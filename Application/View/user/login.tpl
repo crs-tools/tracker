@@ -1,7 +1,7 @@
 <?php $this->title('Login | '); ?>
 
 <div id="user-login-wrapper">
-<?php echo $f = $this->form('user', 'login', array(), array('id' => 'user-login')); ?>
+<?php echo $f = $form(array('id' => 'user-login')); ?>
 	<fieldset>
 		<legend>Login</legend>
 		<ul>

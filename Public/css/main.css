@@ -1645,7 +1645,8 @@ ul.projects li a.link:hover span, ul.projects li a.link:focus span {
 	background-position: -437px -170px;
 }
 
-ul.projects li a.edit, ul.projects li a.delete {
+/* TODO: unify, position list or similar */
+ul.projects li a.edit, ul.projects li a.delete, ul.projects li a.settings {
 	display: block;
 	position: absolute;
 	right: 11.2em;
@@ -1656,8 +1657,9 @@ ul.projects li a.edit, ul.projects li a.delete {
 	color: #acacac;
 }
 
+ul.projects li a.settings { right: 17.3em; }
 ul.projects li a.delete { right: 4em; }
 
-ul.projects li a.edit:hover, ul.projects li a.edit:focus, ul.projects li a.delete:hover, ul.projects li a.delete:focus {
+ul.projects li a.edit:hover, ul.projects li a.edit:focus, ul.projects li a.delete:hover, ul.projects li a.delete:focus, ul.projects li a.settings:hover, ul.projects li a.settings:focus {
 	color: #248fda;
 }

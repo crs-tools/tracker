@@ -1,24 +1,24 @@
 <div id="ticket-header">
-	<h2 class="ticket"><span class="title"><?php echo Filter::specialChars($project['title']); ?></span></h2>
+	<h2 class="ticket"><span class="title"><?php echo $this->h($project['title']); ?></span></h2>
 
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
 		
-		<?php if ($this->User->isAllowed('projects', 'edit')): ?>
+		<?php if (User::isAllowed('projects', 'edit')): ?>
 			<li class="action edit"><?php echo $this->linkTo('projects', 'edit', $project, '<span>edit</span>', 'Edit project'); ?></li>
 		<?php endif; ?>
 		
-		<?php if ($this->User->isAllowed('projects', 'delete')): ?>
+		<?php if (User::isAllowed('projects', 'delete')): ?>
 			<li class="action delete"><?php echo $this->linkTo('projects', 'delete', $project, '<span>delete</span>', 'Delete project…'); ?></li>
 		<?php endif; ?>
 		<li class="ticket-header-bar-background-right"></li>
 	</ul>
 </div>
 
-<?php if (!empty($properties)): ?>	
+<?php if (!empty($properties)): ?>
 	<h3>Properties</h3>
 	<table class="properties">
-		<?php foreach ($properties as $title => $root): ?>
+		<?php foreach ($project->ProjectProperties as $title => $root): ?>
 			<tr>
 				<th colspan="2"><?php echo $title; ?></th>
 			</tr>
@@ -42,7 +42,7 @@
 
 <ul class="ticket-header-bar right horizontal table">
 	<li class="ticket-header-bar-background-left"></li>
-	<?php if ($this->User->isAllowed('user', 'create')): ?>
+	<?php if (User::isAllowed('user', 'create')): ?>
 		<li class="action create"><?php echo $this->linkTo('encodingprofiles', 'create', $project, '<span>create</span>', 'Create new encoding profile…'); ?></li>
 	<?php endif; ?>
 	<li class="ticket-header-bar-background-right"></li>
@@ -64,16 +64,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($profiles as $i => $profile): ?>
+				<?php foreach ($project->EncodingProfile as $i => $profile): ?>
 					<tr class="<?php echo (($i & 1) ? 'even' : 'odd'); ?>">
 						<td><?php echo $profile['name']; ?></td>
 						<td><?php echo $profile['slug']; ?></td>
 						<td><?php echo $profile['extension']; ?></td>
 						<td></td>
-						<td class="link hide right"><?php if ($this->User->isAllowed('encodingprofiles', 'delete')) {
+						<td class="link hide right"><?php if (User::isAllowed('encodingprofiles', 'delete')) {
 							echo $this->linkTo('encodingprofiles', 'delete', $profile + $project, 'delete', array('class' => 'confirm-user-delete'));
 						} ?></td>
-						<td class="link hide right"><?php if ($this->User->isAllowed('encodingprofiles', 'edit')) {
+						<td class="link hide right"><?php if (User::isAllowed('encodingprofiles', 'edit')) {
 							echo $this->linkTo('encodingprofiles', 'edit', $profile + $project, 'edit');
 						} ?></td>
 					</tr>
@@ -83,7 +83,7 @@
 	<?php else: ?>
 		<p>
 			No existing encoding profiles found.
-			<?php if ($this->User->isAllowed('encodingprofiles', 'create')) {
+			<?php if (User::isAllowed('encodingprofiles', 'create')) {
 				echo $this->linkTo('encodingprofiles', 'create', $project, 'Create new encoding profile')/* . ' or ' . $this->linkTo('encodingprofiles', 'import', $project, 'import profiles from another project')*/ . '.';
 			} ?>
 		</p>

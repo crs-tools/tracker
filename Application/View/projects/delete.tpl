@@ -1,6 +1,6 @@
-<?php echo $f = $this->form('projects', 'delete', $project); ?>
+<?php echo $f = $form(); ?>
 	<fieldset>
-		<h2>Delete project <?php echo $this->linkTo('tickets', 'index', array('project_slug' => $project['slug']), $project['title']); ?></h2>
+		<h2>Delete project <?php echo $this->linkTo('tickets', 'index', array('project_slug' => $project['slug']), $project['title']); ?>?</h2>
 		<ul>
 			<li>
 				<p>

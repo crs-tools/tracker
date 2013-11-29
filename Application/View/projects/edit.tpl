@@ -1,10 +1,5 @@
-<?php if (!empty($project)) {
-	$this->title('Edit project ' . Filter::specialChars($project['title']) . ' | ');
-	echo $f = $this->form('projects', 'edit', $project + ((Request::get('ref') == 'index')? array('?ref=index') : array()), array('id' => 'project-edit'));
-} else {
-	$this->title('Create new project | ');
-	echo $f = $this->form('projects', 'create', array(), array('id' => 'project-edit'));
-} ?>
+<?php $this->title((!empty($project))? ('Edit project | ') : 'Create new project | ');
+echo $f = $form(array('id' => 'project-edit')); ?>
 	<fieldset>
 		<?php if (!empty($project)): ?>
 			<h2>Edit project <?php echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), $project['title']); ?></h2>
@@ -19,23 +14,29 @@
 	</fieldset>
 	<fieldset>
 		<legend>Languages</legend>
-		<ul class="edit-properties" data-property-object="language">
-			<?php if (!empty($languages)): ?>
-				<?php foreach($languages as $key => $value): ?>
-					<li><?php echo $f->input('languages[' . $key . ']', $key, $value); ?></li>
-				<?php endforeach; ?>
-			<?php endif; ?>
-		</ul>
+		<?php echo $this->render('shared/properties.tpl', array(
+			'f' => $f,
+			'properties' => array(
+				'for' => $project->Languages,
+				'field' => 'languages',
+				'description' => 'language',
+				'key' => 'language',
+				'value' => 'description'
+			)
+		)); ?>
 	</fieldset>
 	<fieldset>
 		<legend>Properties</legend>
-		<ul class="edit-properties" data-property-object="property">
-			<?php if (!empty($properties)): ?>
-				<?php foreach($properties as $key => $value): ?>
-					<li><?php echo $f->input('properties[' . $key . ']', $key, $value); ?></li>
-				<?php endforeach; ?>
-			<?php endif; ?>
-		</ul>
+		<?php echo $this->render('shared/properties.tpl', array(
+			'f' => $f,
+			'properties' => array(
+				'for' => $project->Properties,
+				'field' => 'properties',
+				'description' => 'property',
+				'key' => 'name',
+				'value' => 'value'
+			)
+		)); ?>
 	</fieldset>
 	<fieldset>
 		<ul>
@@ -43,7 +44,7 @@
 				<?php if (!empty($project)) {
 					echo $f->submit('Save changes') . ' or ';
 					
-					if (Request::get('ref') == 'index') {
+					if (isset($_GET['ref']) and $_GET['ref'] == 'index') {
 						echo $this->linkTo('projects', 'index', 'discard changes', array('class' => 'reset'));
 					} else {
 						echo $this->linkTo('tickets', 'index', array('project_slug' => $project['slug']), 'discard changes', array('class' => 'reset'));

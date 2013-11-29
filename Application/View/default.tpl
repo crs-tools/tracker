@@ -4,20 +4,20 @@
 		<title><?php echo $this->title((!empty($project))? $project['title'] : 'C3 Ticket Tracker'); ?></title>
 		<meta charset="utf-8" />
 		
-		<base href="<?php echo Uri::getBaseUrl(); ?>" />
-		<link rel="shortcut icon" type="image/x-icon" href="<?php echo Uri::getBaseUrl() . ((Controller::getController() == 'encoders' or Controller::getController() == 'user')? 'images/' . Controller::getController() : 'favicon') ?>.ico" />
-		<link rel="stylesheet" href="<?php echo Uri::getBaseUrl(); ?>css/main.css" type="text/css" />
-		<link rel="stylesheet" href="<?php echo Uri::getBaseUrl(); ?>css/codemirror.css" type="text/css" />
+		<base href="<?php echo $this->Request->getRootURL(); ?>" />
+		<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->Request->getRootURL() . 'favicon' /*((Controller::getController() == 'encoders' or Controller::getController() == 'user')? 'images/' . Controller::getController() : 'favicon')*/ ?>.ico" />
+		<link rel="stylesheet" href="<?php echo $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo $this->Request->getRootURL(); ?>css/codemirror.css" type="text/css" />
 	</head>
 	<body>
 		<div id="projects">
 			<ul class="horizontal">
-				<?php if (!empty($projects) and $this->User->isAllowed('projects', 'index')): ?>
-					<?php foreach ($projects as $p): ?>
+				<?php if (!empty($projects) and User::isAllowed('projects', 'index')): ?>
+					<?php foreach ($projects as $slug => $p): ?>
 						<li class="link<?php echo ($p['slug'] == $project['slug'])? ' current' : ''; ?>">
 							<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $p['slug']), $p['title']);
 							
-							if ($p['slug'] == $project['slug'] and $this->User->isAllowed('projects', 'edit')) {
+							if ($p['slug'] == $project['slug'] and User::isAllowed('projects', 'edit')) {
 								echo ' ' . $this->linkTo('projects', 'edit', $project, '(edit)');
 							} ?>
 						</li>
@@ -25,18 +25,18 @@
 					<li class="link"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
 				<?php endif; ?>
 			
-				<?php if ($this->User->isLoggedIn()): ?>
+				<?php if (User::isLoggedIn()): ?>
 					<li class="right link"><?php echo $this->linkTo('user', 'logout', 'Logout'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right link"><?php echo $this->linkTo('user', 'settings', 'Settings'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right text">
-						Signed in as <strong><?php echo $this->User->get('name'); ?></strong>
-						<?php if ($this->User->isSubstitute()) {
+						Signed in as <strong><?php echo User::getCurrent()['name']; ?></strong>
+						<?php /*if ($this->User->isSubstitute()) {
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
-						} ?>
+						}*/ ?>
 					</li>
-					<?php if ($this->User->isAllowed('user', 'index')): ?>
+					<?php if (User::isAllowed('user', 'index')): ?>
 						<li class="right padding">·</li>
 						<li class="right link"><?php echo $this->linkTo('user', 'index', 'Manage users'); ?></li>
 					<?php endif; ?>
@@ -65,23 +65,23 @@
 				<ul id="menu" class="horizontal">
 					<li id="menu-background-left"></li>
 					
-					<?php if ($this->User->isAllowed('tickets', 'feed')): ?>
+					<?php if (User::isAllowed('tickets', 'feed')): ?>
 						<li class="first menu-feed <?php echo ((Controller::getController() == 'tickets' and Controller::getAction() == 'feed')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('tickets', 'feed', $project, '<span>Feed</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php if ($this->User->isAllowed('tickets', 'index')): ?>
+					<?php if (User::isAllowed('tickets', 'index')): ?>
 						<li class="menu-tickets <?php echo (((Controller::getController() == 'tickets' and Controller::getAction() != 'feed') or Controller::getController() == 'import' or Controller::getController() == 'export')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('tickets', 'index', $project + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array()), '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php if ($this->User->isAllowed('services', 'workers')): ?>
+					<?php if (User::isAllowed('services', 'workers')): ?>
 						<li class="menu-services <?php echo ((Controller::getController() == 'services')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('services', 'workers', $project, '<span>Services</span>', 'Services') ?>
 						</li>
 					<?php endif; ?>
 					
-					<?php if ($this->User->isAllowed('project', 'view')): ?>
+					<?php if (User::isAllowed('project', 'view')): ?>
 						<li class="last menu-project <?php echo ((Controller::getController() == 'projects')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('projects', 'view', $project, '<span>Project</span>', 'Project') ?>
 						</li>
@@ -92,31 +92,31 @@
 			<?php endif; ?>
 		</div>
 		<div id="content" class="clearfix">
-			<?php if (empty($flash)) {
+			<?php /*if (empty($flash)) {
 				if ($flash = Model::getValidationErrors() and !empty($flash)) {
 					$flash = array_slice($flash, -1);
 					$flash = end($flash);
 					$flash = array(array('type' => 2, 'text' => mb_ucfirst(current($flash))));
 				}
-			}
+			}*/
 		
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
 				<div id="flash">
-					<?php echo $flash[0]['text']; ?>
+					<?php echo $flash[0]['message']; ?>
 				</div>
 			<?php endif; ?>
 			<?php echo $this->content(); ?>
 		</div>
 		
-		<script src="<?php echo Uri::getBaseUrl(); ?>javascript/jquery-1.7.min.js" type="text/javascript"></script>
-		<script src="<?php echo Uri::getBaseUrl(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
-		<?php if ($this->User->isLoggedIn()): ?>
+		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/jquery-1.7.min.js" type="text/javascript"></script>
+		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
+		<?php if (User::isLoggedIn()): ?>
 			<script type="text/javascript">
-				Tracker.User.data = <?php echo json_encode(array('id' => $this->User->get('id'), 'name' => $this->User->get('name'))); ?>;
+				Tracker.User.data = <?php echo json_encode(array('id' => User::getCurrent()['id'], 'name' => User::getCurrent()['name'])); ?>;
 			</script>
 		<?php endif; ?>
 		<?php echo $this->content('scripts'); ?>
-		<script src="<?php echo Uri::getBaseUrl(); ?>javascript/main.js" type="text/javascript"></script>
+		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/main.js" type="text/javascript"></script>
 	</body>
 </html>

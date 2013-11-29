@@ -8,7 +8,45 @@
 	
 	date_default_timezone_set('Europe/Berlin');
 	
-	require(LIBRARY. 'Application.php');
+	require LIBRARY. 'Application.php';
+	
+	// TOOD: move some to Controller_Application
+	requires(
+		'Log',
+		'Router',
+		'Controller',
+		'View',
+		'Form',
+		'Database/PostgreSQL',
+		'AccessControl',
+		'/Controller/Application'
+	);
+	
+	require ROOT . 'Config/Config.php';
+	require ROOT . 'Config/AccessControl.php';
+	
+	Router::init(ROOT . 'Config/Routes.php');
+	View::setTemplateDirectory(APPLICATION . 'View/'); // TODO: default?
+	
+	try {
+		$requested = Controller::runWithRequest();
+	} catch (NotFoundException $exception) {
+		Controller::renderTemplate('404.tpl', array(), null, new Response(404));
+	} catch (Exception $exception) {
+		var_dump($exception);
+	}
+	
+	$time = microtime(true) - $time;
+	Log::info(sprintf(
+		'Processed %s::%s in %.4fs (%d reqs/sec) (View: %d%%, DB: %d%%)',
+		$requested['controller'],
+		$requested['action'],
+		$time, 1 / $time,
+		(Log::getTimer('View') / $time) * 100,
+		(Log::getTimer('Database') / $time) * 100
+	));
+	
+	/*
 	$app = Application::init();
 	
 	Application::load('Config');
@@ -77,8 +115,6 @@
 			die(View::error(500));
 		}
 	}
-	
-	$time = microtime(true) - $time;
-	Log::info(sprintf('Processed %s::%s for %s in %.4fs (%d reqs/sec) (View: %d%%, DB: %d%%)', Controller::getController(), Controller::getAction(), Request::getIP(), $time, 1 / $time, (Log::getTimer('View') / $time) * 100, (Log::getTimer('Database') / $time) * 100));
+	*/
 	
 ?>

@@ -1,10 +1,27 @@
 <?php
 	
+	requires(
+		'/Controller/Application'
+	);
+	
 	class Controller_User extends Controller_Application {
 		
-		public $requireAuth = true;
+		// public $requireAuth = true;
 		
 		public function login() {
+			$this->form = $this->form();
+			if ($this->form->wasSubmitted()) {
+				if (User::login($this->form->getValue('user'), $this->form->getValue('password'))) {
+					$this->flash('Login successful');
+					
+					// TODO: return to last page
+					return $this->redirect();
+				} else {
+					$this->flashNow('Login failed, check user and password', self::FLASH_WARNING);
+				}
+			}
+			
+			/*
 			if ($this->User->isLoggedIn()) {
 				return $this->View->redirect();
 			}
@@ -15,7 +32,7 @@
 			
 			if (Request::isPostRequest()) {
 				if ($this->User->login(Request::post('user'), Request::post('password'), Request::post('remember', Request::checkbox))) {
-					if ($this->User->isAllowed('user', 'login_complete')) {
+					if (User::isAllowed('user', 'login_complete')) {
 						$this->View->flash('Login successful');
 
 						if (isset($_SESSION['return_to'])) {
@@ -34,10 +51,11 @@
 					$this->View->flashNow('Login failed, check name and password', View::flashWarning);
 				}
 			}
-			
-			$this->View->render('user/login.tpl');
+			*/
+			return $this->render('user/login.tpl');
 		}
 		
+		/*
 		public function logout() {
 			if ($this->User->isLoggedIn()) {
 				$this->User->logout();
@@ -144,7 +162,7 @@
 			
 			$this->View->redirect('user', 'index');
 		}
-		
+		*/
 	}
 	
 ?>

@@ -1,5 +1,21 @@
 <?php
-// This is an auto generated config file.
+	
+	error_reporting(-1);
+	
+	Log::setPath(ROOT . 'Log/application.log');
+	Log::setLevel(Log::debug);
+	Log::colorize(true);
+	
+	Database_PostgreSQL::init(
+		'localhost',
+		'c3tt',
+		'',
+		'c3tt3'
+	);
+	
+	session_set_cookie_params(0, '/', null, false, true);
+	
+/*
 return array(
   'log' => array(
     'path' => ROOT . 'Log/application.log',
@@ -23,4 +39,5 @@ return array(
     'prefix' => 'fem.tracker',
   )
 );
+*/
 ?>

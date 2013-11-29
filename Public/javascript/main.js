@@ -756,37 +756,62 @@
 
 (function() {
   function appendDeleteButton(input) {
+    var deleteField,
+        deleteName = input.data('property-destroy');
+    
     $('<a></a>')
       .attr('href', '#')
       .addClass('delete')
-      .text('Delete ' + this.object)
+      .text('Delete ' + this.description)
+      .attr('title', 'Delete ' + this.description)
       .click(function(event) {  
         event.preventDefault();
         
         if (input[0].disabled) {
           input[0].disabled = false;
-          $(this).removeClass('restore').text('Delete ' + this.object);
+          
+          $(event.target)
+            .removeClass('restore')
+            .text('Delete ' + this.description)
+            .attr('title', 'Delete ' + this.description);
+          
+            deleteField.detach();
         } else {
           input[0].disabled = true;
-          $(this).addClass('restore').text('Restore ' + this.object);
+          $(event.target)
+            .addClass('restore')
+            .text('Restore ' + this.description)
+            .attr('title', 'Restore ' + this.description);
+          
+          if (!deleteField) {
+            deleteField = $('<input>')
+              .attr({
+                'type': 'hidden',
+                'name': deleteName,
+                'value': 1
+              });
+          }
+          
+          deleteField.insertAfter(input);
         }
-      })
+      }.bind(this))
       .insertAfter(input);
   }
   
   function appendCreateButton() {
     this.createButton = $('<a></a>')
       .attr('href', '#')
-      .text('Add new ' + this.object)
+      .text('Add new ' + this.description)
       .click(function(event){
         event.preventDefault();
         
-        var container = $('<li></li>').insertBefore(this.insertBefore);
+        var container = $('<li></li>').insertBefore(this.insertBefore),
+            lastIndex = this.list.find('input[data-property-index]:last').data('property-index') || -1;
         
         $('<input></input>')
           .attr({
             'type': 'text',
-            'name': this.object + '_name[]',
+            'name': this.create.key.replace('[]', '[' + (lastIndex + 1) + ']'),
             'class': 'text'
           })
           .appendTo($('<label></label>').appendTo(container))
@@ -795,7 +820,7 @@
         $('<input></input>')
           .attr({
             'type': 'text',
-            'name': this.object + '_value[]',
+            'name': this.create.value.replace('[]', '[' + (lastIndex + 1) + ']'),
             'class': 'text'
           })
           .appendTo(container);
@@ -803,7 +828,7 @@
         $('<a></a>')
           .attr('href', '#')
           .addClass('delete')
-          .text('Delete ' + this.object)
+          .text('Delete ' + this.description)
           .click(function(event) {
             event.preventDefault();
             container.remove();
@@ -817,11 +842,15 @@
   
   Tracker.Properties = function(list) {
     this.list = $(list);
-    this.object = (this.list.data('property-object'))? this.list.data('property-object') : 'property';
+    this.description = this.list.data('properties-description') || 'property';
+    this.create = {
+      key: this.list.data('properties-create-key') || 'key',
+      value: this.list.data('properties-create-value') || 'value'
+    };
     
     this.list.find('li').each(function(i, li) {
-      appendDeleteButton.call(this, $(li).children('input'));;
-    });
+      appendDeleteButton.call(this, $(li).children('input.text'));;
+    }.bind(this));
     
     // TODO: read data-label
     

@@ -6,11 +6,11 @@
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
 		
-		<?php if ($this->User->isAllowed('tickets', 'create')): ?>
+		<?php if (User::isAllowed('tickets', 'create')): ?>
 			<li class="action create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		<?php endif; ?>
 			
-		<?php if ($this->User->isAllowed('import', 'index')): ?>
+		<?php if (User::isAllowed('import', 'index')): ?>
 			<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 		<?php endif; ?>
 
@@ -21,7 +21,7 @@
 </div>
 
 <?php echo $f = $this->form('export', 'wiki', $project); ?>
-	<?php if ($this->User->isAllowed('export', 'wiki', $project)): ?>
+	<?php if (User::isAllowed('export', 'wiki', $project)): ?>
 	<fieldset>
 		<legend>Export to public wiki</legend>
 		<ul>
@@ -34,7 +34,7 @@
 	<?php endif; ?>
 </form>
 
-<?php if ($this->User->isAllowed('export', 'feedback')):
+<?php if (User::isAllowed('export', 'feedback')):
 	echo $f = $this->form('export', 'feedback', $project); ?>
 		<fieldset>
 			<legend>Sync with feedback tracker</legend>
@@ -48,7 +48,7 @@
 	</form>
 <?php endif; ?>
 
-<?php if ($this->User->isAllowed('export', 'podcast')): ?>
+<?php if (User::isAllowed('export', 'podcast')): ?>
 	<?php echo $f = $this->form('export', 'podcast', $project); ?>
 		<fieldset>
 			<legend>Export as podcast feed</legend>
@@ -57,7 +57,7 @@
 					<li>
 						<p>
 							You can't export a podcast feed without an existing encoding profile.
-							<?php if ($this->User->isAllowed('encoders', 'profiles')) {
+							<?php if (User::isAllowed('encoders', 'profiles')) {
 								echo $this->linkTo('encodingprofiles', 'create', $project, 'Create new encoding profile') . '.';
 							} ?>
 						</p>

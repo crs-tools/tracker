@@ -16,18 +16,18 @@
 		</ul>
 	</form>
 	
-	<?php if ($this->User->isAllowed('tickets', 'create') or $this->User->isAllowed('import', 'index') or $this->User->isAllowed('export', 'index')): ?>
+	<?php if (User::isAllowed('tickets', 'create') or User::isAllowed('import', 'index') or User::isAllowed('export', 'index')): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>		
-			<?php if ($this->User->isAllowed('tickets', 'create')): ?>
+			<?php if (User::isAllowed('tickets', 'create')): ?>
 				<li class="action create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 			<?php endif; ?>
 			
-			<?php if ($this->User->isAllowed('import', 'index')): ?>
+			<?php if (User::isAllowed('import', 'index')): ?>
 				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 			<?php endif; ?>
 			
-			<?php if ($this->User->isAllowed('export', 'index')): ?>
+			<?php if (User::isAllowed('export', 'index')): ?>
 				<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
@@ -42,7 +42,7 @@
 			
 			<ul id="tickets-search-conditions">
 				<li class="borderless">
-					<?php if ($this->User->isAllowed('tickets', 'edit')) {
+					<?php if (User::isAllowed('tickets', 'edit')) {
 						echo $f->submit('Mass edit tickets', array('name' => 'edit', 'id' => 'tickets-search-mass-edit', 'disabled' => (Request::isPostRequest())? false : 'disabled'));
 					}
 					

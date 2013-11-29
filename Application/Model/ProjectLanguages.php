@@ -1,15 +1,15 @@
 <?php
 	
-	class ProjectLanguages extends Model_Properties {
+	class ProjectLanguages extends Model/*_Properties*/ {
 		
-		public $table = 'tbl_project_language';
-		public $objectField = 'project_id';
+		const TABLE = 'tbl_project_language';
 		
-		public $nameField = 'language';
-		public $valueField = 'description';
+		public $primaryKey = array('project_id', 'language');
+		
+		const CREATE_IF_NOT_EXISTS = true;
 		
 		public $belongsTo = array('Project' => array());
-		
+			
 	}
 	
 ?>

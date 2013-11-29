@@ -15,7 +15,7 @@
 			<ul class="ticket-header-bar right horizontal">
 				<li class="ticket-header-bar-background-left"></li>
 
-				<?php if ($this->User->isAllowed('user', 'delete')): ?>
+				<?php if (User::isAllowed('user', 'delete')): ?>
 					<li class="action delete"><?php echo $this->linkTo('user', 'delete', $user, '<span>delete</span>', 'Delete user', array('class' => 'confirm-user-delete')); ?></li>
 				<?php endif; ?>
 				<li class="ticket-header-bar-background-right"></li>

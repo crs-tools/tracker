@@ -1,9 +1,12 @@
 <?php
 	
-	class ProjectProperties extends Model_Properties {
+	class ProjectProperties extends Model/*_Properties*/ {
 		
-		public $table = 'tbl_project_property';
-		public $objectField = 'project_id';
+		const TABLE = 'tbl_project_property';
+		
+		public $primaryKey = array('project_id', 'name');
+		
+		const CREATE_IF_NOT_EXISTS = true;
 		
 		public $belongsTo = array('Project' => array());
 		

@@ -2,6 +2,8 @@
 	
 	class Model_Properties extends Model {
 		
+		
+		/*
 		public $primaryKey = false;
 		
 		public $objectField;
@@ -169,7 +171,7 @@
 			
 			return false;
 		}
-		
+		*/
 	}
 	
 ?>

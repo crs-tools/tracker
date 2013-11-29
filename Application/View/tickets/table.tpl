@@ -70,23 +70,23 @@ if (!empty($tickets)) {
 					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project + array('?u=' . $ticket['user_id']), $ticket['user_name'], array('data-user' => $ticket['user_id'])) . '</span>';
 				}
 				
-				if ($this->User->isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)) {
+				if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)) {
 					$t .= $this->linkTo('tickets', 'cut', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>cut</span>', 'Cut lecture "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if ($this->User->isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)) {
+				if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)) {
 					$t .= $this->linkTo('tickets', 'check', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>check</span>', 'Check' . (($ticket['type_id'] == 2)? ' encoding for' : '') . ' lecture "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if ($this->User->isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)) {
+				if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)) {
 					$t .= $this->linkTo('tickets', 'fix', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>fix</span>', 'Fix failed lecture "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if ($this->User->isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)) {
+				if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)) {
 					$t .= $this->linkTo('tickets', 'handle', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>handle</span>', 'Handle ticket "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if ($this->User->isAllowed('tickets', 'edit')) {
+				if (User::isAllowed('tickets', 'edit')) {
 					$t .= $this->linkTo('tickets', 'edit', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket "' . $ticket['title'] . '"', array('class' => 'edit'));
 				}
 			$t .= '</span>';

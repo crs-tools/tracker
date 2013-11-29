@@ -53,25 +53,25 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 	<?php if ($this->User->isLoggedIn()): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
-			<?php if ($this->User->isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
+			<?php if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
 				<li class="action mark<?php echo ($action == 'cut')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'cut', $ticket + $project, '<span>cut</span>', 'Mark lecture…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
+			if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
 				<li class="action check<?php echo ($action == 'check')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'check', $ticket + $project, '<span>check</span>', 'Check ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
+			if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
 				<li class="action fix<?php echo ($action == 'fix')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
+			if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
 				<li class="action handle<?php echo ($action == 'handle')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'handle', $ticket + $project, '<span>andle</span>', 'Handle ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
+			if (User::isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
 				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', array('class' => 'confirm-ticket-reset')); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'edit')): ?>
+			if (User::isAllowed('tickets', 'edit')): ?>
 				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'delete')): ?>
+			if (User::isAllowed('tickets', 'delete')): ?>
 				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket + $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
 			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
@@ -209,7 +209,7 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 	<h3>Timeline</h3>
 	<div class="line"></div>
 	<ul class="clearfix">
-		<?php if (empty($action) and $this->User->isAllowed('tickets', 'comment')): ?>
+		<?php if (empty($action) and User::isAllowed('tickets', 'comment')): ?>
 			<li class="event left">
 				<?php echo $f = $this->form('tickets', 'comment', $ticket + $project); ?>
 						<fieldset>
@@ -233,7 +233,7 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 							case 'comment': ?>
 								<p><?php echo nl2br(Filter::specialChars($entry['comment'])); ?></p>
 								<strong<?php echo (!empty($entry['origin_user_name']))? ' class="origin"' : ''; ?>>– <?php echo (empty($entry['origin_user_name']))? $entry['user_name'] : mb_substr($entry['origin_user_name'], 0, 20); // TODO: add symbol ?></strong>
-								<?php if ($this->User->isAllowed('tickets', 'delete_comment', $entry['id'], $entry['user_id'])) {
+								<?php if (User::isAllowed('tickets', 'delete_comment', $entry['id'], $entry['user_id'])) {
 									echo $this->linkTo('tickets', 'delete_comment', $entry + $project, 'delete');
 								} ?>
 								<span class="date"><?php echo Date::distanceInWords(new Date($entry['created'])); ?> ago<span>: <?php echo Date::fromString($entry['created'], null, 'D, M j Y, H:i') ?></span></span>

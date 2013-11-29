@@ -1,25 +1,31 @@
 <?php
 	
-	class Controller_Application extends Controller {
+	requires(
+		'/Model/User',
+		'/Model/Project'
+	);
+	
+	abstract class Controller_Application extends Controller {
 		
-		public function __construct($action, $arguments) {
+		protected $beforeAction = array('setProject' => true);
+		
+		public function __construct() {
+			User::recall();
+		}
+		
+		protected function setProject($action, array $arguments) {
 			if (isset($arguments['project_slug'])) {
-				if ($project = $this->Project->setCurrent($arguments['project_slug'])) {
-					$project['project_slug'] = $project['slug'];
-					$this->View->assign('project', $project);
-				} else {
-					if (!$this->User->isAllowed('projects', 'index')) {
-						return $this->View->redirect('user', 'login');
-					} else {
-						return $this->View->redirect('projects', 'index');;
-					}
+				$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
+				
+				if (!$this->project) {
+					return $this->View->redirect('projects', 'index');
 				}
-			} else {
-				$this->View->assign('project', array());
 			}
 			
-			$this->View->assign('projects', $this->Project->findAllIndexedBySlug());
+			$this->projects = Project::findAll()->indexBy('slug');
 		}
+		
+		// TODO: redirectWithReference($default, array('ref1' => […], 'ref2' => …))
 		
 	}
 	

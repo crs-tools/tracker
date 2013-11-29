@@ -2,7 +2,7 @@
 
 <ul class="ticket-header-bar right horizontal table">
 	<li class="ticket-header-bar-background-left"></li>
-	<?php if ($this->User->isAllowed('user', 'create')): ?>
+	<?php if (User::isAllowed('user', 'create')): ?>
 		<li class="action create"><?php echo $this->linkTo('user', 'create', '<span>create</span>', 'Create new user'); ?></li>
 	<?php endif; ?>
 	<li class="ticket-header-bar-background-right"></li>
@@ -63,7 +63,7 @@
 						echo Date::distanceInWords(Date::fromString($worker['last_seen']), null, true) . ' ago';
 					} ?></td>
 					<td></td>
-					<td class="link hide right"><?php if ($this->User->isAllowed('user', 'delete')) {
+					<td class="link hide right"><?php if (User::isAllowed('user', 'delete')) {
 						echo $this->linkTo('user', 'delete', $worker, 'unregister', array('class' => 'confirm-user-unregister'));
 					} ?></td>
 				</tr>

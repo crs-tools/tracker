@@ -31,35 +31,35 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 		<li class="ticket-header-bar-background-left"></li>
 			
 		<?php if (!empty($ticket)): ?>
-			<?php if ($this->User->isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
+			<?php if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
 				<li class="action cut"><?php echo $this->linkTo('tickets', 'cut', $ticket + $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
+			if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
 				<li class="action check"><?php echo $this->linkTo('tickets', 'check', $ticket + $project, '<span>check</span>', 'Check ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
+			if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
 				<li class="action fix"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
+			if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
 				<li class="action handle"><?php echo $this->linkTo('tickets', 'handle', $ticket + $project, '<span>handle</span>', 'Handle ticket…'); ?></li>
 			<?php endif;
-			if ($this->User->isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
+			if (User::isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
 				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task'); ?></li>
 			<?php endif; ?>
 			
 			<li class="action current edit"><?php echo $this->linkTo('tickets', 'edit', $ticket + $project, '<span>edit</span>', 'Edit ticket…'); ?></li>
 			
-			<?php if ($this->User->isAllowed('tickets', 'delete')): ?>
+			<?php if (User::isAllowed('tickets', 'delete')): ?>
 				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket + $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
 			<?php endif; ?>
 		<?php else: ?>
 			<li class="action current create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		
-			<?php if ($this->User->isAllowed('import', 'index')): ?>
+			<?php if (User::isAllowed('import', 'index')): ?>
 				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 			<?php endif; ?>
 		
-			<?php if ($this->User->isAllowed('export', 'index')): ?>
+			<?php if (User::isAllowed('export', 'index')): ?>
 				<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 			<?php endif; ?>
 		<?php endif; ?>
@@ -75,7 +75,7 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
-			<?php if ($ticket['type_id'] == 2 or (empty($ticket) and $this->User->isAllowed('tickets', 'create_all'))): ?>
+			<?php if ($ticket['type_id'] == 2 or (empty($ticket) and User::isAllowed('tickets', 'create_all'))): ?>
 				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + ((!empty($profiles))? $profiles : array()), $ticket['encoding_profile_id']); ?>
 			<?php endif; ?>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
@@ -117,7 +117,7 @@ if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 				<li>
 					<label for="ticket-edit-parent">Parent ticket</label>
 					<select name="parent" id="ticket-edit-parent">
-						<?php if ((empty($ticket) and $this->User->isAllowed('tickets', 'create_all')) or !empty($ticket
+						<?php if ((empty($ticket) and User::isAllowed('tickets', 'create_all')) or !empty($ticket
 							)): ?>
 							<option></option>
 						<?php endif;

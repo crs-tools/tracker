@@ -1,68 +1,67 @@
 <?php
 	
+	requires(
+		'/Model/Project'
+	);
+	
 	class Controller_Projects extends Controller_Application {
 		
-		public $requireAuth = true;
+		// public $requireAuth = true;
 		
 		public function index() {
-			$this->View->render('projects/index.tpl');
+			return $this->render('projects/index.tpl');
 		}
 		
 		public function view() {
-			$this->View->assign('properties', Model::groupByField($this->ProjectProperties->findByObjectWithRoot($this->Project->id), 'root'));
-			$this->View->assign('profiles', $this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id)));
-			$this->View->render('projects/view.tpl');
+			return $this->render('projects/view.tpl');
 		}
 		
 		public function create() {
-			if (Request::isPostRequest() and $this->Project->create(Request::getParams())) {
-				$this->ProjectProperties->update($this->Project->id, Request::post('property_name'), Request::post('property_value'));
-									
-				$this->View->flash('Project created');
-				return $this->View->redirect('projects', 'index');
+			$this->form = $this->form();
+			
+			if ($this->form->wasSubmitted() and ($project = Project::create($this->form->getValues()))) {
+				$this->flash('Project created');
+				// TODO: redirect to project settings (view)?
+				return $this->redirect('projects', 'index');
 			}
 			
-			$this->View->render('projects/edit.tpl');
+			return $this->render('projects/edit.tpl');
 		}
 		
 		public function edit(array $arguments = array()) {
-			if (empty($arguments) or !$project = $this->Project->find($arguments['id'], array())) {
+			if (!$this->project = Project::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (Request::isPostRequest() and $this->Project->save(Request::getParams())) {
-				$this->ProjectLanguages->update($project['id'], Request::post('language_name'), Request::post('language_value'), Request::post('languages'));
-				$this->ProjectProperties->update($project['id'], Request::post('property_name'), Request::post('property_value'), Request::post('properties'));
+			//'projects', 'edit', $project + ((Request::get('ref') == 'index')? array('?ref=index') : array()),
+			$this->form = $this->form();
+			
+			if ($this->form->wasSubmitted() and $this->project->save($this->form->getValues())) {
+				$this->flash('Project updated');
 				
-				$this->View->flash('Project updated');
-				
-				if (Request::get('ref') == 'index') {						
-					return $this->View->redirect('projects', 'index');
-				} else {
-					return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
-				}
+				// if (isset($_GET['ref']) and $_GET['ref'] == 'index') {						
+					return $this->redirect('projects', 'index');
+				// } else {
+					// return $this->redirect('tickets', 'index', array('project_slug' => $this->project['slug']));
+				// }
 			}
 			
-			$this->View->assign('project', $project);
-			$this->View->assign('languages', $this->ProjectLanguages->findByObject($project['id']));
-			$this->View->assign('properties', $this->ProjectProperties->findByObject($project['id']));
-			$this->View->render('projects/edit.tpl');
+			return $this->render('projects/edit.tpl');
 		}
 		
 		public function delete(array $arguments = array()) {
-			if (empty($arguments) or !$project = $this->Project->find($arguments['id'], array())) {
+			if (!$this->project = Project::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (Request::isPostRequest()) {
-				if ($this->Project->delete($project['id'])) {
-					$this->View->flash('Project deleted');
-					return $this->View->redirect('projects', 'index');
-				}
+			$this->form = $this->form();
+			
+			if ($this->form->wasSubmitted() and $this->project->destroy()) {
+				$this->flash('Project deleted');
+				return $this->redirect('projects', 'index');
 			}
 			
-			$this->View->assign('project', $project);
-			$this->View->render('projects/delete.tpl');
+			return $this->render('projects/delete.tpl');
 		}
 		
 	}

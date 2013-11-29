@@ -6,13 +6,13 @@
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
 			
-		<?php if ($this->User->isAllowed('tickets', 'create')): ?>
+		<?php if (User::isAllowed('tickets', 'create')): ?>
 			<li class="action create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		<?php endif; ?>
 			
 		<li class="action current import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 
-		<?php if ($this->User->isAllowed('export', 'index')): ?>
+		<?php if (User::isAllowed('export', 'index')): ?>
 			<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 		<?php endif; ?>
 		

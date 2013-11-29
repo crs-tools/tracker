@@ -1,5 +1,9 @@
 <?php
 	
+	requires(
+		'/Controller/Application'
+	);
+	
 	class Controller_Tickets extends Controller_Application {
     	
 		public $requireAuth = true;
@@ -520,6 +524,8 @@
 				throw new EntryNotFoundException();
 			}
 			
+			// TODO: isOwner?
+			
 			if ($this->Comment->delete($arguments['id'])) { // TODO: check if comment belongs to ticket
 				$this->View->flash('Comment deleted');
 			}
@@ -560,7 +566,7 @@
 					));
 				}
 				
-				if ($this->Ticket->type_id != 3 and !$this->User->isAllowed('tickets', 'create_all')) {
+				if ($this->Ticket->type_id != 3 and !User::isAllowed('tickets', 'create_all')) {
 					$this->View->flash('You are not allowed to create a ticket of this type', View::flashError);
 					return $this->View->redirect('tracker', 'index', array('project_slug' => $this->Project->slug));
 				}
@@ -587,7 +593,7 @@
 			$this->View->assign('profiles', Model::indexByField($this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id), array(), null, null, 'id, name'), 'id', 'name'));
 			// TODO: perhaps order by name instead of vid?
 			$this->View->assign('tickets', $this->Ticket->findAll(array(), array('project_id' => $this->Project->id, 'parent_id IS NULL'), array(), 'fahrplan_id', null, 'id, type_id, fahrplan_id, title'));
-			$this->View->assign('states', Model::groupByField($this->State->findAll(array(), ($this->User->isAllowed('tickets', 'create_all'))? array() : array('ticket_type_id' => 3), array(), 'id'), 'ticket_type_id'));
+			$this->View->assign('states', Model::groupByField($this->State->findAll(array(), (User::isAllowed('tickets', 'create_all'))? array() : array('ticket_type_id' => 3), array(), 'id'), 'ticket_type_id'));
 			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
 			
 			$this->View->render('tickets/edit.tpl');
