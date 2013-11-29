@@ -55,14 +55,13 @@
 			return $this->render('user/login.tpl');
 		}
 		
-		/*
 		public function logout() {
-			if ($this->User->isLoggedIn()) {
-				$this->User->logout();
+			if (User::isLoggedIn() and User::logout()) {
+				$this->flash('Goodbye');
 			}
 			
-			return $this->View->redirect();
-		}*/
+			return $this->redirect();
+		}
 		
 		public function settings() {
 			$this->form = $this->form();
@@ -78,21 +77,6 @@
 					$this->flashNow('Password changed successfully');
 				}
 			}
-			
-			/*
-			$this->User->current();
-			
-			if (Request::isPostRequest()) {
-				if (!$this->User->checkPassword(Request::post('password'))) {
-					$this->View->flashNow('Wrong current password', View::flashWarning);
-				} elseif (Request::post('new_password') and Request::post('new_password_confirmation')) {
-					$this->User->password = Request::post('new_password');
-					$this->User->password_confirmation = Request::post('new_password_confirmation');
-					if ($this->User->save()) {
-						$this->View->flashNow('Changed password successfully');
-					}
-				}
-			}*/
 			
 			return $this->render('user/settings.tpl');
 		}

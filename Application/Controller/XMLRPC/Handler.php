@@ -13,9 +13,6 @@
 		
 		// private $virtual_properties = array('Encoding.Basename', 'Project.Slug', 'EncodingProfile.Basename', 'EncodingProfile.Extension');
 		
-		public function __construct() {
-		}
-		
 		protected function authenticate($method, array $arguments) {
 			if (empty($_GET['group']) or empty($_GET['hostname'])) {
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');

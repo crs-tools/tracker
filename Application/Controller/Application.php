@@ -18,7 +18,7 @@
 				$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
 				
 				if (!$this->project) {
-					return $this->View->redirect('projects', 'index');
+					return $this->redirect('projects', 'index');
 				}
 			}
 			
