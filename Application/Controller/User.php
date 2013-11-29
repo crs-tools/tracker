@@ -62,9 +62,24 @@
 			}
 			
 			return $this->View->redirect();
-		}
+		}*/
 		
 		public function settings() {
+			$this->form = $this->form();
+			$user = User::getCurrent();
+			
+			if ($this->form->wasSubmitted()) {
+				if (!$user->verifyPassword($this->form->getValue('current_password'))) {
+					$this->flashNow('Wrong current password');
+				// TODO: via validation!
+				} elseif ($this->form->getValue('password') and
+					$this->form->getValue('password') == $this->form->getValue('password_confirmation') and
+					$user->save($this->form->getValues())) {
+					$this->flashNow('Password changed successfully');
+				}
+			}
+			
+			/*
 			$this->User->current();
 			
 			if (Request::isPostRequest()) {
@@ -77,11 +92,12 @@
 						$this->View->flashNow('Changed password successfully');
 					}
 				}
-			}
-
-			$this->View->render('user/settings.tpl');
+			}*/
+			
+			return $this->render('user/settings.tpl');
 		}
 		
+		/*
 		public function index() {
 			// $this->View->assign('users', $this->User->findAll(array(), '', array('admin', 'user'), 'human, role, name', null, '*, role = ? OR role = ? AS human'));
 			$this->View->assign('users', $this->User->findAll(array(), 'role != ?', array('worker'), 'name'));

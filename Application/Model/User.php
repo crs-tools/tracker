@@ -11,7 +11,7 @@
 		
 		const FIELD_USER = 'name';
 		const FIELD_ACL_TOKEN = 'role';
-		const FIELD_PERSISTENCE_TOKEN = 'hash';
+		const FIELD_PERSISTENCE_TOKEN = 'persistence_token';
 		const FIELD_LAST_REQUEST = 'last_seen_at';
 		const FIELD_LAST_LOGIN = 'last_login_at';
 		
