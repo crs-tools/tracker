@@ -12,7 +12,6 @@
 		
 		public $hasMany = array(
 			'Ticket' => array('foreign_key' => 'project_id'),
-			// 'EncodingProfile' => array('foreign_key' => 'project_id'),
 			'Properties' => array(
 				'class_name' => 'ProjectProperties',
 				'foreign_key' => 'project_id',
@@ -26,6 +25,16 @@
 		);
 		
 		public $hasAndBelongsToMany = array(
+			'EncodingProfileVersion' => array(
+				'foreign_key' => 'encoding_profile_version_id',
+				'self_key' => 'project_id',
+				'via' => 'tbl_project_encoding_profile'
+			),
+			'TicketState' => array(
+				'foreign_key' => array('ticket_type' , 'ticket_state'),
+				'self_key' => 'project_id',
+				'via' => 'tbl_project_ticket_state'
+			),
 			'WorkerGroup' => array(
 				'foreign_key' => 'worker_group_id',
 				'self_key' => 'project_id',
@@ -33,7 +42,7 @@
 			)
 		);
 		
-		public $acceptNestedEntryFor = array(
+		public $acceptNestedEntriesFor = array(
 			'Properties' => true,
 			'Languages' => true
 		);

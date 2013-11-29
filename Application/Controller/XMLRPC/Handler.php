@@ -38,6 +38,8 @@
 					'name' => $name,
 					'worker_group_id' => $group['id']
 				));
+			} else {
+				// TODO: update last_seen
 			}
 		}
 		
