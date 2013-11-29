@@ -22,10 +22,6 @@
 		);
 		*/
 		
-		public $belongsTo = array(
-			// 'Worker' => array('foreign_key' => 'worker_id')
-		);
-		
 		/*
 		public $table = 'tbl_user';
 		

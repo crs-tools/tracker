@@ -34,17 +34,14 @@
 				return $this->_XMLRPCFault(-32500, 'invalid or missing signature');
 			} 
 			
-			$userName = self::_getUserNameFromHostName($_GET['hostname']);
+			$name = self::_getNameFromHostName($_GET['hostname']);
 			
-			if (!$user = User::findBy(array('name' => $userName), array('Worker'))) {
-				// TODO: create user
-				return;
+			if (!$this->worker = Worker::findBy(array('name' => $name))) {
+				$this->worker = Worker::create(array(
+					'name' => $name,
+					'worker_group_id' => $group['id']
+				));
 			}
-			
-			if (!$user['worker_id']) {
-				return $this->_XMLRPCFault(-32500, 'invalid host name, already in use as user name');
-			}
-			
 		}
 		
 		private static function _validateSignature($secret, $arguments) {
@@ -59,7 +56,7 @@
 			return $hash === $signature;
 		}
 		
-		private static function _getUserNameFromHostName($hostName) {
+		private static function _getNameFromHostName($hostName) {
 			if (filter_var($hostName, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 				return $hostName;
 			}
