@@ -11,24 +11,19 @@
 			<span class="title">Edit user <?php echo $user['name']; ?></span>
 		</h2>
 
-		<?php if ($this->User->isLoggedIn()): ?>
+		<?php if (User::isAllowed('user', 'delete')): ?>
 			<ul class="ticket-header-bar right horizontal">
 				<li class="ticket-header-bar-background-left"></li>
-
-				<?php if (User::isAllowed('user', 'delete')): ?>
-					<li class="action delete"><?php echo $this->linkTo('user', 'delete', $user, '<span>delete</span>', 'Delete user', array('class' => 'confirm-user-delete')); ?></li>
-				<?php endif; ?>
+					<li class="action delete"><?php
+						echo $this->linkTo('user', 'delete', $user, '<span>delete</span>', 'Delete user', array('class' => 'confirm-user-delete'));
+					?></li>
 				<li class="ticket-header-bar-background-right"></li>
 			</ul>
 		<?php endif; ?>
 	</div>
 <?php endif; ?>
 
-<?php if (!empty($user)) {
-	echo $f = $this->form('user', 'edit', $user);
-} else {
-	echo $f = $this->form('user', 'create');
-} ?> 
+<?php echo $f = $form(); ?>
 	<fieldset>
 		<?php if (empty($user)): ?>
 			<h2>Add User</h2>
@@ -46,7 +41,7 @@
 		<legend>Password</legend>
 		<ul>
 			<?php if (!empty($user)): ?>
-				<li><?php echo $f->password('verify_password', 'Your password'); ?></li>
+				<li><?php echo $f->password('user_password', 'Your password'); ?></li>
 			<?php endif; ?>
 			<li><?php echo $f->password('password', (!empty($user))? 'New user password' : 'Password'); ?></li>
 		</ul>

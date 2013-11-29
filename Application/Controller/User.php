@@ -33,7 +33,7 @@
 			if (Request::isPostRequest()) {
 				if ($this->User->login(Request::post('user'), Request::post('password'), Request::post('remember', Request::checkbox))) {
 					if (User::isAllowed('user', 'login_complete')) {
-						$this->View->flash('Login successful');
+						$this->flash('Login successful');
 
 						if (isset($_SESSION['return_to'])) {
 							$this->View->redirect($_SESSION['return_to']);
@@ -45,10 +45,10 @@
 						}
 					} else {
 						$this->User->logout();
-						$this->View->flashNow('You are unable to login with this user');
+						$this->flashNow('You are unable to login with this user');
 					}
 				} else {
-					$this->View->flashNow('Login failed, check name and password', View::flashWarning);
+					$this->flashNow('Login failed, check name and password', self::FLASH_WARNING);
 				}
 			}
 			*/
@@ -81,25 +81,23 @@
 			return $this->render('user/settings.tpl');
 		}
 		
-		/*
-		public function index() {
-			// $this->View->assign('users', $this->User->findAll(array(), '', array('admin', 'user'), 'human, role, name', null, '*, role = ? OR role = ? AS human'));
-			$this->View->assign('users', $this->User->findAll(array(), 'role != ?', array('worker'), 'name'));
-			$this->View->assign('workers', $this->User->findAll(array(), array('role' => 'worker'), array(), 'name'));
-			$this->View->render('user/index.tpl');
-		}
 		
+		public function index() {
+			$this->users = User::findAll()->orderBy('name');
+			return $this->render('user/index.tpl');
+		}
+		/*
 		public function substitute(array $arguments = array()) {
 			if (empty($arguments['id'])) {
 				return $this->View->redirect('user', 'index');
 			}
 			
 			if (!$this->User->substitute($arguments['id'])) {
-				$this->View->flash('You cannot login in the name of this user');
+				$this->flash('You cannot login in the name of this user');
 				return $this->View->redirect('user', 'index');
 			}
 			
-			$this->View->flash('You are now logged in as ' . $this->User->get('name'));
+			$this->flash('You are now logged in as ' . $this->User->get('name'));
 			return $this->View->redirect('projects', 'index');
 		}
 		
@@ -115,54 +113,53 @@
 				return $this->View->redirect('user', 'index');
 			}
 		}
-		
+		*/
 		public function create() {
-			if (Request::isPostRequest() and $this->User->create(Request::getParams())) {
-				$this->View->flash('Successfully added user');
-				return $this->View->redirect('user', 'index');
+			$this->form = $this->form();
+			
+			if ($this->form->wasSubmitted() and User::create($this->form->getValues())) {
+				$this->flash('Successfully added user');
+				return $this->redirect('user', 'index');
 			}
 			
-			$this->View->render('user/edit.tpl');
+			return $this->render('user/edit.tpl');
 		}
 		
-		public function edit(array $arguments = array()) {
-			if (Request::isPostRequest() and Request::post('verify_password')) {
-				$passwordValid = $this->User->current()->checkPassword(Request::post('verify_password'));
-			}
-						
-			if (empty($arguments) or !$user = $this->User->find($arguments['id'], array())) {
+		public function edit(array $arguments) {
+			if (!$this->user = User::find($arguments['id'], array())) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (Request::isPostRequest()) {
-				if (Request::post('password') and !$passwordValid) {
-					$this->View->flashNow('Your password is wrong', View::flashWarning);
-				} else {
-					if ($this->User->save(Request::getParams())) {
-						$this->View->flash('User updated');
-						return $this->View->redirect('user', 'index');
-					}
+			$this->form = $this->form();
+			
+			if ($this->form->wasSubmitted()) {
+				if ($this->form->getValue('password') and
+					!User::getCurrent()->verifyPassword($this->form->getValue('user_password'))) {
+					$this->flashNow('Your entered a wrong password');
+				} elseif ($this->user->save($this->form->getValues())) {
+					$this->flash('User ' . $this->user['name'] . ' updated');
+					return $this->redirect('user', 'index');
 				}
 			}
 			
-			$this->View->assign('user', $user);
-			$this->View->render('user/edit.tpl');
+			return $this->render('user/edit.tpl');
 		}
 		
-		public function delete(array $arguments = array()) {
-			if (!empty($arguments)) {
-				if ($arguments['id'] != $this->User->get('id')) {
-					if ($this->User->delete($arguments['id'])) {
-						$this->View->flash('User deleted');
-					}
-				} else {
-					$this->View->flash('You can\'t delete your own user account', View::flashWarning);
-				}
+		public function delete(array $arguments) {
+			if (!$user = User::find($arguments['id'], array())) {
+				throw new EntryNotFoundException();
 			}
 			
-			$this->View->redirect('user', 'index');
+			$name = $user['name'];
+			
+			if ($user->isCurrent()) {
+				$this->flash('You can\'t delete your own user account');
+			} elseif ($user->destroy()) {
+				$this->flash('User ' . $name . ' deleted');
+			}
+			
+			return $this->redirect('user', 'index');
 		}
-		*/
 	}
 	
 ?>

@@ -40,6 +40,10 @@
 						<li class="right padding">·</li>
 						<li class="right link"><?php echo $this->linkTo('user', 'index', 'Manage users'); ?></li>
 					<?php endif; ?>
+					<?php if (User::isAllowed('workers', 'index')): ?>
+						<li class="right padding">·</li>
+						<li class="right link"><?php echo $this->linkTo('workers', 'index', 'Manage workers'); ?></li>
+					<?php endif; ?>
 				<?php else: ?>
 					<li class="right link"><?php echo $this->linkTo('user', 'login', 'Login'); ?></li>
 				<?php endif; ?>
@@ -103,7 +107,7 @@
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
 				<div id="flash">
-					<?php echo $flash[0]['message']; ?>
+					<?php echo $this->h($flash[0]['message']); ?>
 				</div>
 			<?php endif; ?>
 			<?php echo $this->content(); ?>
