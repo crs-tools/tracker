@@ -7,21 +7,26 @@
 	class Controller_Tickets extends Controller_Application {
     	
 		public $requireAuth = true;
+		
+		/*
 		public $beforeFilter = true;
 		
 		private static $_searchMapping = array('title' => 'title', 'assignee' => 'user_id', 'type' => 'type_id', 'state' => 'state_id', 'encoding_profile' => 'encoding_profile_id', 'fahrplan_id' => 'fahrplan_id');
 		
 		public function beforeFilter($arguments, $action) {
 			if ($this->Project->read_only and !in_array($action, array('index', 'view', 'log', 'export', 'export_wiki', 'export_podcast'))) {
-				$this->View->flash('You can\'t alter tickets in this project because it\'s locked');
+				$this->flash('You can\'t alter tickets in this project because it\'s locked');
 				$this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
 				return false;
 			}
 			
 			return true;
 		}
+		*/
 		
 		public function index() {
+			
+			/*
 			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
 			
 			if (Request::get('t')) {
@@ -167,14 +172,14 @@
 			}
 			
 			$this->View->assign('tickets', $tickets);
+			*/
+			/*if ($this->View->respondTo('json')) {
+				$this->render('tickets/table.tpl');
+			} else {*/
 			
-			if ($this->View->respondTo('json')) {
-				$this->View->render('tickets/table.tpl');
-			} else {
-				$this->View->render('tickets/index.tpl');
-			}
+			return $this->render('tickets/index.tpl');
 		}
-		
+		/*
 		public function view(array $arguments = array()) {
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();
@@ -209,8 +214,10 @@
 			$this->View->contentType('text/plain', true);
 			$this->View->output($log['comment']);
 		}
-		
+		*/
 		public function feed() {
+			
+			/*
 			$conditions = null;
 			$params = array();
 			
@@ -254,7 +261,7 @@
 					$entries[$entryIndex]['children'][] = $entry;
 				}
 			}
-			
+			*/
 			/*
 			if ($numberOfEntries > 0) {
 				$lastEntry = &$log[0];
@@ -277,7 +284,7 @@
 			*/
 			
 			// var_dump($log);
-			
+			/*
 			$this->View->assign('log', $entries);
 			$this->View->assign('messages', Model::indexByField($this->LogMessage->findAll(array(), null, array(), null, null, 'event, feed_message, feed_message_multiple, feed_include_log'), 'event'));
 			$this->View->assign('stats', array(
@@ -286,10 +293,17 @@
 				'fixing' => $this->Ticket->getRows(array('failed' => true, 'project_id' => $this->Project->id)),
 			));
 			$this->View->assign('progress', $this->Ticket->getProgress(array('project_id' => $this->Project->id)));
+			*/
 			
-			$this->View->render('tickets/feed.tpl');
+			$this->stats = array(
+				'cutting' => 0,
+				'checking' => 0,
+				'fixing' => 0
+			);
+			
+			return $this->render('tickets/feed.tpl');
 		}
-		
+		/*
 		public function cut(array $arguments = array()) {
 			$this->_action('cut', $arguments);
 		}
@@ -328,7 +342,7 @@
 			}
 			
 			if (!($states = $this->State->getAction($action, $ticket))) {
-				$this->View->flash('Ticket is not in the required state to execute this action');
+				$this->flash('Ticket is not in the required state to execute this action');
 				return $this->_redirectWithReferer($ticket);
 			}
 			
@@ -337,10 +351,10 @@
 					$this->Ticket->user_id = $ticket['user_id'] = $this->User->get('id');
 					
 					if ($this->Ticket->save()) {
-						$this->View->flashNow('The ticket is now assigned to you');
+						$this->flashNow('The ticket is now assigned to you');
 					}					
 				} elseif (!Request::post('language') and $action == 'cut' and count($this->Project->languages) > 0 and !Request::post('failed', Request::checkbox) and !Request::post('expand', Request::checkbox)) {
-					$this->View->flashNow('You have to choose the language of the talk');
+					$this->flashNow('You have to choose the language of the talk');
 				} else {
 					
 					if (Request::post('reset', Request::checkbox) and !empty($states['reset'])) {
@@ -415,7 +429,7 @@
 								return $this->View->redirect('ticket', 'view', $forward + array('project_slug' => $this->Project->slug, '?forward'));
 							}
 							
-							$this->View->flash('No more tickets to ' . $action);
+							$this->flash('No more tickets to ' . $action);
 						}
 						
 						return $this->_redirectWithReferer($ticket);
@@ -461,7 +475,7 @@
 			}
 			
 			if (!$states = $this->State->getAction($action, $ticket)) {
-				$this->View->flash('Ticket is not in the required state to undo this action');
+				$this->flash('Ticket is not in the required state to undo this action');
 				return $this->_redirectWithReferer($ticket);
 			}
 			
@@ -483,7 +497,7 @@
 			}
 			
 			if ($this->Ticket->resetEncodingTask($ticket['id'])) {
-				$this->View->flash('Encoding task resetted');
+				$this->flash('Encoding task resetted');
 			}
 			
 			$this->_redirectWithReferer($ticket);
@@ -512,7 +526,7 @@
 						'event' => 'Comment.Add'
 					));
 					
-					$this->View->flash('Comment added');
+					$this->flash('Comment added');
 				}
 			}
 			
@@ -527,7 +541,7 @@
 			// TODO: isOwner?
 			
 			if ($this->Comment->delete($arguments['id'])) { // TODO: check if comment belongs to ticket
-				$this->View->flash('Comment deleted');
+				$this->flash('Comment deleted');
 			}
 			
 			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
@@ -567,7 +581,7 @@
 				}
 				
 				if ($this->Ticket->type_id != 3 and !User::isAllowed('tickets', 'create_all')) {
-					$this->View->flash('You are not allowed to create a ticket of this type', View::flashError);
+					$this->flash('You are not allowed to create a ticket of this type', View::flashError);
 					return $this->View->redirect('tracker', 'index', array('project_slug' => $this->Project->slug));
 				}
 				
@@ -584,7 +598,7 @@
 					$this->Properties->update($this->Ticket->id, Request::post('property_name'), Request::post('property_value'));
 					// TODO: set Fahrplan.ID as fahrplan_id
 					
-					$this->View->flash('Ticket created');
+					$this->flash('Ticket created');
 					return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
 				}
 			}
@@ -652,7 +666,7 @@
 				$this->Properties->update($ticket['id'], Request::post('property_name'), Request::post('property_value'), Request::post('properties'));
 				
 				if ($this->Ticket->save()) {
-					$this->View->flash('Ticket updated');
+					$this->flash('Ticket updated');
 					return $this->_redirectWithReferer($ticket);
 				}
 			}
@@ -703,7 +717,7 @@
 					$this->Ticket->save();
 				}
 				
-				$this->View->flash('Tickets updated');
+				$this->flash('Tickets updated');
 				return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
 			}
 			
@@ -717,7 +731,7 @@
 		
 		public function delete(array $arguments = array()) {
 			if (!empty($arguments) and $this->Ticket->delete($arguments['id'], array('project_id' => $this->Project->id))) {
-				$this->View->flash('Ticket deleted');
+				$this->flash('Ticket deleted');
 			}
  			
 			return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
@@ -734,7 +748,7 @@
 			
 			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
 		}
-		
+		*/
 	}
 	
 ?>

@@ -1,10 +1,6 @@
 <?php return array(
-	// RPC Routes
 	'rpc' => array(':controller' => 'XMLRPC_Handler', ':action' => 'default'),
-	//'rpc/:uid/:hostname' => array(':controller' => 'XMLRPC_Handler', ':action' => 'default'),
-	//'rpc/:uid/:hostname/:project_slug' => array(':controller' => 'XMLRPC_ProjectHandler', ':action' => 'default'),
 	
-	// Webapp Routes
 	':project_slug/dashboard' => array(':controller' => 'dashboard', ':action' => 'index'),
 	':project_slug/dashboard/:action' => array(':controller' => 'dashboard', ':type' => 'application/json'),
 
@@ -36,12 +32,17 @@
 	':project_slug/services/worker/:id/halt' => array(':controller' => 'services', ':action' => 'halt'),
 	':project_slug/services/worker/:id/command' => array(':controller' => 'services', ':action' => 'command'),
 
-	':project_slug/services/workers' => array(':controller' => 'services', ':action' => 'workers'),
+	':project_slug/workers' => array(':controller' => 'workers', ':action' => 'project'),
 	':project_slug/services/hold' => array(':controller' => 'services', ':action' => 'hold'),
 	':project_slug/services/resume' => array(':controller' => 'services', ':action' => 'resume'),
 
 	':project_slug/settings' => array(':controller' => 'projects', ':action' => 'view'),
-
+	
+	'workers' => array(':controller' => 'workers', ':action' => 'index'),
+	'workers/group/create' => array(':controller' => 'workers', ':action' => 'create_group'),
+	'workers/group/edit/:id' => array(':controller' => 'workers', ':action' => 'edit_group'),
+	'workers/group/delete/:id' => array(':controller' => 'workers', ':action' => 'delete_group'),
+	
 	'users' => array(':controller' => 'user', ':action' => 'index'),
 	'user/create' => array(':controller' => 'user', ':action' => 'create'),
 	'user/edit/:id' => array(':controller' => 'user', ':action' => 'edit'),
