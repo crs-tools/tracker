@@ -59,34 +59,33 @@
 		</div>
 		<div id="header">
 			<h1><?php if (!empty($project['project_slug'])) {
-				echo $this->linkTo('tickets', 'feed', $project + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array()), 'C3 Ticket Tracker');
+				echo $this->linkTo('tickets', 'feed', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, 'C3 Ticket Tracker');
 			} else {
 				echo $this->linkTo('projects', 'index', 'C3 Ticket Tracker');
 			}?></h1>
-			
 			
 			<?php if (!empty($project['project_slug'])): ?>
 				<ul id="menu" class="horizontal">
 					<li id="menu-background-left"></li>
 					
 					<?php if (User::isAllowed('tickets', 'feed')): ?>
-						<li class="first menu-feed <?php echo ((Controller::getController() == 'tickets' and Controller::getAction() == 'feed')? ' current' : ''); ?>">
+						<li class="first menu-feed <?php echo (($arguments['controller'] == 'tickets' and $arguments['action'] == 'feed')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('tickets', 'feed', $project, '<span>Feed</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
 					<?php if (User::isAllowed('tickets', 'index')): ?>
-						<li class="menu-tickets <?php echo (((Controller::getController() == 'tickets' and Controller::getAction() != 'feed') or Controller::getController() == 'import' or Controller::getController() == 'export')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('tickets', 'index', $project + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array()), '<span>Tickets</span>', 'Feed'); ?>
+						<li class="menu-tickets <?php echo ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['action'] == 'import' or $arguments['action'] == 'export')? ' current' : ''); ?>">
+							<?php echo $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
 					<?php if (User::isAllowed('services', 'workers')): ?>
-						<li class="menu-services <?php echo ((Controller::getController() == 'services')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('services', 'workers', $project, '<span>Services</span>', 'Services') ?>
+						<li class="menu-services <?php echo (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
+							<?php echo $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
 						</li>
 					<?php endif; ?>
 					
 					<?php if (User::isAllowed('project', 'view')): ?>
-						<li class="last menu-project <?php echo ((Controller::getController() == 'projects')? ' current' : ''); ?>">
+						<li class="last menu-project <?php echo (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('projects', 'view', $project, '<span>Project</span>', 'Project') ?>
 						</li>
 					<?php endif; ?>

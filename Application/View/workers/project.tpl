@@ -1,15 +1,18 @@
 <?php $this->title('Services | '); ?>
 
 <div id="tickets-header" class="clearfix">
-	<?php echo $f = $this->form('services', 'workers', $project, array('id' => 'services-filter', 'method' => 'get'), false); ?>
+	<?php //echo $f = $this->form('services', 'workers', $project, array('id' => 'services-filter', 'method' => 'get'), false); ?>
+	<form>
 		<ul class="ticket-header-bar left horizontal">
 			<li class="ticket-header-bar-background-left"></li>
+			<?php /*
 			<li data-ai="1" class="first<?php echo (!Request::get('t') and !Request::exists(Request::get, 'search'))? ' current': ''; ?>"><button>All</button></li>
 			<li data-ai="2" <?php echo (Request::get('t') == 'merging')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Merging', array('value' => 'merging')); ?></li>
 			<li data-ai="3" <?php echo (Request::get('t') == 'copying')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Copying', array('value' => 'copying')); ?></li>
 			<li data-ai="4" <?php echo (Request::get('t') == 'encoding')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Encoding', array('value' => 'encoding')); ?></li>
 			<li data-ai="4" <?php echo (Request::get('t') == 'postprocessing')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Postprocessing', array('value' => 'postprocessing')); ?></li>
 			<li data-ai="5" class="last<?php echo (Request::get('t') == 'releasing')? ' current': ''; ?>"><?php echo $f->button('t', null, 'Releasing', array('value' => 'releasing')); ?></li>
+			*/ ?>
 			<li class="ticket-header-bar-background-right"></li>
 		</ul>
 	</form>

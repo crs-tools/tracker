@@ -1,13 +1,13 @@
 <?php $progressBar = '<div id="feed-stats-progress-bar" style="width: ' . round($progress, 2) . '%"' . (($progress < 20)? ' class="narrow"' : (($progress === 100.0)? ' class="complete"' : '')) . '>';
 $progressBar .= '<span class="label"><span>' . (($progress === 100.0)? 'complete' : (floor($progress) . '%')) . '</span></span></div>';
 
-$actions .= '<ul id="feed-stats-actions"><li><strong>' . $stats['cutting'] . '</strong> ' . $this->linkTo('tickets', 'index', $project + array('?t=cutting'), 'recording task' . (($stats['cutting'] != 1)? 's' : '') . '  to cut') . '</li>';
-$actions .= '<li><strong>' . $stats['checking'] . '</strong> '. $this->linkTo('tickets', 'index', $project + array('?t=releasing'), 'encoding task' . (($stats['checking'] != 1)? 's' : '') . ' to check') . '</li>';
+$actions .= '<ul id="feed-stats-actions"><li><strong>' . $stats['cutting'] . '</strong> ' . $this->linkTo('tickets', 'index', $project, array('?t=cutting'), 'recording task' . (($stats['cutting'] != 1)? 's' : '') . '  to cut') . '</li>';
+$actions .= '<li><strong>' . $stats['checking'] . '</strong> '. $this->linkTo('tickets', 'index', $project, array('?t=releasing'), 'encoding task' . (($stats['checking'] != 1)? 's' : '') . ' to check') . '</li>';
 $actions .= '<li><strong>' . $stats['fixing'] . '</strong> ' . (($stats['fixing'] != 1)? 'tickets' : 'ticket') . ' to fix</li></ul>';
 
-if ($this->respondTo('json')):
+/*if ($this->respondTo('json')):
 	$this->layout(false);
-else:
+else:*/
 	$this->title('Feed | ');
 ?>
 
@@ -23,15 +23,15 @@ else:
 </div>
 
 <ul id="feed">
-<?php endif;
+<?php //endif;
 
-if ($this->respondTo('json')) {
+/*if ($this->respondTo('json')) {
 	$json = array(
 		'entries' => array(),
 		'actions' => $actions,
 		'progress' => $progressBar
 	);
-}
+}*/
 
 if (!empty($log)) {
 	foreach ($log as $entry) {

@@ -12,6 +12,15 @@
 			return $this->render('workers/index.tpl');
 		}
 		
+		public function project() {
+			/*if (Request::get('t')) {
+				$this->View->assign('service', $this->State->getService(Request::get('t')));
+			}*/
+			
+			//$this->View->assign('workers', $this->User->findAll(array('Ticket' => array('limit' => 1)/*, 'ServiceLogEntry'*/), 'role = ? AND last_seen IS NOT NULL AND AGE(last_seen) < ?', array('worker', '1 week'), 'name'));
+			return $this->render('workers/project.tpl');
+		}
+		
 		public function create_group() {
 			$this->form = $this->form();
 			

@@ -16,6 +16,7 @@
 		protected function setProject($action, array $arguments) {
 			if (isset($arguments['project_slug'])) {
 				$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
+				$this->project['project_slug'] = $this->project['slug'];
 				
 				if (!$this->project) {
 					return $this->redirect('projects', 'index');

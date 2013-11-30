@@ -33,7 +33,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($group->Worker as $worker): ?>
+				<?php foreach ($group->Worker->orderBy('last_seen') as $worker): ?>
 					<tr>
 						<td><?php echo $worker['name']; ?></td>
 						<td><?php echo $worker['hostname']; ?></td>

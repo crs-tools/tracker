@@ -1590,7 +1590,7 @@ div.table table tr:last-child td {
 	border-bottom: none;
 }
 
-div.table table tr:nth-child(even) td {
+div.table table tbody tr:nth-child(odd) td {
 	background-color: #F4F7F9;
 }
 
