@@ -384,6 +384,10 @@ form fieldset ul li input.text[disabled] {
 	color: #707070;
 }
 
+form fieldset ul li input.text[readonly] {
+  color: #707070;
+}
+
 form fieldset ul li textarea {
 	margin-bottom: -0.3em;
 }

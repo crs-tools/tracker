@@ -1,11 +1,17 @@
 <?php
 	
+	requires(
+		'/Model/Worker'
+	);
+	
 	class WorkerGroup extends Model {
 		
 		const TABLE = 'tbl_worker_group';
 		
 		public $hasMany = array(
-			'Worker' => array()
+			'Worker' => array(
+				'foreign_key' => 'worker_group_id'
+			)
 		);
 		
 		public $hasAndBelongsToMany = array(
