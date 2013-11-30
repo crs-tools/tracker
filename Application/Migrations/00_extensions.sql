@@ -1,0 +1,7 @@
+BEGIN;
+
+SET ROLE TO postgres;
+
+CREATE EXTENSION IF NOT EXISTS ltree SCHEMA pg_catalog;
+
+COMMIT;

@@ -1,7 +1,8 @@
 ﻿BEGIN;
 
---DROP FUNCTION getTicketStartTimestamp(ticket_id bigint);
-CREATE OR REPLACE FUNCTION getTicketStartTimestamp(param_ticket_id bigint) RETURNS integer AS $$
+SET ROLE TO postgres;
+
+CREATE OR REPLACE FUNCTION ticket_fahrplan_starttime(param_ticket_id bigint) RETURNS integer AS $$
 DECLARE
   unixtime integer;
 BEGIN
@@ -13,7 +14,5 @@ BEGIN
   RETURN unixtime;
 END
 $$ LANGUAGE plpgsql;
-
-
 
 COMMIT;
