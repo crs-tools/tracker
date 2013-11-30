@@ -6,7 +6,7 @@
 	
 	class Controller_Tickets extends Controller_Application {
     	
-		public $requireAuth = true;
+		public $requireAuthorization = true;
 		
 		/*
 		public $beforeFilter = true;

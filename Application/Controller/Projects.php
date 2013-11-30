@@ -6,7 +6,7 @@
 	
 	class Controller_Projects extends Controller_Application {
 		
-		// public $requireAuth = true;
+		public $requireAuthorization = true;
 		
 		public function index() {
 			return $this->render('projects/index.tpl');
