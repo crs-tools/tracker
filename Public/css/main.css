@@ -933,16 +933,6 @@ ul.tickets li.child, ul.tickets li.child a.link, ul.tickets li.child span.other 
 	height: 29px;
 }
 
-ul.tickets li a.needs_attention {
-	position: absolute;
-	top: 8px;
-	left: -28px;
-	width: 20px;
-	height: 20px;
-	background: url(../images/icons.png) no-repeat left -64px;
-	text-indent: -3000px;
-}
-
 ul.tickets li a.link {
 	display: block;
 	height: 39px;
@@ -1563,6 +1553,10 @@ div.table h2 {
 div.table p {
 	padding: 0 1em 1em;
 	color: #3d464d;
+}
+
+div.table table + p {
+  padding: 1em;
 }
 
 div.table table {
