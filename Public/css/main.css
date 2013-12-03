@@ -199,7 +199,7 @@ ul#menu li a:hover, ul#menu li a:focus {
 ul#menu li a span {
   display: block;
   height: 16px;
-  padding: 15px 6px 15px 30px;
+  padding: 15px 10px 15px 34px;
   line-height: 15px;
   font-size: 15px;
   color: #444;
@@ -208,14 +208,20 @@ ul#menu li a span {
 ul#menu li.menu-feed a span {
   width: 20px;
   padding-left: 6px;
+  padding-right: 6px;
   background: transparent url(../images/main.png) no-repeat -224px -46px;
   text-indent: -9000px;
 }
 
-ul#menu li.menu-tickets a:before, ul#menu li.menu-services a:before, ul#menu li.menu-project a:before {
+ul#menu li.menu-tickets a:before,
+ul#menu li.menu-services a:before,
+ul#menu li.menu-project a:before,
+ul#menu li.menu-projects a:before,
+ul#menu li.menu-encodingprofiles a:before {
   content: ' ';
   float: left;
   display: block;
+  margin-left: 2px;
   height: 46px;
   width: 30px;
   background: transparent url(../images/main.png) no-repeat -288px -46px;
@@ -229,17 +235,12 @@ ul#menu li.menu-project a:before {
   background-position: -416px -46px;
 }
 
-
-ul#menu li.menu-tickets.current a:before {
-  background-position: -320px -46px;
+ul#menu li.menu-projects a:before {
+  background-position: left -498px;
 }
 
-ul#menu li.menu-services.current a:before {
-  background-position: -384px -46px;
-}
-
-ul#menu li.menu-project.current a:before {
-  background-position: -448px -46px;
+ul#menu li.menu-encodingprofiles a:before {
+  background-position: -64px -498px;
 }
 
 ul#menu li.current {
@@ -262,6 +263,25 @@ ul#menu li.menu-feed.current a span {
   background-position: -256px -46px;
 }
 
+ul#menu li.menu-tickets.current a:before {
+  background-position: -320px -46px;
+}
+
+ul#menu li.menu-services.current a:before {
+  background-position: -384px -46px;
+}
+
+ul#menu li.menu-project.current a:before {
+  background-position: -448px -46px;
+}
+
+ul#menu li.menu-projects.current a:before {
+  background-position: -32px -498px;
+}
+
+ul#menu li.menu-encodingprofiles.current a:before {
+  background-position: -96px -498px;
+}
 
 #content {
 	min-height: 15em;

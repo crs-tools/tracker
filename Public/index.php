@@ -34,14 +34,14 @@
 		// TODO: init Controller_Application?
 		Controller::renderTemplate('404.tpl', array(), null, new Response(404));
 	} catch (ActionNotAllowedException $exception) {
-		if (User::isLoggedIn()) {
+		// if (User::isLoggedIn()) {
 			Controller::renderTemplate('403.tpl', array(), null, new Response(403));
-		} else {
+		// } else {
 			/*
 			$app->View->flash('You have to login to view this page', View::flashWarning);
 			$app->View->redirect('user', 'login');
 			*/
-		}
+		// }
 	} catch (Exception $exception) {
 		var_dump($exception);
 	}

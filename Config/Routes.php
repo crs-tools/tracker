@@ -23,20 +23,20 @@
 	':project_slug/tickets/export/podcast/:profile_slug' => array(':controller' => 'export', ':action' => 'podcast'),
 	':project_slug/tickets/export/feedback' => array(':controller' => 'export', ':action' => 'feedback'),
 
-	':project_slug/encoding/profiles' => array(':controller' => 'encodingprofiles', ':action' => 'index'),
-	':project_slug/encoding/profile/create' => array(':controller' => 'encodingprofiles', ':action' => 'create'),
-	':project_slug/encoding/profile/import' => array(':controller' => 'encodingprofiles', ':action' => 'import'),
-	':project_slug/encoding/profile/edit/:id' => array(':controller' => 'encodingprofiles', ':action' => 'edit'),
-	':project_slug/encoding/profile/delete/:id' => array(':controller' => 'encodingprofiles', ':action' => 'delete'),
-
-	':project_slug/services/worker/:id/halt' => array(':controller' => 'services', ':action' => 'halt'),
-	':project_slug/services/worker/:id/command' => array(':controller' => 'services', ':action' => 'command'),
+	//':project_slug/services/worker/:id/halt' => array(':controller' => 'services', ':action' => 'halt'),
+	//':project_slug/services/worker/:id/command' => array(':controller' => 'services', ':action' => 'command'),
 
 	':project_slug/workers' => array(':controller' => 'workers', ':action' => 'project'),
 	':project_slug/services/hold' => array(':controller' => 'services', ':action' => 'hold'),
 	':project_slug/services/resume' => array(':controller' => 'services', ':action' => 'resume'),
 
 	':project_slug/settings' => array(':controller' => 'projects', ':action' => 'view'),
+	
+	'encoding/profiles' => array(':controller' => 'encodingprofiles', ':action' => 'index'),
+	'encoding/profile/create' => array(':controller' => 'encodingprofiles', ':action' => 'create'),
+	'encoding/profile/import' => array(':controller' => 'encodingprofiles', ':action' => 'import'),
+	'encoding/profile/edit/:id' => array(':controller' => 'encodingprofiles', ':action' => 'edit'),
+	'encoding/profile/delete/:id' => array(':controller' => 'encodingprofiles', ':action' => 'delete'),
 	
 	'workers' => array(':controller' => 'workers', ':action' => 'index'),
 	'workers/group/create' => array(':controller' => 'workers', ':action' => 'create_group'),

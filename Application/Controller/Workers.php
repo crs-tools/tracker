@@ -1,6 +1,7 @@
 <?php
 	
 	requires(
+		'Random',
 		'/Model/Worker',
 		'/Model/WorkerGroup'
 	);

@@ -5,14 +5,16 @@
 		<meta charset="utf-8" />
 		
 		<base href="<?php echo $this->Request->getRootURL(); ?>" />
-		<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->Request->getRootURL() . 'favicon' /*((Controller::getController() == 'encoders' or Controller::getController() == 'user')? 'images/' . Controller::getController() : 'favicon')*/ ?>.ico" />
-		<link rel="stylesheet" href="<?php echo $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
-		<link rel="stylesheet" href="<?php echo $this->Request->getRootURL(); ?>css/codemirror.css" type="text/css" />
+		<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->Request->getRootURL(); ?>favicon.ico" />
+		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
+		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/codemirror.css" type="text/css" />
 	</head>
 	<body>
 		<div id="projects">
 			<ul class="horizontal">
 				<?php if (!empty($projects) and User::isAllowed('projects', 'index')): ?>
+					<li class="link"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
+					
 					<?php foreach ($projects as $slug => $p): ?>
 						<li class="link<?php echo ($p['slug'] == $project['slug'])? ' current' : ''; ?>">
 							<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $p['slug']), $p['title']);
@@ -22,7 +24,6 @@
 							} ?>
 						</li>
 					<?php endforeach; ?>
-					<li class="link"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
 				<?php endif; ?>
 			
 				<?php if (User::isLoggedIn()): ?>
@@ -39,10 +40,6 @@
 					<?php if (User::isAllowed('user', 'index')): ?>
 						<li class="right padding">·</li>
 						<li class="right link"><?php echo $this->linkTo('user', 'index', 'Manage users'); ?></li>
-					<?php endif; ?>
-					<?php if (User::isAllowed('workers', 'index')): ?>
-						<li class="right padding">·</li>
-						<li class="right link"><?php echo $this->linkTo('workers', 'index', 'Manage workers'); ?></li>
 					<?php endif; ?>
 				<?php else: ?>
 					<li class="right link"><?php echo $this->linkTo('user', 'login', 'Login'); ?></li>
@@ -64,7 +61,31 @@
 				echo $this->linkTo('projects', 'index', 'C3 Ticket Tracker');
 			}?></h1>
 			
-			<?php if (!empty($project['project_slug'])): ?>
+			<?php if (empty($project['project_slug'])): ?>
+				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers'): ?>
+					<ul id="menu" class="horizontal">
+						<li id="menu-background-left"></li>
+					
+						<?php if (User::isAllowed('projects', 'index')): ?>
+							<li class="first menu-projects <?php echo (($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''); ?>">
+								<?php echo $this->linkTo('projects', 'index', '<span>Projects</span>', 'Projects'); ?>
+							</li>
+						<?php endif; ?>
+						<?php if (User::isAllowed('encodingsprofiles', 'index')): ?>
+							<li class="first menu-encodingprofiles <?php echo (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
+								<?php echo $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
+							</li>
+						<?php endif; ?>
+						<?php if (User::isAllowed('workers', 'index')): ?>
+							<li class="first menu-services <?php echo (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
+								<?php echo $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
+							</li>
+						<?php endif; ?>
+						
+						<li id="menu-background-right"></li>
+					</ul>
+				<?php endif; ?>
+			<?php else: ?>
 				<ul id="menu" class="horizontal">
 					<li id="menu-background-left"></li>
 					
@@ -78,15 +99,15 @@
 							<?php echo $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php if (User::isAllowed('services', 'workers')): ?>
+					<?php /*if (User::isAllowed('services', 'workers')): ?>
 						<li class="menu-services <?php echo (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
 						</li>
-					<?php endif; ?>
+					<?php endif;*/ ?>
 					
 					<?php if (User::isAllowed('project', 'view')): ?>
 						<li class="last menu-project <?php echo (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('projects', 'view', $project, '<span>Project</span>', 'Project') ?>
+							<?php echo $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>
 						</li>
 					<?php endif; ?>
 				
