@@ -25,15 +25,13 @@
 	AccessControl::addRole('restricteduser');
 	AccessControl::addRole('user');
 	AccessControl::addRole('owner');
-
-	AccessControl::addRole('worker');
-
+	
 	AccessControl::addRole('superuser', array('user'));
 	AccessControl::addRole('admin', array('user'));
-
+	
 	// Everybody
 	AccessControl::allow(null, array('user'), array('login'));
-
+	
 	/*if ($this->_IPIsInAllowedRange($_SERVER['REMOTE_ADDR'])) {
 		AccessControl::allow(null, array('projects'), array('index'));
 		AccessControl::allow(null, array('tickets'), array('feed', 'index', 'view'));
@@ -41,33 +39,28 @@
 		AccessControl::allow('user', array('projects'), array('index'));
 		AccessControl::allow('user', array('tickets'), array('feed', 'index', 'view'));
 	// }
-
-	// Script
-	AccessControl::allow('worker', array('XMLRPC_Handler'));
-	AccessControl::allow('worker', array('XMLRPC_ProjectHandler'));
-	AccessControl::allow('worker', array('export'), array('wiki', 'podcast'));
-
+	
 	// Restricted User
 	AccessControl::allow('restricteduser', array('user'), array('login_complete', 'logout', 'settings', 'changeback', 'act_as_substitute'));
 	AccessControl::allow('restricteduser', array('tickets'), array('feed', 'comment', 'cut', 'uncut', 'check', 'uncheck', 'handle', 'unhandle', 'log'));
-
+	
 	AccessControl::allow('restricteduser', array('services'), array('workers'));
-
+	
 	// User
 	AccessControl::allow('user', array('user'), array('login_complete', 'logout', 'settings', 'changeback', 'act_as_substitute'));
-
+	
 	AccessControl::allow('user', array('tickets'), array('dashboard', 'comment', 'create', 'cut', 'uncut', 'check', 'uncheck', 'fix', 'unfix', 'handle', 'unhandle', 'reset', 'log', 'edit'));
 	AccessControl::allow('owner', array('tickets'), array('delete_comment'));
 	AccessControl::allow('user', array('export'), array('index', 'wiki', 'podcast', 'feedback'));
-
+	
 	AccessControl::allow('user', array('services'), array('workers'));
-
+	
 	// Superuser
 	AccessControl::allow('superuser', array('encodingprofiles'), array('index', 'create', 'edit'));
-
+	
 	// Admin
 	AccessControl::allow('admin');
-
+	
 	AccessControl::deny('admin', array('user'), array('act_as_substitute'));
 	
 ?>

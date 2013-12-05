@@ -6,7 +6,7 @@
 	
 	class Controller_User extends Controller_Application {
 		
-		// public $requireAuth = true;
+		public $requireAuthorization = true;
 		
 		public function login() {
 			$this->form = $this->form();

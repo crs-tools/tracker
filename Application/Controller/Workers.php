@@ -8,6 +8,8 @@
 	
 	class Controller_Workers extends Controller_Application {
 		
+		public $requireAuthorization = true;
+		
 		public function index() {
 			$this->groups = WorkerGroup::findAll();
 			return $this->render('workers/index.tpl');
