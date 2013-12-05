@@ -53,7 +53,7 @@
 	'user/exit' => array(':controller' => 'user', ':action' => 'changeback'),
 
 	'project/create' => array(':controller' => 'projects', ':action' => 'create'),
-	'project/:id/edit' => array(':controller' => 'projects', ':action' => 'edit'),
+	':project_slug/settings/general' => array(':controller' => 'projects', ':action' => 'edit'),
 	'project/:id/delete' => array(':controller' => 'projects', ':action' => 'delete'),
 	'projects' => array(':controller' => 'projects', ':action' => 'index'),
 

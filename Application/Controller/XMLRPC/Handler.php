@@ -61,54 +61,7 @@
 			}
 			
 			return strstr($hostName . '.', '.', true);
-		}
-		
-		/*
-		// check config
-		if(empty($this->Config->RPC['secret'])) {
-			throw new Exception('RPC: secret missing. tracker not setup up properly',500);
-		}
-
-		// check credentials
-		if (!isset($arguments['uid'])) {
-			throw new ActionNotAllowedException('NO_UID', 401);
-		} elseif(!$this->User->auth($arguments['uid'])) { // register unknown uid
-			if(!isset($arguments['hostname']) || empty($arguments['hostname'])) {
-				throw new ActionNotAllowedException('NO_HOSTNAME', 402);
-			}
-
-			$hash_compare = md5($arguments['hostname'].$this->Config->RPC['secret']);
-			if($hash_compare == strtolower($arguments['uid'])) {
-				// extract hostname or ip
-				$name = preg_match('/^(\d{1,3}.){4}$/',$arguments['hostname']) ? $arguments['hostname'] : strstr($arguments['hostname'].'.', '.', true);
-
-				// check whether hostname is already known
-				$user = $this->User->findFirst(array(), $this->User->loginField .' = ?', array($name));
-				if($user === false) {
-					// create new user and log in
-					$this->User->create(array('name' => $name, 'hostname' => $arguments['hostname'], 'role' => 'worker', 'password' => Random::base64(16), 'hash' => $hash_compare));
-					Log::info("registered new RPC client: uid=".$arguments['uid']." hostname=".$arguments['hostname']);
-
-					return $this->User->auth($hash_compare);
-				} else {
-					// update hash and hostname
-					$this->User->hostname = $arguments['hostname'];
-					$this->User->hash = $hash_compare;
-					$this->User->save();
-					Log::info('re-registered RPC client: name='.$name.' hostname='.$arguments['hostname'].' with hash='.$hash_compare);
-
-					return $this->User->auth($hash_compare);
-				}
-			}
-			throw new ActionNotAllowedException('BAD_LOGIN', 403);
-		}
-		*/
-		/*
-		if (!$this->Project->setCurrent($arguments['project_slug'])) {
-			throw new EntryNotFoundException('project_slug not given oder project not found',410);
-		}
-		*/
-			
+		}	
 		
 		/**
 		* get version string of XMLRPC API
