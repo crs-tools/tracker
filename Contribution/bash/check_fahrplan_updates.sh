@@ -5,7 +5,7 @@ if [[ -z $1 ]]; then
   exit 1
 fi
 
-URL=http://events.ccc.de/congress/2012/Fahrplan/schedule.en.xml
+URL=https://events.ccc.de/congress/2013/Fahrplan/schedule.xml
 
 DESTDIR=$1
 TMPFILE=/tmp/schedule_`whoami`.xml
@@ -30,7 +30,7 @@ else
 	echo "Initial Fahrplan download!"
 fi
 
-VERSION=$(sed -n "s/.*release>Version \(.*\)<\/release.*/\1/p" $TMPFILE)
+VERSION=$(sed -n "s/.*version>\(.*\)<\/version.*/\1/p" $TMPFILE)
 NEWFILE="fahrplan_${VERSION}_$(date +%s).xml"
 echo "new fahrplan file: $NEWFILE"
 
