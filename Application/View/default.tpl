@@ -73,12 +73,12 @@
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('encodingsprofiles', 'index')): ?>
-							<li class="first menu-encodingprofiles <?php echo (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
+							<li class="menu-encodingprofiles <?php echo (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
 								<?php echo $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('workers', 'index')): ?>
-							<li class="first menu-services <?php echo (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
+							<li class="last menu-services <?php echo (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
 								<?php echo $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
 							</li>
 						<?php endif; ?>
