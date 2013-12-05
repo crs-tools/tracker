@@ -952,8 +952,15 @@ $(function() {
       lineNumbers: true,
       // may affect performance but is needed to fit content
       viewportMargin: Infinity,
-      readOnly: textarea.readOnly
+      readOnly: textarea.readOnly,
+      autoCloseTags: true
     }));
+  });
+  
+  $('select[data-submit-on-change]').each(function(i, select) {
+    $(select).change(function(event) {
+      event.target.form.submit();
+    });
   });
   
   var projectBarHidden = $.cookie('p') == '0',
@@ -987,6 +994,13 @@ $(function() {
   
   $('#user-login-user').focus();
   
+  $('a[data-dialog-confirm]').each(function(i, a) {
+    $(a).click(function(event) {
+      return confirm($(a).data('dialog-confirm'));
+    });
+  });
+  
+  // TODO: convert
   $('a.confirm-ticket-delete').click(function(event) {
     return confirm('Are you sure you want to permanently delete this ticket?');
   });

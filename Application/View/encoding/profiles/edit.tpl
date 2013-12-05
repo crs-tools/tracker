@@ -23,25 +23,37 @@
 	<fieldset>
 		<legend>Encoding</legend>
 		<ul>
-			<?php if (isset($profile)): ?>
+			<?php if (isset($profile)):
+				$useRequestValue = (!$form->getValue('save'))? false : Form::REQUEST_METHOD_FORM; ?>
 				<li><?= $f->select('version', 'Version', $versions->indexBy(
 					'id',
 					function(array $entry) {
 						return 'r' . $entry['revision'] .
-							(($entry['description'] !== null)? (' ' . $entry['description']) : '') .
+							(($entry['description'] !== null)? (' – ' . $entry['description']) : '') .
 							' (' . (new Datetime($entry['created']))->format('d.m.Y H:i') . ')';
 					}
-				)->toArray()); ?></li>
-				<li class="checkbox"><?= $f->checkbox('create_version', 'Create new version when editing the template'); ?></li>
+				)->toArray(), $version['id'], array('data-submit-on-change' => true)); ?></li>
+				<li class="checkbox"><?php if ($version['id'] != $profile->LatestVersion['id']) {
+						echo $f->hidden('create_version', 1, array('readonly' => true));
+						echo $f->checkbox('create_version', 'Create new version when editing the template', true, array('disabled' => true), false);
+						echo '<span class="description">Editing an older version always creates a new version.</span>';
+					} else {
+						echo $f->checkbox('create_version', 'Create new version when editing the template', false, [], $useRequestValue);
+					}
+				?></li>
+				
+				<li><?= $f->input('description', 'Description', $version['description'], array('class' => 'wide'), $useRequestValue);  ?></li>
+				<li><?= $f->textarea('xml_template', 'XML encoding template', $version['xml_template'], array('class' => 'extra-wide', 'data-has-editor' => true), $useRequestValue); ?></li>
+			<?php else: ?>
+				<li><?= $f->input('versions[0][description]', 'Description', '', array('class' => 'wide'));  ?></li>
+				<li><?= $f->textarea('versions[0][xml_template]', 'XML encoding template', '', array('class' => 'extra-wide', 'data-has-editor' => true)); ?></li>
 			<?php endif; ?>
-			<li><?= $f->input('versions[0][description]', 'Description', '', array('class' => 'wide'));  ?></li>
-			<li><?= $f->textarea('versions[0][xml_template]', 'XML encoding template', '', array('class' => 'extra-wide')); ?></li>
 		</ul>
 	</fieldset>
 	<fieldset>
 		<ul>
 			<li><?php 
-				echo $f->submit((isset($profile))? 'Save changes' : 'Create new encoding profile') . ' or ';
+				echo $f->submit((isset($profile))? 'Save changes' : 'Create new encoding profile', array('name' => 'save')) . ' or ';
 				echo $this->linkTo('encodingprofiles', 'index', (isset($profile))? 'discard changes' : 'discard encoding profile', array('class' => 'reset'));
 			?></li>
 		</ul>

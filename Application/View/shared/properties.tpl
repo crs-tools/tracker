@@ -1,4 +1,4 @@
-<ul class="edit-properties" data-properties-description="language" data-properties-create-key="<?php echo $properties['field'] . '[][' . $properties['key'] . ']'; ?>" data-properties-create-value="<?php echo $properties['field'] . '[][' . $properties['value'] . ']'; ?>">
+<ul class="edit-properties" data-properties-description="<?= $properties['description']; ?>" data-properties-create-key="<?= $properties['field'] . '[][' . $properties['key'] . ']'; ?>" data-properties-create-value="<?= $properties['field'] . '[][' . $properties['value'] . ']'; ?>">
 	<?php if ($properties['for'] !== null):
 		foreach($properties['for'] as $index => $property): ?>
 			<li>

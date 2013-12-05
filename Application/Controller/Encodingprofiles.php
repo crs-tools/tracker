@@ -65,17 +65,46 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->profile = EncodingProfile::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
-			
 			$this->form = $this->form();
 			
 			if ($this->form->wasSubmitted()) {
-				
+				$version = EncodingProfileVersion::findBy([
+					'id' => $this->form->getValue('version'),
+					'encoding_profile_id' => $arguments['id']
+				], [], []);
 			}
 			
-			$this->versions = $this->profile->Versions;
+			if (!$this->profile = EncodingProfile::find(
+				$arguments['id'],
+				(!isset($version))? ['LatestVersion'] : []
+			)) {
+				throw new EntryNotFoundException();
+			}
+			
+			if ($this->form->getValue('save') and $this->profile->save($this->form->getValues())) {
+				if ($this->form->getValue('create_version')) {
+					$version = new EncodingProfileVersion([
+						'encoding_profile_id' => $this->profile['id']
+						// TODO: save based version
+					]);
+				} else {
+					$version = EncodingProfileVersion::find($this->form->getValue('version'));
+				}
+				
+				$version->save($this->form->getValues());
+						
+				$this->flash('Encoding profile updated');
+				return $this->redirect('encodingprofiles', 'index');
+			}
+			
+			if (isset($version)) {
+				$this->version = $version;
+			} else {
+				$this->version = $this->profile->LatestVersion;
+			}
+			
+			$this->versions = $this->profile->Versions; /*->select('revision, description, created') */
+			
 			return $this->render('encoding/profiles/edit.tpl');
 		}
 		

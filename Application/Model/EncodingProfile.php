@@ -8,7 +8,13 @@
 		
 		const TABLE = 'tbl_encoding_profile';
 		
-		// TODO: hasOne LatestVersion
+		public $hasOne = array(
+			'LatestVersion' => array(
+				'class_name' => 'EncodingProfileVersion',
+				'foreign_key' => 'encoding_profile_id',
+				'order_by' => 'tbl_encoding_profile_version.revision DESC'
+			)
+		);
 		
 		public $hasMany = array(
 			'Versions' => array(
