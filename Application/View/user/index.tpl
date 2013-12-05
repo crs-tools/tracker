@@ -11,7 +11,7 @@
 <div class="table">
 	<h2>Users</h2>
 	
-	<table class="users">
+	<table class="users stripe">
 		<thead>
 			<tr>
 				<th width="15%">Name</th>

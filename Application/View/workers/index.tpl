@@ -9,7 +9,7 @@
 <div class="table">
 	<h2>Worker groups</h2>
 	<?php foreach ($groups as $group): ?>
-		<table class="users">
+		<table class="stripe">
 			<thead>
 				<tr>
 					<th colspan="3"><?php echo $group['title']; ?></th>

@@ -13,7 +13,7 @@
 
 	':project_slug/ticket/:id/log/:entry' => array(':controller' => 'tickets', ':action' => 'log', ':type' => 'text/plain'),
 	':project_slug/ticket/:id' => array(':controller' => 'tickets', ':action' => 'view'),
-	':project_slug/ticket/:action/:id' => array(':controller' => 'tickets'),
+	':project_slug/ticket/:id/:action' => array(':controller' => 'tickets'),
 
 	':project_slug/tickets/import' => array(':controller' => 'import', ':action' => 'index'),
 	':project_slug/tickets/import/review' => array(':controller' => 'import', ':action' => 'review'),
@@ -34,26 +34,27 @@
 	
 	'encoding/profiles' => array(':controller' => 'encodingprofiles', ':action' => 'index'),
 	'encoding/profile/create' => array(':controller' => 'encodingprofiles', ':action' => 'create'),
-	'encoding/profile/import' => array(':controller' => 'encodingprofiles', ':action' => 'import'),
-	'encoding/profile/edit/:id' => array(':controller' => 'encodingprofiles', ':action' => 'edit'),
-	'encoding/profile/delete/:id' => array(':controller' => 'encodingprofiles', ':action' => 'delete'),
+	'encoding/profile/:id/versions/compare' => array(':controller' => 'encodingprofiles', ':action' => 'compare'),
+	'encoding/profile/:id/versions' => array(':controller' => 'encodingprofiles', ':action' => 'view'),
+	'encoding/profile/:id/edit' => array(':controller' => 'encodingprofiles', ':action' => 'edit'),
+	'encoding/profile/:id/delete' => array(':controller' => 'encodingprofiles', ':action' => 'delete'),
 	
 	'workers' => array(':controller' => 'workers', ':action' => 'index'),
 	'workers/group/create' => array(':controller' => 'workers', ':action' => 'create_group'),
-	'workers/group/edit/:id' => array(':controller' => 'workers', ':action' => 'edit_group'),
-	'workers/group/delete/:id' => array(':controller' => 'workers', ':action' => 'delete_group'),
+	'workers/group/:id/edit' => array(':controller' => 'workers', ':action' => 'edit_group'),
+	'workers/group/:id/delete' => array(':controller' => 'workers', ':action' => 'delete_group'),
 	
 	'users' => array(':controller' => 'user', ':action' => 'index'),
 	'user/create' => array(':controller' => 'user', ':action' => 'create'),
-	'user/edit/:id' => array(':controller' => 'user', ':action' => 'edit'),
-	'user/delete/:id' => array(':controller' => 'user', ':action' => 'delete'),
+	'user/:id/edit' => array(':controller' => 'user', ':action' => 'edit'),
+	'user/:id/delete' => array(':controller' => 'user', ':action' => 'delete'),
 
 	'user/switch/:id' => array(':controller' => 'user', ':action' => 'substitute'),
 	'user/exit' => array(':controller' => 'user', ':action' => 'changeback'),
 
 	'project/create' => array(':controller' => 'projects', ':action' => 'create'),
-	'project/edit/:id' => array(':controller' => 'projects', ':action' => 'edit'),
-	'project/delete/:id' => array(':controller' => 'projects', ':action' => 'delete'),
+	'project/:id/edit' => array(':controller' => 'projects', ':action' => 'edit'),
+	'project/:id/delete' => array(':controller' => 'projects', ':action' => 'delete'),
 	'projects' => array(':controller' => 'projects', ':action' => 'index'),
 
 	'login' => array(':controller' => 'user', ':action' => 'login'),

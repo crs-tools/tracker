@@ -911,13 +911,50 @@ $(function() {
     }).appendTo($('#ticket-import-list fieldset:last ul li'));
   }
   
-  var xmlTemplate = $('#encoding-profile-edit-xml_template');
-  
-  if (xmlTemplate[0]) {
-    CodeMirror.fromTextArea(xmlTemplate[0], {
-      lineNumbers: true
+  $('#encoding-profile-versions tr.encoding-profile-version')
+    .hide()
+    .each(function(i, tr) {
+      tr = $(tr);
+      
+      tr
+        .prevUntil('tr.encoding-profile-version')
+        .find('.encoding-profile-version-show')
+        .append(
+          $('<a>')
+            .attr({
+              'href': '#',
+              'title': 'Show xml template'
+            })
+            .text('Show xml template')
+            .click(function(event) {
+              event.preventDefault();
+              
+              var target = $(event.target);
+              
+              if (tr.is(':hidden')) {
+                tr.show();
+                target
+                  .text('Hide xml template')
+                  .attr('title', 'Hide xml template');
+                tr.find('textarea').data('editor').refresh();
+              } else {
+                tr.hide();
+                target
+                  .text('Show xml template')
+                  .attr('title', 'Show xml template');
+              }
+            })
+        );
     });
-  }
+  
+  $('textarea[data-has-editor]').each(function(i, textarea) {
+    $(textarea).data('editor', CodeMirror.fromTextArea(textarea, {
+      lineNumbers: true,
+      // may affect performance but is needed to fit content
+      viewportMargin: Infinity,
+      readOnly: textarea.readOnly
+    }));
+  });
   
   var projectBarHidden = $.cookie('p') == '0',
       basePath = /https?\:\/\/(.*?)(\/.*)/.exec($('base')[0].href);

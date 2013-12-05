@@ -117,7 +117,9 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 
 #projects ul li.right { float: right; }
 #projects ul li.right.link a, #projects ul li.right.text { margin: 0 1em 0 0; }
-#projects ul li.padding { margin: 0 0.6em 0 -0.4em; color: #B8C4D2; }
+
+#projects ul li.padding { margin: 0 -0.4em 0 0.6em; color: #B8C4D2; }
+#projects ul li.right.padding { margin: 0 0.6em 0 -0.4em; }
 
 #projects a#projects-hide {
 	display: block;
@@ -314,6 +316,10 @@ form fieldset { display: block; width: 100% !important; position: relative; clea
 
 form input {
 	font-family: Helvetica, sans-serif;
+}
+
+form input.radio + input.radio {
+  margin-left: 0.5em;
 }
 
 form fieldset legend, form h2, h3 {
@@ -1604,8 +1610,12 @@ div.table table tr:last-child td {
 	border-bottom: none;
 }
 
-div.table table tbody tr:nth-child(odd) td {
-	background-color: #F4F7F9;
+div.table table.stripe tbody tr:nth-child(odd) td {
+  background-color: #F4F7F9;
+}
+
+div.table table.double-stripe tbody tr:nth-child(4n-3) td {
+  background-color: #F4F7F9;
 }
 
 div.table table tr td.right {
@@ -1621,6 +1631,23 @@ div.table table tr td.link a {
 
 div.table table tr td.link.hide a { color: #C1D0E1; }
 div.table table tr:hover td.link.hide a, div.table table tr td.link.hide a:focus { color: #248fda; }
+
+/* Encoding profiles */
+
+div.table table tr.encoding-profile-version td {
+  padding: 1px 0 0 0;
+}
+
+div.table table tr.encoding-profile-version td .CodeMirror {
+  width: 830px;
+  height: auto;
+  border: none;
+}
+
+div.table table tr.encoding-profile-version td .CodeMirror .CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
 
 /* Projects */
 

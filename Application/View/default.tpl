@@ -7,23 +7,24 @@
 		<base href="<?php echo $this->Request->getRootURL(); ?>" />
 		<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->Request->getRootURL(); ?>favicon.ico" />
 		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
-		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/codemirror.css" type="text/css" />
+		<?php echo $this->content('stylesheets'); ?>
 	</head>
 	<body>
 		<div id="projects">
 			<ul class="horizontal">
 				<?php if (!empty($projects) and User::isAllowed('projects', 'index')): ?>
-					<li class="link"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
+					<li class="link<?php echo ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
 					
-					<?php foreach ($projects as $slug => $p): ?>
-						<li class="link<?php echo ($p['slug'] == $project['slug'])? ' current' : ''; ?>">
-							<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $p['slug']), $p['title']);
+					<?php if (isset($project)): ?>
+						<li class="padding">›</li>
+						<li class="link current">
+							<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
 							
-							if ($p['slug'] == $project['slug'] and User::isAllowed('projects', 'edit')) {
-								echo ' ' . $this->linkTo('projects', 'edit', $project, '(edit)');
+							if (User::isAllowed('projects', 'edit')) {
+								echo ' ' . $this->linkTo('projects', 'edit', $project, '(settings)');
 							} ?>
 						</li>
-					<?php endforeach; ?>
+					<?php endif; ?>
 				<?php endif; ?>
 			
 				<?php if (User::isLoggedIn()): ?>
@@ -99,7 +100,8 @@
 							<?php echo $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php /*if (User::isAllowed('services', 'workers')): ?>
+					<?php // TODO: rename to jobs
+					/*if (User::isAllowed('services', 'workers')): ?>
 						<li class="menu-services <?php echo (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
 						</li>

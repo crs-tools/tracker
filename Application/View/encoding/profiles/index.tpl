@@ -16,6 +16,7 @@
 				<th width="10%">Slug</th>
 				<th width="10%">Extension</th>
 				<th></th>
+				<th></th>
 				<th width="3%">&nbsp;</th>
 				<th width="5%">&nbsp;</th>
 			</tr>
@@ -23,9 +24,12 @@
 		<tbody>
 			<?php foreach ($profiles as $profile): ?>
 				<tr>
-					<td><?php echo $profile['name']; ?></td>
-					<td><?php echo $profile['slug']; ?></td>
-					<td><?php echo $profile['extension']; ?></td>
+					<td><?= $this->h($profile['name']); ?></td>
+					<td><?= $this->h($profile['slug']); ?></td>
+					<td><?= $this->h($profile['extension']); ?></td>
+					<td class="link"><?php if (User::isAllowed('encodingprofiles', 'view')) {
+						echo $this->linkTo('encodingprofiles', 'view', $profile, 'Show ' . $profile['versions_count'] . ' version' . (($profile['versions_count'] == 1)? '' : 's'));
+					} ?></td>
 					<td></td>
 					<td class="link hide right"><?php if (User::isAllowed('encodingprofiles', 'delete')) {
 						echo $this->linkTo('encodingprofiles', 'delete', $profile, 'delete', array('data-dialog-confirm' => 'Are you sure you want to permanently delete this encoding ticket?'));

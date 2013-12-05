@@ -20,12 +20,12 @@
 				<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $project['slug']), $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', array('class' => 'link', 'title' => $project['title']));
 				
 				if (User::isAllowed('projects', 'view')) {
-					echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), 'settings', array('class' => 'settings'));
+					echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), 'project settings', array('class' => 'settings'));
 				}
 				
-				if (User::isAllowed('projects', 'edit')) {
+				/*if (User::isAllowed('projects', 'edit')) {
 					echo $this->linkTo('projects', 'edit', $project, array('?ref=index'), 'edit project', array('class' => 'edit'));
-				}
+				}*/
 				
 				if (User::isAllowed('projects', 'delete')) {				
 					echo $this->linkTo('projects', 'delete', $project, 'delete project', array('class' => 'delete'));
