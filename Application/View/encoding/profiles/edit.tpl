@@ -1,10 +1,27 @@
 <?php $this->title((isset($profile))? ('Edit encoding profile ' . $profile['name'] . ' | ') : 'Create encoding profile | '); ?>
 
+<div id="ticket-header">
+	<?php if (isset($profile)): ?>
+		<h2 class="ticket"><span>Edit encoding profile <?= $this->h($profile['name']); ?></span></h2>
+	<?php endif; ?>
+	<ul class="ticket-header-bar right horizontal">
+		<li class="ticket-header-bar-background-left"></li>
+		<?php if (User::isAllowed('encodingprofiles', 'view')): ?>
+			<li class="action versions<?= ($arguments['action'] == 'view')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'view', $profile, '<span>versions</span>', 'Show all versions'); ?></li>
+		<?php endif; ?>
+		<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
+			<li class="action edit<?= ($arguments['action'] == 'edit')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'edit', $profile, '<span>edit</span>', 'Edit encoding profile…'); ?></li>
+		<?php endif; ?>
+		<?php if (User::isAllowed('encodingprofiles', 'delete')): ?>
+			<li class="action delete"><?= $this->linkTo('encodingprofiles', 'delete', $profile, '<span>delete</span>', 'Delete encoding profile'); ?></li>
+		<?php endif; ?>
+		<li class="ticket-header-bar-background-right"></li>
+	</ul>
+</div>
+
 <?= $f = $form(); ?>
 	<fieldset>
-		<?php if (isset($profile)): ?>
-			<h2>Edit encoding profile <?= $this->h($profile['name']); ?></h2>
-		<?php else: ?>
+		<?php if (!isset($profile)): ?>
 			<h2>Create new encoding profile</h2>
 		<?php endif; ?>
 		<ul>
@@ -25,14 +42,7 @@
 		<ul>
 			<?php if (isset($profile)):
 				$useRequestValue = (!$form->getValue('save'))? false : Form::REQUEST_METHOD_FORM; ?>
-				<li><?= $f->select('version', 'Version', $versions->indexBy(
-					'id',
-					function(array $entry) {
-						return 'r' . $entry['revision'] .
-							(($entry['description'] !== null)? (' – ' . $entry['description']) : '') .
-							' (' . (new Datetime($entry['created']))->format('d.m.Y H:i') . ')';
-					}
-				)->toArray(), $version['id'], array('data-submit-on-change' => true)); ?></li>
+				<li><?= $f->select('version', 'Version', $versions->indexBy('id','encodingProfileVersionTitle')->toArray(), $version['id'], array('data-submit-on-change' => true)); ?></li>
 				<li class="checkbox"><?php if ($version['id'] != $profile->LatestVersion['id']) {
 						echo $f->hidden('create_version', 1, array('readonly' => true));
 						echo $f->checkbox('create_version', 'Create new version when editing the template', true, array('disabled' => true), false);

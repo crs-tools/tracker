@@ -1,7 +1,8 @@
 <?php
 	
 	requires(
-		'/Model/EncodingProfile'
+		'/Model/EncodingProfile',
+		'/Helper/EncodingProfile'
 	);
 	
 	class Controller_EncodingProfiles extends Controller_Application {

@@ -8,7 +8,7 @@ body {
 	position: relative;
 	min-height: 100%;
 	background: #fafafa url(../images/background.gif) repeat-x left top;
-	font-family: Helvetica, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Helmet, Freesans, sans-serif;
 	font-size: 80.00%;
 }
 
@@ -44,6 +44,13 @@ h3 {
 	font-size: 1.2em;
 	font-weight: normal;
 	color: #3F5A77;
+}
+
+h3.table {
+  margin-top: 0.5em;
+  padding-left: 0.3em;
+  font-size: 1.5em;
+  font-weight: lighter;
 }
 
 h4 {
@@ -731,6 +738,7 @@ ul.ticket-header-bar li.action a:before {
 
 ul.ticket-header-bar li.action.current a:before {
   margin-top: -1px;
+  background-position: -30px -290px;
 }
 
 ul.ticket-header-bar li.action.create a:before { background-position: -90px -202px; }
@@ -759,6 +767,9 @@ ul.ticket-header-bar li.action.current.mark a:before { background-position: -240
 
 ul.ticket-header-bar li.action.fix a:before { background-position: -270px -202px; }
 ul.ticket-header-bar li.action.current.fix a:before { background-position: -270px -290px; }
+
+ul.ticket-header-bar li.action.versions a:before { background-position: -300px -202px; }
+ul.ticket-header-bar li.action.current.versions a:before { background-position: -300px -290px; }
 
 /*
 ul.ticket-header-bar li.edit { background-position: left -202px; }
@@ -1183,6 +1194,48 @@ table.diff {
 
 table.diff tr td code {
   display: block;
+}
+
+table tr td.right {
+	text-align: right;
+}
+
+table tbody tr td.link a {
+	display: block;
+}
+
+table tr td.link.hide a { color: #C1D0E1; }
+table tr:hover td.link.hide a, div.table table tr td.link.hide a:focus { color: #248fda; }
+
+table.default {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.default thead tr th {
+  padding: 0.3em 0.4em;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: normal;
+  font-size: 1.2em;
+  color: #3d464d;
+}
+
+table.default tbody tr td {
+  padding: 0.4em;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table.default tbody tr:last-child td {
+  border-bottom: none;
+}
+
+table.default tbody tr td.link {
+  padding: 0;
+}
+
+table.default tbody tr td.link a {
+	padding: 0.4em;
 }
 
 form fieldset ul.comments li {
@@ -1619,19 +1672,13 @@ div.table table.double-stripe tbody tr:nth-child(4n-3) td {
   background-color: #F4F7F9;
 }
 
-div.table table tr td.right {
-	text-align: right;
+div.table table tr td.link {
+  padding: 0;
 }
-
-div.table table tr td.link { padding: 0; }
 
 div.table table tr td.link a {
-	display: block;
 	padding: 0.7em 1em;
 }
-
-div.table table tr td.link.hide a { color: #C1D0E1; }
-div.table table tr:hover td.link.hide a, div.table table tr td.link.hide a:focus { color: #248fda; }
 
 /* Encoding profiles */
 

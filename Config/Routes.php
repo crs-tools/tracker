@@ -31,6 +31,7 @@
 	':project_slug/services/resume' => array(':controller' => 'services', ':action' => 'resume'),
 
 	':project_slug/settings' => array(':controller' => 'projects', ':action' => 'view'),
+	':project_slug/settings/encoding/profiles/add' => array(':controller' => 'projects', ':action' => 'add_encoding_profile'),
 	
 	'encoding/profiles' => array(':controller' => 'encodingprofiles', ':action' => 'index'),
 	'encoding/profile/create' => array(':controller' => 'encodingprofiles', ':action' => 'create'),

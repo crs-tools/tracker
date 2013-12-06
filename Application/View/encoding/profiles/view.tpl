@@ -1,11 +1,13 @@
 <ul class="ticket-header-bar right horizontal table">
 	<li class="ticket-header-bar-background-left"></li>
-	<?php /* TODO: versions */ ?>
+	<?php if (User::isAllowed('encodingprofiles', 'view')): ?>
+		<li class="action versions<?= ($arguments['action'] == 'view')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'view', $profile, '<span>versions</span>', 'Show all versions'); ?></li>
+	<?php endif; ?>
 	<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
-		<li class="action edit"><?php echo $this->linkTo('encodingprofiles', 'edit', $profile, '<span>edit</span>', 'Edit encoding profile…'); ?></li>
+		<li class="action edit<?= ($arguments['action'] == 'edit')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'edit', $profile, '<span>edit</span>', 'Edit encoding profile…'); ?></li>
 	<?php endif; ?>
 	<?php if (User::isAllowed('encodingprofiles', 'delete')): ?>
-		<li class="action delete"><?php echo $this->linkTo('encodingprofiles', 'delete', $profile, '<span>delete</span>', 'Delete encoding profile'); ?></li>
+		<li class="action delete"><?= $this->linkTo('encodingprofiles', 'delete', $profile, '<span>delete</span>', 'Delete encoding profile'); ?></li>
 	<?php endif; ?>
 	<li class="ticket-header-bar-background-right"></li>
 </ul>
