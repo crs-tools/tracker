@@ -17,6 +17,7 @@
 					
 					<?php if (isset($project)): ?>
 						<li class="padding">›</li>
+						<?php /* ($arguments['controller'] != 'projects' or $arguments['action'] != 'view')? ' current' : ''; */ ?>
 						<li class="link current">
 							<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
 							
@@ -96,7 +97,7 @@
 						</li>
 					<?php endif; ?>
 					<?php if (User::isAllowed('tickets', 'index')): ?>
-						<li class="menu-tickets <?php echo ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['action'] == 'import' or $arguments['action'] == 'export')? ' current' : ''); ?>">
+						<li class="menu-tickets <?php echo ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['controller'] == 'import' or $arguments['controller'] == 'export')? ' current' : ''); ?>">
 							<?php echo $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>

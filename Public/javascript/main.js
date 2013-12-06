@@ -957,11 +957,12 @@ $(function() {
     }));
   });
   
-  $('select[data-submit-on-change]').each(function(i, select) {
-    $(select).change(function(event) {
-      event.target.form.submit();
+  $('select[data-submit-on-change], input[type="checkbox"][data-submit-on-change]')
+    .each(function(i, field) {
+      $(field).change(function(event) {
+        event.target.form.submit();
+      });
     });
-  });
   
   var projectBarHidden = $.cookie('p') == '0',
       basePath = /https?\:\/\/(.*?)(\/.*)/.exec($('base')[0].href);

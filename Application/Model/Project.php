@@ -15,7 +15,7 @@
 			'Properties' => array(
 				'class_name' => 'ProjectProperties',
 				'foreign_key' => 'project_id',
-				'select' => 'name, value'
+				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
 			),
 			'Languages' => array(
 				'class_name' => 'ProjectLanguages',
@@ -28,7 +28,9 @@
 			'EncodingProfileVersion' => array(
 				'foreign_key' => 'encoding_profile_version_id',
 				'self_key' => 'project_id',
-				'via' => 'tbl_project_encoding_profile'
+				'via' => 'tbl_project_encoding_profile',
+				// TODO: cleanup when Association has support
+				// 'select' => 'tbl_encoding_profile_version.revision, tbl_encoding_profile_version.created, tbl_encoding_profile_version.description, tbl_project_encoding_profile.priority'
 			),
 			'TicketState' => array(
 				'foreign_key' => array('ticket_type' , 'ticket_state'),
@@ -44,7 +46,8 @@
 		
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true,
-			'Languages' => true
+			'Languages' => true,
+			'EncodingProfileVersion' => true
 		);
 	}
 	

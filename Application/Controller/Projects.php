@@ -1,7 +1,9 @@
 <?php
 	
 	requires(
-		'/Model/Project'
+		'/Model/Project',
+		'/Model/EncodingProfile',
+		'/Helper/EncodingProfile'
 	);
 	
 	class Controller_Projects extends Controller_Application {
@@ -13,6 +15,26 @@
 		}
 		
 		public function view() {
+			$this->profilesForm = $this->form();
+			
+			if ($this->profilesForm->wasSubmitted() and $this->project->save($this->profilesForm->getValues())) {
+				$this->flashNow('Updated encoding profiles');
+			}
+			
+			$this->versions = $this->project->EncodingProfileVersion;
+			$this->versions->fetch();
+			
+			$this->versionsLeft = EncodingProfileVersion::findAll(array(
+				'EncodingProfile' => array(
+					'select' => 'name'
+				)
+			))
+				->except(array('select'))
+				->select('id, encoding_profile_id, revision, created, description')
+				->where('encoding_profile_id NOT IN (' .
+					implode(',', $this->project->EncodingProfileVersion->pluck('encoding_profile_id')) .
+				')');
+			
 			return $this->render('projects/view.tpl');
 		}
 		
