@@ -40,7 +40,7 @@ CREATE TABLE tbl_ticket
   project_id bigint NOT NULL,
   title character varying(128) NOT NULL,
   fahrplan_id integer NOT NULL,
-  priority real NOT NULL,
+  priority real NOT NULL DEFAULT 1,
   ticket_type enum_ticket_type NOT NULL,
   ticket_state enum_ticket_state NOT NULL,
   encoding_profile_version_id bigint,
