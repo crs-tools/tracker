@@ -15,9 +15,12 @@ CREATE TABLE tbl_handle
 )
 WITHOUT OIDS;
 
-CREATE FUNCTION valid_handle() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION valid_handle() RETURNS TRIGGER AS $$
 BEGIN
-	IF NOT EXISTS(SELECT id FROM tbl_handle WHERE id = NEW.handle_id)
+  IF NEW.handle_id IS NULL THEN
+    RETURN NEW;
+  END IF;
+  IF NOT EXISTS(SELECT id FROM tbl_handle WHERE id = NEW.handle_id)
 		THEN RAISE EXCEPTION 'Handle % not found', NEW.handle_id;
 	END IF;
 	RETURN NEW;
