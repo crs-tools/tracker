@@ -33,8 +33,9 @@
 				->select('id, encoding_profile_id, revision, created, description')
 				->where('encoding_profile_id NOT IN (' .
 					implode(',', $this->project->EncodingProfileVersion->pluck('encoding_profile_id')) .
-				')');
+				')'); // TODO: cleanup when select()/not() supported
 			
+			$this->properties = $project->Properties;
 			return $this->render('projects/view.tpl');
 		}
 		

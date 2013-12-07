@@ -14,7 +14,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 	</fieldset>
 	<fieldset>
 		<legend>Languages</legend>
-		<?php echo $this->render('shared/properties.tpl', array(
+		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
 				'for' => $project->Languages,
@@ -27,7 +27,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 	</fieldset>
 	<fieldset>
 		<legend>Properties</legend>
-		<?php echo $this->render('shared/properties.tpl', array(
+		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
 				'for' => $project->Properties,
