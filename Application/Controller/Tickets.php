@@ -3,7 +3,8 @@
 	requires(
 		'String',
 		'/Controller/Application',
-		'/Model/Ticket'
+		'/Model/Ticket',
+		'/Model/Comment'
 	);
 	
 	class Controller_Tickets extends Controller_Application {
@@ -186,17 +187,19 @@
 		}
 		
 		public function view(array $arguments = array()) {
-			if (!$this->ticket = Ticket::findBy(['fahrplan_id' => $arguments['fahrplan_id'], 'project_id' => $this->project['id']], [], ['User'])) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
 			}
 			
-			$this->commentForm = $this->form('tickets', 'comment', $this->project->toArray() + $this->ticket->toArray());
+			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
 			$this->parent = $this->ticket->Parent;
 			$this->children = $this->ticket->Children;
 			$this->children->fetch();
 			
 			$this->properties = $this->ticket->Properties;
+			
+			$this->comments = $this->ticket->Comments->join(['User']);
 			
 			/*
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
@@ -525,33 +528,27 @@
 		}*/
 		
 		public function comment(array $arguments = array()) {
-			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id))) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (Request::isPostRequest()) {
-				$this->Comment->ticket_id = $ticket['id'];
-				$this->Comment->user_id = $this->User->get('id');
-				$this->Comment->comment = Request::post('text', Request::unfiltered);
-				$this->Comment->user_set_needs_attention = Request::post('needs_attention', Request::checkbox);
+			$this->form();
+			
+			if ($this->form->wasSubmitted()) {	
+				$this->ticket->save([
+					'needs_attention' => $this->form->getValue('needs_attention')
+				]);
 				
-				if (Request::post('needs_attention', Request::checkbox) xor $ticket['needs_attention']) {
-					$this->Ticket->needs_attention = (boolean) Request::post('needs_attention', Request::checkbox);
-					$this->Ticket->save();
-				}
-				
-				if ($this->Comment->save()) {
-					$this->LogEntry->create(array(
-						'ticket_id' => $ticket['id'],
-						'comment_id' => $this->Comment->id,
-						'event' => 'Comment.Add'
-					));
-					
-					$this->flash('Comment added');
+				if (Comment::create([
+					'ticket_id' => $this->ticket['id'],
+					'handle_id' => User::getCurrent()['id'],
+					'comment' => $this->form->getValue('text')
+				])) {
+					$this->flash('Comment created');
 				}
 			}
 			
-			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
+			return $this->redirect('tickets', 'view', $this->project, $this->ticket);
 		}
 		
 		/*
@@ -633,9 +630,12 @@
 			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
 			
 			$this->View->render('tickets/edit.tpl');
-		}
+		}*/
 		
 		public function edit(array $arguments = array()) {
+			$this->form();
+			
+			/*
 			if (empty($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
@@ -702,9 +702,11 @@
 			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
 			
 			$this->View->render('tickets/edit.tpl');
+			*/
+			return $this->render('tickets/edit.tpl');
 		}
 		
-		public function mass_edit(array $arguments = array()) {
+		/*public function mass_edit(array $arguments = array()) {
 			if (empty($arguments['id']) or !$tickets = $this->Ticket->findAll(array(), array('id' => explode(',', $arguments['id'])))) {
 				throw new EntryNotFoundException();
 			}
