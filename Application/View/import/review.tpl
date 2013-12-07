@@ -20,73 +20,62 @@
 	</ul>
 </div>
 
-<?php echo $f = $this->form('import', 'apply', $project, array('id' => 'ticket-import-list')); ?>
-	<?php if (!empty($tickets['added'])): ?>
+<?= $f = $applyForm(array('id' => 'ticket-import-list')); ?>
+	<?php if (!empty($tickets['new'])): ?>
 		<fieldset>
 			<legend>Tickets to add</legend>
 			<br />
 			<ul class="tickets">
-				<?php foreach ($tickets['added'] as $id => $ticket): ?>
+				<?php foreach ($tickets['new'] as $id => $ticket): ?>
 					<li>
-						<a class="link" title="<?php foreach($ticket as $key => $value) { echo $key . ': ' . $value . "\n"; } ?>">
-							<span class="vid"><?php echo $id; ?></span>
-							<span class="title"><?php echo Text::truncate($ticket['Fahrplan.Title'], 45, '…'); ?></span>
+						<a class="link" title="<?php foreach($ticket as $key => $value) { echo $this->h($key . ': ' . $value) . "\n"; } ?>">
+							<span class="vid"><?= $id; ?></span>
+							<span class="title"><?= $this->h(str_truncate($ticket['Fahrplan.Title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
-							<span class="checkbox"><?php echo $f->checkbox('ticket_add[' . $id . ']', false, null, array('checked' => 'checked')); ?></span>
+							<span class="checkbox"><?= $f->checkbox('tickets[new][' . $id . ']', null, true, [], false); ?></span>
 						</span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 		</fieldset>
 	<?php endif; ?>
-	<?php if (!empty($tickets['updated'])): ?>
+	<?php if (!empty($tickets['changed'])): ?>
 		<fieldset>
 			<legend>Tickets to update</legend>
 			<br />
 			<ul class="tickets">
-				<?php foreach ($tickets['updated'] as $id => $ticket): ?>
+				<?php foreach ($tickets['changed'] as $id => $ticket): ?>
 					<li>
 						<a class="link">
 							<span class="vid"><?php echo $id; ?></span>
-							<span class="title"><?php echo Text::truncate($ticket['title'], 45, '…'); ?></span>
+							<span class="title"><?php echo $this->h(str_truncate($ticket['properties']['Fahrplan.Title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
-							<span class="checkbox"><?php echo $f->checkbox('ticket_update[' . $id . ']', false, null, array('checked' => 'checked')); ?></span>
+							<span class="checkbox"><?php echo $f->checkbox('tickets[change][' . $id . ']', null, true, [], false); ?></span>
 						</span>
 					</li>
 					
 					<table class="diff">
-						<tr>
-							<?php foreach($ticket['properties'] as $key => $value):
-								if (!$value['equals']): ?>
-									<th><?php echo $key; ?></th>
-									<td>
-										<code>
-											<?php if ($value['database'] == NULL): ?>
-												<ins><?php echo $value['fahrplan']; ?></ins>
-											<?php elseif ($value['fahrplan'] == NULL): ?>
-												<del><?php echo $value['database']; ?></del>
-											<?php else: ?>
-												<del><?php echo $value['database']; ?></del>
-												</code><code>
-												<ins><?php echo $value['database']; ?></ins>
-											<?php endif; ?>
-										</code><br />
-									</td>
-								<?php endif;
-							endforeach; ?>
-						</tr>
+						<?php foreach($ticket['diff'] as $key => $value): ?>
+							<tr>
+								<th width="20%"><?php echo $key; ?></th>
+								<td>
+									<code>
+										<?php if ($value['database'] == null): ?>
+											<ins><?php echo $value['fahrplan']; ?></ins>
+										<?php elseif ($value['fahrplan'] == null): ?>
+											<del><?php echo $value['database']; ?></del>
+										<?php else: ?>
+											<del><?php echo $value['database']; ?></del>
+											</code><code>
+											<ins><?php echo $value['database']; ?></ins>
+										<?php endif; ?>
+									</code><br />
+								</td>
+							</tr>
+						<?php endforeach; ?>
 					</table>
-					
-					<?php
-					foreach($ticket['properties'] as $key => $value) {
-						if (!$value['equals']) {
-							
-		
-							echo "\n";
-						}
-					} ?>
 				<?php endforeach; ?>
 			</ul>
 		</fieldset>
@@ -99,11 +88,11 @@
 				<?php foreach ($tickets['deleted'] as $id => $ticket): ?>
 					<li>
 						<a class="link">
-							<span class="vid"><?php echo $id; ?></span>
-							<span class="title"><?php echo Text::truncate($ticket['title'], 45, '…'); ?></span>
+							<span class="vid"><?= $id; ?></span>
+							<span class="title"><?= $this->h(str_truncate($ticket['title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
-							<span class="checkbox"><?php echo $f->checkbox('ticket_delete[' . $id . ']', false, null, array('checked' => 'checked')); ?></span>
+							<span class="checkbox"><?= $f->checkbox('tickets[delete][' . $id . ']', null, true, [], false); ?></span>
 						</span>
 					</li>
 				<?php endforeach; ?>

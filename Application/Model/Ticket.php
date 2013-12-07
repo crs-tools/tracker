@@ -1,12 +1,15 @@
 <?php
 	
 	requires(
+		'/Model/Ticket/Resource',
 		'/Model/TicketProperties'
 	);
 	
 	class Ticket extends Model {
 		
 		const TABLE = "tbl_ticket";
+		
+		const CLASS_RESOURCE = 'Ticket_Resource';
 		
 		public $hasOne = array(
 			'EncodingProfileVersion' => array(
@@ -22,13 +25,31 @@
 			'Properties' => array(
 				'class_name' => 'TicketProperties',
 				'foreign_key' => 'ticket_id',
-				'select' => 'name, value'
+				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
+			),
+			'Children' => array(
+				'class_name' => 'Ticket',
+				'foreign_key' => 'parent_id'
 			)
 		);
 		
 		public $belongsTo = array(
-			'User' => array('foreign_key' => 'handle_id'),
-			'Worker' => array('foreign_key' => 'handle_id')
+			'User' => array(
+				'foreign_key' => 'handle_id',
+				'select' => 'name as user_name'
+			),
+			'Worker' => array(
+				'foreign_key' => 'handle_id'
+			),
+			'Parent' => array(
+				'class_name' => 'Ticket',
+				'foreign_key' => 'parent_id',
+				'join' => false
+			)
+		);
+		
+		public $acceptNestedEntriesFor = array(
+			'Properties' => true
 		);
 		
 		/*

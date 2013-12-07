@@ -1189,11 +1189,39 @@ table.properties tr td.key {
 table.properties tr th { border-top: 1px solid #e0e0e0; }
 
 table.diff {
-  
+  width: 100%;
+  margin: -0.8em 0 1em;
+  border-collapse: collapse;
+}
+
+table.diff tr:first-child th, table.diff tr:first-child td {
+  padding-top: 1em;
+}
+
+table.diff tr th {
+  padding: 0 1em 0 1em;
+  font-weight: normal;
+  vertical-align: top;
+  border-right: 1px solid #e0e0e0;
+  color: #3d464d;
+}
+
+table.diff tr td {
+  padding-left: 1em;
 }
 
 table.diff tr td code {
   display: block;
+  font-size: 1.2em;
+}
+
+table.diff tr td code del {
+  color: #e53b00;
+}
+
+table.diff tr td code ins {
+  background-color: #dbe1ce;
+  color: #516106;
 }
 
 table tr td.right {

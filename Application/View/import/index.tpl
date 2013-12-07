@@ -20,7 +20,7 @@
 	</ul>
 </div>
 
-<?php echo $f = $this->form('import', 'review', $project, array('id' => 'ticket-import')); ?>
+<?= $f = $form(array('id' => 'ticket-import')); ?>
 	<fieldset>
 		<legend>Check for Fahrplan updates</legend>
 		<ul>

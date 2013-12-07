@@ -2,7 +2,7 @@
 	
 	class TicketProperties extends Model/*_Properties*/ {
 		
-		const TABLE = 'tbl_ticket_properties';
+		const TABLE = 'tbl_ticket_property';
 		
 		public $primaryKey = array('ticket_id', 'name');
 		
