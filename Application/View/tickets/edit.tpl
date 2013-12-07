@@ -1,12 +1,12 @@
 <?php if (empty($ticket)) {
 	$this->title('Create new ticket | ');
 } else {
-	$this->title('Edit ticket ' . Filter::specialChars($ticket['title']) . ' | ');
+	$this->title('Edit ticket ' . $ticket['title'] . ' | ');
 }
 
-if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
+/*if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
 	$referer = false;
-} ?>
+}*/ ?>
 
 
 <div id="ticket-header">

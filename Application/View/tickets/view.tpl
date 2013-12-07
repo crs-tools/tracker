@@ -21,7 +21,7 @@
 		} ?></span>
 		<span class="title" title="<?= $this->h($ticket['title']); ?>">
 			<?php if (!empty($action)) {
-				echo mb_ucfirst($action) . ' lecture ' . $this->linkTo('tickets', 'view', $project, $ticket, $this->h(str_shorten($ticket['title'], 37)));
+				echo mb_ucfirst($action) . ' lecture ' . $this->linkTo('tickets', 'view', $ticket, $project, $this->h(str_shorten($ticket['title'], 37)));
 			} else {
 				echo $this->h(str_shorten($ticket['title'], 50));
 			} ?>
@@ -35,9 +35,9 @@
 	
 		<div class="flags">
 			<?php if ($ticket['failed']): ?>
-				<span class="failed"><?php echo $ticket['state_name']; ?> failed</span>
+				<span class="failed"><?= $ticket['state_name']; ?> failed</span>
 			<?php else: ?>
-				<span class="state"><?php echo $ticket['state_name']; ?></span>
+				<span class="state"><?= $ticket['state_name']; ?></span>
 			<?php endif; ?>
 		
 			<?php if ($ticket['needs_attention']): ?>
@@ -45,7 +45,7 @@
 			<?php endif; ?>
 		
 			<?php if (!empty($ticket['user_id'])): ?>
-				<span class="assignee">assigned to <?php echo $this->linkTo('tickets', 'index', $project + array('?u=' . $ticket['user_id']), ($ticket['user_id'] == $this->User->get('id')) ? 'you' : $ticket['user_name']); ?></span>
+				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project + array('?u=' . $ticket['user_id']), ($ticket['user_id'] == $this->User->get('id')) ? 'you' : $ticket['user_name']); ?></span>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
@@ -69,10 +69,10 @@
 				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', array('class' => 'confirm-ticket-reset')); ?></li>
 			<?php endif;*/
 			if (User::isAllowed('tickets', 'edit')): ?>
-				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $project, $ticket, (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket…'); ?></li>
+				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket…'); ?></li>
 			<?php endif;
 			if (User::isAllowed('tickets', 'delete')): ?>
-				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $project, $ticket, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
+				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
 			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
 		</ul>
@@ -117,7 +117,19 @@
 			</li>
 		<?php endif;
 		
-		if (!empty($timeline)):
+		foreach ($comments as $comment): ?>
+			<li class="event comment left">
+				<p><?php echo nl2br($this->h($comment['comment'])); ?></p>
+				<strong>– <?php echo $this->h($comment['user_name']); ?></strong>
+				<?php if (User::isAllowed('tickets', 'delete_comment', $comment['id'], $comment['user_id'])) {
+					echo $this->linkTo('tickets', 'delete_comment', $comment, $project, 'delete');
+				} ?>
+				<span class="date"><?php echo (new DateTime($comment['created']))->format('d.m.Y H:i'); ?></span>
+			</li>
+		<?php endforeach;
+		
+		
+		/*if (!empty($timeline)):
 			foreach ($timeline as $entry):
 				if ($entry['event'] != 'Comment.Add'): ?>
 					<li class="event <?php echo $entry['type'] . ' ' . (($entry['type'] == 'comment')? 'left' : 'right'); ?>">
@@ -163,6 +175,6 @@
 	    			</li>
 				<?php endif;
 			endforeach;
-		endif; ?>
+		endif; */ ?>
 	</ul>
 </div>
