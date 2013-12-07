@@ -1,7 +1,7 @@
 <?php $this->title('Tickets | '); ?>
 
 <div id="tickets-header" class="clearfix">
-	<?php echo $f = $this->form('tickets', 'index', $project, array('id' => 'tickets-filter', 'method' => 'get'), false); ?>
+	<?php /*echo $f = $this->form('tickets', 'index', $project, array('id' => 'tickets-filter', 'method' => 'get'), false); ?>
 		<ul class="ticket-header-bar left horizontal">
 			<li class="ticket-header-bar-background-left"></li>
 			<li data-ai="1" class="first<?php echo (!Request::get('t') and !Request::exists(Request::get, 'search'))? ' current': ''; ?>"><button>All</button></li>
@@ -14,7 +14,7 @@
 			<li class="ticket-header-bar-search"><?php echo $f->input('q', null, '', array('placeholder' => 'Search')); ?></li>
 			<li data-ai="-1" class="ticket-header-bar-search-button"<?php echo (Request::exists(Request::get, 'search'))? ' class="current"' : ''; ?>><?php echo $f->button('search', null, 'Search', array('value' => '')); ?></li>
 		</ul>
-	</form>
+	</form> */ ?>
 	
 	<?php if (User::isAllowed('tickets', 'create') or User::isAllowed('import', 'index') or User::isAllowed('export', 'index')): ?>
 		<ul class="ticket-header-bar right horizontal">
@@ -35,7 +35,7 @@
 	<?php endif; ?>
 </div>
 
-<?php if (Request::exists(Request::get, 'search')): ?>
+<?php /*if (Request::exists(Request::get, 'search')): ?>
 	<?php echo $f = $this->form('tickets', 'index', $project + array('?search'), array('id' => 'tickets-search')); ?>
 		<fieldset>
 			<legend>Search</legend>
@@ -65,11 +65,11 @@
 			<?php echo $f->select('', false, (empty($profiles))? array('' => '–') : $profiles, null, array('id' => 'tickets-search-profiles')); ?>
 		</fieldset>
 	</form>
-<?php endif; ?>
+<?php endif;*/ ?>
 
-<?php $this->render('tickets/table.tpl', array('tickets' => $tickets)); ?>
+<?= $this->render('tickets/list.tpl'); ?>
 
-<?php if (Request::exists(Request::get, 'search')): ?>
+<?php /*if (Request::exists(Request::get, 'search')): ?>
 	<script type="text/javascript">
 		var search = <?php echo (Request::isPostRequest())? json_encode(array(
 			'fields' => Request::post('fields'),
@@ -77,4 +77,4 @@
 			'values' => Request::post('values')
 		)) : 'null'; ?>;
 	</script>
-<?php endif; ?>
+<?php endif;*/ ?>

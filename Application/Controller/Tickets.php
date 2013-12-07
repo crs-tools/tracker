@@ -1,7 +1,9 @@
 <?php
 	
 	requires(
-		'/Controller/Application'
+		'String',
+		'/Controller/Application',
+		'/Model/Ticket'
 	);
 	
 	class Controller_Tickets extends Controller_Application {
@@ -25,6 +27,9 @@
 		*/
 		
 		public function index() {
+			// TODO: join encoding profile?
+			$this->tickets = Ticket::findAll([])
+				->withDefaultProperties();
 			
 			/*
 			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
@@ -179,8 +184,21 @@
 			
 			return $this->render('tickets/index.tpl');
 		}
-		/*
+		
 		public function view(array $arguments = array()) {
+			if (!$this->ticket = Ticket::findBy(['fahrplan_id' => $arguments['fahrplan_id'], 'project_id' => $this->project['id']], [], ['User'])) {
+				throw new EntryNotFoundException();
+			}
+			
+			$this->commentForm = $this->form('tickets', 'comment', $this->project->toArray() + $this->ticket->toArray());
+			
+			$this->parent = $this->ticket->Parent;
+			$this->children = $this->ticket->Children;
+			$this->children->fetch();
+			
+			$this->properties = $this->ticket->Properties;
+			
+			/*
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();
 			}
@@ -200,8 +218,11 @@
 			$this->View->assign('ticket', $ticket);
 			$this->View->assign('timeline', $this->Ticket->getTimeline($ticket['id']));
 			$this->View->render('tickets/view.tpl');
+			*/
+			
+			return $this->render('tickets/view.tpl');
 		}
-		
+		/*
 		public function log($arguments = array()) {
 			if (empty($arguments['entry']) or !$log = $this->LogEntry->find($arguments['entry'], array())) {
 				throw new EntryNotFoundException();
@@ -501,7 +522,7 @@
 			}
 			
 			$this->_redirectWithReferer($ticket);
-		}
+		}*/
 		
 		public function comment(array $arguments = array()) {
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id))) {
@@ -533,6 +554,7 @@
 			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
 		}
 		
+		/*
 		public function delete_comment(array $arguments = array()) {
 			if (empty($arguments['ticket_id']) or !$ticket = $this->Ticket->find($arguments['ticket_id'], array(), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();

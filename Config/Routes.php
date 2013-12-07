@@ -12,7 +12,7 @@
 	':project_slug/ticket/:ticket_id/comment/delete/:id' => array(':controller' => 'tickets', ':action' => 'delete_comment'),
 
 	':project_slug/ticket/:id/log/:entry' => array(':controller' => 'tickets', ':action' => 'log', ':type' => 'text/plain'),
-	':project_slug/ticket/:id' => array(':controller' => 'tickets', ':action' => 'view'),
+	':project_slug/ticket/:fahrplan_id' => array(':controller' => 'tickets', ':action' => 'view'),
 	':project_slug/ticket/:id/:action' => array(':controller' => 'tickets'),
 
 	':project_slug/tickets/import' => array(':controller' => 'import', ':action' => 'index'),
