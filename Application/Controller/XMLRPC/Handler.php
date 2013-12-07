@@ -47,14 +47,14 @@
 			$signature = array_pop($arguments);
 			$hash = hash_hmac(
 				'sha256',
-				urlencode(implode('&', $arguments)),
+				rawurlencode(implode('&', $arguments)),
 				$secret
 			);
-			
+
 			// TODO: compare in constant time
 			return $hash === $signature;
 		}
-		
+
 		private static function _getNameFromHostName($hostName) {
 			if (filter_var($hostName, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 				return $hostName;
@@ -71,6 +71,17 @@
 		public function getVersion() {
 			return '4.0';
 		}
+
+        /**
+         * echo method to testXMLRPC API
+         *
+         * @param string frist message
+         * @param string second message
+         * @return string input string
+         */
+        public function getEcho($msg, $msg2) {
+            return $msg . ' ' . $msg2;
+        }
 
 		/**
 		 * fetches list of projects

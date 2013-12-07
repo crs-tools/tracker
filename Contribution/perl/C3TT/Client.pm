@@ -1,6 +1,6 @@
 # C3TT::CLient
 #
-# Copyright (c) 2010 Peter Große <pegro@fem-net.de>, all rights reserved
+# Copyright (c) 2013 Peter Große <pegro@fem-net.de>, all rights reserved
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
@@ -12,11 +12,11 @@ C3TT::Client - Client for interacting with the C3 Ticket Tracker via XML-RPC
 
 =head1 VERSION
 
-Version 0.2
+Version 0.3
 
 =cut
 
-our $VERSION   = '0.2';
+our $VERSION   = '0.3';
 
 =head1 SYNOPSIS
 
@@ -24,15 +24,11 @@ Generic usage
 
     use C3TT::CLient;
 
-    my $rpc = C3TT::Client->new( $uri, $prefix, $secret );
-
-Set current project
-
-    my $project = $rpc->setCurrentProject('myproject');
+    my $rpc = C3TT::Client->new( $uri, $worker_group_token, $secret );
 
 Call a remote method
 
-    my $states = $rpc->getAllStates(1);
+    my $states = $rpc->getVersion();
 
 =head1 DESCRIPTION
 
@@ -41,9 +37,7 @@ of all arguments
 
 =head1 METHODS
 
-=head2 new ($url, $prefix, $secret)
-
-=head2 setCurrentProject ($project_slug)
+=head2 new ($url, $worker_group_token, $secret)
 
 Create C3TT:Client object.
 
@@ -57,32 +51,25 @@ use vars qw($AUTOLOAD);
 
 use Data::Dumper;
 use Net::Domain qw(hostname hostfqdn);
-use Digest::MD5 qw(md5_hex);
+use Digest::SHA qw(hmac_sha256_hex);
+use URI::Escape qw(uri_escape);
+
+use constant PREFIX => 'C3TT.';
 
 sub new {
     my $prog = shift;
     my $self;
 
     $self->{url} = shift;
-    $self->{prefix} = shift;
-    my $secret = shift;
+    $self->{token} = shift;
+    $self->{secret} = shift;
 
-	$self->{uid} = md5_hex(hostfqdn . "$secret");
-
-    $self->{remote} = XML::RPC::Fast->new($self->{url}.'/'.$self->{uid}.'/'.hostfqdn);
+    # create remote handle
+    $self->{remote} = XML::RPC::Fast->new($self->{url}.'?group='.$self->{token}.'&hostname='.hostfqdn);
 
     bless $self;
 
     return $self;
-}
-
-sub setCurrentProject {
-	my $self = shift;
-	$self->{project_slug} = shift;
-
-	$self->{remote} = XML::RPC::Fast->new($self->{url}.'/'.$self->{uid}.'/'.hostfqdn.'/'.$self->{project_slug});
-
-	bless $self;
 }
 
 sub AUTOLOAD {
@@ -101,7 +88,29 @@ sub AUTOLOAD {
       exit 1;
     }
 
-   return $self->{remote}->call($self->{prefix}.'.'.$name, @_);
+	my @args = @_;
+
+    #####################
+    # generate signature
+    #####################
+    # assemble static part of signature arguments
+    #                     1. URL  2. method name  3. worker group token  4. hostname
+    my @signature_args = ($self->{url}, PREFIX.$name, $self->{token}, hostfqdn);
+
+    # include method arguments if any given
+    if(defined $args[0]) {
+        push(@signature_args,join('&',@args));
+    }
+    # generate hash over url escaped line containing a concatenation of above signature arguments
+    my $signature = hmac_sha256_hex(uri_escape(join('&',@signature_args)), $self->{secret});
+
+    # add signature as additional parameter
+	push(@args,$signature);
+
+    ##############
+    # remote call
+    ##############
+    return $self->{remote}->call(PREFIX.$name, @args);
 }
 
 1;
