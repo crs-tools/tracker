@@ -19,7 +19,7 @@
 				throw new EntryNotFoundException();
 			}
 			
-			$this->form = $this->form('encodingprofiles', 'compare', $this->profile->toArray());
+			$this->form('encodingprofiles', 'compare', $this->profile);
 			$this->versions = $this->profile->Versions->orderBy('revision DESC');
 			
 			return $this->render('encoding/profiles/view.tpl');
@@ -55,7 +55,7 @@
 		}
 		
 		public function create() {
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted() and EncodingProfile::create($this->form->getValues())) {
 				$this->flash('Encoding profile created');
@@ -66,7 +66,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
 				$version = EncodingProfileVersion::findBy([

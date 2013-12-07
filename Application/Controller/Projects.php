@@ -40,7 +40,7 @@
 		}
 		
 		public function create() {
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted() and ($project = Project::create($this->form->getValues()))) {
 				$this->flash('Project created');
@@ -51,11 +51,11 @@
 		}
 		
 		public function edit(array $arguments = array()) {
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted() and $this->project->save($this->form->getValues())) {
 				$this->flash('Project updated');
-				return $this->redirect('projects', 'index');
+				return $this->redirect('projects', 'view', $this->project);
 			}
 			
 			return $this->render('projects/edit.tpl');
@@ -66,7 +66,7 @@
 				throw new EntryNotFoundException();
 			}
 			
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted() and $this->project->destroy()) {
 				$this->flash('Project deleted');

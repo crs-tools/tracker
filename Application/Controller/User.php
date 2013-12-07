@@ -9,7 +9,7 @@
 		public $requireAuthorization = true;
 		
 		public function login() {
-			$this->form = $this->form();
+			$this->form();
 			if ($this->form->wasSubmitted()) {
 				if (User::login($this->form->getValue('user'), $this->form->getValue('password'))) {
 					$this->flash('Login successful');
@@ -64,7 +64,7 @@
 		}
 		
 		public function settings() {
-			$this->form = $this->form();
+			$this->form();
 			$user = User::getCurrent();
 			
 			if ($this->form->wasSubmitted()) {
@@ -115,7 +115,7 @@
 		}
 		*/
 		public function create() {
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted() and User::create($this->form->getValues())) {
 				$this->flash('Successfully added user');
@@ -130,7 +130,7 @@
 				throw new EntryNotFoundException();
 			}
 			
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
 				if ($this->form->getValue('password') and

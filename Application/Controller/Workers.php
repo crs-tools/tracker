@@ -25,7 +25,7 @@
 		}
 		
 		public function create_group() {
-			$this->form = $this->form();
+			$this->form();
 			
 			$group = new WorkerGroup($this->form->getValues());
 			$group['token'] = Random::friendly(32);
@@ -44,7 +44,7 @@
 				throw new EntryNotFoundException();
 			}
 			
-			$this->form = $this->form();
+			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
 				if ($this->form->getValue('create_secret')) {
