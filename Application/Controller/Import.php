@@ -62,7 +62,9 @@
 			$this->tickets = array(
 				'new' => [],
 				'changed' => [],
-				'deleted' => []
+				'deleted' => [],
+				'create_recording_tickets' => $this->form->getValue('create_recording_tickets'),
+				'create_encoding_tickets' => $this->form->getValue('create_encoding_tickets')
 			);
 			
 			foreach ($events as $event) {
@@ -150,7 +152,10 @@
 			// TODO: array_fill_key true
 			
 			if (empty($this->tickets['new']) and empty($this->tickets['changed']) and empty($this->tickets['deleted'])) {
-				$this->flash('Fahrplan has not changed since last update');
+				if (!$this->_createMissingTickets($this->tickets)) {
+					$this->flash('Fahrplan has not changed since last update');
+				}
+				
 				return $this->redirect('import', 'index', $this->project->toArray());
 			}
 			
@@ -243,6 +248,8 @@
 			
 			Database::$Instance->commit();
 			
+			$this->_createMissingTickets($tickets);
+			
 			unset($_SESSION['import']);
 			
 			$this->flash('Updated ' . $ticketsChanged . ' ticket' . (($ticketsChanged > 1)? 's' : ''));
@@ -288,6 +295,7 @@
 				return $xml;
 			}
 			
+			// TODO: use HTTP Client?
 			$curl = curl_init($form->getValue('url'));
 			
 			curl_setopt_array($curl, array(
@@ -306,6 +314,20 @@
 			}
 			
 			return $xml;
+		}
+		
+		public function _createMissingTickets($tickets) {
+			$result = 0;
+			
+			if ($tickets['create_encoding_tickets'] ) {
+				$result |= (Ticket::createMissingEncodingTickets($this->project['id']) > 0);
+			}
+			
+			if ($tickets['create_recording_tickets']) {
+				$result |= (Ticket::createMissingRecordingTickets($this->project['id']) > 0);
+			}
+			
+			return (bool) $result;
 		}
 		
 	}

@@ -27,6 +27,10 @@
 				'foreign_key' => 'ticket_id',
 				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
 			),
+			'Comments' => array(
+				'class_name' => 'Comment',
+				'foreign_key' => 'ticket_id'
+			),
 			'Children' => array(
 				'class_name' => 'Ticket',
 				'foreign_key' => 'parent_id'
@@ -51,6 +55,16 @@
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true
 		);
+		
+		public static function createMissingEncodingTickets($project, $encodingProfile = null) {
+			Database::$Instance->query('SELECT create_missing_encoding_tickets(?, ?)', [$project, $encodingProfile]);
+			return Database::$Instance->fetchRow()['create_missing_encoding_tickets'];
+		}
+		
+		public static function createMissingRecordingTickets($project) {
+			Database::$Instance->query('SELECT create_missing_recording_tickets(?)', [$project]);
+			return Database::$Instance->fetchRow()['create_missing_recording_tickets'];
+		}
 		
 		/*
 		public $hasMany = array('Comment' => array('key' => 'ticket_id'));
