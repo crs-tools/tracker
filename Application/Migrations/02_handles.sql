@@ -15,6 +15,14 @@ CREATE TABLE tbl_handle
 )
 WITHOUT OIDS;
 
+CREATE FUNCTION valid_handle() RETURNS TRIGGER AS $$
+BEGIN
+	IF NOT EXISTS(SELECT id FROM tbl_handle WHERE id = NEW.handle_id)
+		THEN RAISE EXCEPTION 'Handle % not found', NEW.handle_id;
+	END IF;
+	RETURN NEW;
+END $$ LANGUAGE plpgsql;
+
 CREATE TABLE tbl_user
 (
   id bigint NOT NULL DEFAULT nextval('tbl_handle_id_seq'::regclass),

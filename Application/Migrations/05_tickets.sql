@@ -54,9 +54,6 @@ CREATE TABLE tbl_ticket
   CONSTRAINT tbl_ticket_encoding_profile_version_fk FOREIGN KEY (encoding_profile_version_id)
       REFERENCES tbl_encoding_profile_version (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT tbl_ticket_handle_id_fkey FOREIGN KEY (handle_id)
-      REFERENCES tbl_handle (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT tbl_ticket_parent_fk FOREIGN KEY (parent_id)
       REFERENCES tbl_ticket (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
@@ -79,8 +76,11 @@ WITHOUT OIDS;
 -- indexes
 CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(project_id);
 CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(fahrplan_id);
+CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(handle_id);
 
 -- trigger
+CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();
+
 CREATE OR REPLACE FUNCTION inherit_fahrplan_id() RETURNS trigger AS
 $BODY$
 DECLARE
