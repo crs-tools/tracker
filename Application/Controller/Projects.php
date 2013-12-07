@@ -35,7 +35,7 @@
 					implode(',', $this->project->EncodingProfileVersion->pluck('encoding_profile_id')) .
 				')'); // TODO: cleanup when select()/not() supported
 			
-			$this->properties = $project->Properties;
+			$this->properties = $this->project->Properties;
 			return $this->render('projects/view.tpl');
 		}
 		
