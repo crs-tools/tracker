@@ -332,6 +332,4 @@
 		
 	}
 	
-	class TicketsImportException extends Exception {}
-	
 ?>

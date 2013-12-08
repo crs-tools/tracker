@@ -1,5 +1,5 @@
 <div id="ticket-header">
-	<h2 class="ticket"><span class="title"><?php echo $this->h($project['title']); ?></span></h2>
+	<h2 class="ticket"><span class="title"><?= $this->h($project['title']); ?></span></h2>
 
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
@@ -35,13 +35,25 @@
 		<?php foreach ($versions as $index => $version): ?>
 			<tr>
 				<td><?= $version->EncodingProfile['name']; ?></td>
-				<td>
-					<?= $f->select('EncodingProfileVersion[' . $index . '][encoding_profile_version_id]', null, $version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->toArray(), $version['id'], array('data-submit-on-change' => true)); ?>
-				</td>
-				<td><?= $f->select('EncodingProfileVersion[' . $index . '][priority]', null, array('0' => 'disabled', '0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), $version['priority'], array('data-submit-on-change' => true)); ?></td>
+				<td><?= $f->select(
+					'EncodingProfileVersion[' . $index . '][encoding_profile_version_id]',
+					null,
+					$version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->toArray(),
+					$version['id'],
+					array('data-encoding-profile-version-id' => $version['id'], 'data-encoding-profile-index' => $index)
+				); ?></td>
+				<td><?= $f->select(
+					'EncodingProfileVersion[' . $index . '][priority]',
+					null,
+					array('0' => 'disabled', '0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'),
+					$version['priority'],
+					array('data-submit-on-change' => true)
+				); ?></td>
 				<td><?= $f->checkbox('EncodingProfileVersion[' . $index . '][_destroy]', null, false, array('data-submit-on-change' => true)); ?></td>
 			</tr>
 		<?php endforeach; ?>
+		<?php $f->register('EncodingProfileVersion[][encoding_profile_version_id]'); ?>
+		<?php $f->register('EncodingProfileVersion[][_destroy]'); ?>
 			<tr>
 				<td></td>
 				<td colspan="3">
@@ -60,7 +72,6 @@
 						<?php endforeach; ?>
 						</optgroup>
 					</select>
-					<?php $f->register('EncodingProfileVersion[][encoding_profile_version_id]'); ?>
 				</td>
 			</tr>
 		</tbody>

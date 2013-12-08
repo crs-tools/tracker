@@ -958,11 +958,55 @@ $(function() {
   });
   
   $('select[data-submit-on-change], input[type="checkbox"][data-submit-on-change]')
-    .each(function(i, field) {
+    .each(function(i, field) { // TODO: remove each
       $(field).change(function(event) {
         event.target.form.submit();
       });
     });
+  
+  $('select[data-encoding-profile-version-id]').change(function(event) {
+    var target = $(event.target),
+        lastIndex = parseInt($('select[data-encoding-profile-index]')
+          .last()
+          .data('encoding-profile-index'), 10);
+    
+          // TODO: set name via data-*?
+    $('<input>')
+      .attr({
+        'type': 'hidden',
+        'name': 'EncodingProfileVersion[' + (lastIndex + 1) + '][encoding_profile_version_id]',
+        'value': target.data('encoding-profile-version-id')
+      })
+      .insertAfter(target);
+    $('<input>')
+      .attr({
+        'type': 'hidden',
+        'name': 'EncodingProfileVersion[' + (lastIndex + 1) + '][_destroy]',
+        'value': 1
+      })
+      .insertAfter(target);
+    
+      event.target.form.submit();
+  });
+  /*
+    .each(function(i, select) {
+      var input = $('<input>')
+        .attr({
+          'type': 'hidden',
+          'name': select.name,
+          'value': select.value
+        });
+      
+      select.change(function(event) {
+        
+        select.attr({
+          'name': 
+        });
+        
+        event.target.form.submit();
+      });
+    });
+  */
   
   var projectBarHidden = $.cookie('p') == '0',
       basePath = /https?\:\/\/(.*?)(\/.*)/.exec($('base')[0].href);
