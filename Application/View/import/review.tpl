@@ -7,13 +7,13 @@
 		<li class="ticket-header-bar-background-left"></li>
 			
 		<?php if (User::isAllowed('tickets', 'create')): ?>
-			<li class="action create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
+			<li class="action create"><?= $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		<?php endif; ?>
 			
-		<li class="action current import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
+		<li class="action current import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 
 		<?php if (User::isAllowed('export', 'index')): ?>
-			<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
+			<li class="action export"><?= $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 		<?php endif; ?>
 		
 		<li class="ticket-header-bar-background-right"></li>
@@ -48,28 +48,28 @@
 				<?php foreach ($tickets['changed'] as $id => $ticket): ?>
 					<li>
 						<a class="link">
-							<span class="vid"><?php echo $id; ?></span>
-							<span class="title"><?php echo $this->h(str_truncate($ticket['properties']['Fahrplan.Title'], 45, '…')); ?></span>
+							<span class="vid"><?= $id; ?></span>
+							<span class="title"><?= $this->h(str_truncate($ticket['properties']['Fahrplan.Title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
-							<span class="checkbox"><?php echo $f->checkbox('tickets[change][' . $id . ']', null, true, [], false); ?></span>
+							<span class="checkbox"><?= $f->checkbox('tickets[change][' . $id . ']', null, true, [], false); ?></span>
 						</span>
 					</li>
 					
 					<table class="diff">
 						<?php foreach($ticket['diff'] as $key => $value): ?>
 							<tr>
-								<th width="20%"><?php echo $key; ?></th>
+								<th width="20%"><?= $key; ?></th>
 								<td>
 									<code>
 										<?php if ($value['database'] == null): ?>
-											<ins><?php echo $value['fahrplan']; ?></ins>
+											<ins><?= $value['fahrplan']; ?></ins>
 										<?php elseif ($value['fahrplan'] == null): ?>
-											<del><?php echo $value['database']; ?></del>
+											<del><?= $value['database']; ?></del>
 										<?php else: ?>
-											<del><?php echo $value['database']; ?></del>
+											<del><?= $value['database']; ?></del>
 											</code><code>
-											<ins><?php echo $value['database']; ?></ins>
+											<ins><?= $value['database']; ?></ins>
 										<?php endif; ?>
 									</code><br />
 								</td>
@@ -102,7 +102,7 @@
 	
 	<fieldset>
 		<ul>
-			<li><?php echo $f->submit('Apply checked changes'); ?></li>
+			<li><?= $f->submit('Apply checked changes'); ?></li>
 		</ul>
 	</fieldset>
 </form>

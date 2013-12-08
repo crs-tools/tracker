@@ -3,7 +3,7 @@
 <?php if (User::isAllowed('user', 'create')): ?>
 	<ul class="ticket-header-bar right horizontal table">
 		<li class="ticket-header-bar-background-left"></li>
-			<li class="action create"><?php echo $this->linkTo('user', 'create', '<span>create</span>', 'Create new user'); ?></li>
+			<li class="action create"><?= $this->linkTo('user', 'create', '<span>create</span>', 'Create new user'); ?></li>
 		<li class="ticket-header-bar-background-right"></li>
 	</ul>
 <?php endif; ?>
@@ -25,8 +25,8 @@
 		<tbody>
 			<?php foreach ($users as $user): ?>
 				<tr>
-					<td><?php echo $user['name']; ?></td>
-					<td><?php echo $user['role']; ?></td>
+					<td><?= $this->h($user['name']); ?></td>
+					<td><?= $this->h($user['role']); ?></td>
 					<td></td>
 					<td class="link hide right"><?php if (User::isAllowed('user', 'delete') and !$user->isCurrent()) {
 						echo $this->linkTo('user', 'delete', $user, 'delete', array('class' => 'confirm-user-delete'));

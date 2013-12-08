@@ -1,7 +1,7 @@
 <?php if (User::isAllowed('worker', 'create_group')): ?>
 	<ul class="ticket-header-bar right horizontal table">
 		<li class="ticket-header-bar-background-left"></li>
-			<li class="action create"><?php echo $this->linkTo('workers', 'create_group', '<span>create</span>', 'Create new worker group'); ?></li>
+			<li class="action create"><?= $this->linkTo('workers', 'create_group', '<span>create</span>', 'Create new worker group'); ?></li>
 		<li class="ticket-header-bar-background-right"></li>
 	</ul>
 <?php endif; ?>
@@ -12,7 +12,7 @@
 		<table class="stripe">
 			<thead>
 				<tr>
-					<th colspan="3"><?php echo $group['title']; ?></th>
+					<th colspan="3"><?= $this->h($group['title']); ?></th>
 					<th></th>
 					<th width="5%" class="link hide right">
 						<?php if (User::isAllowed('workers', 'delete_group')) {
@@ -35,9 +35,9 @@
 			<tbody>
 				<?php foreach ($group->Worker->orderBy('last_seen') as $worker): ?>
 					<tr>
-						<td><?php echo $worker['name']; ?></td>
-						<td><?php echo $worker['hostname']; ?></td>
-						<td><?php echo $worker['last_seen']; ?></td>
+						<td><?= $this->h($worker['name']); ?></td>
+						<td><?= $this->h($worker['hostname']); ?></td>
+						<td><?= (new DateTime($worker['last_seen']))->format('d.m.Y H:i:s'); ?></td>
 						<td colspan="3"></td>
 					</tr>
 				<?php endforeach; ?>

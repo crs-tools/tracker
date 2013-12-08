@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?php echo $this->title((!empty($project))? $project['title'] : 'C3 Ticket Tracker'); ?></title>
+		<title><?= $this->title((!empty($project))? $project['title'] : 'C3 Ticket Tracker'); ?></title>
 		<meta charset="utf-8" />
 		
-		<base href="<?php echo $this->Request->getRootURL(); ?>" />
-		<link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->Request->getRootURL(); ?>favicon.ico" />
+		<base href="<?= $this->Request->getRootURL(); ?>" />
+		<link rel="shortcut icon" type="image/x-icon" href="<?= $this->Request->getRootURL(); ?>favicon.ico" />
 		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
-		<?php echo $this->content('stylesheets'); ?>
+		<?= $this->content('stylesheets'); ?>
 	</head>
 	<body>
 		<div id="projects">
 			<ul class="horizontal">
 				<?php if (!empty($projects) and User::isAllowed('projects', 'index')): ?>
-					<li class="link<?php echo ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>"><?php echo $this->linkTo('projects', 'index', 'All projects'); ?></li>
+					<li class="link<?= ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>"><?= $this->linkTo('projects', 'index', 'All projects'); ?></li>
 					
 					<?php if (isset($project)): ?>
 						<li class="padding">›</li>
@@ -29,22 +29,22 @@
 				<?php endif; ?>
 			
 				<?php if (User::isLoggedIn()): ?>
-					<li class="right link"><?php echo $this->linkTo('user', 'logout', 'Logout'); ?></li>
+					<li class="right link"><?= $this->linkTo('user', 'logout', 'Logout'); ?></li>
 					<li class="right padding">·</li>
-					<li class="right link"><?php echo $this->linkTo('user', 'settings', 'Settings'); ?></li>
+					<li class="right link"><?= $this->linkTo('user', 'settings', 'Settings'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right text">
-						Signed in as <strong><?php echo User::getCurrent()['name']; ?></strong>
+						Signed in as <strong><?= User::getCurrent()['name']; ?></strong>
 						<?php /*if ($this->User->isSubstitute()) {
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
 						}*/ ?>
 					</li>
 					<?php if (User::isAllowed('user', 'index')): ?>
 						<li class="right padding">·</li>
-						<li class="right link"><?php echo $this->linkTo('user', 'index', 'Manage users'); ?></li>
+						<li class="right link"><?= $this->linkTo('user', 'index', 'Manage users'); ?></li>
 					<?php endif; ?>
 				<?php else: ?>
-					<li class="right link"><?php echo $this->linkTo('user', 'login', 'Login'); ?></li>
+					<li class="right link"><?= $this->linkTo('user', 'login', 'Login'); ?></li>
 				<?php endif; ?>
 			</ul>
 			<script type="text/javascript" charset="utf-8">
@@ -69,18 +69,18 @@
 						<li id="menu-background-left"></li>
 					
 						<?php if (User::isAllowed('projects', 'index')): ?>
-							<li class="first menu-projects <?php echo (($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''); ?>">
-								<?php echo $this->linkTo('projects', 'index', '<span>Projects</span>', 'Projects'); ?>
+							<li class="first menu-projects <?= (($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''); ?>">
+								<?= $this->linkTo('projects', 'index', '<span>Projects</span>', 'Projects'); ?>
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('encodingsprofiles', 'index')): ?>
-							<li class="menu-encodingprofiles <?php echo (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
-								<?php echo $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
+							<li class="menu-encodingprofiles <?= (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
+								<?= $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('workers', 'index')): ?>
-							<li class="last menu-services <?php echo (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
-								<?php echo $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
+							<li class="last menu-services <?= (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
+								<?= $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
 							</li>
 						<?php endif; ?>
 						
@@ -92,25 +92,25 @@
 					<li id="menu-background-left"></li>
 					
 					<?php if (User::isAllowed('tickets', 'feed')): ?>
-						<li class="first menu-feed <?php echo (($arguments['controller'] == 'tickets' and $arguments['action'] == 'feed')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('tickets', 'feed', $project, '<span>Feed</span>', 'Feed'); ?>
+						<li class="first menu-feed <?= (($arguments['controller'] == 'tickets' and $arguments['action'] == 'feed')? ' current' : ''); ?>">
+							<?= $this->linkTo('tickets', 'feed', $project, '<span>Feed</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
 					<?php if (User::isAllowed('tickets', 'index')): ?>
-						<li class="menu-tickets <?php echo ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['controller'] == 'import' or $arguments['controller'] == 'export')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
+						<li class="menu-tickets <?= ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['controller'] == 'import' or $arguments['controller'] == 'export')? ' current' : ''); ?>">
+							<?= $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
 					<?php // TODO: rename to jobs
 					/*if (User::isAllowed('services', 'workers')): ?>
-						<li class="menu-services <?php echo (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
+						<li class="menu-services <?= (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
+							<?= $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
 						</li>
 					<?php endif;*/ ?>
 					
 					<?php if (User::isAllowed('project', 'view')): ?>
-						<li class="last menu-project <?php echo (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
-							<?php echo $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>
+						<li class="last menu-project <?= (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
+							<?= $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>
 						</li>
 					<?php endif; ?>
 				
@@ -130,20 +130,20 @@
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
 				<div id="flash">
-					<?php echo $this->h($flash[0]['message']); ?>
+					<?= $this->h($flash[0]['message']); ?>
 				</div>
 			<?php endif; ?>
-			<?php echo $this->content(); ?>
+			<?= $this->content(); ?>
 		</div>
 		
-		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/jquery-1.7.min.js" type="text/javascript"></script>
-		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
+		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-1.7.min.js" type="text/javascript"></script>
+		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
 		<?php if (User::isLoggedIn()): ?>
 			<script type="text/javascript">
-				Tracker.User.data = <?php echo json_encode(array('id' => User::getCurrent()['id'], 'name' => User::getCurrent()['name'])); ?>;
+				Tracker.User.data = <?= json_encode(array('id' => User::getCurrent()['id'], 'name' => User::getCurrent()['name'])); ?>;
 			</script>
 		<?php endif; ?>
-		<?php echo $this->content('scripts'); ?>
-		<script src="<?php echo $this->Request->getRootURL(); ?>javascript/main.js" type="text/javascript"></script>
+		<?= $this->content('scripts'); ?>
+		<script src="<?= $this->Request->getRootURL(); ?>javascript/main.js" type="text/javascript"></script>
 	</body>
 </html>
