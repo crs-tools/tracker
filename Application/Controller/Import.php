@@ -33,7 +33,8 @@
 				$this->files = (!empty($files))? array('' => '') + $files : array();
 			}
 			
-			// $this->View->assign('projectProperties', $this->ProjectProperties->findByObject($this->Project->id));
+			$this->source = $this->project->Properties->where(['name' => 'Fahrplan.XML'])->first();
+			
 			return $this->render('import/index.tpl');
 		}
 		

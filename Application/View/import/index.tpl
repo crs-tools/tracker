@@ -25,7 +25,7 @@
 		<legend>Check for Fahrplan updates</legend>
 		<ul>
 			<li>
-				<?= $f->input('url','XML URL', $projectProperties['Fahrplan.XML'], array('class' => 'wide')); ?>
+				<?= $f->input('url','XML URL', (isset($source))? $source['value'] : '', array('class' => 'wide')); ?>
 				<span class="description">
 					The latest Fahrplan XML will be parsed and it'll be checked 
 					wether there is a ticket with the correct metadata for every 

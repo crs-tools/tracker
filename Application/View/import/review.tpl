@@ -2,16 +2,16 @@
 
 <div id="ticket-header">
 	<h2 class="ticket"><span class="title">Check for Fahrplan updates</span></h2>
-
+	
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
-			
+		
 		<?php if (User::isAllowed('tickets', 'create')): ?>
 			<li class="action create"><?= $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		<?php endif; ?>
-			
+		
 		<li class="action current import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
-
+		
 		<?php if (User::isAllowed('export', 'index')): ?>
 			<li class="action export"><?= $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 		<?php endif; ?>
@@ -59,7 +59,7 @@
 					<table class="diff">
 						<?php foreach($ticket['diff'] as $key => $value): ?>
 							<tr>
-								<th width="20%"><?= $key; ?></th>
+								<th width="10%"><?= $key; ?></th>
 								<td>
 									<code>
 										<?php if ($value['database'] == null): ?>
@@ -69,7 +69,7 @@
 										<?php else: ?>
 											<del><?= $value['database']; ?></del>
 											</code><code>
-											<ins><?= $value['database']; ?></ins>
+											<ins><?= $value['fahrplan']; ?></ins>
 										<?php endif; ?>
 									</code><br />
 								</td>
