@@ -988,6 +988,27 @@ $(function() {
     
       event.target.form.submit();
   });
+  
+  $('input[data-encoding-profile-destroy]').each(function(i, input) {
+    input = $(input);
+    
+    input.hide();
+    
+    $('<a>')
+      .attr({
+        'href': '#'
+      })
+      .text('remove')
+      .insertAfter(input)
+      .click(function(event) {
+        event.preventDefault();
+        
+        input.click();
+      });
+    
+    input.parent('td').addClass('link');  
+  });
+  
   /*
     .each(function(i, select) {
       var input = $('<input>')
