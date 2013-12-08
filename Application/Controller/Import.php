@@ -2,6 +2,7 @@
 	
 	requires(
 		'String',
+		'HTTP/Client',
 		'/Model/Ticket'
 	);
 	
@@ -296,20 +297,13 @@
 				return $xml;
 			}
 			
-			// TODO: use HTTP Client?
-			$curl = curl_init($form->getValue('url'));
+			$client = new HTTP_Client();
+			$client->setUserAgent('FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)');
 			
-			curl_setopt_array($curl, array(
-				CURLOPT_USERAGENT => 'FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)',
-				CURLOPT_RETURNTRANSFER => true
-			));
+			$response = $client->get($form->getValue('url'));
+			// TODO: $response->isFailed() / 404?
 			
-			if (!$xml = curl_exec($curl)) {
-				$this->flash('Request to XML URL failed');
-				return false;
-			}
-			
-			if (!$xml = simplexml_load_string($xml)) {
+			if (!$xml = $response->toObject('application/xml')) {
 				$this->flash('Could not parse XML');
 				return false;
 			}
