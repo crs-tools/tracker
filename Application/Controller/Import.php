@@ -71,12 +71,43 @@
 			
 			foreach ($events as $event) {
 				$properties = array();
+				$attributes = $event->attributes();
 				
-				$properties['Fahrplan.ID'] = (int) $event->attributes()['id'];
-				$properties['Fahrplan.GUID'] = (int) $event->attributes()['guid'];
+				if (!isset($attributes['id'])) {
+					// TODO: warning
+					continue;
+				}
+				
+				$properties['Fahrplan.ID'] = (int) $attributes['id'];
+				
+				if (isset($attributes['guid'])) {
+					$properties['Fahrplan.GUID'] = (string) $attributes['guid'];
+				}
 				
 				$properties['Fahrplan.Date'] = (string) current($event->xpath('ancestor::day/@date'));
 				$properties['Fahrplan.Start'] = (string) $event->start;
+				
+				$properties['Fahrplan.Day'] = (string) current($event->xpath('ancestor::day/@index'));
+				$properties['Fahrplan.Duration'] = (string) $event->duration;
+				$properties['Fahrplan.Room'] = (string) $event->room;
+				
+				$properties['Fahrplan.Title'] = (string) $event->title;
+				$properties['Fahrplan.Subtitle'] = (string) $event->subtitle;
+				$properties['Fahrplan.Slug'] = (string) $event->slug;
+				
+				$properties['Fahrplan.Type'] = (string) $event->type;
+				$properties['Fahrplan.Track'] = (string) $event->track;
+				$properties['Fahrplan.Language'] = (string) $event->language;
+				
+				if (isset($event->recording)) {
+					$properties['Fahrplan.Recording.License'] = (string) $event->recording->license;
+					$properties['Fahrplan.Recording.Optout'] = ((string) $event->recording->optout == 'true');
+				}
+				
+				$properties['Fahrplan.Abstract'] = (string) $event->abstract;
+				
+				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
+				
 				
 				$eventStart = new DateTime($properties['Fahrplan.Date'] . ' ' . $properties['Fahrplan.Start']);
 				$eventDayChange = new DateTime($properties['Fahrplan.Date'] . ' ' . $dayChange);
@@ -87,23 +118,8 @@
 						->format('Y-m-d');
 				}
 				
-				$properties['Fahrplan.Day'] = (string) current($event->xpath('ancestor::day/@index'));
-				$properties['Fahrplan.Duration'] = (string) $event->duration;
-				$properties['Fahrplan.Room'] = (string) $event->room;
-				
-				$properties['Fahrplan.Slug'] = (string) $event->slug;
-				$properties['Fahrplan.Title'] = (string) $event->title;
-				$properties['Fahrplan.Subtitle'] = (string) $event->subtitle;
-				$properties['Fahrplan.Track'] = (string) $event->track;
-				$properties['Fahrplan.Type'] = (string) $event->type;
-				$properties['Fahrplan.Language'] = (string) $event->language;
-
-				$properties['Fahrplan.Abstract'] = (string) $event->abstract;
-				
-				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
-				
 				foreach ($properties as $property => $value) {
-					if (empty($value)) {
+					if (empty($value) and $value !== false) {
 						unset($properties[$property]);
 					}
 				}
