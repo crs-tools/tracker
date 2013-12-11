@@ -22,7 +22,7 @@
 							<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
 							
 							if (User::isAllowed('projects', 'edit')) {
-								echo ' ' . $this->linkTo('projects', 'edit', $project, '(settings)');
+								echo ' ' . $this->linkTo('projects', 'view', $project, '(settings)');
 							} ?>
 						</li>
 					<?php endif; ?>

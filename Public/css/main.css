@@ -1724,14 +1724,14 @@ ul.projects {
 	padding: 0;
 }
 
-ul.projects li {
+ul.projects > li {
 	position: relative;
 	margin: 0;
 	list-style-type: none;
 	border-bottom: 1px solid #e0e0e0;
 }
 
-ul.projects li a.link {
+ul.projects > li > a {
 	position: relative;
 	display: block;
 	padding: 1em 0 1em 1em;
@@ -1739,12 +1739,12 @@ ul.projects li a.link {
 	z-index: 10;
 }
 
-ul.projects li a.link:hover, ul.projects li a.link:focus {
+ul.projects > li > a:hover, ul.projects > li > a:focus {
 	background-color: #fff;
 	text-decoration: none;
 }
 
-ul.projects li a.link span {
+ul.projects > li > a > span {
 	position: absolute;
 	right: 0.7em;
 	top: 0.55em;
@@ -1755,25 +1755,23 @@ ul.projects li a.link span {
 	text-indent: -3000px;
 }
 
-ul.projects li a.link:hover span, ul.projects li a.link:focus span {
+ul.projects > li > a:hover > span, ul.projects > li > a:focus > span {
 	background-position: -437px -170px;
 }
 
-/* TODO: unify, position list or similar */
-ul.projects li a.edit, ul.projects li a.delete, ul.projects li a.settings {
-	display: block;
-	position: absolute;
-	right: 11.2em;
-	top: 1.25em;
-	top: 1.1em;
-	padding: 0.7em;
+ul.projects li ul.actions {
+  display: block;
+  position: absolute;
+	right: 4em;
+	top: 1.8em;
 	z-index: 100;
-	color: #acacac;
 }
 
-ul.projects li a.settings { right: 17.3em; }
-ul.projects li a.delete { right: 4em; }
+ul.projects li ul.actions li a {
+  padding: 1em 0.7em;
+  color: #acacac;
+}
 
-ul.projects li a.edit:hover, ul.projects li a.edit:focus, ul.projects li a.delete:hover, ul.projects li a.delete:focus, ul.projects li a.settings:hover, ul.projects li a.settings:focus {
-	color: #248fda;
+ul.projects li ul.actions li a:hover, ul.projects li ul.actions li a:focus {
+  color: #248fda;
 }

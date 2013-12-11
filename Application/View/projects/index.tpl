@@ -17,19 +17,16 @@
 	<?php if (!empty($projects)): ?>
 		<?php foreach ($projects as $project): ?>
 			<li>
-				<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $project['slug']), $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', array('class' => 'link', 'title' => $project['title']));
+				<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $project['slug']), $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', array('class' => 'link', 'title' => $project['title'])); ?>
 				
-				if (User::isAllowed('projects', 'view')) {
-					echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), 'project settings', array('class' => 'settings'));
-				}
-				
-				/*if (User::isAllowed('projects', 'edit')) {
-					echo $this->linkTo('projects', 'edit', $project, array('?ref=index'), 'edit project', array('class' => 'edit'));
-				}*/
-				
-				if (User::isAllowed('projects', 'delete')) {				
-					echo $this->linkTo('projects', 'delete', $project, 'delete project', array('class' => 'delete'));
-				} ?>
+				<ul class="actions horizontal">
+					<?php if (User::isAllowed('projects', 'view')): ?>
+						<li><?= $this->linkTo('projects', 'view', ['project_slug' => $project['slug']], 'project settings'); ?></li>
+					<?php endif; ?>
+					<?php if (User::isAllowed('projects', 'delete')): ?>
+						<li><?= $this->linkTo('projects', 'delete', ['project_slug' => $project['slug']], 'delete project'); ?></li>
+					<?php endif; ?>
+				</ul>
 			</li>
 		<?php endforeach; ?>
 	<?php endif; ?>

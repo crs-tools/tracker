@@ -1,6 +1,6 @@
 <?php echo $f = $form(); ?>
 	<fieldset>
-		<h2>Delete project <?php echo $this->linkTo('tickets', 'index', array('project_slug' => $project['slug']), $project['title']); ?>?</h2>
+		<h2>Delete project <?= $this->linkTo('projects', 'view', $project, $project['title']); ?>?</h2>
 		<ul>
 			<li>
 				<p>
@@ -11,7 +11,7 @@
 					</span>
 				</p>
 			</li>
-			<li><?php echo $f->submit('Delete project'); ?> or <?php echo $this->linkTo('projects', 'index', 'return without doing anything') ?></li>
+			<li><?= $f->submit('Delete project'); ?> or <?= $this->linkTo('projects', 'index', 'return without doing anything'); ?></li>
 		</ul>
 	</fieldset>
 </form>

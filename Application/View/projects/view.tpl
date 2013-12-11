@@ -43,7 +43,7 @@
 					$version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->toArray(),
 					$version['id'],
 					array('data-encoding-profile-version-id' => $version['id'], 'data-encoding-profile-index' => $index)
-				); ?></td>
+				); // TODO: show "x newer versions", maybe JS? ?></td>
 				<td><?= $f->select(
 					'EncodingProfileVersion[' . $index . '][priority]',
 					null,
@@ -90,3 +90,5 @@
 </form>
 
 <h3 class="table">States</h3>
+
+<h3 class="table">Worker groups</h3>

@@ -46,7 +46,7 @@
 				<li class="checkbox"><?php if ($version['id'] != $profile->LatestVersion['id']) {
 						echo $f->hidden('create_version', 1, array('readonly' => true));
 						echo $f->checkbox('create_version', 'Create new version when editing the template', true, array('disabled' => true), false);
-						echo '<span class="description">Editing an older version always creates a new version.</span>';
+						echo '<span class="description">Editing an old version always creates a new version.</span>';
 					} else {
 						echo $f->checkbox('create_version', 'Create new version when editing the template', false, [], $useRequestValue);
 					}
