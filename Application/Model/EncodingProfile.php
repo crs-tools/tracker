@@ -12,7 +12,8 @@
 			'LatestVersion' => array(
 				'class_name' => 'EncodingProfileVersion',
 				'foreign_key' => 'encoding_profile_id',
-				'order_by' => 'tbl_encoding_profile_version.revision DESC'
+				'order_by' => 'tbl_encoding_profile_version.revision DESC',
+				'join' => false
 			)
 		);
 		
@@ -27,15 +28,15 @@
 			'Versions' => true // TODO: disable destroy
 		);
 		
-		public static function findAllWithVersionCount(array $join = null) {
-			// TODO: clean up if Database_Query_Abstract has support
+		public static function findAllWithVersionCount(array $join = null) {			
 			return self::findAll($join)
-				->select('(' .
+				->select(
+					'*',
 					EncodingProfileVersion::findAll(array())
-						->except(array('select'))->select('COUNT(*)')
+						->select('COUNT(*)')
 						->where('encoding_profile_id = ' . self::TABLE . '.id')
-						->toString() .
-				') AS versions_count');
+						->selectAs('versions_count')
+				);
 		}
 		
 	}

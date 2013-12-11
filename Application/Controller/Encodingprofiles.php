@@ -66,21 +66,11 @@
 		}
 		
 		public function edit(array $arguments) {
-			$this->form();
-			
-			if ($this->form->wasSubmitted()) {
-				$version = EncodingProfileVersion::findBy([
-					'id' => $this->form->getValue('version'),
-					'encoding_profile_id' => $arguments['id']
-				], [], []);
-			}
-			
-			if (!$this->profile = EncodingProfile::find(
-				$arguments['id'],
-				(!isset($version))? ['LatestVersion'] : []
-			)) {
+			if (!$this->profile = EncodingProfile::find($arguments['id'], [])) {
 				throw new EntryNotFoundException();
 			}
+			
+			$this->form();
 			
 			if ($this->form->getValue('save') and $this->profile->save($this->form->getValues())) {
 				if ($this->form->getValue('create_version')) {
@@ -98,8 +88,11 @@
 				return $this->redirect('encodingprofiles', 'index');
 			}
 			
-			if (isset($version)) {
-				$this->version = $version;
+			if ($this->form->wasSubmitted()) {
+				$this->version = EncodingProfileVersion::findBy([
+					'id' => $this->form->getValue('version'),
+					'encoding_profile_id' => $arguments['id']
+				], [], []);
 			} else {
 				$this->version = $this->profile->LatestVersion;
 			}

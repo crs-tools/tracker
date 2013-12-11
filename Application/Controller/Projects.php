@@ -21,7 +21,10 @@
 				$this->flashNow('Updated encoding profiles');
 			}
 			
-			$this->versions = $this->project->EncodingProfileVersion;
+			$this->versions = $this->project
+				->EncodingProfileVersion
+				->join(['EncodingProfile'])
+				->orderBy(EncodingProfile::TABLE . '.name');
 			$this->versions->fetch();
 			
 			$this->versionsLeft = EncodingProfileVersion::findAll(array(
@@ -29,11 +32,18 @@
 					'select' => 'name'
 				)
 			))
-				->except(array('select'))
 				->select('id, encoding_profile_id, revision, created, description')
-				->where('encoding_profile_id NOT IN (' .
-					implode(',', $this->project->EncodingProfileVersion->pluck('encoding_profile_id')) .
-				')'); // TODO: cleanup when select()/not() supported
+				->orderBy('encoding_profile_id, revision DESC'); // TODO: order by encoding_profile_name
+			
+			$versions = $this->versions->pluck('encoding_profile_id');
+			
+			if (!empty($versions)) {
+				$this->versionsLeft->whereNot([
+					'encoding_profile_id' => $versions
+				]);
+			}
+			
+			$this->versionsLeft->fetch();
 			
 			$this->properties = $this->project->Properties;
 			return $this->render('projects/view.tpl');
@@ -62,10 +72,6 @@
 		}
 		
 		public function delete(array $arguments = array()) {
-			if (!$this->project = Project::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
-			
 			$this->form();
 			
 			if ($this->form->wasSubmitted() and $this->project->destroy()) {

@@ -56,14 +56,14 @@
 			'Properties' => true
 		);
 		
-		public static function createMissingEncodingTickets($project, $encodingProfile = null) {
-			Database::$Instance->query('SELECT create_missing_encoding_tickets(?, ?)', [$project, $encodingProfile]);
-			return Database::$Instance->fetchRow()['create_missing_encoding_tickets'];
-		}
-		
 		public static function createMissingRecordingTickets($project) {
 			Database::$Instance->query('SELECT create_missing_recording_tickets(?)', [$project]);
 			return Database::$Instance->fetchRow()['create_missing_recording_tickets'];
+		}
+		
+		public static function createMissingEncodingTickets($project, $encodingProfile = null) {
+			Database::$Instance->query('SELECT create_missing_encoding_tickets(?, ?)', [$project, $encodingProfile]);
+			return Database::$Instance->fetchRow()['create_missing_encoding_tickets'];
 		}
 		
 		/*
