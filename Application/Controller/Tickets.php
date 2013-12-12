@@ -564,12 +564,14 @@
 			}
 			
 			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
-		}
+		}*/
 		
 		public function create() {
+			$this->form();
+			
 			// TODO: check if encoding_profile_id is set for tickets with type_id = 2
 			//       perhaps we have do set a custom validation in model 
-			if (Request::isPostRequest()) {
+			/*if (Request::isPostRequest()) {
 				$this->Ticket->project_id = $this->Project->id;
 				
 				// temporary fix
@@ -628,9 +630,13 @@
 			$this->View->assign('tickets', $this->Ticket->findAll(array(), array('project_id' => $this->Project->id, 'parent_id IS NULL'), array(), 'fahrplan_id', null, 'id, type_id, fahrplan_id, title'));
 			$this->View->assign('states', Model::groupByField($this->State->findAll(array(), (User::isAllowed('tickets', 'create_all'))? array() : array('ticket_type_id' => 3), array(), 'id'), 'ticket_type_id'));
 			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
+			*/
+			$this->users = User::findAll()
+				->select('id, name')
+				->indexBy('id', 'name');
 			
-			$this->View->render('tickets/edit.tpl');
-		}*/
+			return $this->render('tickets/edit.tpl');
+		}
 		
 		public function edit(array $arguments) {
 			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
@@ -710,7 +716,9 @@
 			
 			// $this->states = TicketState::findAll([])->indexBy('');
 			
-			$this->users = User::findAll([])->indexBy('id', 'name'); // TODO: select
+			$this->users = User::findAll()
+				->select('id, name')
+				->indexBy('id', 'name');
 			
 			return $this->render('tickets/edit.tpl');
 		}
