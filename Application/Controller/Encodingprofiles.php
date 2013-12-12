@@ -33,12 +33,12 @@
 			$values = $this->form()->getValues();
 			
 			if (!isset($values['version_a']) or !isset($values['version_b'])) {
-				return $this->redirect('encodingprofiles', 'view', $this->profile->toArray());
+				return $this->redirect('encodingprofiles', 'view', $this->profile);
 			}
 			
 			if ($values['version_a'] == $values['version_b']) {
 				$this->flash('Cannot compare a version with itself');
-				return $this->redirect('encodingprofiles', 'view', $this->profile->toArray());
+				return $this->redirect('encodingprofiles', 'view', $this->profile);
 			}
 			
 			$versions = EncodingProfileVersion::findAll(array())

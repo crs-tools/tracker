@@ -27,7 +27,7 @@
 		*/
 		
 		public function index() {
-			$this->form = $this->form('import', 'review', $this->project->toArray());
+			$this->form = $this->form('import', 'review', $this->project);
 			
 			if (file_exists(ROOT . 'Public/fahrplan/')) {
 				$files = $this->_getFiles();
@@ -41,14 +41,14 @@
 		
 		public function review() {
 			$this->form = $this->form();
-			$this->applyForm = $this->form('import', 'apply', $this->project->toArray());
+			$this->applyForm = $this->form('import', 'apply', $this->project);
 			
 			if (!$this->form->wasSubmitted()) {
-				return $this->redirect('import', 'index', $this->project->toArray());
+				return $this->redirect('import', 'index', $this->project);
 			}
 			
 			if (!$xml = $this->_loadXML($this->form)) {
-				return $this->redirect('import', 'index', $this->project->toArray());
+				return $this->redirect('import', 'index', $this->project);
 			}
 			
 			$tickets = Ticket::findAll(array())
@@ -174,7 +174,7 @@
 					$this->flash('Fahrplan has not changed since last update');
 				}
 				
-				return $this->redirect('import', 'index', $this->project->toArray());
+				return $this->redirect('import', 'index', $this->project);
 			}
 			
 			requiresSession();
@@ -188,7 +188,7 @@
 		
 		public function apply() {
 			if (!isset($_SESSION['import'])) {
-				return $this->redirect('import', 'index', $this->project->toArray());
+				return $this->redirect('import', 'index', $this->project);
 			}
 			
 			$ticketsChanged = 0;
@@ -271,7 +271,7 @@
 			unset($_SESSION['import']);
 			
 			$this->flash('Updated ' . $ticketsChanged . ' ticket' . (($ticketsChanged > 1)? 's' : ''));
-			return $this->redirect('import', 'index', $this->project->toArray());
+			return $this->redirect('import', 'index', $this->project);
 		}
 		
 		public function _getFiles() {
