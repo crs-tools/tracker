@@ -172,6 +172,8 @@
 			if (empty($this->tickets['new']) and empty($this->tickets['changed']) and empty($this->tickets['deleted'])) {
 				if (!$this->_createMissingTickets($this->tickets)) {
 					$this->flash('Fahrplan has not changed since last update');
+				} else {
+					$this->flash('Added missing child tickets');
 				}
 				
 				return $this->redirect('import', 'index', $this->project);
@@ -266,7 +268,7 @@
 			
 			Database::$Instance->commit();
 			
-			$this->_createMissingTickets($tickets);
+			$this->_createMissingTickets($_SESSION['import']);
 			
 			unset($_SESSION['import']);
 			
@@ -330,7 +332,7 @@
 		public function _createMissingTickets($tickets) {
 			$result = 0;
 			
-			if ($tickets['create_encoding_tickets'] ) {
+			if ($tickets['create_encoding_tickets']) {
 				$result |= (Ticket::createMissingEncodingTickets($this->project['id']) > 0);
 			}
 			
