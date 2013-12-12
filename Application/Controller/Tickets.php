@@ -29,8 +29,8 @@
 		
 		public function index() {
 			// TODO: join encoding profile?
-			$this->tickets = Ticket::findAll([])
-				->withDefaultProperties();
+			$this->tickets = Ticket::findAll()
+				->scoped(['with_default_properties', 'order_list']);
 			
 			/*
 			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
@@ -632,7 +632,11 @@
 			$this->View->render('tickets/edit.tpl');
 		}*/
 		
-		public function edit(array $arguments = array()) {
+		public function edit(array $arguments) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
+				throw new EntryNotFoundException();
+			}
+			
 			$this->form();
 			
 			/*
@@ -703,6 +707,11 @@
 			
 			$this->View->render('tickets/edit.tpl');
 			*/
+			
+			// $this->states = TicketState::findAll([])->indexBy('');
+			
+			$this->users = User::findAll([])->indexBy('id', 'name'); // TODO: select
+			
 			return $this->render('tickets/edit.tpl');
 		}
 		

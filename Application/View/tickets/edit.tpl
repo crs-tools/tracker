@@ -21,7 +21,7 @@
 					echo $ticket['id'];
 				}
 			} ?></span>
-			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket + $project, Text::shorten($ticket['title'], 37)); ?></span>
+			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket, $project, str_shorten($ticket['title'], 37)); ?></span>
 		</h2>
 	<?php else: ?>
 		<h2 class="ticket"><span class="title">Create new ticket</span></h2>
@@ -31,7 +31,7 @@
 		<li class="ticket-header-bar-background-left"></li>
 			
 		<?php if (!empty($ticket)): ?>
-			<?php if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
+			<?php /*if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
 				<li class="action cut"><?php echo $this->linkTo('tickets', 'cut', $ticket + $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
 			<?php endif;
 			if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
@@ -45,12 +45,12 @@
 			<?php endif;
 			if (User::isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
 				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task'); ?></li>
-			<?php endif; ?>
+			<?php endif;*/ ?>
 			
-			<li class="action current edit"><?php echo $this->linkTo('tickets', 'edit', $ticket + $project, '<span>edit</span>', 'Edit ticket…'); ?></li>
+			<li class="action current edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, '<span>edit</span>', 'Edit ticket…'); ?></li>
 			
 			<?php if (User::isAllowed('tickets', 'delete')): ?>
-				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket + $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
+				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
 			<?php endif; ?>
 		<?php else: ?>
 			<li class="action current create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
@@ -67,11 +67,12 @@
 	</ul>
 </div>
 
-<?php if (empty($ticket)) {
+<?php /*if (empty($ticket)) {
 	echo $f = $this->form('tickets', 'create', $project, array('id' => 'ticket-edit'));
 } else {
 	echo $f = $this->form('tickets', 'edit', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), array('id' => 'ticket-edit'));
-} ?>
+} */ ?>
+<?= $f = $form(array('id' => 'ticket-edit')); ?>
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
@@ -79,7 +80,7 @@
 				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + ((!empty($profiles))? $profiles : array()), $ticket['encoding_profile_id']); ?>
 			<?php endif; ?>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
-			<li><?php echo $f->select('assignee', 'Assignee', array('' => '–') + $users, $ticket['user_id']); ?></li>
+			<li><?php echo $f->select('assignee', 'Assignee', array('' => '–') + $users->toArray(), $ticket['user_id']); ?></li>
 			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
 		</ul>
 	</fieldset>
@@ -87,7 +88,7 @@
 		<legend>State</legend>
 		<ul>
 			<li>
-				<?php if (!empty($ticket)): ?>
+				<?php /*if (!empty($ticket)): ?>
 			        <?php echo $states[$ticket['state_id']]; ?><span class="description-color">  ⟶ </span>
 				<?php endif; ?>
 				<label for="ticket-edit-state">State</label>
@@ -105,7 +106,7 @@
 					</select>
 				<?php else: ?>
 					<?php echo $f->select('state', null, $states, $ticket['state_id'], array('id' => 'ticket-edit-state')) ?>
-				<?php endif; ?>
+				<?php endif;*/ ?>
 			</li>
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', $ticket['failed']); ?></li>
 		</ul>
@@ -132,27 +133,16 @@
 	<?php endif; ?>
 	<fieldset class="foldable">
 		<legend>Properties</legend>
-		<ul id="ticket-edit-properties" class="edit-properties" data-property-object="property">
-			<?php if (!empty($properties)): ?>
-				<?php foreach($properties as $key => $value): ?>
-					<li><?php echo $f->input('properties[' . $key . ']', $key, $value); ?></li>
-				<?php endforeach; ?>
-			<?php endif; ?>
-			
-			<?php if (Request::isPostRequest() and Request::post('name')): ?>
-				<?php $values = Request::post('value');
-				$names = Request::post('value');
-				
-				if (is_array($names) and is_array($values) and count($names) == count($values)):
-					foreach (Request::post('name') as $i => $name): ?>
-						<li class="new">
-							<label><?php echo $f->input('name[]', null, $name); ?></label>
-							<?php echo $f->input('value[]', null, $values[$i]); ?>	
-						</li>
-					<?php endforeach; ?>
-				<?php endif; ?>
-			<?php endif; ?>
-		</ul>
+		<?php echo $this->render('shared/form/properties.tpl', array(
+			'f' => $f,
+			'properties' => array(
+				'for' => $ticket->Properties,
+				'field' => 'properties',
+				'description' => 'property',
+				'key' => 'name',
+				'value' => 'value'
+			)
+		)); ?>
 	</fieldset>
 	<fieldset>
 		<ul>
@@ -164,9 +154,9 @@
 					echo $f->submit('Save ticket') . ' or ';
 					
 					if ($referer) {
-						echo $this->linkTo('tickets', 'index', $project + (($referer != 'index')? array('?t=' . $referer) : array()), 'discard changes', array('class' => 'reset'));
+						echo $this->linkTo('tickets', 'index', $project, (($referer != 'index')? array('?t=' . $referer) : array()), 'discard changes', array('class' => 'reset'));
 					} else {
-						echo $this->linkTo('tickets', 'view', $ticket + $project, 'discard changes', array('class' => 'reset'));
+						echo $this->linkTo('tickets', 'view', $ticket, $project, 'discard changes', array('class' => 'reset'));
 					}
 				} ?>
 			</li>

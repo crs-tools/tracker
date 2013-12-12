@@ -955,17 +955,22 @@ ul.tickets {
 ul.tickets li {
 	position: relative;
 	height: 39px;
-	margin: 0 0 10px 0;
+  margin: 0 0 10px 0;
 	clear: both;
 	list-style-type: none;
 }
 
 ul.tickets li.child {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
-ul.tickets li.child.first { margin-top: -10px; }
-ul.tickets li.child.last { margin-bottom: 10px; }
+ul.tickets li:not(.child) + li.child {
+  margin-top: -10px;
+}
+
+ul.tickets li.child + li:not(.child) {
+  margin-top: 10px;
+}
 
 ul.tickets li.child, ul.tickets li.child a.link, ul.tickets li.child span.other {
 	height: 29px;

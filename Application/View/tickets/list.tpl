@@ -18,7 +18,7 @@ if (!empty($tickets)) {
 	// }
 	
 	foreach ($tickets as $i => $ticket) {
-		$t = '<li data-id="' . $ticket['id'] . '"' /*. ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child' . ((empty($tickets[$i - 1]['parent_id']))? ' first' : '') . ((empty($tickets[$i + 1]['parent_id']))? ' last' : '')) . '"' : '') . */ . '>';
+		$t = '<li data-id="' . $ticket['id'] . '"' . ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child') . '"' : '') . '>';
 			$t .= '<a class="link" href="' . $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + array('project_slug' => $project['slug']) + (($referer and $referer != 'index')? array('?ref=' . $referer) : array())) . '" title="' . (($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) . ' – ' . $this->h($ticket['title']) . ((!empty($ticket['encoding_profile_name']))? ' (' . $ticket['encoding_profile_name'] . ')' : '') . (($ticket['failed'])? ' (' . $ticket['ticket_state'] . ' failed)' : (($ticket['needs_attention'])? ' (needs attention)' : '')) . '">';
 				$t .= '<span class="vid' . (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : '') . '">';
 				

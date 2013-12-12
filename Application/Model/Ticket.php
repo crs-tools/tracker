@@ -1,7 +1,6 @@
 <?php
 	
 	requires(
-		'/Model/Ticket/Resource',
 		'/Model/TicketProperties'
 	);
 	
@@ -55,6 +54,59 @@
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true
 		);
+		
+		public $scopes = array(
+			'with_properties',
+			'with_default_properties',
+			'order_list'
+			// TODO: with_progress
+		);
+		
+		public function with_properties(Model_Resource $resource, array $arguments) {
+			// $parent = $this->Parent;
+			// OR ticket_id = tbl_ticket.parent_id
+			
+			foreach ($arguments as $property => $as) {
+				$resource->join(
+					TicketProperties::TABLE,
+					'value AS ' . $as,
+					'((ticket_id = ' .
+						self::TABLE .
+						'.id AND ' . 
+						self::TABLE .
+						'.parent_id IS NULL) OR (ticket_id = ' .
+						self::TABLE .
+						'.parent_id AND ' .
+						self::TABLE .
+						'.parent_id IS NOT NULL)) AND name = ?',
+					array($property),
+					'LEFT'
+				);
+			}
+			
+			return $resource;
+		}
+		
+		public function with_default_properties(Model_Resource $resource, array $arguments) {
+			return $this->with_properties($resource, [
+				'Fahrplan.Start' => 'fahrplan_start',
+				'Fahrplan.Date' => 'fahrplan_date',
+				'Fahrplan.Day' => 'fahrplan_day',
+				'Fahrplan.Room' => 'fahrplan_room'
+			]);
+		}
+		
+		public function order_list(Model_Resource $resource, array $arguments) {
+			return $resource->orderBy(
+				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC'
+			);
+			
+			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
+			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
+		}
+		
+		// TODO: with_progress
+		// $this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
 		
 		public static function createMissingRecordingTickets($project) {
 			Database::$Instance->query('SELECT create_missing_recording_tickets(?)', [$project]);
@@ -350,47 +402,5 @@
 		}
 		*/
 	}
-	
-	/*
-	class Ticket_Query extends Database_Query {
-		
-		private $_properties;
-		private $_progress;
-		
-		public function __construct() {
-			parent::__construct('tbl_ticket');
-			
-			$this->_properties = array();
-			$this->_progress = false;
-		}
-		
-		public function getProperties(array $properties = array()) {
-			$this->_properties = array_merge($this->_properties, $properties);
-			return $this;
-		}
-		
-		public function getProgress() {
-			$this->_progress = true;
-			return $this;
-		}
-		
-		public function toString() {
-			if (!empty($this->_properties)) {
-				foreach ($this->_properties as $property => $as) {
-					$this->join('tbl_ticket_property', 'value AS ' . $as, '(ticket_id = tbl_ticket.id OR ticket_id = tbl_ticket.parent_id) AND name = ?', array($property), 'LEFT');
-				}
-			}
-			
-			if ($this->_progress) {
-				$this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
-			}
-			
-			$query = parent::toString();
-			
-			return 'SELECT DISTINCT' . mb_substr($query, 6);
-		}
-		
-	}
-	*/
 	
 ?>
