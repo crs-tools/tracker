@@ -20,36 +20,22 @@
 	</ul>
 </div>
 
-<?php echo $f = $this->form('export', 'wiki', $project); ?>
-	<?php if (User::isAllowed('export', 'wiki', $project)): ?>
-	<fieldset>
-		<legend>Export to public wiki</legend>
-		<ul>
-			<li><?php echo $f->input('url', 'URL to public wiki', $projectProperties['Wiki.URL'], array('class' => 'wide')); ?></li>
-			<li><?php echo $f->input('user', 'User', $projectProperties['Wiki.User']); ?></li>
-			<li><?php echo $f->password('password', 'Password', array('value' => $projectProperties['Wiki.Password'])); ?></li>
-			<li><?php echo $f->submit('Export to public wiki'); ?></li>
-		</ul>
-	</fieldset>
-	<?php endif; ?>
-</form>
-
-<?php if (User::isAllowed('export', 'feedback')):
-	echo $f = $this->form('export', 'feedback', $project); ?>
+<?php if (User::isAllowed('export', 'wiki', $project)): ?>
+	<?php echo $f = $wikiForm(); ?>
 		<fieldset>
-			<legend>Sync with feedback tracker</legend>
+			<legend>Export to public wiki</legend>
 			<ul>
-				<li><?php echo $f->input('url', 'URL to feedback tracker', $projectProperties['Feedback.URL'], array('class' => 'wide')); ?></li>
-				<li><?php echo $f->input('user', 'User', $projectProperties['Feedback.User']); ?></li>
-				<li><?php echo $f->password('password', 'Password', array('value' => $projectProperties['Feedback.Password'])); ?></li>
-				<li><?php echo $f->submit('Sync with feedback tracker'); ?></li>
+				<li><?php echo $f->input('url', 'URL to public wiki', $projectProperties['Wiki.URL'], array('class' => 'wide')); ?></li>
+				<li><?php echo $f->input('user', 'User', $projectProperties['Wiki.User']); ?></li>
+				<li><?php echo $f->password('password', 'Password', array('value' => $projectProperties['Wiki.Password'])); ?></li>
+				<li><?php echo $f->submit('Export to public wiki'); ?></li>
 			</ul>
 		</fieldset>
 	</form>
 <?php endif; ?>
 
 <?php if (User::isAllowed('export', 'podcast')): ?>
-	<?php echo $f = $this->form('export', 'podcast', $project); ?>
+	<?php echo $f = $podcastForm(); ?>
 		<fieldset>
 			<legend>Export as podcast feed</legend>
 			<ul>

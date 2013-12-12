@@ -4,20 +4,24 @@
 		
 		public $requireAuth = true;
 		
-		public function __construct($action, $arguments) {
-			parent::__construct($action, $arguments);
-			
-			$this->View->assign('projectProperties', $this->ProjectProperties->findByObject($this->Project->id));
-		}
-		
 		public function index() {
+			$this->wikiForm = $this->form('export', 'wiki', $this->project);
+			$this->podcastForm = $this->form('export', 'podcast', $this->project);
+			
+			$this->projectProperties = $this->project
+				->Properties
+				->indexBy('name', 'value')
+				->toArray();
+			
+			/*
 			$profiles = $this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id), array(), null, null, 'slug, name');
 			
 			if (!empty($profiles)) {
 				$this->View->assign('profiles', Model::indexByField($profiles, 'slug', 'name'));
 			}
+			*/
 			
-			$this->View->render('export/index.tpl');
+			return $this->render('export/index.tpl');
 		}
 		
 		public function wiki() {			
@@ -48,19 +52,19 @@
 				$result = $client->post($loginURL);
 				
 				if (!isset($result['login']['result']) or $result['login']['result'] != 'NeedToken') {
-					throw new TicketsExportException('can\'t acquire a valid token');
+					// throw new TicketsExportException('can\'t acquire a valid token');
 				}
 
 				$result = $client->post($loginURL . '&lgtoken=' . urlencode($result['login']['token']));
 				
 				if (!isset($result['login']['result']) or $result['login']['result'] != 'Success') {
-					throw new TicketsExportException('username, password or token invalid');
+					// throw new TicketsExportException('username, password or token invalid');
 				}
 				
 				$result = $client->get($baseURL . '&action=query&prop=info&intoken=edit&titles=Conference%20Recordings');
 				
 				if (!isset($result['query']['pages'])) {
-					throw new TicketsExportException('can\'t acquire valid page info');
+					// throw new TicketsExportException('can\'t acquire valid page info');
 				}
 				
 				$result = current($result['query']['pages']);
@@ -82,10 +86,10 @@
 				));
 				
 				if (empty($result)) {
-					$this->View->flash('Exported tickets successfully');
+					$this->flash('Exported tickets successfully');
 				}
 			} catch (TicketsExportException $e) {
-				$this->View->flash('Export failed' . (($e->getMessage())? ': ' . $e->getMessage() : ''), View::flashWarning);
+				// $this->flash('Export failed' . (($e->getMessage())? ': ' . $e->getMessage() : ''), self::FLASH_WARNING);
 			}
 			
 			return $this->View->redirect('export', 'index', array('project_slug' => $this->Project->slug));
@@ -112,110 +116,6 @@
 			$this->View->render('export/podcast.tpl');
 		}
 		
-		public function feedback() {
-			if (Request::isPostRequest()) {
-				try {
-					$client = new HTTP_Client();
-					$client->setUserAgent('FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)');
-					$client->setAuthentication(Request::post('user'), Request::post('password'));
-					
-					$comments = $client->get(Request::post('url') . 's/comments');
-					
-					if (!empty($comments)) {
-						foreach ($comments as $comment) {
-							if (isset($comment['uid'])) {
-								if (!$parent = $this->Ticket->find($comment['uid'], array(), array('project_id' => $this->Project->id))) {
-									Log::info('Misc ticket id ' . $comment['fahrplan_id'] . ' not found in feedback tracker import');
-									continue;
-								}
-							} else {
-								if (!$parent = $this->Ticket->findFirst(array(), array('fahrplan_id' => $comment['fahrplan_id'], 'project_id' => $this->Project->id))) {
-									Log::info('Ticket id #' . $comment['fahrplan_id'] . ' not found in feedback tracker import');
-									continue;
-								}
-								
-								if (!$this->Ticket->create(array(
-										'parent_id' => $parent['id'],
-										'project_id' => $parent['project_id'],
-										'title' => Text::truncate($comment['comment'], 50),
-										'fahrplan_id' => $parent['fahrplan_id'],
-										'type_id' => 3,
-										'priority' => 1.0,
-										'state_id' => $this->State->getIdByName('open')
-									))) {
-									continue;
-								}
-								
-								if ($this->Comment->create(array(
-										'ticket_id' => $this->Ticket->id,
-										'user_id' => 1, // FIXME: hardcoded user id, very, very bad
-										'origin_user_name' => $comment['author'],
-										'comment' => $comment['comment']
-									))) {
-									Log::info('Successfully imported comment from feedback tracker');	
-								}
-							}
-						}
-					}
-					
-					$tickets = $this->Ticket->findAll(array('Comment' => array('fields' => 'created, comment, user_id, origin_user_name'), 'EncodingProfile' => array('fields' => 'name AS encoding_profile_name, slug AS encoding_profile_slug')), array('project_id' => $this->Project->id), array(), null, null, 'id, fahrplan_id, state_id, type_id, title, created, modified');
-					$data = array();
-					
-					foreach ($tickets['ticket'] as $ticket) {
-						if (!isset($data['tickets'][$ticket['fahrplan_id']])) {
-							$data['tickets'][$ticket['fahrplan_id']] = array('title' => '', 'state' => '', 'profiles' => array(), 'feedback' => array());
-						}
-						
-						switch ($ticket['type_id']) {
-							case 1:
-								$data['tickets'][$ticket['fahrplan_id']]['title'] = $ticket['title'];
-								$data['tickets'][$ticket['fahrplan_id']]['state'] = $this->State->getPublicNameById($ticket['state_id']);
-								break;
-							case 2:
-								$data['tickets'][$ticket['fahrplan_id']]['profiles'][$ticket['encoding_profile_slug']] = array(
-									// 'url' => ,
-									'state' => $this->State->getPublicNameById($ticket['state_id'])
-								);
-								
-								if (!isset($data['profiles'][$ticket['encoding_profile_slug']])) {
-									$data['profiles'][$ticket['encoding_profile_slug']] = array(
-										'name' => $ticket['encoding_profile_name']
-									);
-								}
-								break;
-							case 3:
-								$data['tickets'][$ticket['fahrplan_id']]['feedback'][$ticket['id']] = array(
-									'state' => $this->State->getPublicNameById($ticket['state_id']),
-									'modified' => Date::fromString($ticket['modified'], null, 'c')->toString(),
-									'comments' => array()
-								);
-								
-								if (isset($ticket['comment'])) {
-									foreach ($ticket['comment'] as $comment) {
-										$data['tickets'][$ticket['fahrplan_id']]['feedback'][$ticket['id']]['comments'][] = array(
-											'created' => Date::fromString($ticket['created'], null, 'c')->toString(),
-											'is_feedback' => isset($comment['origin_user_name']),
-											'author' => $comment['origin_user_name'],
-											'comment' => $comment['comment']
-										);
-									}
-								}
-								break;
-						}
-					}
-					
-					$client->post(Request::post('url') . 's/tickets', array('data' => json_encode($data)));
-					
-					$this->View->flash('Synced with feedback tracker');
-					return $this->View->redirect('export', 'index', array('project_slug' => $this->Project->slug));
-				} catch (TicketsExportException $exception) {
-				
-				}
-			}
-		}
-		
 	}
-	
-	class TicketsExportException extends Exception {}
 	
 ?>
