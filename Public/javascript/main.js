@@ -821,7 +821,8 @@
           .attr({
             'type': 'text',
             'name': this.create.value.replace('[]', '[' + (lastIndex + 1) + ']'),
-            'class': 'text'
+            'class': 'text',
+            'data-property-index': lastIndex + 1
           })
           .appendTo(container);
         
