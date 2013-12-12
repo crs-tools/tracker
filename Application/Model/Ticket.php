@@ -98,7 +98,7 @@
 		
 		public function order_list(Model_Resource $resource, array $arguments) {
 			return $resource->orderBy(
-				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC'
+				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, title'
 			);
 			
 			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
