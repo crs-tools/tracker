@@ -47,7 +47,8 @@
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true,
 			'Languages' => true,
-			'EncodingProfileVersion' => true
+			'EncodingProfileVersion' => true,
+			'WorkerGroup' => true
 		);
 	}
 	

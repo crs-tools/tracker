@@ -2,8 +2,11 @@
 	
 	requires(
 		'/Model/Project',
+		
 		'/Model/EncodingProfile',
-		'/Helper/EncodingProfile'
+		'/Helper/EncodingProfile',
+		
+		'/Model/WorkerGroup'
 	);
 	
 	class Controller_Projects extends Controller_Application {
@@ -15,6 +18,10 @@
 		}
 		
 		public function view() {
+			// Properties
+			$this->properties = $this->project->Properties;
+			
+			// Encoding Profiles
 			$this->profilesForm = $this->form();
 			
 			if ($this->profilesForm->wasSubmitted() and $this->project->save($this->profilesForm->getValues())) {
@@ -45,7 +52,21 @@
 			
 			$this->versionsLeft->fetch();
 			
-			$this->properties = $this->project->Properties;
+			// Worker Groups
+			$this->workerGroupForm = $this->form();
+			
+			if ($this->workerGroupForm->wasSubmitted() and $this->project->save($this->workerGroupForm->getValues())) {
+				$this->flashNow('Updated project worker group assignment');
+			}
+			
+			$this->workerGroups = WorkerGroup::findAll()
+				->select('id, title');
+			$this->workerGroupAssignment = $this->project
+				->WorkerGroup
+				->select(WorkerGroup::TABLE . '.id')
+				->indexBy('id')
+				->toArray();
+			
 			return $this->render('projects/view.tpl');
 		}
 		

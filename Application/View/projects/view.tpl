@@ -92,3 +92,25 @@
 <h3 class="table">States</h3>
 
 <h3 class="table">Worker groups</h3>
+
+<?= $f = $workerGroupForm(); ?>
+	<ul class="worker-groups">
+		<?php foreach ($workerGroups as $index => $group): ?>
+			<li>
+				<?= $f->checkbox(
+					'WorkerGroup[' . $index . '][worker_group_id]',
+					$group['title'],
+					isset($workerGroupAssignment[$group['id']]),
+					['value' => $group['id']] +
+						((isset($workerGroupAssignment[$group['id']]))?
+							['data-worker-group-destroy' => 'WorkerGroup[' . $index . '][_destroy]'] :
+							[]),
+					false
+				); ?>
+			</li>
+		<?php $f->register('WorkerGroup[' . $index . '][_destroy]');
+		endforeach; ?>
+	</ul>
+	
+	<?= $f->submit('Save assignment'); ?>
+</form>

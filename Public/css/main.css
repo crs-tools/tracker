@@ -1647,6 +1647,34 @@ ul.workers li span.log {
 	display: none;
 }
 
+ul.worker-groups {
+  padding: 0;
+}
+
+ul.worker-groups li {
+  margin: 0;
+  width: 50%;
+  float: left;
+  list-style-type: none;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+ul.worker-groups li input.checkbox {
+  margin: 0.7em 0.5em 0.5em;
+}
+
+ul.worker-groups li label {
+	font-size: 1.2em;
+}
+
+ul.worker-groups + input.submit {
+  margin: 0.7em 0.4em;
+}
+
+/*ul.worker-groups li:nth-child(odd) {
+  border-right: 1px solid #e0e0e0;
+}*/
+
 /* Users */
 
 div.table {

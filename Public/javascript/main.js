@@ -1010,25 +1010,34 @@ $(function() {
     input.parent('td').addClass('link');  
   });
   
-  /*
-    .each(function(i, select) {
-      var input = $('<input>')
+  $('input[data-worker-group-destroy]')
+    .change(function(event) {
+      var target = $(event.target);
+    
+      if (!event.target.checked) {
+        target.data(
+          'destroy',
+          $('<input>')
+            .attr({
+              'type': 'hidden',
+              'name': target.data('worker-group-destroy'),
+              'value': 1
+            })
+            .insertAfter(target)
+        );
+      } else if (target.data('destroy')) {
+        target.data('destroy').remove();
+      }
+    })
+    .each(function(i, input) {
+      $('<input>')
         .attr({
           'type': 'hidden',
-          'name': select.name,
-          'value': select.value
-        });
-      
-      select.change(function(event) {
-        
-        select.attr({
-          'name': 
-        });
-        
-        event.target.form.submit();
-      });
+          'name': input.name,
+          'value': input.value
+        })
+        .insertAfter(input);
     });
-  */
   
   var projectBarHidden = $.cookie('p') == '0',
       basePath = /https?\:\/\/(.*?)(\/.*)/.exec($('base')[0].href);
