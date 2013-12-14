@@ -2,7 +2,9 @@
 	
 	requires(
 		'Controller/XMLRPC',
-		'/Model/WorkerGroup'
+		'/Model/WorkerGroup',
+        '/Model/EncodingProfile',
+        '/Model/LogEntry'
 	);
 	
 	class Controller_XMLRPC_Handler extends Controller_XMLRPC {
@@ -21,15 +23,16 @@
 			if (!$group = WorkerGroup::findBy(array('token' => $_GET['group']))) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
 			}
-			
-			if (!self::_validateSignature($group['secret'], array_merge(array(
+
+            $signature = array_pop($this->arguments);
+			if (!self::_validateSignature($group['secret'], $signature, array_merge(array(
 				$this->Request->getURL(),
 				self::XMLRPC_PREFIX . $method,
 				$group['token'],
-				$_GET['hostname']
-			), $arguments))) {
+				$_GET['hostname']),
+                $this->arguments))) {
 				return $this->_XMLRPCFault(-32500, 'invalid or missing signature');
-			} 
+			}
 			
 			$name = self::_getNameFromHostName($_GET['hostname']);
 			
@@ -43,8 +46,7 @@
 			}
 		}
 		
-		private static function _validateSignature($secret, $arguments) {
-			$signature = array_pop($arguments);
+		private static function _validateSignature($secret, $signature, $arguments) {
 			$hash = hash_hmac(
 				'sha256',
 				rawurlencode(implode('&', $arguments)),
@@ -73,17 +75,21 @@
 		}
 
         /**
-         * echo method to testXMLRPC API
+         * Get details about the encoding profiles available for this project.
          *
-         * @param string frist message
-         * @param string second message
-         * @return string input string
+         * @param integer encoding_profile_id get details only for specified profile
+         * @return array profile details
          */
-        public function getEcho($msg, $msg2) {
-            return $msg . ' ' . $msg2;
+        public function getEncodingProfiles($encoding_profile_id = null) {
+            if(!empty($encoding_profile_id)) {
+                $profiles = array(EncodingProfile::findBy(array('id' => $encoding_profile_id))->toArray());
+            } else {
+                $profiles = EncodingProfile::findAll()->toArray();
+            }
+            return is_array($profiles) ? $profiles : array();
         }
 
-		/**
+        /**
 		 * fetches list of projects
 		 * 
 		 * @param boolean read_only if true, finished projects get listed too (default: false)
@@ -654,22 +660,6 @@
 			$processor->importStylesheet($template);
 			
 			return $processor->transformToXML($content);
-		}*/
-		
-		/**
-		* Get details about the encoding profiles available for this project.
-		*
-		* @param encoding_profile_id get details only for specified profile
-		* @return array profile details
-		*/
-		/*public function getEncodingProfiles($encoding_profile_id = null) {
-			if($encoding_profile_id) {
-				$profiles = $this->EncodingProfile->find($encoding_profile_id, array(), array('project_id' => $this->Project->current()->id));
-			} else {
-				$profiles = $this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->current()->id));
-			}
-			
-			return is_array($profiles) ? $profiles : array();
 		}*/
 		
 		/**
