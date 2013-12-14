@@ -22,14 +22,11 @@
 	':project_slug/tickets/export/wiki' => array(':controller' => 'export', ':action' => 'wiki'),
 	':project_slug/tickets/export/podcast/:profile_slug' => array(':controller' => 'export', ':action' => 'podcast'),
 	':project_slug/tickets/export/feedback' => array(':controller' => 'export', ':action' => 'feedback'),
-
-	//':project_slug/services/worker/:id/halt' => array(':controller' => 'services', ':action' => 'halt'),
-	//':project_slug/services/worker/:id/command' => array(':controller' => 'services', ':action' => 'command'),
-
+	
 	':project_slug/workers' => array(':controller' => 'workers', ':action' => 'project'),
 	':project_slug/services/hold' => array(':controller' => 'services', ':action' => 'hold'),
 	':project_slug/services/resume' => array(':controller' => 'services', ':action' => 'resume'),
-
+	
 	':project_slug/settings' => array(':controller' => 'projects', ':action' => 'view'),
 	':project_slug/settings/encoding/profiles/add' => array(':controller' => 'projects', ':action' => 'add_encoding_profile'),
 	
@@ -52,15 +49,15 @@
 
 	'user/switch/:id' => array(':controller' => 'user', ':action' => 'substitute'),
 	'user/exit' => array(':controller' => 'user', ':action' => 'changeback'),
-
+	
 	'project/create' => array(':controller' => 'projects', ':action' => 'create'),
 	':project_slug/settings/general' => array(':controller' => 'projects', ':action' => 'edit'),
-	'project/:id/delete' => array(':controller' => 'projects', ':action' => 'delete'),
+	':project_slug/delete' => array(':controller' => 'projects', ':action' => 'delete'),
 	'projects' => array(':controller' => 'projects', ':action' => 'index'),
-
+	
 	'login' => array(':controller' => 'user', ':action' => 'login'),
 	'logout' => array(':controller' => 'user', ':action' => 'logout'),
 	'settings' => array(':controller' => 'user', ':action' => 'settings'),
-
+	
 	':project_slug' => array(':controller' => 'tickets', ':action' => 'feed')
 ); ?>

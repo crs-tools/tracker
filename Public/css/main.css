@@ -486,12 +486,12 @@ form fieldset ul li input.submit + a {
 	margin-left: 0.5em;
 }
 
-form fieldset ul li a.reset {
+form a.reset {
 	display: inline-block;
 	color: #707070;
 }
 
-form fieldset ul li a.reset:hover, form fieldset ul li a.reset:focus {
+form a.reset:hover, form a.reset:focus {
 	color: #FF3E43;
 }
 

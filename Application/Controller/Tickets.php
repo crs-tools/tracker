@@ -4,6 +4,7 @@
 		'String',
 		'/Controller/Application',
 		'/Model/Ticket',
+		'/Model/TicketState',
 		'/Model/Comment'
 	);
 	
@@ -639,7 +640,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
@@ -714,7 +715,22 @@
 			$this->View->render('tickets/edit.tpl');
 			*/
 			
-			// $this->states = TicketState::findAll([])->indexBy('');
+			if ($this->form->wasSubmitted() and $this->ticket->save($this->form->getValues())) {
+				if ($this->form->getValue('comment')) {
+					Comment::create([
+						'ticket_id' => $this->ticket['id'],
+						'handle_id' => User::getCurrent()['id'],
+						'comment' => $this->form->getValue('comment')
+					]);
+				}
+				
+				$this->flash('Ticket updated');
+				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+			}
+			
+			$this->states = $this->project
+				->States
+				->where(['ticket_type' => $this->ticket['ticket_type']]);
 			
 			$this->users = User::findAll()
 				->select('id, name')

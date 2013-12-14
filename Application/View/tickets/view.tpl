@@ -35,17 +35,17 @@
 	
 		<div class="flags">
 			<?php if ($ticket['failed']): ?>
-				<span class="failed"><?= $ticket['state_name']; ?> failed</span>
+				<span class="failed"><?= $ticket['ticket_state']; ?> failed</span>
 			<?php else: ?>
-				<span class="state"><?= $ticket['state_name']; ?></span>
+				<span class="state"><?= $ticket['ticket_state']; ?></span>
 			<?php endif; ?>
 		
 			<?php if ($ticket['needs_attention']): ?>
 				<span class="needs_attention">needs attention</span>
 			<?php endif; ?>
 		
-			<?php if (!empty($ticket['user_id'])): ?>
-				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project + array('?u=' . $ticket['user_id']), ($ticket['user_id'] == $this->User->get('id')) ? 'you' : $ticket['user_name']); ?></span>
+			<?php if (!empty($ticket['handle_id'])): ?>
+				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), ($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['user_name']); ?></span>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>

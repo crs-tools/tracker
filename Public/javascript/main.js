@@ -293,7 +293,7 @@
         return Tracker.Edit.Mass.init();
       }
       
-      assignee.select = $('#ticket-edit-assignee');
+      assignee.select = $('#ticket-edit-handle_id');
       assignee.description = $('<span> or </span>').addClass('description').insertAfter(assignee.select);
       
       $('<a></a>').attr('href', '#').text('Remove assignee').click(removeAssignee).prependTo(assignee.description);

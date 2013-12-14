@@ -32,7 +32,9 @@
 				// TODO: cleanup when Association has support
 				// 'select' => 'tbl_encoding_profile_version.revision, tbl_encoding_profile_version.created, tbl_encoding_profile_version.description, tbl_project_encoding_profile.priority'
 			),
-			'TicketState' => array(
+			// TODO: move to 'through' => 'ProjectState'
+			'States' => array(
+				'class_name' => 'TicketState',
 				'foreign_key' => array('ticket_type' , 'ticket_state'),
 				'self_key' => 'project_id',
 				'via' => 'tbl_project_ticket_state'

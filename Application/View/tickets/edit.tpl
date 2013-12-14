@@ -80,20 +80,21 @@
 				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + ((!empty($profiles))? $profiles : array()), $ticket['encoding_profile_id']); ?>
 			<?php endif; ?>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
-			<li><?php echo $f->select('assignee', 'Assignee', array('' => '–') + $users->toArray(), $ticket['user_id']); ?></li>
+			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
 			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
+			<?php $f->register('comment'); ?>
 		</ul>
 	</fieldset>
 	<fieldset>
 		<legend>State</legend>
 		<ul>
 			<li>
-				<?php /*if (!empty($ticket)): ?>
-			        <?php echo $states[$ticket['state_id']]; ?><span class="description-color">  ⟶ </span>
+				<?php if (!empty($ticket)): ?>
+			        <?php echo $ticket['ticket_state']; ?><span class="description-color">  ⟶ </span>
 				<?php endif; ?>
 				<label for="ticket-edit-state">State</label>
-				<?php if (empty($ticket)): ?>
-					<select name="state" id="ticket-edit-state">
+				<?php if (empty($ticket)): /* ?>
+					<select name="ticket_state" id="ticket-edit-state">
 						<?php foreach($types as $id => $name): ?>
 							<?php if (!empty($states[$id])): ?>
 								<optgroup label="<?php echo $name; ?>">
@@ -104,9 +105,9 @@
 							<?php endif; ?>
 						<?php endforeach; ?>
 					</select>
-				<?php else: ?>
-					<?php echo $f->select('state', null, $states, $ticket['state_id'], array('id' => 'ticket-edit-state')) ?>
-				<?php endif;*/ ?>
+				<?php */ else: ?>
+					<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), $ticket['ticket_state'], array('id' => 'ticket-edit-state')) ?>
+				<?php endif; ?>
 			</li>
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', $ticket['failed']); ?></li>
 		</ul>

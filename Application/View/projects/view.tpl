@@ -112,5 +112,5 @@
 		endforeach; ?>
 	</ul>
 	
-	<?= $f->submit('Save assignment'); ?>
+	<?= $f->submit('Save assignment'); ?> or <?= $this->linkTo('projects', 'view', $project, 'discard changes', array('class' => 'reset')); ?>
 </form>
