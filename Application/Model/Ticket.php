@@ -13,10 +13,6 @@
 		public $hasOne = array(
 			'EncodingProfileVersion' => array(
 				'foreign_key' => 'encoding_profile_version_id'
-			),
-			'State' => array(
-				'class_name' => 'TicketState',
-				'foreign_key' => array('ticket_type', 'ticket_state')
 			)
 		);
 		
@@ -48,6 +44,11 @@
 				'class_name' => 'Ticket',
 				'foreign_key' => 'parent_id',
 				'join' => false
+			),
+			'State' => array(
+				'class_name' => 'TicketState',
+				'primary_key' => array('ticket_type', 'ticket_state'),
+				'foreign_key' => array('ticket_type', 'ticket_state')
 			)
 		);
 		
