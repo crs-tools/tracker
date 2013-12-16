@@ -11,28 +11,24 @@
 		const CLASS_RESOURCE = 'Ticket_Resource';
 		
 		public $hasMany = array(
-			'Properties' => array(
-				'class_name' => 'TicketProperties',
-				'foreign_key' => 'ticket_id',
-				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
+			'Children' => array(
+				'class_name' => 'Ticket',
+				'foreign_key' => 'parent_id'
 			),
 			'Comments' => array(
 				'class_name' => 'Comment',
 				'foreign_key' => 'ticket_id'
 			),
-			'Children' => array(
-				'class_name' => 'Ticket',
-				'foreign_key' => 'parent_id'
+			'Properties' => array(
+				'class_name' => 'TicketProperties',
+				'foreign_key' => 'ticket_id',
+				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
 			)
 		);
 		
 		public $belongsTo = array(
-			'User' => array(
-				'foreign_key' => 'handle_id',
-				'select' => 'name as user_name'
-			),
-			'Worker' => array(
-				'foreign_key' => 'handle_id'
+			'EncodingProfileVersion' => array(
+				'foreign_key' => 'encoding_profile_version_id'
 			),
 			'Parent' => array(
 				'class_name' => 'Ticket',
@@ -44,22 +40,30 @@
 				'primary_key' => array('project_id', 'ticket_type', 'ticket_state'),
 				'foreign_key' => array('project_id', 'ticket_type', 'ticket_state')
 			),
-            'Project' => array(
-                'foreign_key' => 'project_id'
-            ),
-            'EncodingProfileVersion' => array(
-                'foreign_key' => 'encoding_profile_version_id'
-            )
-        );
+			'User' => array(
+				'foreign_key' => 'handle_id',
+				'select' => 'name as user_name'
+			),
+			'Worker' => array(
+				'foreign_key' => 'handle_id'
+			)
+		);
 		
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true
 		);
 		
 		public $scopes = array(
+			'filter_recording',
+			'filter_cutting',
+			'filter_encoding',
+			'filter_releasing',
+			'filter_handle',
+			
+			'order_list',
+			
 			'with_properties',
-			'with_default_properties',
-			'order_list'
+			'with_default_properties'
 			// TODO: with_progress
 		);
 		
@@ -84,12 +88,10 @@
 					'LEFT'
 				);
 			}
-			
-			return $resource;
 		}
 		
 		public function with_default_properties(Model_Resource $resource, array $arguments) {
-			return $this->with_properties($resource, [
+			$this->with_properties($resource, [
 				'Fahrplan.Start' => 'fahrplan_start',
 				'Fahrplan.Date' => 'fahrplan_date',
 				'Fahrplan.Day' => 'fahrplan_day',
@@ -98,7 +100,7 @@
 		}
 		
 		public function order_list(Model_Resource $resource, array $arguments) {
-			return $resource->orderBy(
+			$resource->orderBy(
 				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, title'
 			);
 			
@@ -108,6 +110,75 @@
 		
 		// TODO: with_progress
 		// $this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
+		
+		public function filter_recording(Model_Resource $resource, array $arguments) {
+			$resource->where(
+				['((ticket_type = ? AND parent_id IS NOT NULL) OR parent_id IS NULL)',
+				'ticket_state' => [
+					'locked',
+					'scheduled',
+					'recording',
+					'recorded',
+					'preparing'
+				]],
+				['recording']
+			);
+		}
+		
+		public function filter_cutting(Model_Resource $resource, array $arguments) {
+			$resource->where(
+				['((ticket_type = ? AND parent_id IS NOT NULL) OR parent_id IS NULL)',
+				'ticket_state' => [
+					'prepared',
+					'cutting',
+					'cut'
+				]],
+				['recording']
+			);
+		}
+		
+		public function filter_encoding(Model_Resource $resource, array $arguments) {
+			/*
+			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id AND type_id = ?', array(2), 'LEFT');
+			$tickets->join('tbl_ticket', '', 'id = tbl_ticket.parent_id', array(), 'LEFT');
+			$tickets->join('tbl_encoding_profile', '', 'id = tbl_ticket_2.encoding_profile_id', array(), 'LEFT');
+			$tickets->where('
+				((state_id IN (? , ? , ? , ?) AND tbl_encoding_profile_2.approved) OR
+				(tbl_ticket_2.state_id IN (? , ? , ? , ?) AND tbl_encoding_profile.approved)) OR
+				(parent_id IS NOT NULL AND type_id = ? AND state_id != ? AND tbl_ticket_3.state_id != ?) OR
+				(parent_id IS NULL AND state_id != ? AND tbl_ticket_2.state_id != ?)', array_merge($this->State->getIdsByName(array(
+					'ready to encode', 'encoding', 'encoded', 'tagging',
+					'ready to encode', 'encoding', 'encoded', 'tagging'
+				)),
+				array(2),
+				$this->State->getIdsByName(array( // TODO: this part of the query needs enhancement
+					'material needed', 'copied',
+					'copied', 'material needed'
+				))
+			));
+			*/
+		}
+		
+		public function filter_releasing(Model_Resource $resource, array $arguments) {
+			/*
+			$states = $this->State->getIdsByName(array('tagged', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release'));
+			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
+			$tickets->where('state_id IN (? , ? , ? , ? , ? , ?) OR tbl_ticket_2.state_id IN (? , ? , ? , ? , ? , ?)', array_merge($states, $states));
+			*/
+		}
+		
+		public function filter_handle(Model_Resource $resource, array $arguments) {
+			if (!isset($arguments['handle'])) {
+				return;
+			}
+			
+			$resource->join(
+				self::TABLE,
+				null,
+				['parent_id = ' . self::TABLE . '.id AND (' . self::TABLE . '.handle_id = ? OR handle_id = ?)'],
+				[$arguments['handle'], $arguments['handle']]
+			);
+		}
 		
 		public static function createMissingRecordingTickets($project) {
 			Database::$Instance->query('SELECT create_missing_recording_tickets(?)', [$project]);

@@ -311,6 +311,8 @@ ul#menu li.menu-encodingprofiles.current a:before {
 	padding: 0.4em 0.5em 0.35em;
 	margin: 0 0 0.5em;
 	background-color: #fff;
+  overflow: hidden;
+  word-wrap: break-word;
 	font-weight: bold;
 	font-size: 1.6em;
 	color: #3d464d;

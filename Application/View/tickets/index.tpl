@@ -1,20 +1,20 @@
 <?php $this->title('Tickets | '); ?>
 
 <div id="tickets-header" class="clearfix">
-	<?php /*echo $f = $this->form('tickets', 'index', $project, array('id' => 'tickets-filter', 'method' => 'get'), false); ?>
+	<?php echo $f = $form(array('id' => 'tickets-filter'), false); ?>
 		<ul class="ticket-header-bar left horizontal">
 			<li class="ticket-header-bar-background-left"></li>
-			<li data-ai="1" class="first<?php echo (!Request::get('t') and !Request::exists(Request::get, 'search'))? ' current': ''; ?>"><button>All</button></li>
-			<li data-ai="2" <?php echo (Request::get('t') == 'recording')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Recording', array('value' => 'recording')); ?></li>
-			<li data-ai="3" <?php echo (Request::get('t') == 'cutting')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Cutting', array('value' => 'cutting')); ?></li>
-			<li data-ai="4" <?php echo (Request::get('t') == 'encoding')? ' class="current"' : ''; ?>><?php echo $f->button('t', null, 'Encoding', array('value' => 'encoding')); ?></li>
-			<li data-ai="5" class="last<?php echo (Request::get('t') == 'releasing')? ' current': ''; ?>"><?php echo $f->button('t', null, 'Releasing', array('value' => 'releasing')); ?></li>
+			<li data-ai="1" class="first<?php echo ($filter === null/* and !$search*/)? ' current': ''; ?>"><button>All</button></li>
+			<li data-ai="2" <?php echo ($filter == 'recording')? ' class="current"' : ''; ?>><?= $f->button('t', null, 'Recording', array('value' => 'recording')); ?></li>
+			<li data-ai="3" <?php echo ($filter == 'cutting')? ' class="current"' : ''; ?>><?= $f->button('t', null, 'Cutting', array('value' => 'cutting')); ?></li>
+			<li data-ai="4" <?php echo ($filter == 'encoding')? ' class="current"' : ''; ?>><?= $f->button('t', null, 'Encoding', array('value' => 'encoding')); ?></li>
+			<li data-ai="5" class="last<?php echo ($filter == 'releasing')? ' current': ''; ?>"><?= $f->button('t', null, 'Releasing', array('value' => 'releasing')); ?></li>
 			<li class="ticket-header-bar-background-right"></li>
 			
-			<li class="ticket-header-bar-search"><?php echo $f->input('q', null, '', array('placeholder' => 'Search')); ?></li>
-			<li data-ai="-1" class="ticket-header-bar-search-button"<?php echo (Request::exists(Request::get, 'search'))? ' class="current"' : ''; ?>><?php echo $f->button('search', null, 'Search', array('value' => '')); ?></li>
+			<?php /*<li class="ticket-header-bar-search"><?= $f->input('q', null, '', array('placeholder' => 'Search')); ?></li>
+			<li data-ai="-1" class="ticket-header-bar-search-button"<?php echo (Request::exists(Request::get, 'search'))? ' class="current"' : ''; ?>><?php echo $f->button('search', null, 'Search', array('value' => '')); ?></li>> */ ?>
 		</ul>
-	</form> */ ?>
+	</form>
 	
 	<?php if (User::isAllowed('tickets', 'create') or User::isAllowed('import', 'index') or User::isAllowed('export', 'index')): ?>
 		<ul class="ticket-header-bar right horizontal">

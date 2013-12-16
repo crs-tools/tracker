@@ -33,48 +33,24 @@
 			$this->tickets = Ticket::findAll()
 				->scoped(['with_default_properties', 'order_list']);
 			
-			/*
-			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
+			$this->form(null, null, Request::METHOD_GET);
+			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
 			
-			if (Request::get('t')) {
-				switch (Request::get('t')) {
+			if ($this->filter !== null) {
+				switch ($this->filter) {
 					case 'recording':
-						$tickets->where('state_id IN (? , ? , ? , ? , ?) AND parent_id IS NULL', $this->State->getIdsByName(array('locked', 'scheduled', 'recording', 'recorded', 'merging')));
-						break;
 					case 'cutting':
-						$tickets->where('state_id IN (? , ? , ? , ?) AND parent_id IS NULL', $this->State->getIdsByName(array('merged', 'cutting', 'fixing', 'cut')));
+						$this->tickets->scoped(['filter_' . $this->filter]);
 						break;
-					case 'encoding':
-						$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id AND type_id = ?', array(2), 'LEFT');
-						$tickets->join('tbl_ticket', '', 'id = tbl_ticket.parent_id', array(), 'LEFT');
-						$tickets->join('tbl_encoding_profile', '', 'id = tbl_ticket_2.encoding_profile_id', array(), 'LEFT');
-						$tickets->where('
-							((state_id IN (? , ? , ? , ?) AND tbl_encoding_profile_2.approved) OR
-							(tbl_ticket_2.state_id IN (? , ? , ? , ?) AND tbl_encoding_profile.approved)) OR
-							(parent_id IS NOT NULL AND type_id = ? AND state_id != ? AND tbl_ticket_3.state_id != ?) OR
-							(parent_id IS NULL AND state_id != ? AND tbl_ticket_2.state_id != ?)', array_merge($this->State->getIdsByName(array(
-								'ready to encode', 'encoding', 'encoded', 'tagging',
-								'ready to encode', 'encoding', 'encoded', 'tagging'
-							)),
-							array(2),
-							$this->State->getIdsByName(array( // TODO: this part of the query needs enhancement
-								'material needed', 'copied',
-								'copied', 'material needed'
-							))
-						));
-						break;
-					case 'releasing':
-						$states = $this->State->getIdsByName(array('tagged', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release'));
-						$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
-						$tickets->where('state_id IN (? , ? , ? , ? , ? , ?) OR tbl_ticket_2.state_id IN (? , ? , ? , ? , ? , ?)', array_merge($states, $states));
-						break;
-				}
-			} else {
-				if (Request::get('u', Request::int)) {
-					$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
-					$tickets->where('user_id = ? OR tbl_ticket_2.user_id = ?', array(Request::get('u', Request::int), Request::get('u', Request::int)));
 				}
 			}
+			
+			if (isset($_GET['u'])) {
+				$this->tickets->scoped(['filter_handle' => ['handle' => $_GET['u']]]);
+			}
+			
+			/*
+			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
 			
 			if ($query = Request::get('q')) {
 				if (mb_strlen($query) == 4 and ctype_digit($query)) {
@@ -645,75 +621,6 @@
 			}
 			
 			$this->form();
-			
-			/*
-			if (empty($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
-			
-			if (mb_strpos($arguments['id'], ',')) {
-				return $this->mass_edit($arguments);
-			}
-			
-			if (!$ticket = $this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id))) {
-				throw new EntryNotFoundException();
-			}
-			
-			if (Request::isPostRequest()) {
-				$this->Ticket->title = Request::post('title', Request::unfiltered);
-				// $this->Ticket->slug = Request::post('title');
-				$this->Ticket->priority = Request::post('priority', Request::float);
-				
-				if ($ticket['type_id'] == 2) {
-					$this->Ticket->encoding_profile_id = Request::post('encoding_profile', Request::int);
-				}
-				
-				$this->Ticket->needs_attention = Request::post('needs_attention', Request::checkbox);
-				
-				$this->Ticket->type_id = $this->State->getTypeById(Request::post('state', Request::int));
-				$this->Ticket->state_id = Request::post('state', Request::int);
-				$this->Ticket->failed = Request::post('failed', Request::checkbox);
-				
-				if (Request::post('comment', Request::unfiltered)) {
-					$this->Comment->create(array(
-						'ticket_id' => $ticket['id'],
-						'user_id' => $this->User->get('id'),
-						'comment' => Request::post('comment', Request::unfiltered),
-						'user_set_needs_attention' => Request::post('needs_attention', Request::checkbox),
-						'user_set_failed' => Request::post('failed', Request::checkbox),
-					));
-				}
-				
-				if (Request::post('assignee', Request::int)) {
-					$this->Ticket->user_id = Request::post('assignee', Request::int);
-				} else {
-					$this->Ticket->user_id = null;
-				}
-				
-				if (Request::post('parent', Request::int)) {
-					$this->Ticket->parent_id = Request::post('parent', Request::int);
-				} else {
-					$this->Ticket->parent_id = null;
-				}
-				
-				$this->Properties->update($ticket['id'], Request::post('property_name'), Request::post('property_value'), Request::post('properties'));
-				
-				if ($this->Ticket->save()) {
-					$this->flash('Ticket updated');
-					return $this->_redirectWithReferer($ticket);
-				}
-			}
-			
-			$this->View->assign('ticket', $ticket);
-			$this->View->assign('properties', $this->Properties->findByObject($ticket['id']));
-			$this->View->assign('profiles', Model::indexByField($this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id), array(), null, null, 'id, name'), 'id', 'name'));
-			$this->View->assign('types', $this->Type->getList('name'));
-			$this->View->assign('tickets', $this->Ticket->findAll(array(), array('project_id' => $this->Project->id, 'parent_id IS NULL'), array(), 'fahrplan_id', null, 'id, type_id, fahrplan_id, title'));
-			$this->View->assign('states', $this->State->getList('name', array('ticket_type_id' => $ticket['type_id']), array(), 'id'));
-			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
-			
-			$this->View->render('tickets/edit.tpl');
-			*/
 			
 			if ($this->form->wasSubmitted() and $this->ticket->save($this->form->getValues())) {
 				if ($this->form->getValue('comment')) {
