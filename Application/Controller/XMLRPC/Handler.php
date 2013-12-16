@@ -4,7 +4,9 @@
 		'Controller/XMLRPC',
 		'/Model/WorkerGroup',
         '/Model/EncodingProfile',
-        '/Model/LogEntry'
+        '/Model/LogEntry',
+        '/Model/Ticket',
+        '/Model/TicketState'
 	);
 	
 	class Controller_XMLRPC_Handler extends Controller_XMLRPC {
@@ -13,9 +15,23 @@
 		
 		const XMLRPC_PREFIX = 'C3TT.';
 		
-		// private $virtual_properties = array('Encoding.Basename', 'Project.Slug', 'EncodingProfile.Basename', 'EncodingProfile.Extension');
-		
-		protected function authenticate($method, array $arguments) {
+		private $virtual_properties = array(
+            'Encoding.Basename',
+            'Project.Slug',
+            'EncodingProfile.Basename',
+            'EncodingProfile.Extension'
+        );
+
+        /**
+         * constructor
+         *
+         * set error reporting to suppress notices, since error messages break XML output
+         */
+        public function __construct() {
+            error_reporting(E_ALL & ~ E_NOTICE);
+        }
+
+        protected function authenticate($method, array $arguments) {
 			if (empty($_GET['group']) or empty($_GET['hostname'])) {
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');
 			}
@@ -95,6 +111,87 @@
         }
 
         /**
+         * Get consecutive ticket state of given ticket type and ticket state available for this project.
+         *
+         * @param integer project_id project identifier
+         * @param string ticket_type type of ticket (meta, recording, encoding, ingest)
+         * @param string ticket_state ticket state to find successor of
+         * @return array ticket state
+         */
+        public function getNextState($project_id, $ticket_type, $ticket_state) {
+            return TicketState::getNextState($project_id, $ticket_type, $ticket_state);
+        }
+
+        /**
+         * Get preceding ticket state of given ticket type and ticket state available for this project.
+         *
+         * @param integer project_id project identifier
+         * @param string ticket_type type of ticket (meta, recording, encoding, ingest)
+         * @param string ticket_state ticket state to find predecessor of
+         * @return array ticket state
+         */
+        public function getPreviousState($project_id, $ticket_type, $ticket_state) {
+            return TicketState::getPreviousState($project_id, $ticket_type, $ticket_state);
+        }
+
+        /**
+         * Get consecutive ticket state of given ticket
+         *
+         * @param integer ticket_id ticket identifier
+         * @return array ticket state
+         */
+        public function getTicketNextState($ticket_id) {
+            $ticket = Ticket::findBy(['id' => $ticket_id]);
+
+            return TicketState::getNextState($ticket['project_id'], $ticket['ticket_type'], $ticket['ticket_state']);
+        }
+
+        /**
+         * Set ticket state of given ticket to consecutive state, if allowed
+         *
+         * (Maybe deprecated)
+         * @param integer ticket_id ticket identifier
+         * @param string log_message optional log message
+         * @return bool true if state successfully advanced
+         * @throws Exception
+         */
+        public function setTicketNextState($ticket_id, $log_message = '') {
+            $ticket = Ticket::findBy(['id' => $ticket_id]);
+            if(!$ticket) {
+                throw new Exception(__METHOD__.': ticket not found',101);
+            }
+
+            if(empty($ticket['handle_id']) || $ticket['handle_id'] != $this->worker['id']) {
+                throw new Exception(__METHOD__.': ticket is not assigned to you',102);
+            }
+
+            $state = $ticket->State;
+            if(false && !$state['service_executable']) {
+                throw new Exception(__METHOD__.': current ticket state is not serviceable',103);
+            }
+
+            $next_state = $state->getNextState();
+            if(!$next_state) {
+                throw new Exception(__METHOD__.': no next state available!',104);
+            }
+
+            if($ticket->save(['ticket_state' => $next_state['ticket_state']])) {
+                LogEntry::create(array(
+                    'ticket_id' => $ticket['id'],
+                    'from_state' => $state['ticket_state'],
+                    'to_state' => $next_state['ticket_state'],
+                    'handle_id' => $this->worker['id'],
+                    'event' => __FUNCTION__,
+                    'comment' => $log_message));
+
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /**
 		 * fetches list of projects
 		 * 
 		 * @param boolean read_only if true, finished projects get listed too (default: false)
@@ -126,31 +223,32 @@
 		 * and progress. The return value is used to apply commands.
 		 *
 		 * @param integer ticket_id of current ticket a worker is working on, empty if none assigned
-		 * @param string log messages since last ping
-		 * @param mixed progress information of current process
+		 * @param string optional log message
 		 * @return string command to handle by worker, 'OK' if nothing special to do
 		 */
-		/*public function ping($ticket_id = null, $log_message_delta = null, $progress = null) {
+		public function ping($ticket_id = null, $log_message = null) {
 			// log ping
-			$time_since = ($this->User->last_seen) ? Date::distanceInWords(Date::fromString($this->User->last_seen),null,true) : 'long long time';
-			Log::debug('ping from '.$this->User->hostname.' ('.Request::getIP().') [last ping '.$time_since." ago]: ticket_id=$ticket_id progress=$progress log_message_delta=$log_message_delta");
+            $time_since = ($this->worker['last_seen']) ? (new DateTime())->diff(new DateTime($this->worker['last_seen']))->format('%Hh %imin %ss') : 'long long time';
+			Log::debug('ping from '.$this->worker['name'].' ('.$this->Request->getRemoteIP().') [last ping '.$time_since." ago]: ticket_id=$ticket_id log_message='$log_message'");
 
 			// set cmd for return value
 			$cmd = 'OK';
 			$reason = '';
 
+            $state = array();
 			// check ticket state if id given
 			$ticket_id = intval($ticket_id);
 			if($ticket_id > 0) {
-				if(!$ticket = $this->Ticket->find($ticket_id, array('User','State'))) {
+				if(!$ticket = Ticket::find(['id' => $ticket_id], ['State', 'User'])) {
 					$reason = 'ticket not found';
-				} elseif($this->Ticket->user_id == null) {
+				} elseif($ticket['handle_id'] == null) {
 					$reason = 'ticket is unassigned';
-				} elseif($this->Ticket->user_id != $this->User->id) {
-					$reason = 'ticket is assigned to other user: '.$this->Ticket->user_name;
-				} elseif(!$service = $this->State->getServiceByTicket($ticket)) {
-					$reason = 'ticket is in non-service state: '.$this->Ticket->state_name;
+				} elseif($ticket['handle_id'] != $this->worker['id']) {
+					$reason = 'ticket is assigned to other user: '.$ticket['user_name'];
+				} elseif($state = $ticket->State && !$state['service_executable']) {
+					$reason = 'ticket is in non-service state: '.$ticket['ticket_state'];
 				}
+
 				// lose ticket if error occurred
 				if(!empty($reason)) {
 					$cmd = 'Ticket lost';
@@ -159,43 +257,23 @@
 			} else {
 				$ticket_id = null;
 			}
-			
-			// save output
-			if($progress != null || $log_message_delta != null) {
-				$this->ServiceLogEntry->create(array(
-						'ticket_id' => $ticket_id,
-						'output_delta' => $log_message_delta,
-						'progress' => $progress
-					));
-			}
-
-			// check next ping command if no previous error occurred
-			if(empty($reason) && $this->User->next_ping_command) {
-				$cmd = $this->User->next_ping_command;
-				$reason = $this->User->next_ping_command_reason;
-			}
 
 			if($cmd != 'OK') {
-				// reset command and reason
-				$this->User->next_ping_command = null;
-				$this->User->next_ping_command_reason = null;
-
 				// only log valid ticket ids
 				if($ticket) {
-					$this->LogEntry->create(array(
+					LogEntry::create(array(
 						'ticket_id' => $ticket_id,
-						'user_id' => $this->User->id,
+						'handle_id' => $this->worker['id'],
 						'comment' => "User received command '$cmd'\n\nReason: $reason",
-						'event' => 'RPC.Ping.Command'
+						'event' => __FUNCTION__
 					));
 				}
 			}
 
-			$this->User->updateLastRequest(false);
-			$this->User->save();
+			$this->worker->save(['last_seen' =>  new DateTime()]);
 			
 			return $cmd;
-		}*/
+		}
 		
 		/**
 		* Get value assigned to given property name of the ticket with given id
@@ -218,117 +296,117 @@
 		* Get properties of ticket with given id
 		*
 		* @param int ticket_id id of ticket
-		* @param string optional pattern of property names (see ltree docs for operator "~")
+		* @param string sub_path prefix of property names
 		* @return array property data
+        * @throws Exception if ticket not found
 		*/
-		/*public function getTicketProperties($ticket_id, $pattern = null) {
-			if(!$ticket = $this->Ticket->find($ticket_id,array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('getTicketProperties: ticket not found',414);
-			}
+		public function getTicketProperties($ticket_id, $pattern = null) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Parent','Project'])) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',201);
+            }
 
 			// get project properties
-			if($pattern != null) {
-				$properties = ProjectProperties::indexByField($this->ProjectProperties->findAll(array(),'project_id = :project_id AND name ~ :name',array('project_id' => $this->Project->id, 'name' => $pattern)),'name','value');
-			} else {
-				$properties = ProjectProperties::indexByField($this->ProjectProperties->findAll(array(),array('project_id' => $this->Project->id)),'name','value');
-			}
-			
-			if(!is_array($properties)) {
-				$properties = array();
-			}
+            $properties = $this->_getProperties($ticket->Project);
 
 			// get ticket properties of parent
 			if($ticket['parent_id'] !== null) {
-				if($pattern != null) {
-					$parent_properties = Properties::indexByField($this->Properties->findAll(array(),'ticket_id = :ticket_id AND name ~ :name',array('ticket_id' => $ticket['parent_id'], 'name' => $pattern)),'name','value');
-				} else {
-					$parent_properties = Properties::indexByField($this->Properties->findAll(array(),array('ticket_id' => $ticket['parent_id'])),'name','value');
-				}
-				
-				if(is_array($parent_properties)) {
-					$properties = array_merge($properties, $parent_properties);
-				}
-			}
+                $properties = array_merge($properties,$this->_getProperties($ticket->Parent,$pattern));
+            }
 
-			// get ticket properties
-			if($pattern != null) {
-				$ticket_properties = Properties::indexByField($this->Properties->findAll(array(),'ticket_id = :ticket_id AND name ~ :name',array('ticket_id' => $ticket_id, 'name' => $pattern)),'name','value');
-			} else {
-				$ticket_properties = Properties::indexByField($this->Properties->findAll(array(),array('ticket_id' => $ticket_id)),'name','value');
-			}
-			
-			if (is_array($ticket_properties)) {
-				$properties = array_merge($properties, $ticket_properties);
-			}
+            // get ticket properties of related recording ticket
+            if($ticket['ticket_type'] != 'recording') {
+                $children = ($ticket->Parent) ? $ticket->Parent->Children : $ticket->Children;
+                $children->where(array('ticket_type' => 'recording'));
+                $recording_ticket = $children->first();
+
+                // get ticket properties of parent
+			    if($recording_ticket) {
+                    $properties = array_merge($properties,$this->_getProperties($recording_ticket,$pattern));
+                }
+            }
+
+            // get ticket properties of related ingest ticket
+            if($ticket['ticket_type'] != 'ingest') {
+                $children = ($ticket->Parent) ? $ticket->Parent->Children : $ticket->Children;
+                $children->where(array('ticket_type' => 'ingest'));
+                $ingest_ticket = $children->first();
+
+                // get ticket properties of parent
+                if($ingest_ticket) {
+                    $properties = array_merge($properties,$this->_getProperties($ingest_ticket,$pattern));
+                }
+            }
+
+            // get ticket properties
+            $properties = array_merge($properties,$this->_getProperties($ticket,$pattern));
 
 			// virtual property: project slug
 			if($pattern != null && strpos('Project.Slug',$pattern) !== false || $pattern == null) {
-				$properties['Project.Slug'] = $this->Project->current()->slug;
+				$properties['Project.Slug'] = $ticket->Project['slug'];
 			}
 
-			// virtual property: basename for encoding
+            // virtual property: basename for encoding, project slug, fahrplan id, ticket slug
 			if($pattern != null && strpos('Encoding.Basename',$pattern) !== false || $pattern == null) {
-				$filename = $this->Properties->getFilename($properties);
-				if(strlen($filename) > 0) {
-					$properties['Encoding.Basename'] = $filename;
-				}
+                $parts = array();
+
+                if(isset($properties['Project.Slug'])) {
+                    array_push($parts, $properties['Project.Slug']);
+                }
+
+                if(isset($properties['Fahrplan.ID'])) {
+                    array_push($parts, $properties['Fahrplan.ID']);
+                }
+
+                /*
+                // add language if project has multiple languages
+                if($this->Project->current() and count($this->Project->current()->languages) > 0) {
+                    if(!isset($properties['Record.Language'])) {
+                        // error: language is not set, return empty string
+                        return '';
+                    } else {
+                        $parts[] = $properties['Record.Language'];
+                    }
+                }*/
+
+                if(isset($properties['Fahrplan.Slug'])) {
+                    array_push($parts, $properties['Fahrplan.Slug']);
+                }
+
+                $properties['Encoding.Basename'] = implode('-', $parts);
 			}
 
-			// add encoding profile properties
-			if($ticket['type_id'] == 2) {
-				$profile = $this->EncodingProfile->find($ticket['encoding_profile_id'],array(), array('project_id' => $this->Project->current()->id));
-				if(!$profile) {
-					throw new EntryNotFoundException('getTicketProperties: encoding profile not found',417);
-				}
-				// virtual property:  EncodingProfile.Basename
-				$properties['EncodingProfile.Basename'] = $properties['Encoding.Basename'];
-				if(!empty($profile['slug'])) {
-					$properties['EncodingProfile.Basename'] .= '_' . $profile['slug'];
-				}
+            // add encoding profile properties
+            if($ticket['ticket_type'] == 'encoding') {
+                $profile = $ticket->EncodingProfileVersion->EncodingProfile;
+                if(!$profile) {
+                    throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',202);
+                }
 
-				// virtual property:  EncodingProfile.Extension
-				$properties['EncodingProfile.Extension'] = $profile['extension'];
-				// virtual property:  EncodingProfile.Extension
-				$properties['EncodingProfile.Slug'] = $profile['slug'];
-			}
+                // add virtual properties
+                if(isset($properties['Encoding.Basename'])) {
+                    $properties['EncodingProfile.Basename'] = $properties['Encoding.Basename'];
+                    if(!empty($profile['slug'])) {
+                        $properties['EncodingProfile.Basename'] .= '_' . $profile['slug'];
+                    }
+                }
+
+                $properties['EncodingProfile.Slug'] = $profile['slug'];
+                $properties['EncodingProfile.Extension'] = $profile['extension'];
+                $properties['EncodingProfile.MirrorFolder'] = $profile['mirror_folder'];
+            }
 
 			return $properties;
-		}*/
+		}
 
-		/**
-		* Set ticket property for ticket with given id
-		*
-		* @param int ticket_id id of ticket
-		* @param string name property name
-		* @param string name value
-		* @return true if properties set successfully
-		*/
-		/*public function setTicketProperty($ticket_id, $name, $value) {
-			if(!$ticket = $this->Ticket->find($ticket_id,array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('setTicketProperty: ticket not found',414);
-			}
-			
-			if(in_array($name,$this->virtual_properties)) {
-					Log::warn('[RPC] setTicketProperties: ingored virtual property '.$name);
-					return false;
-			}
-			
-			$this->Properties->clear();
-			$this->Properties->set(array('ticket_id' => $ticket_id, $name => $value));
-			
-			if (!$save = $this->Properties->save()) {
-				Log::warn('[RPC] setTicketProperty: race condition with other request. delaying new request');
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'event' => 'RPC.Property.Set',
-				'comment' => $name . '="' . $value . '"'
-			));
-			
-			return true;
-		}*/
+        private function _getProperties(Model $model, $pattern = null) {
+            $properties =  $model->Properties->indexBy('name','value');
+
+            if($pattern != null) {
+                $properties->where('name ~ ?',array($pattern));
+            }
+
+            return $properties->toArray();
+        }
 
 		/**
 		* Set ticket properties for ticket with given id
@@ -336,40 +414,42 @@
 		* @param int ticket_id id of ticket
 		* @param array associative array of properties ( key => value )
 		* @return true if properties set successfully
+        * @throws Exception if ticket not exists
 		*/
-		/*public function setTicketProperties($ticket_id, $properties) {
-			if(!$ticket = $this->Ticket->find($ticket_id,array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('setTicketProperties: ticket not found',414);
-			}
+		public function setTicketProperties($ticket_id, array $properties) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Parent','Project','Properties'])) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',301);
+            }
 			if(!is_array($properties) || count($properties) < 1) {
-				throw new EntryNotFoundException('setTicketProperties: no properties given',420);
+				throw new EntryNotFoundException(__FUNCTION__.': no properties given',302);
 			}
 
-			$comment = "";
-			foreach($properties as $name => $value) {
-				if(in_array($name,$this->virtual_properties)) {
-					Log::warn('[RPC] setTicketProperties: ingored virtual property '.$name);
-					continue;
-				}
-				$this->Properties->clear();
-				$this->Properties->set(array('ticket_id' => $ticket_id, $name => $value));
-
-				$log_line = $name . '="' . $value . '"';
-				if (!$save = $this->Properties->save()) {
-					Log::warn('[RPC] setTicketProperties: cannot set property '.$log_line);
-					return false;
-				}
-				$comment .= $log_line . "\n";
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'event' => 'RPC.Property.Set',
-				'comment' => $comment
-			));
-			
-			return true;
-		}*/
+            $ticket_properties = array();
+            $log_message = array();
+            $log_message[] = __FUNCTION__.': changing properties';
+            foreach($properties as $name => $value) {
+                if(in_array($name,$this->virtual_properties)) {
+                    Log::warn('[RPC] setTicketProperties: ingored virtual property '.$name);
+                    continue;
+                } elseif($value !== '') {
+                    $ticket_properties[] = array('name' => $name, 'value' => $value);
+                    $log_message[] = $name . '=' . $value;
+                } else {
+                    $ticket_properties[] = array('name' => $name, '_destroy' => 1);
+                    $log_message[] = 'deleting property: ' . $name;
+                }
+            }
+            if($ticket->save(array('properties' => $ticket_properties))) {
+                LogEntry::create(array(
+                    'ticket_id' => $ticket['id'],
+                    'handle_id' => $this->worker['id'],
+                    'comment' => implode("\n",$log_message),
+                    'event' => __FUNCTION__
+                ));
+                return true;
+            }
+            return false;
+		}
 
 		/**
 		 * Get all unassigned tickets in given state
