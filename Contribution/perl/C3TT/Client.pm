@@ -99,8 +99,11 @@ sub AUTOLOAD {
 
     # include method arguments if any given
     if(defined $args[0]) {
-        push(@signature_args,join('&',@args));
+        foreach my $arg (@args) {
+            push(@signature_args, (ref($arg) eq 'HASH') ? hash_serialize($arg) : $arg);
+        }
     }
+
     # generate hash over url escaped line containing a concatenation of above signature arguments
     my $signature = hmac_sha256_hex(uri_escape(join('&',@signature_args)), $self->{secret});
 
@@ -111,6 +114,17 @@ sub AUTOLOAD {
     # remote call
     ##############
     return $self->{remote}->call(PREFIX.$name, @args);
+}
+
+sub hash_serialize {
+    my($data) = @_;
+
+    my $result = "";
+    for my $key (keys %$data) {
+        $result .= '&' if length $result;
+        $result .= uri_escape($key) . '=' . uri_escape($data->{$key});
+    }
+    return $result;
 }
 
 1;

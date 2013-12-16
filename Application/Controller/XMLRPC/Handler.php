@@ -47,9 +47,14 @@
 		}
 		
 		private static function _validateSignature($secret, $signature, $arguments) {
+            $args = array();
+            foreach($arguments as $argument) {
+                $args[] = is_array($argument) ? http_build_query($argument) : $argument;
+            }
+
 			$hash = hash_hmac(
 				'sha256',
-				rawurlencode(implode('&', $arguments)),
+				rawurlencode(implode('&', $args)),
 				$secret
 			);
 
