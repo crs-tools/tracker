@@ -68,15 +68,14 @@ CASE
     WHEN ticket_type = 'encoding'::enum_ticket_type THEN encoding_profile_version_id IS NOT NULL
     ELSE true
 END),
-  CONSTRAINT ticket_valid_inheritence CHECK (check_fahrplan_inheritance(parent_id, fahrplan_id) IS TRUE),
-  CONSTRAINT tbl_ticket_project_fahrplanid_uq UNIQUE (project_id, fahrplan_id)
+  CONSTRAINT ticket_valid_inheritence CHECK (check_fahrplan_inheritance(parent_id, fahrplan_id) IS TRUE)
 )
 WITHOUT OIDS;
 
 -- indexes
-CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(project_id);
+CREATE INDEX tbl_ticket_project_id_idx ON tbl_ticket USING btree(project_id);
 CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(fahrplan_id);
-CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(handle_id);
+CREATE INDEX tbl_ticket_handle_id_idx ON tbl_ticket USING btree(handle_id);
 
 -- trigger
 CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();

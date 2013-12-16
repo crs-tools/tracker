@@ -1,7 +1,5 @@
 ﻿BEGIN;
 
-SET search_path TO test;
-
 SET ROLE TO postgres;
 
 CREATE OR REPLACE VIEW view_all_tickets AS 
