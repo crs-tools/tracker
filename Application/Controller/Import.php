@@ -84,7 +84,12 @@
 					$properties['Fahrplan.GUID'] = (string) $attributes['guid'];
 				}
 				
-				$properties['Fahrplan.Date'] = (string) current($event->xpath('ancestor::day/@date'));
+				if (isset($event->date)) {
+					$properties['Fahrplan.Date'] = (new DateTime($event->date))->format('Y-m-d');
+				} else {
+					$properties['Fahrplan.Date'] = (string) current($event->xpath('ancestor::day/@date'));
+				}
+				
 				$properties['Fahrplan.Start'] = (string) $event->start;
 				
 				$properties['Fahrplan.Day'] = (string) current($event->xpath('ancestor::day/@index'));
@@ -108,14 +113,15 @@
 				
 				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
 				
+				if (!isset($event->date)) {
+					$eventStart = new DateTime($properties['Fahrplan.Date'] . ' ' . $properties['Fahrplan.Start']);
+					$eventDayChange = new DateTime($properties['Fahrplan.Date'] . ' ' . $dayChange);
 				
-				$eventStart = new DateTime($properties['Fahrplan.Date'] . ' ' . $properties['Fahrplan.Start']);
-				$eventDayChange = new DateTime($properties['Fahrplan.Date'] . ' ' . $dayChange);
-				
-				if ($eventStart < $eventDayChange) {
-					$properties['Fahrplan.Date'] = $eventStart
-						->modify('+1 day')
-						->format('Y-m-d');
+					if ($eventStart < $eventDayChange) {
+						$properties['Fahrplan.Date'] = $eventStart
+							->modify('+1 day')
+							->format('Y-m-d');
+					}
 				}
 				
 				foreach ($properties as $property => $value) {
@@ -302,13 +308,19 @@
 				
 				$path = ROOT . self::FAHRPLAN_FILES . $file;
 				
-				if (!isset($path)) {
+				if (!isset($path) or !is_readable($path)) {
 					$this->flash('Could not read file');
 					return false;
 				}
 				
-				if (!$xml = simplexml_load_file($path)) {
-					$this->flash('Could not parse XML');
+				libxml_use_internal_errors(true);
+				
+				if (!$xml = simplexml_load_file(realpath($path))) {
+					$errors = libxml_get_errors();
+					$this->flash('Could not parse XML' . ((count($errors) > 0)? (': ' . $errors[0]->message) : ''));
+					
+					libxml_clear_errors();
+					
 					return false;
 				}
 				
