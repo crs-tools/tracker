@@ -64,6 +64,7 @@
 			
 			'with_child',
 			'with_default_properties',
+			'with_progress',
 			'with_properties'
 			// TODO: with_progress
 		);
@@ -165,6 +166,10 @@
 				'Fahrplan.Day' => 'fahrplan_day',
 				'Fahrplan.Room' => 'fahrplan_room'
 			]);
+		}
+		
+		public function with_progress(Model_Resource $resource, array $arguments) {
+			$resource->select(self::TABLE . '.*, ticket_progress(' . self::TABLE . '.id) AS progress');
 		}
 		
 		// TODO: with_progress

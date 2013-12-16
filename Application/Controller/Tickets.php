@@ -32,7 +32,11 @@
 			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
 				->joins(['User'])
-				->scoped(['with_default_properties', 'order_list']);
+				->scoped([
+					'with_default_properties',
+					'with_progress',
+					'order_list'
+				]);
 			
 			$this->form(null, null, Request::METHOD_GET);
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
@@ -613,6 +617,8 @@
 			$this->View->assign('states', Model::groupByField($this->State->findAll(array(), (User::isAllowed('tickets', 'create_all'))? array() : array('ticket_type_id' => 3), array(), 'id'), 'ticket_type_id'));
 			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
 			*/
+			$this->states = $this->project->States;
+			
 			$this->users = User::findAll()
 				->select('id, name')
 				->indexBy('id', 'name');
