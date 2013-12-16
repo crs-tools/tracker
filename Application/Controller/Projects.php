@@ -30,7 +30,7 @@
 			
 			$this->versions = $this->project
 				->EncodingProfileVersion
-				->join(['EncodingProfile'])
+				->joins(['EncodingProfile'])
 				->orderBy(EncodingProfile::TABLE . '.name');
 			$this->versions->fetch();
 			

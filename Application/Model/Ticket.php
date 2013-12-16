@@ -62,78 +62,37 @@
 			
 			'order_list',
 			
-			'with_properties',
-			'with_default_properties'
+			'with_child',
+			'with_default_properties',
+			'with_properties'
 			// TODO: with_progress
 		);
 		
-		public function with_properties(Model_Resource $resource, array $arguments) {
-			// $parent = $this->Parent;
-			// OR ticket_id = tbl_ticket.parent_id
-			
-			foreach ($arguments as $property => $as) {
-				$resource->join(
-					TicketProperties::TABLE,
-					'value AS ' . $as,
-					'((ticket_id = ' .
-						self::TABLE .
-						'.id AND ' . 
-						self::TABLE .
-						'.parent_id IS NULL) OR (ticket_id = ' .
-						self::TABLE .
-						'.parent_id AND ' .
-						self::TABLE .
-						'.parent_id IS NOT NULL)) AND name = ?',
-					array($property),
-					'LEFT'
-				);
-			}
-		}
-		
-		public function with_default_properties(Model_Resource $resource, array $arguments) {
-			$this->with_properties($resource, [
-				'Fahrplan.Start' => 'fahrplan_start',
-				'Fahrplan.Date' => 'fahrplan_date',
-				'Fahrplan.Day' => 'fahrplan_day',
-				'Fahrplan.Room' => 'fahrplan_room'
-			]);
-		}
-		
-		public function order_list(Model_Resource $resource, array $arguments) {
-			$resource->orderBy(
-				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, title'
-			);
-			
-			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
-			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
-		}
-		
-		// TODO: with_progress
-		// $this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
-		
 		public function filter_recording(Model_Resource $resource, array $arguments) {
 			$resource->where(
-				['((ticket_type = ? AND parent_id IS NOT NULL) OR parent_id IS NULL)',
-				'ticket_state' => [
-					'locked',
-					'scheduled',
+				'(' . self::TABLE . '.ticket_type = ? AND ' .
+				self::TABLE . '.ticket_state IN (?,?,?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?))',
+				[
 					'recording',
-					'recorded',
-					'preparing'
-				]],
-				['recording']
+					'locked', 'scheduled', 'recording', 'recorded', 'preparing',
+					'recording',
+					'locked', 'scheduled', 'recording', 'recorded', 'preparing',
+				]
 			);
 		}
 		
 		public function filter_cutting(Model_Resource $resource, array $arguments) {
 			$resource->where(
-				['((ticket_type = ? AND parent_id IS NOT NULL) OR parent_id IS NULL)',
-				'ticket_state' => [
-					'prepared',
-					'cutting',
-					'cut'
-				]],
-				['recording']
+				'(' . self::TABLE . '.ticket_type = ? AND ' .
+				self::TABLE . '.ticket_state IN (?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?))',
+				[
+					'recording',
+					'prepared', 'cutting', 'cut',
+					'recording',
+					'prepared', 'cutting', 'cut'
+				]
 			);
 		}
 		
@@ -178,6 +137,60 @@
 				['parent_id = ' . self::TABLE . '.id AND (' . self::TABLE . '.handle_id = ? OR handle_id = ?)'],
 				[$arguments['handle'], $arguments['handle']]
 			);
+		}
+		
+		public function order_list(Model_Resource $resource, array $arguments) {
+			$resource->orderBy(
+				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, title'
+			);
+			
+			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
+			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
+		}
+		
+		public function with_child(Model_Resource $resource, array $arguments) {
+			$resource->join(
+				[self::TABLE, 'child'],
+				null,
+				[self::TABLE . '.id = parent_id'],
+				[],
+				'LEFT'
+			);
+		}
+		
+		public function with_default_properties(Model_Resource $resource, array $arguments) {
+			$this->with_properties($resource, [
+				'Fahrplan.Start' => 'fahrplan_start',
+				'Fahrplan.Date' => 'fahrplan_date',
+				'Fahrplan.Day' => 'fahrplan_day',
+				'Fahrplan.Room' => 'fahrplan_room'
+			]);
+		}
+		
+		// TODO: with_progress
+		// $this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
+		
+		public function with_properties(Model_Resource $resource, array $arguments) {
+			// $parent = $this->Parent;
+			// OR ticket_id = tbl_ticket.parent_id
+			
+			foreach ($arguments as $property => $as) {
+				$resource->join(
+					TicketProperties::TABLE,
+					'value AS ' . $as,
+					'((ticket_id = ' .
+						self::TABLE .
+						'.id AND ' . 
+						self::TABLE .
+						'.parent_id IS NULL) OR (ticket_id = ' .
+						self::TABLE .
+						'.parent_id AND ' .
+						self::TABLE .
+						'.parent_id IS NOT NULL)) AND name = ?',
+					array($property),
+					'LEFT'
+				);
+			}
 		}
 		
 		public static function createMissingRecordingTickets($project) {

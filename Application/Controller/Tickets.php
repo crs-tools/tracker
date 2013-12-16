@@ -40,7 +40,7 @@
 				switch ($this->filter) {
 					case 'recording':
 					case 'cutting':
-						$this->tickets->scoped(['filter_' . $this->filter]);
+						$this->tickets->scoped(['with_child', 'filter_' . $this->filter]);
 						break;
 				}
 			}
@@ -176,7 +176,7 @@
 			
 			$this->properties = $this->ticket->Properties;
 			
-			$this->comments = $this->ticket->Comments->join(['User']);
+			$this->comments = $this->ticket->Comments->joins(['User']);
 			
 			/*
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
