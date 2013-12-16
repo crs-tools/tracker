@@ -66,8 +66,8 @@ if (!empty($tickets)) {
 				$t .= '</span><span class="view"></span>';
 			$t .= '</a><span class="other">';
 				
-				if (!empty($ticket['user_id'])) {
-					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project + array('?u=' . $ticket['user_id']), $ticket['user_name'], array('data-user' => $ticket['user_id'])) . '</span>';
+				if (!empty($ticket['handle_id'])) {
+					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name'], array('data-user' => $ticket['user_id'])) . '</span>';
 				}
 				
 				/*if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)) {

@@ -31,16 +31,21 @@
 		public function index() {
 			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
+				->joins(['User'])
 				->scoped(['with_default_properties', 'order_list']);
 			
 			$this->form(null, null, Request::METHOD_GET);
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
 			
+			if ($this->filter !== null or isset($_GET['u'])) {
+				$this->tickets->scoped(['with_child']);
+			}
+			
 			if ($this->filter !== null) {
 				switch ($this->filter) {
 					case 'recording':
 					case 'cutting':
-						$this->tickets->scoped(['with_child', 'filter_' . $this->filter]);
+						$this->tickets->scoped(['filter_' . $this->filter]);
 						break;
 				}
 			}

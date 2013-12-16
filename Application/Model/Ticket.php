@@ -131,12 +131,12 @@
 				return;
 			}
 			
-			$resource->join(
-				self::TABLE,
-				null,
-				['parent_id = ' . self::TABLE . '.id AND (' . self::TABLE . '.handle_id = ? OR handle_id = ?)'],
-				[$arguments['handle'], $arguments['handle']]
-			);
+			$resource
+				->where(
+					self::TABLE . '.handle_id = ? OR child.handle_id = ?',
+					[$arguments['handle'], $arguments['handle']]
+				)
+				->distinct();		
 		}
 		
 		public function order_list(Model_Resource $resource, array $arguments) {
