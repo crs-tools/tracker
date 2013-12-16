@@ -10,12 +10,6 @@
 		
 		const CLASS_RESOURCE = 'Ticket_Resource';
 		
-		public $hasOne = array(
-			'EncodingProfileVersion' => array(
-				'foreign_key' => 'encoding_profile_version_id'
-			)
-		);
-		
 		public $hasMany = array(
 			'Properties' => array(
 				'class_name' => 'TicketProperties',
@@ -46,11 +40,17 @@
 				'join' => false
 			),
 			'State' => array(
-				'class_name' => 'TicketState',
-				'primary_key' => array('ticket_type', 'ticket_state'),
-				'foreign_key' => array('ticket_type', 'ticket_state')
-			)
-		);
+				'class_name' => 'ProjectTicketState',
+				'primary_key' => array('project_id', 'ticket_type', 'ticket_state'),
+				'foreign_key' => array('project_id', 'ticket_type', 'ticket_state')
+			),
+            'Project' => array(
+                'foreign_key' => 'project_id'
+            ),
+            'EncodingProfileVersion' => array(
+                'foreign_key' => 'encoding_profile_version_id'
+            )
+        );
 		
 		public $acceptNestedEntriesFor = array(
 			'Properties' => true
