@@ -1215,11 +1215,14 @@ table.diff tr th {
 
 table.diff tr td {
   padding-left: 1em;
+  overflow: scroll;
+  max-width: 550px;
 }
 
 table.diff tr td code {
   display: block;
   font-size: 1.2em;
+  white-space: nowrap;
 }
 
 table.diff tr td code del {
