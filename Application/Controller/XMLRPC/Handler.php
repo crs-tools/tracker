@@ -6,7 +6,7 @@
         '/Model/EncodingProfile',
         '/Model/LogEntry',
         '/Model/Ticket',
-        '/Model/TicketState'
+        '/Model/ProjectTicketState'
 	);
 	
 	class Controller_XMLRPC_Handler extends Controller_XMLRPC {
@@ -119,7 +119,7 @@
          * @return array ticket state
          */
         public function getNextState($project_id, $ticket_type, $ticket_state) {
-            return TicketState::getNextState($project_id, $ticket_type, $ticket_state);
+            return ProjectTicketState::getNextState($project_id, $ticket_type, $ticket_state);
         }
 
         /**
@@ -131,7 +131,7 @@
          * @return array ticket state
          */
         public function getPreviousState($project_id, $ticket_type, $ticket_state) {
-            return TicketState::getPreviousState($project_id, $ticket_type, $ticket_state);
+            return ProjectTicketState::getPreviousState($project_id, $ticket_type, $ticket_state);
         }
 
         /**
@@ -143,7 +143,7 @@
         public function getTicketNextState($ticket_id) {
             $ticket = Ticket::findBy(['id' => $ticket_id]);
 
-            return TicketState::getNextState($ticket['project_id'], $ticket['ticket_type'], $ticket['ticket_state']);
+            return ProjectTicketState::getNextState($ticket['project_id'], $ticket['ticket_type'], $ticket['ticket_state']);
         }
 
         /**
@@ -189,32 +189,6 @@
 
             return false;
         }
-
-
-        /**
-		 * fetches list of projects
-		 * 
-		 * @param boolean read_only if true, finished projects get listed too (default: false)
-		 * @param boolean list_encoding_profiles if true, list of encoding profiles for each project is returned (default: true)
-		 * @return array project data
-		 */
-		/*public function getProjects($read_only = false, $list_encoding_profiles = true) {
-			if($list_encoding_profiles) {
-				$projects = $this->Project->findAll(array('Project','EncodingProfile'), array('read_only' => $read_only));
-			} else {
-				$projects = $this->Project->findAll(array(), array('read_only' => $read_only));
-			}
-			return is_array($projects) ? $projects : array();
-		}*/
-
-		/**
-		 * returns list of states services can retrieve tickets for (merging, encoding, ....)
-		 *
-		 * @return array list of services
-		 */
-		/*public function getServices() {
-			return array_keys($this->State->services);
-		}*/
 
 		/**
 		 * Control channel for workers.
@@ -270,28 +244,11 @@
 				}
 			}
 
-			$this->worker->save(['last_seen' =>  new DateTime()]);
+			$this->worker->touch();
 			
 			return $cmd;
 		}
 		
-		/**
-		* Get value assigned to given property name of the ticket with given id
-		*
-		* @param int ticket_id id of ticket
-		* @param string property name
-		* @return string value of property or empty string if not found
-		*/
-		/*public function getTicketProperty($ticket_id, $name) {
-			if(empty($name)) {
-				throw new Exception('getTicketProperty: empty property name',419);
-			}
-			
-			$properties = $this->getTicketProperties($ticket_id);
-			
-			return isset($properties[$name]) ? $properties[$name] : '';
-		}*/
-
 		/**
 		* Get properties of ticket with given id
 		*
@@ -301,7 +258,7 @@
         * @throws Exception if ticket not found
 		*/
 		public function getTicketProperties($ticket_id, $pattern = null) {
-            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Parent','Project'])) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Worker','Parent','Project'])) {
                 throw new EntryNotFoundException(__FUNCTION__.': ticket not found',201);
             }
 
@@ -357,16 +314,10 @@
                     array_push($parts, $properties['Fahrplan.ID']);
                 }
 
-                /*
                 // add language if project has multiple languages
-                if($this->Project->current() and count($this->Project->current()->languages) > 0) {
-                    if(!isset($properties['Record.Language'])) {
-                        // error: language is not set, return empty string
-                        return '';
-                    } else {
-                        $parts[] = $properties['Record.Language'];
-                    }
-                }*/
+                if(count($ticket->Project->Languages) > 0 && isset($properties['Record.Language'])) {
+                    array_push($parts, $properties['Record.Language']);
+                }
 
                 if(isset($properties['Fahrplan.Slug'])) {
                     array_push($parts, $properties['Fahrplan.Slug']);
@@ -452,49 +403,54 @@
 		}
 
 		/**
-		 * Get all unassigned tickets in given state
-		 *
-		 * @param string id or name of state
-		 * @return array ticket data
-		 */
-		/*public function getUnassignedTicketsInState($state) {
-			if(!$this->checkReadOnly()) {
-				return array();
-			}
-			// auto cast types
-			if(!is_integer($state)) {
-				$state = $this->State->getIdByName($state);
-			}
-
-			$tickets = $this->Ticket->findUnassignedByState($state);
-
-			return is_array($tickets) ? $tickets : array();
-		}*/
-
-		/**
 		 * Get next unassigned ticket ready to be in state $state after transition.
 		 *
 		 * First ticket found gets assigned to calling user and state transition to $state is performed.
 		 *
-		 * @param string id or name of state
+		 * @param string ticket_type type of ticket
+         * @param string ticket_state ticket state the returned ticket will be in after this call
+         * @param array filter_parameters return only tickets matching given properties
 		 * @return array ticket data or false if no matching ticket found (or user is halted)
+         * @throws Exception on error
 		 */
-		/*public function assignNextUnassignedForState($state) {
+		public function assignNextUnassignedForState($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
+			/* TODO reintroduce worker hold
 			if(!$this->checkReadOnly()) {
 				return false;
-			}
-			
-			// auto cast types
-			if(is_integer($state)) {
-				$state = $this->State->getNameById($state);
-			}
-			
-			// check if valid state
-			if(!$service = $this->State->getService($state)) {
-				throw new ActionNotAllowedException('assignNextUnassignedForState: no service found for state', 413);
-			}
-			
-			if(!$ticket = $this->Ticket->findUnassignedByState($service['from'], 1)) {
+			}*/
+
+            if(empty($ticket_type) || empty($ticket_state)) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
+            }
+
+            // find all projects
+			$tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
+            if(empty($filter_properties)) {
+                $ticket = $tickets->first();
+            } else {
+                Log::debug($filter_properties);
+                foreach($tickets as $_ticket) {
+                    $ticket = $_ticket;
+                    $properties = $this->getTicketProperties($_ticket['id']);
+                    foreach($properties as $name => $value) {
+                        if(array_key_exists($name,$filter_properties) && $filter_properties[$name] != $value) {
+                            // if property mismatch, invalidate current ticket guess
+                            $ticket = null;
+                            break;
+                        }
+                    }
+                    if($ticket) {
+                        break;
+                    }
+                }
+            }
+
+            if(!$ticket) {
+                return false;
+            }
+
+            /* TODO handling abandoned tickets after timeout
+             if(!$ticket = $this->Ticket->findUnassignedByState($service['from'], 1)) {
 				// no matching ticket found
 				
 				// get ping timeout for workers
@@ -512,25 +468,24 @@
 			} else {
 				$from_state_id = $service['from'];
 				$from_user_id = null;
-			}
-			
-			$this->Ticket->user_id = $this->User->id;
-			$this->Ticket->state_id = $service['state'];
-			
-			if (!$save = $this->Ticket->save(null, array('user_id' => $from_user_id, 'state_id' => $from_state_id))) {
-				Log::warn('[RPC] assignNextUnassignedForState: race condition with other request. delaying new request');
+			}*/
+
+            $log_entry = array(
+                'ticket_id' => $ticket['id'],
+                'from_state_id' => $ticket['ticket_state'],
+                'to_state_id' => $ticket['next_state'],
+                'event' => __FUNCTION__
+            );
+
+			if (!$save = $ticket->save(array('handle_id' => $this->worker['id'], 'ticket_state' => $ticket['next_state']))) {
+				Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
 				return false;
 			}
+
+			LogEntry::create($log_entry);
 			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'from_state_id' => $from_state_id,
-				'to_state_id' => $service['state'],
-				'event' => 'RPC.Processing.Start'
-			));
-			
-			return $ticket;
-		}*/
+			return $ticket->toArray();
+		}
 
 		/**
 		 * Unassign ticket and set state to according state after procressing by service.
@@ -540,39 +495,40 @@
 		 * @param integer id of ticket
 		 * @param string optional log message
 		 * @return boolean true if action was performed sucessfully
+         * @throws Exception
 		 */
-		/*public function setTicketDone($ticket_id, $log_message = null) {
-			if(!$ticket = $this->Ticket->find($ticket_id, array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('setTicketDone: ticket not found',414);
+		public function setTicketDone($ticket_id, $log_message = null) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id])) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
+            }
+
+            if($ticket['handle_id'] == null) {
+				throw new Exception(__FUNCTION__.': ticket not assigned', 502);
 			}
-			if($this->Ticket->user_id == null) {
-				throw new Exception('setTicketDone: ticket not assigned', 415);
+			if($ticket['user_id'] != $this->worker['id']) {
+				throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
+            }
+			if($state = $ticket->State && !$state['service_executable']) {
+				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 504);
 			}
-			if($this->Ticket->user_id != $this->User->id) {
-				throw new Exception('setTicketDone: this is not your ticket', 416);
-			}
-			if(!$service = $this->State->getServiceByTicket($ticket)) {
-				throw new Exception('setTicketDone: no service found for ticket state', 417);
-			}
-			
-			$this->Ticket->user_id = null;
-			$this->Ticket->state_id = $service['to'];
-			
-			if (!$save = $this->Ticket->save(null, array('user_id' => $this->User->id, 'state_id' => $service['state']))) {
-				Log::warn('[RPC] setTicketDone: race condition with other request. delaying new request');
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'from_state_id' => $service['state'],
-				'to_state_id' => $service['to'],
-				'event' => 'RPC.Processing.Done',
-				'comment' => $log_message
-			));
+
+            $log_entry = array(
+                'ticket_id' => $ticket['id'],
+                'from_state_id' => $ticket['ticket_state'],
+                'to_state_id' => $ticket['next_state'],
+                'event' => __FUNCTION__,
+                'comment' => $log_message
+            );
+
+            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $ticket['next_state']))) {
+                Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
+                return false;
+            }
+
+            LogEntry::create($log_entry);
 
 			return true;
-		}*/
+		}
 
 		/**
 		 * Unassign ticket and set "failed" flag.
@@ -582,148 +538,66 @@
 		 * @param integer id of ticket
 		 * @param string optional log message
 		 * @return boolean true if action was performed sucessfully
+         * @throws Exception
 		 */
-		/*public function setTicketFailed($ticket_id, $log_message = null) {
-			if(!$ticket = $this->Ticket->find($ticket_id, array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('setTicketFailed: ticket not found',414);
-			}
-			if($this->Ticket->user_id == null) {
-				throw new Exception('setTicketFailed: ticket not assigned', 415);
-			}
-			if($this->Ticket->user_id != $this->User->id) {
-				throw new Exception('setTicketFailed: this is not your ticket', 416);
-			}
-			if(!$service = $this->State->getServiceByTicket($ticket)) {
-				throw new Exception('setTicketFailed: no service found for ticket state', 417);
-			}
-			
-			$this->Ticket->user_id = null;
-			$this->Ticket->failed = true;
-			
-			if (!$save = $this->Ticket->save(null, array('user_id' => $this->User->id))) {
-				Log::warn('[RPC] setTicketFailed: race condition with other request. delaying new request');
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'event' => 'RPC.Processing.Failed',
-				'comment' => $log_message
-			));
+		public function setTicketFailed($ticket_id, $log_message = null) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id])) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
+            }
 
-			return true;
-		}*/
+            if($ticket['handle_id'] == null) {
+                throw new Exception(__FUNCTION__.': ticket not assigned', 502);
+            }
+            if($ticket['user_id'] != $this->worker['id']) {
+                throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
+            }
+            if($state = $ticket->State && !$state['service_executable']) {
+                throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 504);
+            }
 
-		/**
-		 * Sets the state of a unassigned ticket to the next state in the normal workflow.
-		 *
-		 * @param int ticket_id id of ticket
-		 * @param string id or name of state
-		 * @param string optional log message
-		 * @return true if set state sucessfully
-		 */
-		/*public function setTicketNextState($ticket_id, $state, $log_message = null) {
-			if(!$this->checkReadOnly()) {
-				return false;
-			}
+            $log_entry = array(
+                'ticket_id' => $ticket['id'],
+                'from_state_id' => $ticket['ticket_state'],
+                'to_state_id' => $ticket['next_state'],
+                'event' => __FUNCTION__,
+                'comment' => $log_message
+            );
 
-			// auto cast types
-			if(!is_integer($state)) {
-				$state = $this->State->getIdByName($state);
-			}
-			
-			$ticket = $this->Ticket->find($ticket_id,array(), array('failed' => 'false', 'project_id' => $this->Project->current()->id));
-			if(!$ticket) {
-				throw new EntryNotFoundException('setTicketNextState: ticket not found or failed',414);
-			}
-			if($this->Ticket->state_id != $state) {
-				throw new ActionNotAllowedException('setNextTicketState: ticket not in given state. maybe race condition',418);
-			}
-			if($this->Ticket->user_id != null) {
-				throw new ActionNotAllowedException('setNextTicketState: ticket not unassigned.',418);
-			}
-			// check if valid state
-			if(!$service = $this->State->getServiceByTicket($ticket)) {
-				throw new ActionNotAllowedException('setNextTicketState: no service found for state', 419);
-			}
-			
-			$next_state = ($service['from'] == $state) ? $service['state'] : $service['to'];
-			$this->Ticket->state_id = $next_state;
-			
-			if (!$save = $this->Ticket->save(null, array('user_id' => null, 'state_id' => $state))) {
-				Log::warn('[RPC] setTicketNextState: race condition with other request. delaying new request');
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->Ticket->id,
-				'from_state_id' => $state,
-				'to_state_id' => $next_state,
-				'event' => 'RPC.State.Next',
-				'comment' => $log_message
-			));
-			
-			return true;
-		}*/
+            if (!$save = $ticket->save(array('handle_id' => null, 'failed' => true))) {
+                Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
+                return false;
+            }
 
-		/*public function getJobfile($ticket_id) {
-			$ticket = $this->Ticket->find($ticket_id,array(), array('failed' => 'false', 'type_id' => 2, 'project_id' => $this->Project->current()->id));
-			if(!$ticket) {
-				throw new EntryNotFoundException('getJobfile: ticket not found, failed or wrong ticket type',416);
-			}
-			
-			$properties = $this->getTicketProperties($this->Ticket->id);
+            LogEntry::create($log_entry);
+
+            return true;
+        }
+
+        /**
+         * Render job file for master.pl encoding scripts
+         *
+         * @param integer id of ticket
+         * @return boolean true if action was performed sucessfully
+         * @throws Exception
+         */
+		public function getJobfile($ticket_id) {
+            $properties = $this->getTicketProperties($ticket_id);
 
 			// check for basename
 			if(!isset($properties['Encoding.Basename'])) {
-				throw new Exception('getJobfile: could not examine file basename. Is property Record.Language set?',418);
+				throw new Exception(__FUNCTION__.': could not examine file basename. Is property Record.Language set?',601);
 			}
 
 			// get encoding profile
-			$profile = $this->EncodingProfile->find($ticket['encoding_profile_id'],array(), array('project_id' => $this->Project->current()->id));
-			if(!$profile) {
-				throw new EntryNotFoundException('getTicketProperties: encoding profile not found',417);
+			if(!$profileVersion = Ticket::findBy(array('id' => $ticket_id))->EncodingProfileVersion) {
+				throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',602);
 			}
-			
+
 			$template = new DOMDocument();
 			
 			// prepare template
-			if (!$template->loadXML($profile['xml_template'])) {
-				throw new Exception('getJobfile: Couldn\'t parse XML template');
-			}
-			
-			if ($template->documentElement->nodeName != 'xsl:stylesheet') {
-				// Process XML Template with PHP, this is deprecated since 2012-12-10
-				
-				// replace property placeholder
-				$xpath = new DOMXPath($template);
-				$entries = $xpath->query('//property');
-				foreach($entries as $property) {
-					if($property->attributes->getNamedItem('name') == null) continue;
-
-					// get property value
-					$property_value = isset($properties[$property->attributes->getNamedItem('name')->value]) ? $properties[$property->attributes->getNamedItem('name')->value] : '';
-
-					// check further escaping
-					$escaping = $property->attributes->getNamedItem('escaping');
-					if($escaping != null && $escaping->value == 'ascii') {
-						$property_value = iconv("UTF-8", "ASCII//TRANSLIT", $property_value);
-					}
-					// replace placeholder
-					$property->parentNode->replaceChild($template->createTextNode($property_value),$property);
-				}
-
-				// set job id
-				$id = $this->Ticket->fahrplan_id;
-				
-				if(!empty($profile['slug'])) {
-					$id .= '_' . $profile['slug'];
-				} else { // render slug for id from profile name if profile slug is empty
-					$id .= '_' . preg_replace('/[^a-zA-Z_\-0-9]/','_',preg_replace('/[.:]/','',$profile['name']));
-				}
-				$template->documentElement->setAttribute('id',$id);
-
-				return $template->saveXML();
+			if (!$template->loadXML($profileVersion['xml_template'])) {
+				throw new Exception(__FUNCTION__.': Couldn\'t parse XML template');
 			}
 			
 			// Process templates as XSL
@@ -745,7 +619,7 @@
 			$processor->importStylesheet($template);
 			
 			return $processor->transformToXML($content);
-		}*/
+		}
 		
 		/**
 		* Add a log message regarding the ticket with given id
@@ -753,19 +627,20 @@
 		* @param int ticket_id id of ticket
 		* @param string comment text for log message
 		* @return boolean true if comment saved successfully
+        * @throws Exception if ticket not found
 		*/
-		/*public function addLog($ticket_id, $log_message) {
-			if(!$ticket = $this->Ticket->find($ticket_id,array(), array('project_id' => $this->Project->current()->id))) {
-				throw new EntryNotFoundException('setTicketFailed: ticket not found',414);
-			}
-			
-			return $this->LogEntry->create(array(
+		public function addLog($ticket_id, $log_message) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id])) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
+            }
+
+			return LogEntry::create(array(
 				'ticket_id' => $ticket_id,
-				'user_id' => $this->User->id,
+				'user_id' => $this->worker['id'],
 				'comment' => $log_message,
-				'event' => 'RPC.Log'
+				'event' => __FUNCTION__
 			));
-		}*/
+		}
 		
 		/**
 		 * Check whether project is writable and user not set to read only.
