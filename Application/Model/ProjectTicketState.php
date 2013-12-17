@@ -12,13 +12,21 @@ class ProjectTicketState extends Model {
             )
         );
 
-        public function getNextState() {
-            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$this['project_id'], $this['ticket_type'], $this['ticket_state']]);
+        public function nextState() {
+            return self::getNextState($this['project_id'], $this['ticket_type'], $this['ticket_state']);
+        }
+
+        public function previousState() {
+            return self::getPreviousState($this['project_id'], $this['ticket_type'], $this['ticket_state']);
+        }
+
+        public static function getNextState($project_id, $ticket_type, $ticket_state) {
+            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
             return Database::$Instance->fetchRow();
         }
 
-        public function getPreviousState() {
-            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$this['project_id'], $this['ticket_type'], $this['ticket_state']]);
+        public static function getPreviousState($project_id, $ticket_type, $ticket_state) {
+            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
             return Database::$Instance->fetchRow();
         }
 }
