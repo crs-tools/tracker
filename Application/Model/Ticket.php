@@ -35,6 +35,9 @@
 				'foreign_key' => 'parent_id',
 				'join' => false
 			),
+            'Project' => array(
+                'foreign_key' => 'project_id'
+            ),
 			'State' => array(
 				'class_name' => 'ProjectTicketState',
 				'primary_key' => array('project_id', 'ticket_type', 'ticket_state'),
@@ -45,7 +48,8 @@
 				'select' => 'name as user_name'
 			),
 			'Worker' => array(
-				'foreign_key' => 'handle_id'
+				'foreign_key' => 'handle_id',
+                'select' => 'name as worker_name'
 			)
 		);
 		
