@@ -85,12 +85,12 @@
 
 <?php if ($parent !== null): ?>
 	<h3>Parent</h3>
-	<?php $this->render('tickets/list.tpl', array('tickets' => array($parent), 'referer' => false)); ?>
+	<?= $this->render('tickets/list.tpl', array('tickets' => array($parent), 'referer' => false)); ?>
 <?php endif; ?>
 
 <?php if ($children->getRows() > 0): ?>
 	<h3>Children</h3>
-	<?php $this->render('tickets/list.tpl', array('tickets' => $children, 'referer' => false, 'simulateTickets' => true)); ?>
+	<?= $this->render('tickets/list.tpl', array('tickets' => $children, 'referer' => false, 'simulateTickets' => true)); ?>
 <?php endif; ?>
 
 <h3 class="table">Properties</h3>
