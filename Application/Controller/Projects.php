@@ -14,6 +14,7 @@
 		public $requireAuthorization = true;
 		
 		public function index() {
+			$this->projects = Project::findAll();
 			return $this->render('projects/index.tpl');
 		}
 		

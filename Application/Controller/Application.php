@@ -23,8 +23,6 @@
 					$this->project['project_slug'] = $this->project['slug'];
 				}
 			}
-			
-			$this->projects = Project::findAll()->indexBy('slug');
 		}
 		
 		// TODO: redirectWithReference($default, array('ref1' => […], 'ref2' => …))

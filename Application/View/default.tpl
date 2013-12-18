@@ -12,21 +12,22 @@
 	<body>
 		<div id="projects">
 			<ul class="horizontal">
-				<?php if (!empty($projects) and User::isAllowed('projects', 'index')): ?>
+				<?php if (User::isAllowed('projects', 'index')): ?>
 					<li class="link<?= ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>"><?= $this->linkTo('projects', 'index', 'All projects'); ?></li>
-					
-					<?php if (isset($project)): ?>
-						<li class="padding">›</li>
-						<?php /* ($arguments['controller'] != 'projects' or $arguments['action'] != 'view')? ' current' : ''; */ ?>
-						<li class="link current">
-							<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
-							
-							if (User::isAllowed('projects', 'edit')) {
-								echo ' ' . $this->linkTo('projects', 'view', $project, '(settings)');
-							} ?>
-						</li>
-					<?php endif; ?>
 				<?php endif; ?>
+				
+				<?php if (isset($project)): ?>
+					<li class="padding">›</li>
+					<?php /* ($arguments['controller'] != 'projects' or $arguments['action'] != 'view')? ' current' : ''; */ ?>
+					<li class="link current">
+						<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
+						
+						if (User::isAllowed('projects', 'edit')) {
+							echo ' ' . $this->linkTo('projects', 'view', $project, '(settings)');
+						} ?>
+					</li>
+				<?php endif; ?>
+				
 			
 				<?php if (User::isLoggedIn()): ?>
 					<li class="right link"><?= $this->linkTo('user', 'logout', 'Logout'); ?></li>
