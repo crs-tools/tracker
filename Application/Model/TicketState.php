@@ -12,6 +12,19 @@
 			)
 		);
 		
+		protected static $_actions = [
+			'cut' => 'cutting',
+			'check' => 'checking'
+		];
+		
+		public static function getStateByAction($action) {
+			if (!isset(self::$_actions[$action])) {
+				return false;
+			}
+			
+			return self::$_actions[$action];
+		}
+		
 		/*
 		public $actions = array(
 			'cut' => array(

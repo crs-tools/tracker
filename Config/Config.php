@@ -13,31 +13,9 @@
 		'c3tt3'
 	);
 	
+	requires('Cache/Adapter/APC');
+	Cache::setAdapter(new Cache_Adapter_APC());
+	
 	session_set_cookie_params(0, '/', null, false, true);
 	
-/*
-return array(
-  'log' => array(
-    'path' => ROOT . 'Log/application.log',
-    'level' => Log::info,
-    'colorize' => false,
-  ),
-  'errors' => array(
-    'display' => true,
-    'log' => true,
-  ),
-  'view' => array(
-    'compress' => false,
-  ),
-  'database' => array(
-    'host' => 'localhost',
-    'user' => '',
-    'password' => '',
-    'name' => '',
-  ),
-  'cache' => array(
-    'prefix' => 'fem.tracker',
-  )
-);
-*/
 ?>

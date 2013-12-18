@@ -70,15 +70,15 @@ if (!empty($tickets)) {
 					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name'], array('data-user' => $ticket['user_id'])) . '</span>';
 				}
 				
-				/*if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)) {
-					$t .= $this->linkTo('tickets', 'cut', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>cut</span>', 'Cut lecture "' . $ticket['title'] . '"', array('class' => 'action'));
+				if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')) {
+					$t .= $this->linkTo('tickets', 'cut', $ticket, $project, /*(($referer)? array('?ref=' . $referer) : array()),*/ '<span>cut</span>', 'Cut recording "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)) {
-					$t .= $this->linkTo('tickets', 'check', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>check</span>', 'Check' . (($ticket['type_id'] == 2)? ' encoding for' : '') . ' lecture "' . $ticket['title'] . '"', array('class' => 'action'));
+				if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')) {
+					$t .= $this->linkTo('tickets', 'check', $ticket, $project, /* (($referer)? array('?ref=' . $referer) : array()),*/ '<span>check</span>', 'Check "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)) {
+				/*if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)) {
 					$t .= $this->linkTo('tickets', 'fix', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), '<span>fix</span>', 'Fix failed lecture "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				

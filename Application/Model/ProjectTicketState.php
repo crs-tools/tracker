@@ -1,6 +1,6 @@
 <?php
-
-class ProjectTicketState extends Model {
+	
+	class ProjectTicketState extends Model {
 
         const TABLE = 'tbl_project_ticket_state';
 
@@ -20,15 +20,27 @@ class ProjectTicketState extends Model {
             return self::getPreviousState($this['project_id'], $this['ticket_type'], $this['ticket_state']);
         }
 
-        public static function getNextState($project_id, $ticket_type, $ticket_state) {
-            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
-            return Database::$Instance->fetchRow();
+        public static function getNextState($project, $type, $state) {
+			return Cache::get(
+				Cache::ns('project.' . $project . '.states') .
+					'.' . $type . '.' . $state . '.next',
+				function() use ($project, $type, $state) {
+		            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$project, $type, $state]);
+		            return Database::$Instance->fetchRow();
+				}
+			);
         }
 
-        public static function getPreviousState($project_id, $ticket_type, $ticket_state) {
-            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
-            return Database::$Instance->fetchRow();
+        public static function getPreviousState($project, $type, $state) {
+			return Cache::get(
+				Cache::ns('project.' . $project . '.states') .
+					'.' . $type . '.' . $state . '.previous',
+				function() use ($project, $type, $state) {
+		            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
+		            return Database::$Instance->fetchRow();
+				}
+			);
         }
-}
-
+	}
+	
 ?>

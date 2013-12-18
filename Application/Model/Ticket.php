@@ -1,7 +1,10 @@
 <?php
 	
 	requires(
-		'/Model/TicketProperties'
+		'/Model/TicketProperties',
+		
+		'/Model/TicketState',
+		'/Model/ProjectTicketState'
 	);
 	
 	class Ticket extends Model {
@@ -73,7 +76,7 @@
 			// TODO: with_progress
 		);
 		
-		public function filter_recording(Model_Resource $resource, array $arguments) {
+		public static function filter_recording(Model_Resource $resource, array $arguments) {
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
 				self::TABLE . '.ticket_state IN (?,?,?,?,?)) OR ' .
@@ -87,7 +90,7 @@
 			);
 		}
 		
-		public function filter_cutting(Model_Resource $resource, array $arguments) {
+		public static function filter_cutting(Model_Resource $resource, array $arguments) {
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
 				self::TABLE . '.ticket_state IN (?,?,?)) OR ' .
@@ -101,7 +104,7 @@
 			);
 		}
 		
-		public function filter_encoding(Model_Resource $resource, array $arguments) {
+		public static function filter_encoding(Model_Resource $resource, array $arguments) {
 			/*
 			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id AND type_id = ?', array(2), 'LEFT');
 			$tickets->join('tbl_ticket', '', 'id = tbl_ticket.parent_id', array(), 'LEFT');
@@ -123,7 +126,7 @@
 			*/
 		}
 		
-		public function filter_releasing(Model_Resource $resource, array $arguments) {
+		public static function filter_releasing(Model_Resource $resource, array $arguments) {
 			/*
 			$states = $this->State->getIdsByName(array('tagged', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release'));
 			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
@@ -131,7 +134,7 @@
 			*/
 		}
 		
-		public function filter_handle(Model_Resource $resource, array $arguments) {
+		public static function filter_handle(Model_Resource $resource, array $arguments) {
 			if (!isset($arguments['handle'])) {
 				return;
 			}
@@ -153,7 +156,7 @@
 			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
 		}
 		
-		public function with_child(Model_Resource $resource, array $arguments) {
+		public static function with_child(Model_Resource $resource, array $arguments) {
 			$resource->join(
 				[self::TABLE, 'child'],
 				null,
@@ -163,8 +166,8 @@
 			);
 		}
 		
-		public function with_default_properties(Model_Resource $resource, array $arguments) {
-			$this->with_properties($resource, [
+		public static function with_default_properties(Model_Resource $resource, array $arguments) {
+			self::with_properties($resource, [
 				'Fahrplan.Start' => 'fahrplan_start',
 				'Fahrplan.Date' => 'fahrplan_date',
 				'Fahrplan.Day' => 'fahrplan_day',
@@ -172,19 +175,13 @@
 			]);
 		}
 		
-		public function with_progress(Model_Resource $resource, array $arguments) {
+		public static function with_progress(Model_Resource $resource, array $arguments) {
 			$resource->select(self::TABLE . '.*, ticket_progress(' . self::TABLE . '.id) AS progress');
 		}
 		
-		// TODO: with_progress
-		// $this->_fields[] = 'getTicketProgress(tbl_ticket.id) AS progress';
-		
-		public function with_properties(Model_Resource $resource, array $arguments) {
-			// $parent = $this->Parent;
-			// OR ticket_id = tbl_ticket.parent_id
-			
+		public static function with_properties(Model_Resource $resource, array $arguments) {
 			foreach ($arguments as $property => $as) {
-				$resource->join(
+				$resource->leftJoin(
 					TicketProperties::TABLE,
 					'value AS ' . $as,
 					'((ticket_id = ' .
@@ -196,8 +193,7 @@
 						'.parent_id AND ' .
 						self::TABLE .
 						'.parent_id IS NOT NULL)) AND name = ?',
-					array($property),
-					'LEFT'
+					[$property]
 				);
 			}
 		}
@@ -212,34 +208,23 @@
 			return Database::$Instance->fetchRow()['create_missing_encoding_tickets'];
 		}
 		
-		/*
-		public $hasMany = array('Comment' => array('key' => 'ticket_id'));
-		
-		public $belongsTo = array(
-			'Project' => array(),
-			'Type' => array('join' => true, 'key' => 'type_id', 'fields' => 'name AS type_name'),
-			'State' => array('join' => true, 'fields' => 'name AS state_name'),
-			'EncodingProfile' => array('join' => true, 'fields' => 'name AS encoding_profile_name'),
-			'User' => array('join' => true, 'fields' => 'name AS user_name')
-		);
-		
-		public $validatePresenceOf = array('title' => true);
-		public $validate = array('state' => array('message' => 'invalid state given'));
-		
-		public function getAsTable($conditions = null, array $params = array()) {
-			$tickets = new Ticket_Query();
-			$tickets->getProperties(array('Fahrplan.Start' => 'fahrplan_start', 'Fahrplan.Date' => 'fahrplan_date', 'Fahrplan.Day' => 'fahrplan_day', 'Fahrplan.Room' => 'fahrplan_room'));
-			$tickets->getProgress();
-			
-			if ($conditions !== null) {
-				$tickets->where($conditions, $params);
+		public function isEligibleAction($action) {
+			if (!$state = TicketState::getStateByAction($action)) {
+				return false;
 			}
 			
-			$tickets->orderBy('fahrplan_date, fahrplan_start, fahrplan_room DESC');
+			if ($this['ticket_state'] == $state) {
+				return true;
+			}
 			
-			return $tickets;
+			return (ProjectTicketState::getNextState(
+				$this['project_id'],
+				$this['ticket_type'],
+				$this['ticket_state']
+			)['ticket_state'] == $state);
 		}
 		
+		/*
 		public function findUnassignedByState($state, $limit = null) {
 			$query = 'SELECT
 						t.*,
@@ -292,55 +277,6 @@
 			return $this->findBySQL($query, array('state_id' => $state, 'project_id' => $this->Project->current()->id, 'role' => 'worker', 'timeout' => $timeout), array());
 		}
 		
-		public function getChildren($id) {
-			return $this->Ticket->findBySQL($this->getAsTable()->where(array('parent_id' => $id)), array(), array('User', 'State', 'EncodingProfile'));
-		}
-		
-		public function getParent($id) {
-			return $this->Ticket->findBySQL($this->getAsTable()->where(array('id' => $id)), array(), array('User', 'State'));
-		}
-		
-		public function getExportable(array $properties = array()) {
-			$tickets = new Ticket_Query();
-			$tickets->getProperties(array('Record.Language' => 'record_language', 'Fahrplan.Slug' => 'fahrplan_slug'));
-			
-			if (!empty($properties)) {
-				$tickets->getProperties($properties);
-			}
-			
-			// TODO: should we use project_id here?
-			$tickets->where('parent_id IS NULL AND NOT state_id = ? AND project_id = ?', array(1, $this->Project->id));
-			$tickets->orderBy('fahrplan_id');
-			$tickets->select('id, fahrplan_id, title');
-			
-			return $this->Ticket->findBySQL($tickets, array(), array());
-		}
-		
-		public function getForExport($fetch = null, $conditions = null, array $params = array(), array $properties = array()) {
-			$tickets = new Ticket_Query();
-			$tickets->getProperties(array('Record.Language' => 'record_language', 'Fahrplan.Slug' => 'fahrplan_slug'));
-			
-			if (!empty($properties)) {
-				$tickets->getProperties($properties);
-			}
-			
-			if ($conditions !== null) {
-				$tickets->where($conditions, $params);
-			}
-			
-			return $this->Ticket->findBySQL($tickets, array(), $fetch);
-		}
-		
-		public function getProgress($conditions = null, array $params = array()) {
-			$query = Database_Query::selectFrom($this->table, 'SUM(getTicketProgress(tbl_ticket.id)) / COUNT(tbl_ticket.id) AS progress', $conditions, $params);
-			$query->where('type_id = ? AND state_id != ?', array(1, $this->State->getIdByName('locked')));
-			
-			$this->Database->query($query);
-			$result = $this->Database->fetchRow();
-			
-			return (float) $result['progress'];
-		}
-		
 		public function getTimeline($id) {
 			$log = $this->LogEntry->findByTicketId($id, array('LogMessage', 'User'), 'created DESC');
 			$comments = $this->Comment->findAll(array('User'), array('ticket_id' => $id), array(), 'created DESC');
@@ -370,55 +306,6 @@
 			}
 			
 			return $timeline;
-		}
-		
-		public static function sortByFahrplanStart(array $tickets) {
-			usort($tickets, function($a, $b) {
-				if (isset($a['fahrplan_date']) and isset($a['fahrplan_start'])) {
-					$s = strtotime($a['fahrplan_date'] . ' ' . $a['fahrplan_start']);
-					$t = strtotime($b['fahrplan_date'] . ' ' . $b['fahrplan_start']);
-					
-					if ($s < $t) {
-						return -1;
-					} elseif ($s > $t) {
-						return 1;
-					}
-					
-					if (isset($a['fahrplan_room'])) {
-						$r = strcmp($a['fahrplan_room'], $b['fahrplan_room']);
-						
-						if ($r != 0) {
-							return $r;
-						}
-					}
-					
-					if (isset($a['fahrplan_id'])) {
-						if ($a['fahrplan_id'] < $b['fahrplan_id']) {
-							return -1;
-						} elseif ($a['fahrplan_id'] > $b['fahrplan_id']) {
-							return 1;
-						}
-					}
-					
-					if ($a['parent_id'] === $b['parent_id']) {
-						return 0;
-					}
-
-					if ($a['parent_id'] === null) {
-						if ($a['id'] === $b['parent_id']) {
-							return -1;
-						}
-					} else {
-						if ($b['id'] === $a['parent_id']) {
-							return 1;
-						}
-					}
-				}
-				
-				return 0;
-			});
-			
-			return $tickets;
 		}
 		
 		public function expandRecordingTask($id, $byMinutes) {
@@ -488,11 +375,6 @@
 			));
 			
 			return true;
-		}
-		
-		protected function _validateState($value, $message) {
-			// TODO: use Model State here
-			return $this->Type->getRows(array('id' => $value)) >= 1;
 		}
 		*/
 	}
