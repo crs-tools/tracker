@@ -92,7 +92,7 @@ if (!empty($tickets)) {
 			$t .= '</span>';
 			
 			if (empty($ticket['parent_id']) or isset($simulateTickets)) {
-				$t .= $this->linkTo('tickets', 'view', $ticket, $project, (($referer and $referer != 'index')? array('?ref=' . $referer) : array()), '<span style="width: ' . round($ticket['progress']) . '%;">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>', round($ticket['progress']) . '% (' . (($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) . ' – ' . $this->h($ticket['title']) . ')', array('class' => 'progress'));
+				$t .= $this->linkTo('tickets', 'view', $ticket, $project, (($referer and $referer != 'index')? array('?ref=' . $referer) : array()), (isset($ticket['progress']))? ('<span style="width: ' . round($ticket['progress']) . '%;">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>') : '', (isset($ticket['progress']))? (round($ticket['progress']) . '% (' . $ticket['fahrplan_id'] . ' – ' . $ticket['title'] . ')') : '', array('class' => 'progress'));
 			}
 		$t .= '</li>';
 		

@@ -1,5 +1,7 @@
-<?php $progressBar = '<div id="feed-stats-progress-bar" style="width: ' . round($progress, 2) . '%"' . (($progress < 20)? ' class="narrow"' : (($progress === 100.0)? ' class="complete"' : '')) . '>';
-$progressBar .= '<span class="label"><span>' . (($progress === 100.0)? 'complete' : (floor($progress) . '%')) . '</span></span></div>';
+<?php if (isset($progress)) {
+	$progressBar = '<div id="feed-stats-progress-bar" style="width: ' . round($progress, 2) . '%"' . (($progress < 20)? ' class="narrow"' : (($progress === 100.0)? ' class="complete"' : '')) . '>';
+	$progressBar .= '<span class="label"><span>' . (($progress === 100.0)? 'complete' : (floor($progress) . '%')) . '</span></span></div>';
+}
 
 $actions .= '<ul id="feed-stats-actions"><li><strong>' . $stats['cutting'] . '</strong> ' . $this->linkTo('tickets', 'index', $project, array('?t=cutting'), 'recording task' . (($stats['cutting'] != 1)? 's' : '') . '  to cut') . '</li>';
 $actions .= '<li><strong>' . $stats['checking'] . '</strong> '. $this->linkTo('tickets', 'index', $project, array('?t=releasing'), 'encoding task' . (($stats['checking'] != 1)? 's' : '') . ' to check') . '</li>';
@@ -14,10 +16,12 @@ else:*/
 <div id="feed-stats">
 	<!-- TODO: show notice, if somebody assigned a ticket to the user -->
 	
-	<div id="feed-stats-progress">
-		<?php echo $progressBar; ?>
-		<span class="description">Overall progress</span>
-	</div>
+	<?php if (!empty($progressBar)): ?>
+		<div id="feed-stats-progress">
+			<?php echo $progressBar; ?>
+			<span class="description">Overall progress</span>
+		</div>
+	<?php endif; ?>
 	
 	<?php echo $actions; ?>
 </div>

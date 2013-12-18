@@ -12,7 +12,6 @@
 			'LatestVersion' => array(
 				'class_name' => 'EncodingProfileVersion',
 				'foreign_key' => 'encoding_profile_id',
-				'select' => 'id',
 				'order_by' => 'tbl_encoding_profile_version.revision DESC',
 				'join' => false
 			)

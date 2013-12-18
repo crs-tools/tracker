@@ -42,7 +42,9 @@
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
 			
 			if ($this->filter !== null or isset($_GET['u'])) {
-				$this->tickets->scoped(['with_child']);
+				$this->tickets
+					->distinct()
+					->scoped(['with_child']);
 			}
 			
 			if ($this->filter !== null) {
@@ -179,6 +181,7 @@
 			
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
+			// TODO: add scopes for properties and progress
 			$this->parent = $this->ticket->Parent;
 			$this->children = $this->ticket->Children;
 			$this->children->fetch();
@@ -186,28 +189,6 @@
 			$this->properties = $this->ticket->Properties;
 			
 			$this->comments = $this->ticket->Comments->joins(['User']);
-			
-			/*
-			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
-				throw new EntryNotFoundException();
-			}
-			
-			if (!empty($ticket['parent_id'])) {
-				$this->View->assign('parent', $this->Ticket->getParent($ticket['parent_id']));
-			} else {
-				$this->View->assign('children', $this->Ticket->getChildren($ticket['id']));
-			}
-			
-			$properties = $this->Properties->findByObjectWithRoot($ticket['id']);
-			
-			if (!empty($properties)) {
-				$this->View->assign('properties', Model::groupByField($properties, 'root'));
-			}
-			
-			$this->View->assign('ticket', $ticket);
-			$this->View->assign('timeline', $this->Ticket->getTimeline($ticket['id']));
-			$this->View->render('tickets/view.tpl');
-			*/
 			
 			return $this->render('tickets/view.tpl');
 		}
