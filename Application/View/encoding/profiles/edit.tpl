@@ -1,23 +1,24 @@
 <?php $this->title((isset($profile))? ('Edit encoding profile ' . $profile['name'] . ' | ') : 'Create encoding profile | '); ?>
 
-<div id="ticket-header">
-	<?php if (isset($profile)): ?>
+<?php if (isset($profile)): ?>
+	<div id="ticket-header">
 		<h2 class="ticket"><span>Edit encoding profile <?= $this->h($profile['name']); ?></span></h2>
-	<?php endif; ?>
-	<ul class="ticket-header-bar right horizontal">
-		<li class="ticket-header-bar-background-left"></li>
-		<?php if (User::isAllowed('encodingprofiles', 'view')): ?>
-			<li class="action versions<?= ($arguments['action'] == 'view')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'view', $profile, '<span>versions</span>', 'Show all versions'); ?></li>
-		<?php endif; ?>
-		<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
-			<li class="action edit<?= ($arguments['action'] == 'edit')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'edit', $profile, '<span>edit</span>', 'Edit encoding profile…'); ?></li>
-		<?php endif; ?>
-		<?php if (User::isAllowed('encodingprofiles', 'delete')): ?>
-			<li class="action delete"><?= $this->linkTo('encodingprofiles', 'delete', $profile, '<span>delete</span>', 'Delete encoding profile'); ?></li>
-		<?php endif; ?>
-		<li class="ticket-header-bar-background-right"></li>
-	</ul>
-</div>
+		
+		<ul class="ticket-header-bar right horizontal">
+			<li class="ticket-header-bar-background-left"></li>
+			<?php if (User::isAllowed('encodingprofiles', 'view')): ?>
+				<li class="action versions<?= ($arguments['action'] == 'view')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'view', $profile, '<span>versions</span>', 'Show all versions'); ?></li>
+			<?php endif; ?>
+			<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
+				<li class="action edit<?= ($arguments['action'] == 'edit')? ' current' : '' ?>"><?= $this->linkTo('encodingprofiles', 'edit', $profile, '<span>edit</span>', 'Edit encoding profile…'); ?></li>
+			<?php endif; ?>
+			<?php if (User::isAllowed('encodingprofiles', 'delete')): ?>
+				<li class="action delete"><?= $this->linkTo('encodingprofiles', 'delete', $profile, '<span>delete</span>', 'Delete encoding profile'); ?></li>
+			<?php endif; ?>
+			<li class="ticket-header-bar-background-right"></li>
+		</ul>
+	</div>
+<?php endif; ?>
 
 <?= $f = $form(); ?>
 	<fieldset>
