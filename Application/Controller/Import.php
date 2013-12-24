@@ -286,9 +286,11 @@
 			$files = array();
 			
 			foreach (new DirectoryIterator(ROOT . 'Public/fahrplan/') as $file) {
-				if (mb_substr($file->getFilename(), -4) == '.xml') {
-					$files[$file->getFilename()] = mb_substr($file->getFilename(), 0, -4);
+				if (mb_substr($file->getFilename(), -4) != '.xml') {
+					continue;
 				}
+				
+				$files[$file->getFilename()] = mb_substr($file->getFilename(), 0, -4);
 			}
 			
 			natsort($files);
