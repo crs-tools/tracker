@@ -25,7 +25,7 @@
 	require ROOT . 'Config/Config.php';
 	require ROOT . 'Config/AccessControl.php';
 	
-	Router::init(ROOT . 'Config/Routes.php');
+	Router::addRoutes(ROOT . 'Config/Routes.php');
 	View::setTemplateDirectory(APPLICATION . 'View/'); // TODO: default?
 	
 	try {
