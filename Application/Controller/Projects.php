@@ -51,8 +51,6 @@
 				]);
 			}
 			
-			$this->versionsLeft->fetch();
-			
 			// Worker Groups
 			$this->workerGroupForm = $this->form();
 			
@@ -82,7 +80,7 @@
 			return $this->render('projects/edit.tpl');
 		}
 		
-		public function edit(array $arguments = array()) {
+		public function edit(array $arguments) {
 			$this->form();
 			
 			if ($this->form->wasSubmitted() and $this->project->save($this->form->getValues())) {
@@ -93,7 +91,7 @@
 			return $this->render('projects/edit.tpl');
 		}
 		
-		public function delete(array $arguments = array()) {
+		public function delete(array $arguments) {
 			$this->form();
 			
 			if ($this->form->wasSubmitted() and $this->project->destroy()) {

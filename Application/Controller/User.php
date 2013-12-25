@@ -87,7 +87,7 @@
 			return $this->render('user/index.tpl');
 		}
 		/*
-		public function substitute(array $arguments = array()) {
+		public function substitute(array $arguments) {
 			if (empty($arguments['id'])) {
 				return $this->View->redirect('user', 'index');
 			}

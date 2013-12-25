@@ -95,7 +95,7 @@
 			return $this->View->redirect('export', 'index', array('project_slug' => $this->Project->slug));
 		}
 		
-		public function podcast(array $arguments = array()) {
+		public function podcast(array $arguments) {
 			if (Request::isPostRequest()) {
 				if (!$this->EncodingProfile->findFirst(array(), array('project_id' => $this->Project->id, 'slug' => Request::post('profile')))) {
 					throw new EntryNotFoundException();
