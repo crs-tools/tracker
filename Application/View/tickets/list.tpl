@@ -19,7 +19,7 @@ if (!empty($tickets)) {
 	
 	foreach ($tickets as $i => $ticket) {
 		$t = '<li data-id="' . $ticket['id'] . '"' . ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child') . '"' : '') . '>';
-			$t .= '<a class="link" href="' . $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + array('project_slug' => $project['slug']) + (($referer and $referer != 'index')? array('?ref=' . $referer) : array())) . '" title="' . (($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) . ' – ' . $this->h($ticket['title']) . ((!empty($ticket['encoding_profile_name']))? ' (' . $ticket['encoding_profile_name'] . ')' : '') . (($ticket['failed'])? ' (' . $ticket['ticket_state'] . ' failed)' : (($ticket['needs_attention'])? ' (needs attention)' : '')) . '">';
+			$t .= '<a class="link" href="' . $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + array('project_slug' => $project['slug'])/* + (($referer and $referer != 'index')? array('?ref=' . $referer) : array())*/) . '" title="' . (($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) . ' – ' . $this->h($ticket['title']) . ((!empty($ticket['encoding_profile_name']))? ' (' . $ticket['encoding_profile_name'] . ')' : '') . (($ticket['failed'])? ' (' . $ticket['ticket_state'] . ' failed)' : (($ticket['needs_attention'])? ' (needs attention)' : '')) . '">';
 				$t .= '<span class="vid' . (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : '') . '">';
 				
 				if (empty($ticket['parent_id']) or isset($simulateTickets)) {
@@ -47,27 +47,27 @@ if (!empty($tickets)) {
 				$t .= '</span><span class="state' . (($ticket['failed'])? ' failed' : '') . '">' . $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : '');
 				$t .= '</span><span class="day">';
 				
-				if (empty($ticket['parent_id'])) {
+				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
 					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . $ticket['fahrplan_day']) : '-'; 
 				}
 				
 				$t .= '</span><span class="start">';
 				
-				if (empty($ticket['parent_id'])) {
+				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_start'])) {
 					$t .= $ticket['fahrplan_start'];
 				}
 				
 				$t .= '</span><span class="room">';
 				
-				if (empty($ticket['parent_id'])) {
+				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
 					$t .= $ticket['fahrplan_room'];
 				}
 				
 				$t .= '</span><span class="view"></span>';
 			$t .= '</a><span class="other">';
 				
-				if (!empty($ticket['handle_id'])) {
-					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name'], array('data-user' => $ticket['user_id'])) . '</span>';
+				if (!empty($ticket['handle_id']) and isset($ticket['user_name'])) {
+					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name'], array('data-handle' => $ticket['handle_id'])) . '</span>';
 				}
 				
 				if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')) {
@@ -87,12 +87,12 @@ if (!empty($tickets)) {
 				}*/
 				
 				if (User::isAllowed('tickets', 'edit')) {
-					$t .= $this->linkTo('tickets', 'edit', $ticket, $project, (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket "' . $ticket['title'] . '"', array('class' => 'edit'));
+					$t .= $this->linkTo('tickets', 'edit', $ticket, $project, /*(($referer)? array('?ref=' . $referer) : array()),*/ '<span>edit</span>', 'Edit ticket "' . $ticket['title'] . '"', array('class' => 'edit'));
 				}
 			$t .= '</span>';
 			
 			if (empty($ticket['parent_id']) or isset($simulateTickets)) {
-				$t .= $this->linkTo('tickets', 'view', $ticket, $project, (($referer and $referer != 'index')? array('?ref=' . $referer) : array()), (isset($ticket['progress']))? ('<span style="width: ' . round($ticket['progress']) . '%;">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>') : '', (isset($ticket['progress']))? (round($ticket['progress']) . '% (' . $ticket['fahrplan_id'] . ' – ' . $ticket['title'] . ')') : '', array('class' => 'progress'));
+				$t .= $this->linkTo('tickets', 'view', $ticket, $project, /*(($referer and $referer != 'index')? array('?ref=' . $referer) : array()),*/ (isset($ticket['progress']))? ('<span style="width: ' . round($ticket['progress']) . '%;">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>') : '', (isset($ticket['progress']))? (round($ticket['progress']) . '% (' . $ticket['fahrplan_id'] . ' – ' . $ticket['title'] . ')') : '', array('class' => 'progress'));
 			}
 		$t .= '</li>';
 		

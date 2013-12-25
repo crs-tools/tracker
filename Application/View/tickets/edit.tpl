@@ -12,15 +12,7 @@
 <div id="ticket-header">
 	<?php if (!empty($ticket)): ?>
 		<h2 class="ticket">
-			<span class="fahrplan"><?php if ($ticket['fahrplan_id'] !== 0) {
-				echo $ticket['fahrplan_id'];
-			} else {
-				if ($ticket['type_id'] == 3 and empty($ticket['parent_id'])) {
-					echo '–';
-				} else {
-					echo $ticket['id'];
-				}
-			} ?></span>
+			<span class="fahrplan"><?= $this->h($ticket['fahrplan_id']); ?></span>
 			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket, $project, str_shorten($ticket['title'], 37)); ?></span>
 		</h2>
 	<?php else: ?>
@@ -76,8 +68,8 @@
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
-			<?php if ($ticket['type_id'] == 2 or (empty($ticket) and User::isAllowed('tickets', 'create_all'))): ?>
-				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + ((!empty($profiles))? $profiles : array()), $ticket['encoding_profile_id']); ?>
+			<?php if ($ticket['ticket_type'] == 'encoding' or (empty($ticket) and User::isAllowed('tickets', 'create_all'))): ?>
+				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + $profiles->toArray(), $ticket['encoding_profile_version_id']); ?>
 			<?php endif; ?>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
 			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
@@ -125,7 +117,7 @@
 						<?php endif;
 						foreach ($tickets as $t) {
 							// echo $f->option(($t['type_id'] == 3)? '–' : (($t['fahrplan_id'] === 0)? $t['id'] : $t['fahrplan_id']), $t['id'], Request::post('parent') == $t['parent_id'] or $ticket['parent_id'] == $t['id']); // TODO: better option selection
-							echo $f->option((($t['type_id'] == 3)? '–' : (($t['fahrplan_id'] === 0)? $t['id'] : $t['fahrplan_id'])) . ' | ' . $t['title'], $t['id'], $ticket['parent_id'] == $t['id'], null, array('name' => 'parent'));
+							echo $f->option((($t['ticket_type'] == 3)? '–' : (($t['fahrplan_id'] === 0)? $t['id'] : $t['fahrplan_id'])) . ' | ' . $t['title'], $t['id'], $ticket['parent_id'] == $t['id'], null, array('name' => 'parent'));
 						} ?>
 					</select>
 				</li>
@@ -153,12 +145,7 @@
 					echo $this->linkTo('tickets', 'index', $project, 'discard ticket', array('class' => 'reset'));
 				} else {
 					echo $f->submit('Save ticket') . ' or ';
-					
-					if ($referer) {
-						echo $this->linkTo('tickets', 'index', $project, (($referer != 'index')? array('?t=' . $referer) : array()), 'discard changes', array('class' => 'reset'));
-					} else {
-						echo $this->linkTo('tickets', 'view', $ticket, $project, 'discard changes', array('class' => 'reset'));
-					}
+					echo $this->linkTo('tickets', 'view', $ticket, $project, 'discard changes', array('class' => 'reset'));
 				} ?>
 			</li>
 		</ul>
