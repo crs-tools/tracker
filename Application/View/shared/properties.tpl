@@ -1,6 +1,11 @@
 <table class="properties">
 	<?php $root = null;
 	
+	if ($properties instanceOf Model_Resource) {
+		$properties = clone $properties;
+		$properties->except(['indexBy']);
+	}
+	
 	foreach ($properties as $property):
 		if ($root != $property['root']):
 			$root = $property['root']; ?>
