@@ -23,15 +23,7 @@ if (!empty($tickets)) {
 				$t .= '<span class="vid' . (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : '') . '">';
 				
 				if (empty($ticket['parent_id']) or isset($simulateTickets)) {
-					if ($ticket['fahrplan_id'] !== 0) {
-						$t .=  $ticket['fahrplan_id'];
-					} else {
-						if ($ticket['type_id'] == 3 and empty($ticket['parent_id'])) {
-							$t .=  '–';
-						} else {
-							$t .=  $ticket['id'];
-						}
-					}
+					$t .= $this->h($ticket['fahrplan_id']);
 				} else {
 					$t .=  '&nbsp;';
 				}
@@ -41,6 +33,7 @@ if (!empty($tickets)) {
 				if (empty($ticket['encoding_profile_name'])) {
 					$t .= $this->h(str_shorten($ticket['title'], 40));
 				} else {
+					// TODO: we probably aren't going to join this, maybe show "Recording/Ingest" for others?
 					$t .= $ticket['encoding_profile_name'];
 				}
 				
@@ -48,19 +41,19 @@ if (!empty($tickets)) {
 				$t .= '</span><span class="day">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
-					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . $ticket['fahrplan_day']) : '-'; 
+					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . $this->h($ticket['fahrplan_day'])) : '-'; 
 				}
 				
 				$t .= '</span><span class="start">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_start'])) {
-					$t .= $ticket['fahrplan_start'];
+					$t .= $this->h($ticket['fahrplan_start']);
 				}
 				
 				$t .= '</span><span class="room">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
-					$t .= $ticket['fahrplan_room'];
+					$t .= $this->h($ticket['fahrplan_room']);
 				}
 				
 				$t .= '</span><span class="view"></span>';

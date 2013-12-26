@@ -1,22 +1,22 @@
 <?php
 	
 	function delayToMilliseconds($delay) {
-		return ((float)$delay) * 1000;
+		return ((float) $delay) * 1000;
 	}
 
 	function millisecondsToDelay($milliseconds) {
-		return $milliseconds / 1000;
+		return ((int) $milliseconds) / 1000;
 	}
 	
 	function actionExpandOptions() {
 		return [
 			'' => '',
-			'5' => '5 minutes',
-			'10' => '10 minutes',
-			'20' => '20 minutes',
-			'30' => '30 minutes',
-			'60' => '60 minutes',
-			'90' => '90 minutes'
+			'300' => '5 minutes',
+			'600' => '10 minutes',
+			'1200' => '20 minutes',
+			'1800' => '30 minutes',
+			'3600' => '60 minutes',
+			'5400' => '90 minutes'
 		];
 	}
 	

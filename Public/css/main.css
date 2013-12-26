@@ -764,8 +764,8 @@ ul.ticket-header-bar li.action.reset a:before { background-position: -180px -202
 ul.ticket-header-bar li.action.check a:before { background-position: -210px -202px; }
 ul.ticket-header-bar li.action.current.check a:before { background-position: -210px -290px; }
 
-ul.ticket-header-bar li.action.mark a:before { background-position: -240px -202px; }
-ul.ticket-header-bar li.action.current.mark a:before { background-position: -240px -290px; }
+ul.ticket-header-bar li.action.cut a:before { background-position: -240px -202px; }
+ul.ticket-header-bar li.action.current.cut a:before { background-position: -240px -290px; }
 
 ul.ticket-header-bar li.action.fix a:before { background-position: -270px -202px; }
 ul.ticket-header-bar li.action.current.fix a:before { background-position: -270px -290px; }
@@ -1163,29 +1163,29 @@ ul.tickets li a.progress span span {
 	background: transparent url(../images/main.png) no-repeat right -346px;
 }
 
-table.log, table.properties {
+table.properties {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-table.log tr th, table.properties tr th {
+table.properties tr th {
 	padding: 0.3em 0.4em;
-	border-right: 1px solid #e0e0e0;
 	background-color: #fff;
+  text-align: left;
 	font-weight: normal;
 	font-size: 1.2em;
 	color: #3d464d;
 }
 
-table.log tr th:last-child, table.properties tr th:last-child { border: none; }
+h3.table + table.properties thead:first-child tr th { border: none; }
 
-table.log tr td, table.properties tr td {
+table.properties tr td {
 	border-top: 1px solid #e0e0e0;
 	border-bottom: 1px solid #e0e0e0;
 	padding: 0.4em 0.7em;
 }
 
-table.log tr td, table.properties tr:last-child td { border-bottom: none; }
+table.properties tr:last-child td { border-bottom: none; }
 
 table.properties tr td.key {
 	width: 16%;

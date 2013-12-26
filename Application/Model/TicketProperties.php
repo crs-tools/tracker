@@ -39,14 +39,6 @@
 
 			return implode('-', $parts);
 		}
-		
-		public static function delayToMilliseconds($delay) {
-			return ((float)$delay) * 1000;
-		}
-		
-		public static function millisecondsToDelay($milliseconds) {
-			return $milliseconds / 1000;
-		}
 		*/
 		
 	}

@@ -417,12 +417,12 @@
   }
   
   function updateLinks() {
-    tickets.find('a[data-user]').each(function(i, link) {
+    tickets.find('a[data-handle]').each(function(i, link) {
       $(link).click(function(event) {
         if(!event.metaKey && !event.controlKey) {
           event.preventDefault();
           
-          getTickets({'u': $(link).data('user')}, true, 0);
+          getTickets({'u': $(link).data('handle')}, true, 0);
           
           $('.ticket-header-bar li.current').removeClass('current');
           $('.ticket-header-bar li.first').addClass('current');
@@ -525,7 +525,8 @@
   Tracker.Action = {
     init: function() {
       comment = $('#ticket-action-comment');
-      expandBy = $('#ticket-action-expand_by').parent().detach();
+      expandLeft = $('#ticket-action-expand_left').parent().detach();
+      expandRight = $('#ticket-action-expand_right').parent().detach();
       delayBy = $('#ticket-action-delay_by').parent();
       
       failed = $('#ticket-action-failed');
@@ -544,11 +545,14 @@
               failed.trigger('change');
             }
             
-            expandBy.insertAfter(expand.parent());
+            expandLeft.insertAfter(expand.parent());
+            expandRight.insertAfter(expandLeft);
             
-            submit.button.value = 'Expand timeline and prepare for merging';
+            submit.button.value = 'Expand timeline and set up preparing';
           } else {
-            expandBy.detach();
+            expandLeft.detach();
+            expandRight.detach();
+            
             submit.button.value = submit.originalText;
           }
         });

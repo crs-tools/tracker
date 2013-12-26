@@ -1,5 +1,5 @@
-<?php if (empty($action)) {
-	$this->title((($ticket['type_id'] == 3)? '' : ((($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) . ' | ')) . $ticket['title'] . ' | ');
+<?php if (!isset($action)) {
+	$this->title($ticket['fahrplan_id'] . ' | ' . $ticket['title'] . ' | ');
 } else {
 	$this->title(mb_ucfirst($action) . ' lecture ' . $ticket['title'] . ' | ');
 }
@@ -21,7 +21,7 @@
 		} ?></span>
 		<span class="title" title="<?= $this->h($ticket['title']); ?>">
 			<?php if (!empty($action)) {
-				echo mb_ucfirst($action) . ' lecture ' . $this->linkTo('tickets', 'view', $ticket, $project, $this->h(str_shorten($ticket['title'], 37)));
+				echo $this->h(mb_ucfirst($action)) . ' lecture ' . $this->linkTo('tickets', 'view', $ticket, $project, $this->h(str_shorten($ticket['title'], 37)));
 			} else {
 				echo $this->h(str_shorten($ticket['title'], 50));
 			} ?>
@@ -53,12 +53,12 @@
 	<?php if (User::isLoggedIn()): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
-			<?php /*if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
-				<li class="action mark<?php echo ($action == 'cut')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'cut', $ticket + $project, '<span>cut</span>', 'Mark lecture…'); ?></li>
+			<?php if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')): ?>
+				<li class="action cut<?php echo (isset($action) and $action == 'cut')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
 			<?php endif;
-			if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
-				<li class="action check<?php echo ($action == 'check')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'check', $ticket + $project, '<span>check</span>', 'Check ticket…'); ?></li>
-			<?php endif;
+			if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')): ?>
+				<li class="action check<?php echo (isset($action) and $action == 'check')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check ticket…'); ?></li>
+			<?php endif;/*
 			if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
 				<li class="action fix<?php echo ($action == 'fix')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
 			<?php endif;
@@ -69,7 +69,7 @@
 				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', array('class' => 'confirm-ticket-reset')); ?></li>
 			<?php endif;*/
 			if (User::isAllowed('tickets', 'edit')): ?>
-				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, (($referer)? array('?ref=' . $referer) : array()), '<span>edit</span>', 'Edit ticket…'); ?></li>
+				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, /*(($referer)? array('?ref=' . $referer) : array()),*/ '<span>edit</span>', 'Edit ticket…'); ?></li>
 			<?php endif;
 			if (User::isAllowed('tickets', 'delete')): ?>
 				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
@@ -79,16 +79,16 @@
 	<?php endif; ?>
 </div>
 
-<?php /* if (!empty($action)) {
+<?php if (!empty($action)) {
 	echo $this->render('tickets/view/action.tpl');
-} */ ?>
+} ?>
 
-<?php if ($parent !== null): ?>
+<?php if (isset($parent)): ?>
 	<h3>Parent</h3>
 	<?= $this->render('tickets/list.tpl', array('tickets' => array($parent), 'referer' => false)); ?>
 <?php endif; ?>
 
-<?php if ($children->getRows() > 0): ?>
+<?php if (isset($children) and $children->getRows() > 0): ?>
 	<h3>Children</h3>
 	<?= $this->render('tickets/list.tpl', array('tickets' => $children, 'referer' => false, 'simulateTickets' => true)); ?>
 <?php endif; ?>
@@ -96,6 +96,10 @@
 <h3 class="table">Properties</h3>
 
 <?= $this->render('shared/properties.tpl'); ?>
+
+<?php if (isset($parentProperties)): ?>
+	<?= $this->render('shared/properties.tpl', ['properties' => $parentProperties]); ?>
+<?php endif; ?>
 
 <div id="timeline">
 	<h3>Timeline</h3>
@@ -117,6 +121,7 @@
 			</li>
 		<?php endif;
 		
+		if (isset($comments)):
 		foreach ($comments as $comment): ?>
 			<li class="event comment left">
 				<p><?php echo nl2br($this->h($comment['comment'])); ?></p>
@@ -127,6 +132,7 @@
 				<span class="date"><?php echo (new DateTime($comment['created']))->format('d.m.Y H:i'); ?></span>
 			</li>
 		<?php endforeach;
+		endif;
 		
 		
 		/*if (!empty($timeline)):

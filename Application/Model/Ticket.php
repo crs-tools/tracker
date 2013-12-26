@@ -222,6 +222,72 @@
 			)['ticket_state'] == $state);
 		}
 		
+		public function expandRecording(array $expand) {
+			if ($this['ticket_type'] != 'recording') {
+				return false;
+			}
+			
+			$existingProperties = $this->properties->indexBy('name', 'value');
+			$properties = [];
+			
+			if ($expand[0] > 0) {
+				if (isset($existingProperties['Record.StartPadding'])) {
+					$expand[0] += (int) $existingProperties['Record.StartPadding'];
+				}
+				
+				$properties[] = [
+					'name' => 'Record.StartPadding',
+					'value' => $expand[0]
+				];
+			}
+			
+			if ($expand[1] > 0) {
+				if (isset($existingProperties['Record.EndPadding'])) {
+					$expand[1] += (int) $existingProperties['Record.EndPadding'];
+				}
+				
+				$properties[] = [
+					'name' => 'Record.EndPadding',
+					'value' => $expand[1]
+				];
+			}
+			
+			return $this->save([
+				'properties' => $properties,
+				'ticket_state' => $this->queryPreviousState('preparing'),
+				'handle_id' => null,
+				'failed' => false
+			]);
+		}
+		
+		public function queryPreviousState($state = null) {
+			return (new Database_Query(''))
+				->select('ticket_state')
+				->from(
+					'ticket_state_previous(?, ?, ?)',
+					'previous_state',
+					[
+						$this['project_id'],
+						$this['ticket_type'],
+						($state === null)? $this['ticket_state'] : $state
+					]
+				);
+		}
+		
+		public function queryNextState($state = null) {
+			return (new Database_Query(''))
+				->select('ticket_state')
+				->from(
+					'ticket_state_next(?, ?, ?)',
+					'next_state',
+					[
+						$this['project_id'],
+						$this['ticket_type'],
+						($state === null)? $this['ticket_state'] : $state
+					]
+				);
+		}
+		
 		/*
 		public function findUnassignedByState($state, $limit = null) {
 			$query = 'SELECT
@@ -304,23 +370,6 @@
 			}
 			
 			return $timeline;
-		}
-		
-		public function expandRecordingTask($id, $byMinutes) {
-			$by = 60 * $byMinutes;
-			$properties = $this->Properties->findByObject($id, array('name' => 'Record.EndPadding'));
-			
-			if (!empty($properties['Record.EndPadding'])) {
-				$by += (int) $properties['Record.EndPadding'];
-			}
-			
-			$this->Properties->save(array('ticket_id' => $id, 'Record.EndPadding' => $by));
-			
-			if (!$this->Database->query(Database_Query::updateTable($this->table, array('state_id' => $this->State->getIdByName('recorded'), 'failed' => false, 'user_id' => null), array('id' => $id, 'type_id' => 1)))) {
-				return false;
-			}
-			
-			return true;
 		}
 		
 		public function resetRecordingTask($id) {

@@ -23,13 +23,13 @@
 		<li class="ticket-header-bar-background-left"></li>
 			
 		<?php if (!empty($ticket)): ?>
-			<?php /*if (User::isAllowed('tickets', 'cut') and $this->State->isEligibleAction('cut', $ticket)): ?>
-				<li class="action cut"><?php echo $this->linkTo('tickets', 'cut', $ticket + $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
+			<?php if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')): ?>
+				<li class="action cut"><?php echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
 			<?php endif;
-			if (User::isAllowed('tickets', 'check') and $this->State->isEligibleAction('check', $ticket)): ?>
-				<li class="action check"><?php echo $this->linkTo('tickets', 'check', $ticket + $project, '<span>check</span>', 'Check ticket…'); ?></li>
+			if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')): ?>
+				<li class="action check"><?php echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check ticket…'); ?></li>
 			<?php endif;
-			if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
+			/*if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
 				<li class="action fix"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
 			<?php endif;
 			if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>

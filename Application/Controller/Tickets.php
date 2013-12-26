@@ -2,10 +2,16 @@
 	
 	requires(
 		'String',
+		
 		'/Controller/Application',
+		
 		'/Model/Ticket',
 		'/Model/TicketState',
-		'/Model/Comment'
+		'/Model/Comment',
+		
+		'/Model/EncodingProfileVersion',
+		
+		'/Helper/Ticket'
 	);
 	
 	class Controller_Tickets extends Controller_Application {
@@ -174,7 +180,7 @@
 			return $this->render('tickets/index.tpl');
 		}
 		
-		public function view(array $arguments = array()) {
+		public function view(array $arguments) {
 			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
 			}
@@ -182,9 +188,11 @@
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
 			// TODO: add scopes for properties and progress
+			// TODO: joins user
 			$this->parent = $this->ticket->Parent;
-			$this->children = $this->ticket->Children;
-			$this->children->fetch();
+			$this->children = $this->ticket
+				->Children
+				->joins(['User']);
 			
 			$this->properties = $this->ticket->Properties;
 			
@@ -294,114 +302,157 @@
 			
 			return $this->render('tickets/feed.tpl');
 		}
-		/*
-		public function cut(array $arguments = array()) {
+		
+		public function cut(array $arguments) {
 			$this->_action('cut', $arguments);
 		}
 		
-		public function uncut(array $arguments = array()) {
+		public function uncut(array $arguments) {
 			$this->_undoAction('cut', $arguments);
 		}
 		
-		public function check(array $arguments = array()) {
+		public function check(array $arguments) {
 			$this->_action('check', $arguments);
 		}
 		
-		public function uncheck(array $arguments = array()) {
+		public function uncheck(array $arguments) {
 			$this->_undoAction('check', $arguments);
 		}
 		
-		public function fix(array $arguments = array()) {
+		/*
+		public function fix(array $arguments) {
 			$this->_action('fix', $arguments);
 		}
 		
-		public function unfix(array $arguments = array()) {
+		public function unfix(array $arguments) {
 			$this->_undoAction('fix', $arguments);
 		}
 		
-		public function handle(array $arguments = array()) {
+		public function handle(array $arguments) {
 			$this->_action('handle', $arguments);
 		}
 		
-		public function unhandle(array $arguments = array()) {
+		public function unhandle(array $arguments) {
 			$this->_undoAction('handle', $arguments);
 		}
+		*/
 		
-		private function _action($action, array $arguments = array()) {
-			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User', 'State'), array('project_id' => $this->Project->id))) {
+		private function _action($action, array $arguments) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (!($states = $this->State->getAction($action, $ticket))) {
-				$this->flash('Ticket is not in the required state to execute this action');
-				return $this->_redirectWithReferer($ticket);
+			if (!$this->ticket->isEligibleAction($action)) {
+				$this->flash('Ticket is not in the required state to execute the action ' . $action);
+				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
-			if (Request::isPostRequest()) {
-				if (Request::post('appropriate')) {
-					$this->Ticket->user_id = $ticket['user_id'] = $this->User->get('id');
-					
-					if ($this->Ticket->save()) {
-						$this->flashNow('The ticket is now assigned to you');
-					}					
-				} elseif (!Request::post('language') and $action == 'cut' and count($this->Project->languages) > 0 and !Request::post('failed', Request::checkbox) and !Request::post('expand', Request::checkbox)) {
-					$this->flashNow('You have to choose the language of the talk');
+			$state = TicketState::getStateByAction($action);
+			
+			if ($state === false) {
+				$this->flash('Ticket is not in the required state to execute this action');
+			}
+			
+		    if ($this->ticket['ticket_state'] != $state) {
+				$this->ticket->save([
+					'handle_id' => User::getCurrent()['id'],
+					'ticket_state' => $state,
+					'failed' => false
+				]);
+   			}
+			
+			$this->action = $action;
+			$this->actionForm = $this->form('tickets', $action);
+			
+			$this->languages = $this->project
+				->Languages
+				->indexBy('language', 'description');
+			
+			$this->properties = $this->ticket
+				->Properties
+				->indexBy('name', 'value');
+			$this->parentProperties = $this->ticket
+				->Parent
+				->Properties
+				->indexBy('name', 'value');
+			
+			if ($this->actionForm->wasSubmitted()) {
+				if ($this->actionForm->getValue('comment')) {
+					Comment::create([
+						'ticket_id' => $this->ticket['id'],
+						'handle_id' => User::getCurrent()['id'],
+						'comment' => $this->actionForm->getValue('comment')
+					]);
+				}
+				
+				if ($this->actionForm->getValue('appropriate') and
+					$this->ticket->save(['handle_id' => User::getCurrent()['id']])) {
+					$this->flashNow('This ticket is now assigned to you');
+				} elseif ($this->actionForm->getValue('expand') and
+					$this->ticket->expandRecording([
+						(int) $this->actionForm->getValue('expand_left'),
+						(int) $this->actionForm->getValue('expand_right')
+					])) {
+					$this->flash('Expanded timeline, ' . $action . ' another ticket while preparing');
+					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+				} elseif ($this->actionForm->getValue('failed') and
+					$this->ticket->save([
+						'handle_id' => null,
+						'failed' => true
+					])) {
+					$this->flash('Marked ticket as failed');
+					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+				} elseif ($this->actionForm->getValue('language') === '') {
+					$this->flashNow('You have to choose a language');
 				} else {
+					$properties = [];
 					
+					if ($this->actionForm->getValue('language')) {
+						$properties[] = [
+							'name' => 'Record.Language',
+							'value' => $this->actionForm->getValue('language')
+						];
+					}
+					
+					if ($this->actionForm->getValue('delay')) {
+						$properties[] = [
+							'name' => 'Record.AVDelay',
+							'value' => millisecondsToDelay($this->actionForm->getValue('delay_by'))
+						];
+					} else {
+						$properties[] = [
+							'name' => 'Record.AVDelay',
+							'_destroy' => true
+						];
+					}
+					
+					if ($this->ticket->save([
+						'ticket_state' => $this->ticket->queryNextState($state),
+						'handle_id' => null,
+						'failed' => false,
+						'properties' => $properties
+					])) {
+						$this->flash('Successfully finished ' . $state);
+					}
+					
+					return $this->redirect('tickets', 'view', $this->ticket, $this->project); 
+				}
+			}
+			
+			
+			
+			/*
+			if (Request::isPostRequest()) {
+				…
 					if (Request::post('reset', Request::checkbox) and !empty($states['reset'])) {
 						if (!empty($ticket['parent_id'])) {
 							$this->Ticket->resetRecordingTask($ticket['parent_id']);
 						}
 						
 						return $this->_redirectWithReferer($ticket);
-					} elseif (Request::post('expand', Request::checkbox) and $action == 'cut') {
-						$this->Ticket->expandRecordingTask($ticket['id'], Request::post('expand_by', Request::int));
-						
-						$this->LogEntry->create(array(
-							'ticket_id' => $this->Ticket->id,
-							'event' => 'Action.' . mb_ucfirst($action) . '.Expand'
-						));
-						
-						return $this->_redirectWithReferer($ticket);
-					} elseif (Request::post('failed', Request::checkbox) and isset($states['failed'])) {
-						$this->Ticket->state_id = $states['failed'];
-						$this->Ticket->user_id = null;
-						$this->Ticket->failed = $states['to_failed'];
+				…
 					} else {
-						$this->Ticket->failed = false;
-						$this->Ticket->user_id = null;
-						$this->Ticket->state_id = $states['to'];
-						
-						if ($action == 'cut') {
-							if (count($this->Project->languages) > 0) {
-								$this->Properties->save(array(
-									'ticket_id' => $ticket['id'],
-									'Record.Language' => Request::post('language')
-								));
-							}
-							
-							if (Request::post('delay', Request::checkbox)) {
-								$this->Properties->save(array(
-									'ticket_id' => $ticket['id'],
-									'Record.AVDelay' => Properties::millisecondsToDelay(Request::post('delay_by', Request::int))
-								));
-							}							
-						}
-												
-						if ($action == 'fix' and Request::post('replacement')) {
-							$this->Properties->save(array('ticket_id' => $ticket['id'], 'Record.SourceReplacement' => Request::post('replacement')));
-						}
-					}
-					
-					if (Request::post('comment', Request::unfiltered)) {
-						$this->Comment->create(array(
-							'ticket_id' => $ticket['id'],
-							'user_id' => $this->User->get('id'),
-							'comment' => Request::post('comment', Request::unfiltered),
-							'user_set_failed' => $this->Ticket->failed
-						));
-					}
-					
+				…
 					if ($this->Ticket->save()) {
 						$this->LogEntry->create(array(
 							'ticket_id' => $this->Ticket->id,
@@ -426,41 +477,16 @@
 						return $this->_redirectWithReferer($ticket);
 					}
 				}
-			} else {
-				if ($ticket['state_id'] != $states['state']) {
-					$ticket['user_id'] = $this->User->get('id');
-					
-					$this->Ticket->failed = false;
-					$this->Ticket->state_id = $ticket['state_id'] = $states['state'];
-					$this->Ticket->user_id = $this->User->get('id');
-					$this->Ticket->save();
-				}
 			}
+			*/
 			
-			$properties = $this->Properties->findByObjectWithRoot($ticket['id']);
+			// $this->comments = $this->ticket->Comments->joins(['User']);
 			
-			if (!is_array($properties)) {
-				$properties = array();
-			}
-			
-			if (isset($ticket['parent_id'])) {
-				$parent = $this->Properties->findByObjectWithRoot($ticket['parent_id']);
-				
-				if (!empty($parent)) {
-					$properties = array_merge($properties, $parent);
-				}
-			}
-			
-			$this->View->assign('properties', Model::groupByField($properties, 'root'));
-			$this->View->assign('action', $action);
-			$this->View->assign('state', $this->State->getNameById($states['state']));
-			
-			$this->View->assign('ticket', $ticket);
-			$this->View->assign('timeline', $this->Ticket->getTimeline($ticket['id']));
-			$this->View->render('tickets/view.tpl');
+			return $this->render('tickets/view.tpl');
 		}
 		
-		private function _undoAction($action, array $arguments = array()) {
+		private function _undoAction($action, array $arguments) {
+			/*
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User'), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();
 			}
@@ -480,8 +506,9 @@
 			$this->Ticket->save();
 			
 			$this->_redirectWithReferer($ticket);
+			*/
 		}
-		
+		/*
 		public function reset($arguments = array()) {
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();
@@ -494,7 +521,7 @@
 			$this->_redirectWithReferer($ticket);
 		}*/
 		
-		public function comment(array $arguments = array()) {
+		public function comment(array $arguments) {
 			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
 			}
@@ -519,7 +546,7 @@
 		}
 		
 		/*
-		public function delete_comment(array $arguments = array()) {
+		public function delete_comment(array $arguments) {
 			if (empty($arguments['ticket_id']) or !$ticket = $this->Ticket->find($arguments['ticket_id'], array(), array('project_id' => $this->Project->id))) {
 				throw new EntryNotFoundException();
 			}
@@ -635,10 +662,12 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
+			$this->profiles = $this->project->EncodingProfileVersion;
+			
 			return $this->render('tickets/edit.tpl');
 		}
 		
-		/*public function mass_edit(array $arguments = array()) {
+		/*public function mass_edit(array $arguments) {
 			if (empty($arguments['id']) or !$tickets = $this->Ticket->findAll(array(), array('id' => explode(',', $arguments['id'])))) {
 				throw new EntryNotFoundException();
 			}
@@ -685,7 +714,7 @@
 			$this->View->render('tickets/mass_edit.tpl');
 		}
 		
-		public function delete(array $arguments = array()) {
+		public function delete(array $arguments) {
 			if (!empty($arguments) and $this->Ticket->delete($arguments['id'], array('project_id' => $this->Project->id))) {
 				$this->flash('Ticket deleted');
 			}
