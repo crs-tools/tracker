@@ -319,24 +319,6 @@
 			$this->_undoAction('check', $arguments);
 		}
 		
-		/*
-		public function fix(array $arguments) {
-			$this->_action('fix', $arguments);
-		}
-		
-		public function unfix(array $arguments) {
-			$this->_undoAction('fix', $arguments);
-		}
-		
-		public function handle(array $arguments) {
-			$this->_action('handle', $arguments);
-		}
-		
-		public function unhandle(array $arguments) {
-			$this->_undoAction('handle', $arguments);
-		}
-		*/
-		
 		private function _action($action, array $arguments) {
 			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
 				throw new EntryNotFoundException();
@@ -486,28 +468,27 @@
 		}
 		
 		private function _undoAction($action, array $arguments) {
-			/*
-			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array('User'), array('project_id' => $this->Project->id))) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if (!$states = $this->State->getAction($action, $ticket)) {
-				$this->flash('Ticket is not in the required state to undo this action');
-				return $this->_redirectWithReferer($ticket);
+			if (!$this->ticket->isEligibleAction($action)) {
+				$this->flash('Ticket is not in the required state to undo the action ' . $action);
+				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
-			$this->Ticket->state_id = $states['from'];
-			$this->Ticket->user_id = null;
-			
-			if ($states['from_failed']) {
-				$this->Ticket->failed = true;
+			if ($this->ticket->save([
+				'ticket_state' => $this->ticket->queryPreviousState(
+					TicketState::getStateByAction($action)
+				),
+				'handle_id' => null
+			])) {
+				$this->flash('Ticket reset from action ' . $action);
 			}
 			
-			$this->Ticket->save();
-			
-			$this->_redirectWithReferer($ticket);
-			*/
+			return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 		}
+		
 		/*
 		public function reset($arguments = array()) {
 			if (empty($arguments['id']) or !$ticket = $this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id))) {
@@ -522,19 +503,19 @@
 		}*/
 		
 		public function comment(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
+			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {	
-				$this->ticket->save([
+				$ticket->save([
 					'needs_attention' => $this->form->getValue('needs_attention')
 				]);
 				
 				if (Comment::create([
-					'ticket_id' => $this->ticket['id'],
+					'ticket_id' => $ticket['id'],
 					'handle_id' => User::getCurrent()['id'],
 					'comment' => $this->form->getValue('text')
 				])) {
@@ -542,23 +523,28 @@
 				}
 			}
 			
-			return $this->redirect('tickets', 'view', $this->project, $this->ticket);
+			return $this->redirect('tickets', 'view', $ticket, $this->project);
 		}
 		
-		/*
 		public function delete_comment(array $arguments) {
-			if (empty($arguments['ticket_id']) or !$ticket = $this->Ticket->find($arguments['ticket_id'], array(), array('project_id' => $this->Project->id))) {
+			if (!$ticket = Ticket::findBy(['id' => $arguments['ticket_id'], 'project_id' => $this->project['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
-			// TODO: isOwner?
+			if (!$comment = Comment::findBy([
+				'id' => $arguments['id'],
+				'handle_id' => User::getCurrent()['id'],
+				'ticket_id' => $ticket['id']
+			])) {
+				throw new EntryNotFoundException();
+			}
 			
-			if ($this->Comment->delete($arguments['id'])) { // TODO: check if comment belongs to ticket
+			if ($comment->destroy()) {
 				$this->flash('Comment deleted');
 			}
 			
-			return $this->View->redirect('tickets', 'view', $ticket + array('project_slug' => $this->Project->slug));
-		}*/
+			return $this->redirect('tickets', 'view', $ticket, $this->project);
+		}
 		
 		public function create() {
 			$this->form();
