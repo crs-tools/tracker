@@ -94,7 +94,7 @@
 <h3 class="table">Worker groups</h3>
 
 <?= $f = $workerGroupForm(); ?>
-	<ul class="worker-groups">
+	<ul class="worker-groups clearfix">
 		<?php foreach ($workerGroups as $index => $group): ?>
 			<li>
 				<?= $f->checkbox(
