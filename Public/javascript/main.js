@@ -810,8 +810,9 @@
         event.preventDefault();
         
         var container = $('<li></li>').insertBefore(this.insertBefore),
-            lastIndex = this.list.find('input[data-property-index]:last').data('property-index') || -1;
-        
+            lastInput = this.list.find('input[data-property-index]:last'),
+            lastIndex = (lastInput[0])? lastInput.data('property-index') : -1;
+            
         $('<input></input>')
           .attr({
             'type': 'text',
