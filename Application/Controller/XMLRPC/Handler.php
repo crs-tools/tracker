@@ -472,6 +472,7 @@
 
             $log_entry = array(
                 'ticket_id' => $ticket['id'],
+                'handle_id' => $this->worker['id'],
                 'from_state_id' => $ticket['ticket_state'],
                 'to_state_id' => $ticket['next_state'],
                 'event' => __FUNCTION__
@@ -514,6 +515,7 @@
 
             $log_entry = array(
                 'ticket_id' => $ticket['id'],
+                'handle_id' => $this->worker['id'],
                 'from_state_id' => $ticket['ticket_state'],
                 'to_state_id' => $ticket['next_state'],
                 'event' => __FUNCTION__,
@@ -557,6 +559,7 @@
 
             $log_entry = array(
                 'ticket_id' => $ticket['id'],
+                'handle_id' => $this->worker['id'],
                 'from_state_id' => $ticket['ticket_state'],
                 'to_state_id' => $ticket['next_state'],
                 'event' => __FUNCTION__,
@@ -636,7 +639,7 @@
 
 			return LogEntry::create(array(
 				'ticket_id' => $ticket_id,
-				'user_id' => $this->worker['id'],
+                'handle_id' => $this->worker['id'],
 				'comment' => $log_message,
 				'event' => __FUNCTION__
 			));
