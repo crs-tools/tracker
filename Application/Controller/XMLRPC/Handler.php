@@ -429,7 +429,8 @@
             // filter out virtual conditions used for further where conditions
             $virtualConditions = array(
                 'Record.StartedBefore' => 'time_start < ?',
-                'Record.EndedAfter' => 'time_end > ?'
+                'Record.EndedAfter' => 'time_end > ?',
+                'Record.EndedBefore' => 'time_end < ?'
             );
 
             Log::debug(var_export($filter_properties,true));
