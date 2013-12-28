@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION create_missing_recording_tickets(param_project_id big
      FROM
          tbl_ticket t1
          LEFT JOIN
-         tbl_ticket t2 ON t2.parent_id = t1.id
+         tbl_ticket t2 ON t2.parent_id = t1.id AND t2.ticket_type = 'recording'
      WHERE
        t1.ticket_type = 'meta' AND
        t1.project_id = param_project_id
