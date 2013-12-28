@@ -1,5 +1,9 @@
 <?php
-	
+
+    requires (
+        'String'
+    );
+
 	class TicketProperties extends Model/*_Properties*/ {
 		
 		const TABLE = 'tbl_ticket_property';
@@ -9,6 +13,27 @@
 		const CREATE_IF_NOT_EXISTS = true;
 		
 		public $belongsTo = array('Ticket' => array('foreign_key' => 'ticket_id'));
+
+        public static function buildSlug(Model $project, $properties = array()) {
+            $parts = array();
+
+            array_push($parts, $project['slug']);
+
+            if(isset($properties['Fahrplan.ID'])) {
+                array_push($parts, $properties['Fahrplan.ID']);
+            }
+
+            // add language if project has multiple languages
+            if(count($project->Languages) > 0 && isset($properties['Record.Language'])) {
+                array_push($parts, $properties['Record.Language']);
+            }
+
+            // generate slug from ticket title (and ignore the one from the frab)
+            $slug = preg_replace(['/[.:"]/','/[^a-zA-Z_\-0-9]/','/_+/'],['','_','_'],iconv("utf-8","ascii//TRANSLIT",$properties['Fahrplan.Title']));
+            array_push($parts, $slug);
+
+            return implode('-', $parts);
+        }
 		
 		/*
 		public function getFilename($properties = array()) {

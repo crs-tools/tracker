@@ -315,26 +315,7 @@
 
             // virtual property: basename for encoding, project slug, fahrplan id, ticket slug
 			if($pattern != null && strpos('Encoding.Basename',$pattern) !== false || $pattern == null) {
-                $parts = array();
-
-                if(isset($properties['Project.Slug'])) {
-                    array_push($parts, $properties['Project.Slug']);
-                }
-
-                if(isset($properties['Fahrplan.ID'])) {
-                    array_push($parts, $properties['Fahrplan.ID']);
-                }
-
-                // add language if project has multiple languages
-                if(count($ticket->Project->Languages) > 0 && isset($properties['Record.Language'])) {
-                    array_push($parts, $properties['Record.Language']);
-                }
-
-                if(isset($properties['Fahrplan.Slug'])) {
-                    array_push($parts, $properties['Fahrplan.Slug']);
-                }
-
-                $properties['Encoding.Basename'] = implode('-', $parts);
+                $properties['Encoding.Basename'] = TicketProperties::buildSlug($ticket->Project, $properties);
 			}
 
             // add encoding profile properties
