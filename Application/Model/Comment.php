@@ -5,7 +5,11 @@
 		const TABLE = 'tbl_comment';
 		
 		public $belongsTo = array(
-			'Ticket' => array(
+            'Handle' => array(
+                'foreign_key' => 'handle_id',
+                'select' => 'name AS handle_name'
+            ),
+            'Ticket' => array(
 				'foreign_key' => 'ticket_id'
 			),
 			'User' => array(

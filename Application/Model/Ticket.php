@@ -2,7 +2,6 @@
 	
 	requires(
 		'/Model/TicketProperties',
-		
 		'/Model/TicketState',
 		'/Model/ProjectTicketState'
 	);
@@ -33,6 +32,10 @@
 			'EncodingProfileVersion' => array(
 				'foreign_key' => 'encoding_profile_version_id'
 			),
+            'Handle' => array(
+                'foreign_key' => 'handle_id',
+                'select' => 'name AS handle_name'
+            ),
 			'Parent' => array(
 				'class_name' => 'Ticket',
 				'foreign_key' => 'parent_id',
