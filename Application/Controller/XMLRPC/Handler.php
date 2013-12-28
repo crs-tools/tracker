@@ -65,12 +65,12 @@
 		private static function _validateSignature($secret, $signature, $arguments) {
             $args = array();
             foreach($arguments as $argument) {
-                $args[] = is_array($argument) ? http_build_query($argument) : $argument;
+                $args[] = is_array($argument) ? http_build_query(['' => $argument], null, '&', PHP_QUERY_RFC3986) : rawurlencode($argument);
             }
 
 			$hash = hash_hmac(
 				'sha256',
-				rawurlencode(implode('&', $args)),
+				implode('%26', $args),
 				$secret
 			);
 
@@ -423,8 +423,24 @@
                 throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
             }
 
-            // find all projects
-			$tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
+            // create query: find all tickets in state
+            $tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
+
+            // filter out virtual conditions used for further where conditions
+            $virtualConditions = array(
+                'Record.StartedBefore' => 'time_start < ?',
+                'Record.EndedAfter' => 'time_end > ?'
+            );
+
+            Log::debug(var_export($filter_properties,true));
+            foreach($virtualConditions as $property => $condition) {
+                if(array_key_exists($property, $filter_properties)) {
+                    Log::debug('found property '.$property);
+                    $tickets->where($condition,array($filter_properties[$property]));
+                    unset($filter_properties[$condition]);
+                }
+            }
+
             if(empty($filter_properties)) {
                 $ticket = $tickets->first();
             } else {
@@ -506,7 +522,7 @@
             if($ticket['handle_id'] == null) {
 				throw new Exception(__FUNCTION__.': ticket not assigned', 502);
 			}
-			if($ticket['user_id'] != $this->worker['id']) {
+			if($ticket['handle_id'] != $this->worker['id']) {
 				throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
             }
 			if($state = $ticket->State && !$state['service_executable']) {
@@ -550,7 +566,7 @@
             if($ticket['handle_id'] == null) {
                 throw new Exception(__FUNCTION__.': ticket not assigned', 502);
             }
-            if($ticket['user_id'] != $this->worker['id']) {
+            if($ticket['handle_id'] != $this->worker['id']) {
                 throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
             }
             if($state = $ticket->State && !$state['service_executable']) {

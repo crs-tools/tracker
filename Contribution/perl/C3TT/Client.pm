@@ -95,17 +95,17 @@ sub AUTOLOAD {
     #####################
     # assemble static part of signature arguments
     #                     1. URL  2. method name  3. worker group token  4. hostname
-    my @signature_args = ($self->{url}, PREFIX.$name, $self->{token}, hostfqdn);
+    my @signature_args = (uri_escape($self->{url}), PREFIX.$name, $self->{token}, hostfqdn);
 
     # include method arguments if any given
     if(defined $args[0]) {
         foreach my $arg (@args) {
-            push(@signature_args, (ref($arg) eq 'HASH') ? hash_serialize($arg) : $arg);
+            push(@signature_args, (ref($arg) eq 'HASH') ? hash_serialize($arg) : uri_escape($arg));
         }
     }
 
     # generate hash over url escaped line containing a concatenation of above signature arguments
-    my $signature = hmac_sha256_hex(uri_escape(join('&',@signature_args)), $self->{secret});
+    my $signature = hmac_sha256_hex(join('%26',@signature_args), $self->{secret});
 
     # add signature as additional parameter
 	push(@args,$signature);
@@ -122,7 +122,7 @@ sub hash_serialize {
     my $result = "";
     for my $key (keys %$data) {
         $result .= '&' if length $result;
-        $result .= uri_escape($key) . '=' . uri_escape($data->{$key});
+        $result .= '%5B' . uri_escape($key) . '%5D=' . uri_escape($data->{$key});
     }
     return $result;
 }
