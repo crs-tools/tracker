@@ -49,6 +49,7 @@ class LogEntry extends Model {
 			$fromState = ($this['from_state'] !== null)? $this['from_state'] : 'unknown state';
 			
 			if (!isset(self::$_messages[$this['event']])) {
+				Log::info('Log message for event ' . $this['event'] . ' missing.');
 				return false;
 			}
 			
