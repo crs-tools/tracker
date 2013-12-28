@@ -37,6 +37,7 @@
 		public function index() {
 			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
+				->where(['project_id' => $this->project['id']])
 				->joins(['User'])
 				->scoped([
 					'with_default_properties',
