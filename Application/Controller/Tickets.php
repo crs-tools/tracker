@@ -430,7 +430,13 @@
 				}
 			}
 			
-			
+			$this->comments = $this->ticket
+				->Comments
+				->joins(['User'])
+				->orderBy('created DESC');
+			$this->log = $this->ticket
+				->LogEntries
+				->orderBy('created DESC');
 			
 			/*
 			if (Request::isPostRequest()) {
