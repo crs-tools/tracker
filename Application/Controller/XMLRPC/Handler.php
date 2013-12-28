@@ -591,7 +591,7 @@
             if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group', 604);
             }
-            $state = $ticket->State
+            $state = $ticket->State;
             if(empty($state) || !$state['service_executable']) {
                 throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 605);
             }
