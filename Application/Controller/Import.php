@@ -232,7 +232,7 @@
 				$tickets['change'] = array_filter($tickets['change']);
 			
 				foreach (array_intersect_key($_SESSION['import']['changed'], $tickets['change']) as $fahrplanID => $changed) {
-					$ticket = Ticket::findBy(array('fahrplan_id' => $fahrplanID), [], []);
+					$ticket = Ticket::findBy(array('fahrplan_id' => $fahrplanID, 'project_id' => $this->project['id']), [], []);
 				
 					$ticket['title'] = $changed['properties']['Fahrplan.Title'];
 					$properties = array();
