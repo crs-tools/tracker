@@ -11,7 +11,7 @@
 							// TODO: more options if $action failed
 							echo 'This ticket is abandoned';
 						} else {
-							echo $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name']) . ' is ' . $state;
+							echo $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['handle_name']) . ' is ' . $state;
 						}
 						
 						echo ' since ' . (new DateTime($ticket['modified']))->format('d.m.Y H:i:s'); ?>.

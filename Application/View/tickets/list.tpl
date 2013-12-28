@@ -60,7 +60,7 @@ if (!empty($tickets)) {
 			$t .= '</a><span class="other">';
 				
 				if (!empty($ticket['handle_id']) and isset($ticket['user_name'])) {
-					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['user_name'], array('data-handle' => $ticket['handle_id'])) . '</span>';
+					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['handle_name'], array('data-handle' => $ticket['handle_id'])) . '</span>';
 				}
 				
 				if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')) {

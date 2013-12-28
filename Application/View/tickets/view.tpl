@@ -45,7 +45,7 @@
 			<?php endif; ?>
 		
 			<?php if (!empty($ticket['handle_id'])): ?>
-				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), ($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['user_name']); ?></span>
+				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), ($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name']); ?></span>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>

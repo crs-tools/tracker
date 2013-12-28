@@ -5,6 +5,8 @@
 		
 		'/Controller/Application',
 		
+		'/Model/Handle',
+		
 		'/Model/Ticket',
 		'/Model/TicketState',
 		'/Model/Comment',
@@ -38,7 +40,7 @@
 			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
 				->where(['project_id' => $this->project['id']])
-				->joins(['User'])
+				->joins(['Handle'])
 				->scoped([
 					'with_default_properties',
 					'with_progress',
@@ -182,7 +184,7 @@
 		}
 		
 		public function view(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['Handle'])) {
 				throw new EntryNotFoundException();
 			}
 			
@@ -327,7 +329,7 @@
 		}
 		
 		private function _action($action, array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['User'])) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['Handle'])) {
 				throw new EntryNotFoundException();
 			}
 			
