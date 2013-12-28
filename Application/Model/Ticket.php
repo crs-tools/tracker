@@ -81,8 +81,9 @@
 			'with_child',
 			'with_default_properties',
 			'with_progress',
-			'with_properties'
-			// TODO: with_progress
+			'with_properties',
+			'with_recording',
+			'without_locked'
 		);
 		
 		public static function filter_recording(Model_Resource $resource, array $arguments) {
@@ -203,6 +204,19 @@
 					[$property]
 				);
 			}
+		}
+		
+		public static function with_recording(Model_Resource $resource, array $arguments) {
+			$resource->leftJoin(
+				[self::TABLE, 'recording'],
+				null,
+				['(' . self::TABLE . '.ticket_type = ? AND id IS NULL) OR (' . self::TABLE . '.parent_id = parent_id AND ticket_type = ?) OR (' . self::TABLE . '.id = parent_id AND ticket_type = ?)'],
+				['recording', 'recording', 'recording']
+			);
+		}
+		
+		public static function without_locked(Model_Resource $resource, array $arguments) {
+			$resource->where('ticket_state != ? AND (recording.id IS NULL or recording.ticket_state != ?)', ['locked', 'locked']);
 		}
 		
 		public static function createMissingRecordingTickets($project) {

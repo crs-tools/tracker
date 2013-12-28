@@ -53,7 +53,11 @@
 			if ($this->filter !== null or isset($_GET['u'])) {
 				$this->tickets
 					->distinct()
-					->scoped(['with_child']);
+					->scoped([
+						'with_child',
+						'with_recording',
+						'without_locked'
+					]);
 			}
 			
 			if ($this->filter !== null) {
