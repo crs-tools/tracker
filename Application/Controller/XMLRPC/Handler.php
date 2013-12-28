@@ -188,7 +188,7 @@
                     'from_state' => $state['ticket_state'],
                     'to_state' => $next_state['ticket_state'],
                     'handle_id' => $this->worker['id'],
-                    'event' => __FUNCTION__,
+                    'event' => 'RPC.'.__FUNCTION__,
                     'comment' => $log_message));
 
                 return true;
@@ -250,7 +250,7 @@
 						'ticket_id' => $ticket_id,
 						'handle_id' => $this->worker['id'],
 						'comment' => "User received command '$cmd'\n\nReason: $reason",
-						'event' => __FUNCTION__
+						'event' => 'RPC.'.__FUNCTION__
 					));
 				}
 			}
@@ -390,7 +390,7 @@
                     'ticket_id' => $ticket['id'],
                     'handle_id' => $this->worker['id'],
                     'comment' => implode("\n",$log_message),
-                    'event' => __FUNCTION__
+                    'event' => 'RPC.'.__FUNCTION__
                 ));
                 return true;
             }
@@ -487,7 +487,7 @@
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
                 'to_state' => $ticket['next_state'],
-                'event' => __FUNCTION__
+                'event' => 'RPC.'.__FUNCTION__
             );
 
 			if (!$save = $ticket->save(array('handle_id' => $this->worker['id'], 'ticket_state' => $ticket['next_state']))) {
@@ -534,7 +534,7 @@
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
                 'to_state' => $ticket['next_state'],
-                'event' => __FUNCTION__,
+                'event' => 'RPC.'.__FUNCTION__,
                 'comment' => $log_message
             );
 
@@ -582,7 +582,7 @@
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
                 'to_state' => $ticket['next_state'],
-                'event' => __FUNCTION__,
+                'event' => 'RPC.'.__FUNCTION__,
                 'comment' => $log_message
             );
 
@@ -661,7 +661,7 @@
 				'ticket_id' => $ticket_id,
                 'handle_id' => $this->worker['id'],
 				'comment' => $log_message,
-				'event' => __FUNCTION__
+				'event' => 'RPC.'.__FUNCTION__
 			));
 		}
 		
