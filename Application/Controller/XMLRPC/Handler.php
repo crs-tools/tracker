@@ -2,6 +2,7 @@
 	
 	requires(
 		'Controller/XMLRPC',
+        '/Model/Handle',
 		'/Model/WorkerGroup',
         '/Model/EncodingProfile',
         '/Model/LogEntry',
@@ -220,12 +221,12 @@
 			// check ticket state if id given
 			$ticket_id = intval($ticket_id);
 			if($ticket_id > 0) {
-				if(!$ticket = Ticket::find(['id' => $ticket_id], ['State', 'User'])) {
+				if(!$ticket = Ticket::find(['id' => $ticket_id], ['State', 'Handle'])) {
 					$reason = 'ticket not found';
 				} elseif($ticket['handle_id'] == null) {
 					$reason = 'ticket is unassigned';
 				} elseif($ticket['handle_id'] != $this->worker['id']) {
-					$reason = 'ticket is assigned to other user: '.$ticket['user_name'];
+					$reason = 'ticket is assigned to other handle: '.$ticket['handle_name'];
                 } elseif(!in_array($ticket['project_id'],$this->worker->project_ids)) {
                     $reason = 'ticket in project not assigned to worker group';
 				}
@@ -249,7 +250,7 @@
 					LogEntry::create(array(
 						'ticket_id' => $ticket_id,
 						'handle_id' => $this->worker['id'],
-						'comment' => "User received command '$cmd'\n\nReason: $reason",
+						'comment' => "Worker received command '$cmd'\n\nReason: $reason",
 						'event' => 'RPC.'.__FUNCTION__
 					));
 				}
@@ -269,7 +270,7 @@
         * @throws Exception if ticket not found
 		*/
 		public function getTicketProperties($ticket_id, $pattern = null) {
-            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Worker','Parent','Project'])) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id], ['Handle','Worker','Parent','Project'])) {
                 throw new EntryNotFoundException(__FUNCTION__.': ticket not found',201);
             }
 
@@ -360,7 +361,7 @@
         * @throws Exception if ticket not exists
 		*/
 		public function setTicketProperties($ticket_id, array $properties) {
-            if(!$ticket = Ticket::find(['id' => $ticket_id], ['User','Parent','Project','Properties'])) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id], ['Handle','Parent','Project','Properties'])) {
                 throw new EntryNotFoundException(__FUNCTION__.': ticket not found',301);
             }
 			if(!is_array($properties) || count($properties) < 1) {
@@ -428,19 +429,22 @@
                 'Record.EndedBefore' => 'time_end < ?'
             );
 
-            Log::debug(var_export($filter_properties,true));
-            foreach($virtualConditions as $property => $condition) {
-                if(array_key_exists($property, $filter_properties)) {
-                    Log::debug('found property '.$property);
-                    $tickets->where($condition,array($filter_properties[$property]));
-                    unset($filter_properties[$condition]);
+            // extract virtual filter properties
+            if(!empty($filter_properties)) {
+                Log::debug('got property filter: '.var_export($filter_properties,true));
+                foreach($virtualConditions as $property => $condition) {
+                    if(array_key_exists($property, $filter_properties)) {
+                        Log::debug('found property '.$property);
+                        $tickets->where($condition,array($filter_properties[$property]));
+                        unset($filter_properties[$condition]);
+                    }
                 }
             }
 
+            // check again if we still need to filter tickets properties
             if(empty($filter_properties)) {
                 $ticket = $tickets->first();
             } else {
-                Log::debug($filter_properties);
                 foreach($tickets as $_ticket) {
                     $ticket = $_ticket;
                     $properties = $this->getTicketProperties($_ticket['id']);
@@ -519,7 +523,7 @@
 				throw new Exception(__FUNCTION__.': ticket not assigned', 502);
 			}
 			if($ticket['handle_id'] != $this->worker['id']) {
-				throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
+				throw new Exception(__FUNCTION__.': ticket is assigned to other handle: '.$ticket['handle_name'], 503);
             }
             if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',504);
@@ -528,17 +532,21 @@
 			if(empty($state) || !$state['service_executable']) {
 				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 505);
 			}
+            $next_state = $state->nextState()['ticket_state'];
+            if(!$next_state) {
+                throw new Exception(__FUNCTION__.': no next state available!',506);
+            }
 
             $log_entry = array(
                 'ticket_id' => $ticket['id'],
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
-                'to_state' => $ticket['next_state'],
+                'to_state' => $next_state,
                 'event' => 'RPC.'.__FUNCTION__,
                 'comment' => $log_message
             );
 
-            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $state->nextState()['ticket_state']))) {
+            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $next_state))) {
                 Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
                 return false;
             }
@@ -567,7 +575,7 @@
                 throw new Exception(__FUNCTION__.': ticket not assigned', 602);
             }
             if($ticket['handle_id'] != $this->worker['id']) {
-                throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 603);
+                throw new Exception(__FUNCTION__.': ticket is assigned to other handle: '.$ticket['handle_name'], 603);
             }
             if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group', 604);
@@ -581,7 +589,6 @@
                 'ticket_id' => $ticket['id'],
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
-                'to_state' => $ticket['next_state'],
                 'event' => 'RPC.'.__FUNCTION__,
                 'comment' => $log_message
             );
@@ -640,8 +647,12 @@
 			
 			$processor = new XSLTProcessor();
 			$processor->importStylesheet($template);
-			
-			return $processor->transformToXML($content);
+
+            // pretty print
+            $output = $processor->transformToDoc($content);
+            $output->formatOutput = true;
+
+			return $output->saveXml();
 		}
 		
 		/**
