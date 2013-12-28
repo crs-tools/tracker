@@ -49,7 +49,10 @@ CREATE TABLE tbl_project_ticket_state
   ticket_type enum_ticket_type NOT NULL,
   ticket_state enum_ticket_state NOT NULL,
   service_executable boolean NOT NULL DEFAULT false,
-  CONSTRAINT tbl_project_ticket_state_pk PRIMARY KEY (project_id, ticket_type, ticket_state)
+  CONSTRAINT tbl_project_ticket_state_pk PRIMARY KEY (project_id, ticket_type, ticket_state),
+  CONSTRAINT tbl_project_ticket_state_project_fk FOREIGN KEY (project_id)
+      REFERENCES tbl_project (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITHOUT OIDS;
 
