@@ -3,7 +3,9 @@
 	requires(
 		'/Model/TicketProperties',
 		'/Model/TicketState',
-		'/Model/ProjectTicketState'
+		'/Model/ProjectTicketState',
+		
+		'/Model/LogEntry'
 	);
 	
 	class Ticket extends Model {
@@ -19,6 +21,10 @@
 			),
 			'Comments' => array(
 				'class_name' => 'Comment',
+				'foreign_key' => 'ticket_id'
+			),
+			'LogEntries' => array(
+				'class_name' => 'LogEntry',
 				'foreign_key' => 'ticket_id'
 			),
 			'Properties' => array(

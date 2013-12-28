@@ -30,7 +30,7 @@
 	
 	<?php if (empty($action)): ?>
 		<span class="date">
-			last edited <?php /* echo Date::distanceInWords(new Date($ticket['modified'])); */ ?> ago<span>: <?= (new DateTime($ticket['modified']))->format('D, M j Y, H:i'); ?></span>
+			last edited <?= /* echo Date::distanceInWords(new Date($ticket['modified']));  ?> ago<span>: <?=*/ (new DateTime($ticket['modified']))->format('D, M j Y, H:i'); ?><!--</span>-->
 		</span>
 	
 		<div class="flags">
@@ -121,66 +121,20 @@
 			</li>
 		<?php endif;
 		
-		if (isset($comments)):
-		foreach ($comments as $comment): ?>
-			<li class="event comment left">
-				<p><?php echo nl2br($this->h($comment['comment'])); ?></p>
-				<strong>– <?php echo $this->h($comment['user_name']); ?></strong>
-				<?php if (User::isAllowed('tickets', 'delete_comment', $comment['id'], $comment['user_id'])) {
-					echo $this->linkTo('tickets', 'delete_comment', $comment, $project, 'delete');
-				} ?>
-				<span class="date"><?php echo (new DateTime($comment['created']))->format('d.m.Y H:i'); ?></span>
-			</li>
-		<?php endforeach;
-		endif;
+		$log = $log->getIterator();
 		
+		foreach ($comments as $comment) {
+			echo $this->render('tickets/view/comment.tpl', ['comment' => $comment]);
+			
+			while (strtotime($log->current()['created']) > strtotime($comment['created'])) {
+				echo $this->render('tickets/view/log_entry.tpl', ['entry' => $log->current()]);
+				$log->next();
+			}
+		}
 		
-		/*if (!empty($timeline)):
-			foreach ($timeline as $entry):
-				if ($entry['event'] != 'Comment.Add'): ?>
-					<li class="event <?php echo $entry['type'] . ' ' . (($entry['type'] == 'comment')? 'left' : 'right'); ?>">
-						<?php switch ($entry['type']) {
-							case 'comment': ?>
-								<p><?php echo nl2br(Filter::specialChars($entry['comment'])); ?></p>
-								<strong<?php echo (!empty($entry['origin_user_name']))? ' class="origin"' : ''; ?>>– <?php echo (empty($entry['origin_user_name']))? $entry['user_name'] : mb_substr($entry['origin_user_name'], 0, 20); // TODO: add symbol ?></strong>
-								<?php if (User::isAllowed('tickets', 'delete_comment', $entry['id'], $entry['user_id'])) {
-									echo $this->linkTo('tickets', 'delete_comment', $entry + $project, 'delete');
-								} ?>
-								<span class="date"><?php echo Date::distanceInWords(new Date($entry['created'])); ?> ago<span>: <?php echo Date::fromString($entry['created'], null, 'D, M j Y, H:i') ?></span></span>
-								<?php break;
-							case 'log': ?>
-									<span class="title"><?php if (isset($entry['message'])) {
-										$toState = (isset($entry['to_state_name']))? $entry['to_state_name'] : 'unknown state';
-										$fromState = (isset($entry['from_state_name']))? $entry['from_state_name'] : 'unknown state';
-										
-										// TODO: add {duration}
-										echo str_replace(
-											array('{to_state}', '{to_State}', '{from_state}', '{from_State}'),
-											array($toState, mb_ucfirst($toState), $fromState, mb_ucfirst($fromState)),
-											$entry['message']
-										);
-									} else {
-										echo '<em>' . $entry['event'] . '</em>';
-									} ?></span>
-									<?php if (!empty($entry['comment'])): ?>
-										<code>
-											<?php $lines = array_filter(explode("\n", Filter::specialChars($entry['comment'])));
-											
-											echo nl2br(implode('<br />', array_slice($lines, 0, 3)));
-											
-											if (count($lines) > 3) {
-												echo ' ' . $this->linkTo('tickets', 'log', $ticket + array('entry' => $entry['id']) + $project + array('.txt'), 'more');
-											} ?>
-										</code>
-									<?php endif; ?>
-									
-									<span class="date"><?php echo Date::distanceInWords(new Date($entry['created'])); ?> ago<span>: <?php echo Date::fromString($entry['created'], null, 'D, M j Y, H:i') ?></span></span><span class="description"> by <?php echo $entry['user_name']; ?></span>
-								<?php break;
-						} ?>
-						<span class="spine"></span>
-	    			</li>
-				<?php endif;
-			endforeach;
-		endif; */ ?>
+		while ($log->current()) {
+			echo $this->render('tickets/view/log_entry.tpl', ['entry' => $log->current()]);
+			$log->next();
+		} ?>
 	</ul>
 </div>
