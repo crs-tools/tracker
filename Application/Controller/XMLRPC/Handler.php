@@ -60,6 +60,9 @@
 			} else {
 				// TODO: update last_seen
 			}
+
+            // store projects ids of projects assigned to parent worker group
+            $this->worker->project_ids = $group->Project->pluck('id');
 		}
 		
 		private static function _validateSignature($secret, $signature, $arguments) {
@@ -158,21 +161,25 @@
         public function setTicketNextState($ticket_id, $log_message = '') {
             $ticket = Ticket::findBy(['id' => $ticket_id]);
             if(!$ticket) {
-                throw new Exception(__METHOD__.': ticket not found',101);
+                throw new Exception(__FUNCTION__.': ticket not found',101);
             }
 
             if(empty($ticket['handle_id']) || $ticket['handle_id'] != $this->worker['id']) {
-                throw new Exception(__METHOD__.': ticket is not assigned to you',102);
+                throw new Exception(__FUNCTION__.': ticket is not assigned to you',102);
+            }
+
+            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',103);
             }
 
             $state = $ticket->State;
             if(false && !$state['service_executable']) {
-                throw new Exception(__METHOD__.': current ticket state is not serviceable',103);
+                throw new Exception(__FUNCTION__.': current ticket state is not serviceable',104);
             }
 
             $next_state = $state->getNextState();
             if(!$next_state) {
-                throw new Exception(__METHOD__.': no next state available!',104);
+                throw new Exception(__FUNCTION__.': no next state available!',105);
             }
 
             if($ticket->save(['ticket_state' => $next_state['ticket_state']])) {
@@ -219,6 +226,8 @@
 					$reason = 'ticket is unassigned';
 				} elseif($ticket['handle_id'] != $this->worker['id']) {
 					$reason = 'ticket is assigned to other user: '.$ticket['user_name'];
+                } elseif(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                    $reason = 'ticket in project not assigned to worker group';
 				} elseif($state = $ticket->State && !$state['service_executable']) {
 					$reason = 'ticket is in non-service state: '.$ticket['ticket_state'];
 				}
@@ -245,7 +254,7 @@
 			}
 
 			$this->worker->touch();
-			
+
 			return $cmd;
 		}
 		
@@ -374,6 +383,9 @@
 			if(!is_array($properties) || count($properties) < 1) {
 				throw new EntryNotFoundException(__FUNCTION__.': no properties given',302);
 			}
+            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',303);
+            }
 
             $ticket_properties = array();
             $log_message = array();
@@ -424,7 +436,7 @@
             }
 
             // create query: find all tickets in state
-            $tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
+            $tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('project_id' => $this->worker->project_ids, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
 
             // filter out virtual conditions used for further where conditions
             $virtualConditions = array(
@@ -516,7 +528,7 @@
          * @throws Exception
 		 */
 		public function setTicketDone($ticket_id, $log_message = null) {
-            if(!$ticket = Ticket::find(['id' => $ticket_id])) {
+            if(!$ticket = Ticket::find(['id' => $ticket_id],['State'])) {
                 throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
             }
 
@@ -526,8 +538,12 @@
 			if($ticket['handle_id'] != $this->worker['id']) {
 				throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
             }
-			if($state = $ticket->State && !$state['service_executable']) {
-				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 504);
+            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',504);
+            }
+            $state = $ticket->State;
+			if(empty($state) || !$state['service_executable']) {
+				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 505);
 			}
 
             $log_entry = array(
@@ -539,7 +555,7 @@
                 'comment' => $log_message
             );
 
-            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $ticket['next_state']))) {
+            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $state->nextState()['ticket_state']))) {
                 Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
                 return false;
             }
@@ -561,17 +577,20 @@
 		 */
 		public function setTicketFailed($ticket_id, $log_message = null) {
             if(!$ticket = Ticket::find(['id' => $ticket_id])) {
-                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',601);
             }
 
             if($ticket['handle_id'] == null) {
-                throw new Exception(__FUNCTION__.': ticket not assigned', 502);
+                throw new Exception(__FUNCTION__.': ticket not assigned', 602);
             }
             if($ticket['handle_id'] != $this->worker['id']) {
-                throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 503);
+                throw new Exception(__FUNCTION__.': ticket is assigned to other user: '.$ticket['user_name'], 603);
             }
-            if($state = $ticket->State && !$state['service_executable']) {
-                throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 504);
+            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group', 604);
+            }
+            if(!$state = $ticket->State || !$state['service_executable']) {
+                throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 605);
             }
 
             $log_entry = array(
@@ -605,12 +624,12 @@
 
 			// check for basename
 			if(!isset($properties['Encoding.Basename'])) {
-				throw new Exception(__FUNCTION__.': could not examine file basename. Is property Record.Language set?',601);
+				throw new Exception(__FUNCTION__.': could not examine file basename. Is property Record.Language set?',701);
 			}
 
 			// get encoding profile
 			if(!$profileVersion = Ticket::findBy(array('id' => $ticket_id))->EncodingProfileVersion) {
-				throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',602);
+				throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',702);
 			}
 
 			$template = new DOMDocument();
@@ -651,7 +670,7 @@
 		*/
 		public function addLog($ticket_id, $log_message) {
             if(!$ticket = Ticket::find(['id' => $ticket_id])) {
-                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',501);
+                throw new EntryNotFoundException(__FUNCTION__.': ticket not found',801);
             }
 
 			return LogEntry::create(array(
