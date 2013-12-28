@@ -253,7 +253,7 @@
 				}
 			}
 
-			$this->worker->touch();
+			$this->worker->touch(['last_seen']);
 
 			return $cmd;
 		}
