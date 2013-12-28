@@ -114,7 +114,7 @@
 			);
 		}
 		
-		public static function filter_encoding(Model_Resource $resource, array $arguments) {
+		public static function filter_encoding(Model_Resource $resource, array $arguments) {			
 			/*
 			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id AND type_id = ?', array(2), 'LEFT');
 			$tickets->join('tbl_ticket', '', 'id = tbl_ticket.parent_id', array(), 'LEFT');
@@ -137,11 +137,17 @@
 		}
 		
 		public static function filter_releasing(Model_Resource $resource, array $arguments) {
-			/*
-			$states = $this->State->getIdsByName(array('tagged', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release'));
-			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
-			$tickets->where('state_id IN (? , ? , ? , ? , ? , ?) OR tbl_ticket_2.state_id IN (? , ? , ? , ? , ? , ?)', array_merge($states, $states));
-			*/
+			$resource->where(
+				'(' . self::TABLE . '.ticket_type = ? AND ' .
+				self::TABLE . '.ticket_state IN (?,?,?,?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?,?))',
+				[
+					'encoding',
+					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release',
+					'encoding',
+					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release',
+				]
+			);
 		}
 		
 		public static function filter_handle(Model_Resource $resource, array $arguments) {

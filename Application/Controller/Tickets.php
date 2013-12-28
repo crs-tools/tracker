@@ -64,6 +64,8 @@
 				switch ($this->filter) {
 					case 'recording':
 					case 'cutting':
+					case 'encoding':
+					case 'releasing':
 						$this->tickets->scoped(['filter_' . $this->filter]);
 						break;
 				}
