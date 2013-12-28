@@ -23,7 +23,7 @@ class LogEntry extends Model {
 			'RPC.ping' => 'Issued command.',
 			'RPC.setTicketFailed' => '{from_State} failed.',
 			'RPC.setTicketDone' => '{from_State} finished.',
-			
+			'RPC.setTicketProperties' => 'Properties changed.',
 			
 			/*
 			'RPC.Log' => '',
@@ -34,7 +34,6 @@ class LogEntry extends Model {
 			'RPC.State.Next' => 'State changed to {to_state}.',
 			'Action.Cut.Failed' => 'Cutting failed.',
 			'Action.Cut.Expand' => 'Expanded recording time.',
-			'RPC.Property.Set' => 'Properties changed.',
 			'RPC.Ping.Command' => 'Issued command.',
 			'Action.Check' => 'Encoding checked.',
 			'Encoding.Parent.Reset' => 'Task has been reset while recording task was beeing reset.',
