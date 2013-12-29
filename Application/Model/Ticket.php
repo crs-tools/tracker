@@ -114,26 +114,18 @@
 			);
 		}
 		
-		public static function filter_encoding(Model_Resource $resource, array $arguments) {			
-			/*
-			$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id AND type_id = ?', array(2), 'LEFT');
-			$tickets->join('tbl_ticket', '', 'id = tbl_ticket.parent_id', array(), 'LEFT');
-			$tickets->join('tbl_encoding_profile', '', 'id = tbl_ticket_2.encoding_profile_id', array(), 'LEFT');
-			$tickets->where('
-				((state_id IN (? , ? , ? , ?) AND tbl_encoding_profile_2.approved) OR
-				(tbl_ticket_2.state_id IN (? , ? , ? , ?) AND tbl_encoding_profile.approved)) OR
-				(parent_id IS NOT NULL AND type_id = ? AND state_id != ? AND tbl_ticket_3.state_id != ?) OR
-				(parent_id IS NULL AND state_id != ? AND tbl_ticket_2.state_id != ?)', array_merge($this->State->getIdsByName(array(
-					'ready to encode', 'encoding', 'encoded', 'tagging',
-					'ready to encode', 'encoding', 'encoded', 'tagging'
-				)),
-				array(2),
-				$this->State->getIdsByName(array( // TODO: this part of the query needs enhancement
-					'material needed', 'copied',
-					'copied', 'material needed'
-				))
-			));
-			*/
+		public static function filter_encoding(Model_Resource $resource, array $arguments) {
+			$resource->where(
+				'(' . self::TABLE . '.ticket_type = ? AND ' .
+				self::TABLE . '.ticket_state IN (?,?,?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?))',
+				[
+					'encoding',
+					'ready to encode', 'encoding', 'encoded', 'postencoding', 'postencoded',
+					'encoding',
+					'ready to encode', 'encoding', 'encoded', 'postencoding', 'postencoded'
+				]
+			);
 		}
 		
 		public static function filter_releasing(Model_Resource $resource, array $arguments) {
