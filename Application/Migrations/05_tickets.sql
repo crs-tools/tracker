@@ -96,6 +96,7 @@ LANGUAGE plpgsql VOLATILE;
 
 CREATE TRIGGER inherit_fahrplan_id BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE inherit_fahrplan_id();
 
+-- update child tickets title, when title of meta ticket is changed
 CREATE OR REPLACE FUNCTION update_child_ticket_title() RETURNS trigger AS $$
   DECLARE
 	profile record;
@@ -111,6 +112,21 @@ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_child_ticket_title AFTER UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_child_ticket_title();
 
+-- update encoding tickets state to "ready to encode", if recording ticket changes state to "finalized"
+CREATE OR REPLACE FUNCTION update_encoding_ticket_state() RETURNS trigger AS $$
+DECLARE
+  profile record;
+BEGIN
+  IF NEW.ticket_type = 'recording' AND NEW.ticket_state <> OLD.ticket_state AND NEW.ticket_state = 'finalized' THEN
+    UPDATE tbl_ticket SET ticket_state = 'ready to encode' WHERE ticket_type = 'encoding' AND parent_id = NEW.parent_id AND ticket_state = 'material needed';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_encoding_ticket_state AFTER UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_encoding_ticket_state();
+
+-- ticket properties
 CREATE TABLE tbl_ticket_property
 (
   ticket_id bigint NOT NULL,
