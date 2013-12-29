@@ -17,7 +17,9 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 	LEFT JOIN
 		tbl_ticket_property p ON p.ticket_id = COALESCE(t.parent_id,t.id) AND p.name = 'Fahrplan.Duration'
 	WHERE
-		(t.ticket_state = 'staged' OR pt.ticket_state = 'staged')
+		(t.ticket_state = 'staged' OR pt.ticket_state = 'staged') AND 
+		ticket_priority(t.id) > 0 AND 
+		COALESCE(ticket_depending_encoding_ticket_state(t.id),'released') = 'released'
 	ORDER BY
 		ticket_priority(t.id) DESC;
 

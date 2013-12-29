@@ -13,7 +13,11 @@ CREATE TABLE tbl_encoding_profile
   slug character varying(64),
   extension character varying(16),
   mirror_folder character varying(256),
-  CONSTRAINT tbl_encoding_profile_pk PRIMARY KEY (id)
+  depends_on bigint,
+  CONSTRAINT tbl_encoding_profile_pk PRIMARY KEY (id),
+  CONSTRAINT tbl_encoding_profile_depends_on_fkey FOREIGN KEY (depends_on)
+  REFERENCES tbl_encoding_profile (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITHOUT OIDS;
 
