@@ -66,6 +66,7 @@
 					case 'cutting':
 					case 'encoding':
 					case 'releasing':
+					case 'released':
 						$this->tickets->scoped(['filter_' . $this->filter]);
 						break;
 				}

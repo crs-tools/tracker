@@ -9,6 +9,7 @@
 			<li data-ai="3" <?php echo ($filter == 'cutting')? ' class="current"' : ''; ?>><?= $f->button('t', null, 'Cutting', array('value' => 'cutting')); ?></li>
 			<li data-ai="4" <?php echo ($filter == 'encoding')? ' class="current"' : ''; ?>><?= $f->button('t', null, 'Encoding', array('value' => 'encoding')); ?></li>
 			<li data-ai="5" class="last<?php echo ($filter == 'releasing')? ' current': ''; ?>"><?= $f->button('t', null, 'Releasing', array('value' => 'releasing')); ?></li>
+			<li data-ai="5" class="last<?php echo ($filter == 'released')? ' current': ''; ?>"><?= $f->button('t', null, 'Released', array('value' => 'released')); ?></li>
 			<li class="ticket-header-bar-background-right"></li>
 			
 			<?php /*<li class="ticket-header-bar-search"><?= $f->input('q', null, '', array('placeholder' => 'Search')); ?></li>

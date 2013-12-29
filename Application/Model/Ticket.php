@@ -74,6 +74,7 @@
 			'filter_cutting',
 			'filter_encoding',
 			'filter_releasing',
+			'filter_released',
 			'filter_handle',
 			
 			'order_list',
@@ -138,6 +139,20 @@
 					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing',
 					'encoding',
 					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing'
+				]
+			);
+		}
+		
+		public static function filter_released(Model_Resource $resource, array $arguments) {
+			$resource->where(
+				'(' . self::TABLE . '.ticket_type = ? AND ' .
+				self::TABLE . '.ticket_state IN (?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?))',
+				[
+					'encoding',
+					'released',
+					'encoding',
+					'released'
 				]
 			);
 		}
