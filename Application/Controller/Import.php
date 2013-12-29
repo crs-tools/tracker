@@ -27,7 +27,7 @@
 		*/
 		
 		public function index() {
-			$this->form = $this->form('import', 'review', $this->project);
+			$this->form('import', 'rooms', $this->project);
 			
 			if (file_exists(ROOT . 'Public/fahrplan/')) {
 				$files = $this->_getFiles();
@@ -39,17 +39,54 @@
 			return $this->render('import/index.tpl');
 		}
 		
+		public function rooms() {
+			$this->reviewForm = $this->form('import', 'review', $this->project);
+			$roomForm = $this->form();
+			
+			if (!$xml = $this->_loadXML($roomForm)) {
+				return $this->redirect('import', 'index', $this->project);
+			}
+			
+			$rooms = $xml->xpath('day/room');
+			$this->rooms = [];
+			
+			foreach ($rooms as $room) {
+				$this->rooms[(string) $room->attributes()['name']] = true;
+			}
+			
+			/*
+				'create_recording_tickets' => $this->form->getValue('create_recording_tickets'),
+				'create_encoding_tickets' => $this->form->getValue('create_encoding_tickets')
+			*/
+			
+			requiresSession();
+			$_SESSION['import'] = [
+				'step' => 'review',
+				'create_recording_tickets' => $roomForm->getValue('create_recording_tickets'),
+				'create_encoding_tickets' => $roomForm->getValue('create_encoding_tickets'),
+				'xml' => $xml->asXML()
+			];
+			
+			return $this->render('import/rooms.tpl');
+		}
+		
 		public function review() {
-			$this->form = $this->form();
+			if (!isset($_SESSION['import']) or $_SESSION['import']['step'] != 'review') {
+				unset($_SESSION['import']);
+				return $this->redirect('import', 'index', $this->project);
+			}
+			
+			$this->form();
 			$this->applyForm = $this->form('import', 'apply', $this->project);
+			
+			$rooms = $this->form->getValue('rooms');
 			
 			if (!$this->form->wasSubmitted()) {
 				return $this->redirect('import', 'index', $this->project);
 			}
 			
-			if (!$xml = $this->_loadXML($this->form)) {
-				return $this->redirect('import', 'index', $this->project);
-			}
+			// TODO: better solution?
+			$xml = simplexml_load_string($_SESSION['import']['xml']);
 			
 			$tickets = Ticket::findAll(array())
 				->where(array('ticket_type' => 'meta', 'project_id' => $this->project['id']))
@@ -62,14 +99,19 @@
 			$events = $xml->xpath('day/room/event');
 			
 			$this->tickets = array(
+				'step' => 'apply',
 				'new' => [],
 				'changed' => [],
 				'deleted' => [],
-				'create_recording_tickets' => $this->form->getValue('create_recording_tickets'),
-				'create_encoding_tickets' => $this->form->getValue('create_encoding_tickets')
+				'create_recording_tickets' => $_SESSION['import']['create_recording_tickets'],
+				'create_encoding_tickets' => $_SESSION['import']['create_encoding_tickets']
 			);
 			
 			foreach ($events as $event) {
+				if (!$rooms[(string) $event->room]) {
+					continue;
+				}
+				
 				$properties = array();
 				$attributes = $event->attributes();
 				
@@ -195,7 +237,8 @@
 		
 		
 		public function apply() {
-			if (!isset($_SESSION['import'])) {
+			if (!isset($_SESSION['import']) or $_SESSION['import']['step'] == 'apply') {
+				unset($_SESSION['import']);
 				return $this->redirect('import', 'index', $this->project);
 			}
 			

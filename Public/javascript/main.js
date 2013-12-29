@@ -917,6 +917,20 @@ $(function() {
     }).appendTo($('#ticket-import-list fieldset:last ul li'));
   }
   
+  $('ul[data-invert-checkboxes]').each(function(i, ul) {
+    ul = $(ul);
+    
+    $('<a></a>')
+      .attr('href', '#')
+      .text('Invert selection')
+      .click(function(event) {
+        event.preventDefault();
+        ul.find('input.checkbox').each(function(i, checkbox) {
+          checkbox.checked = !checkbox.checked;
+        });
+      }).insertAfter($(ul).find('input.submit:last'));
+  });
+  
   $('#encoding-profile-versions tr.encoding-profile-version')
     .hide()
     .each(function(i, tr) {
