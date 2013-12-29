@@ -420,7 +420,10 @@
             }
 
             // create query: find all tickets in state
-            $tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('project_id' => $this->worker->project_ids, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1));
+            $tickets = Ticket::findAll(['State'])
+                ->from('view_serviceable_tickets', 'tbl_ticket')
+                ->where(array('project_id' => $this->worker->project_ids, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1))
+                ->orderBy('priority DESC');
 
             // filter out virtual conditions used for further where conditions
             $virtualConditions = array(
