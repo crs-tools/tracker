@@ -306,7 +306,7 @@
 			*/
 			
 			$this->stats = array(
-				'cutting' => Ticket::countByNextState($this->project['id'], 'encoding', 'cutting'),
+				'cutting' => Ticket::countByNextState($this->project['id'], 'recording', 'cutting'),
 				'checking' => Ticket::countByNextState($this->project['id'], 'encoding', 'checking'),
 				'fixing' => Ticket::findAll()->where(['failed' => true, 'project_id' => $this->project['id']])->count()
 			);
