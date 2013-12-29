@@ -1,10 +1,19 @@
-<table class="properties">
-	<?php $root = null;
+<?php
 	
 	if ($properties instanceOf Model_Resource) {
 		$properties = clone $properties;
 		$properties->except(['indexBy']);
+		
+		if ($properties->getRows() < 1) {
+			return;
+		}
+	} elseif (empty($properties)) {
+		return;
 	}
+	
+?>
+<table class="properties">
+	<?php $root = null;
 	
 	foreach ($properties as $property):
 		if ($root != $property['root']):

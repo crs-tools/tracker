@@ -97,9 +97,13 @@
 
 <?= $this->render('shared/properties.tpl'); ?>
 
-<?php if (isset($parentProperties)): ?>
-	<?= $this->render('shared/properties.tpl', ['properties' => $parentProperties]); ?>
-<?php endif; ?>
+<?php if (isset($parentProperties)) {
+	echo $this->render('shared/properties.tpl', ['properties' => $parentProperties]);
+}
+
+if (isset($recordingProperties)) {
+	echo $this->render('shared/properties.tpl', ['properties' => $recordingProperties]);
+} ?>
 
 <div id="timeline">
 	<h3>Timeline</h3>

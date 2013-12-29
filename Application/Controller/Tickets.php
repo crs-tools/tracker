@@ -368,8 +368,13 @@
 				->Parent
 				->Properties
 				->indexBy('name', 'value');
-			
-			// TODO: record properties
+			$this->recordingProperties = $this->ticket
+				->Parent
+				->Children
+				->where(['ticket_type' => 'recording'])
+				->first()
+				->Properties
+				->indexBy('name', 'value');
 			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {
