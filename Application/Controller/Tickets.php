@@ -173,17 +173,9 @@
 				$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
 			}
 			
-			$tickets = $this->Ticket->findBySQL($tickets, array(), array('User', 'State', 'EncodingProfile'));
-			
-			if (is_array($tickets)) {
-				$tickets = Ticket::sortByFahrplanStart($tickets);
-			}
-			
 			if (Request::isPostRequest() and Request::post('edit')) {
 				return $this->View->redirect('tickets', 'edit', array('project_slug' => $this->Project->slug, 'id' => implode(Model::indexByField($tickets,'id', 'id'), ',')));
 			}
-			
-			$this->View->assign('tickets', $tickets);
 			*/
 			/*if ($this->View->respondTo('json')) {
 				$this->render('tickets/table.tpl');
@@ -379,7 +371,7 @@
 			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {
-					Comment::create([
+					$comment = Comment::create([
 						'ticket_id' => $this->ticket['id'],
 						'handle_id' => User::getCurrent()['id'],
 						'comment' => $this->actionForm->getValue('comment')
@@ -401,6 +393,12 @@
 						'handle_id' => null,
 						'failed' => true
 					])) {
+					LogEntry::createForTicket($this->ticket, [
+						'comment_id' => (isset($comment))? $comment['id'] : null,
+						'event' => 'Action.' . $action . '.failed',
+						'handle_id' => User::getCurrent()['id']
+					]);
+					
 					$this->flash('Marked ticket as failed');
 					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 				} elseif ($this->actionForm->getValue('language') === '') {
@@ -427,12 +425,22 @@
 						];
 					}
 					
+					$oldState = $ticket['ticket_state'];
+					
 					if ($this->ticket->save([
 						'ticket_state' => $this->ticket->queryNextState($state),
 						'handle_id' => null,
 						'failed' => false,
 						'properties' => $properties
 					])) {
+						LogEntry::createForTicket($this->ticket, [
+							'comment_id' => (isset($comment))? $comment['id'] : null,
+							'event' => 'Action.' . $action,
+							'handle_id' => User::getCurrent()['id'],
+							'from_state' => $oldState,
+							'to_state' => $state
+						]);
+						
 						$this->flash('Successfully finished ' . $state);
 					}
 					
@@ -461,13 +469,6 @@
 					} else {
 				…
 					if ($this->Ticket->save()) {
-						$this->LogEntry->create(array(
-							'ticket_id' => $this->Ticket->id,
-							'from_state_id' => $ticket['state_id'],
-							'to_state_id' => $states['to'],
-							'event' => 'Action.' . mb_ucfirst($action) . ((Request::post('failed', Request::checkbox) and isset($states['failed']))? '.Failed' : ''),
-							'comment_id' => (Request::post('comment', Request::unfiltered))? $this->Comment->id : null
-						));
 						
 						if (Request::post('forward', Request::checkbox)) {
 							if (isset($ticket['encoding_profile_id']) and $forward = $this->Ticket->findFirst(array(), 'project_id = ? AND state_id = ? AND encoding_profile_id = ? AND id != ?', array($this->Project->id, $states['from'], $ticket['encoding_profile_id'], $ticket['id']))) {

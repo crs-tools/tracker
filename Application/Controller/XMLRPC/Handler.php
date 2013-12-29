@@ -59,7 +59,8 @@
 					'worker_group_id' => $group['id']
 				));
 			} else {
-				// TODO: update last_seen
+				$this->worker->touch(['last_seen']);
+				// TODO: worker_group_id?
 			}
 
             // store projects ids of projects assigned to parent worker group
@@ -255,9 +256,7 @@
 					));
 				}
 			}
-
-			$this->worker->touch(['last_seen']);
-
+			
 			return $cmd;
 		}
 		

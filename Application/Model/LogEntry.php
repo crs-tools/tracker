@@ -25,6 +25,12 @@ class LogEntry extends Model {
 			'RPC.setTicketDone' => '{from_State} finished.',
 			'RPC.setTicketProperties' => 'Properties changed.',
 			
+			'Action.cut' => 'Recording cut.',
+			'Action.cut.failed' => 'Cutting failed.',
+			
+			'Action.check' => 'Encoding checked.',
+			'Action.check.failed' => 'Encoding check failed.',
+			
 			/*
 			'RPC.Log' => '',
 			'Comment.Add' => 'Comment added.',
@@ -32,13 +38,9 @@ class LogEntry extends Model {
 			'Encoding.Reset' => 'Encoding task has been reset.',
 			'Recording.Reset' => 'Task has been reset.',
 			'RPC.State.Next' => 'State changed to {to_state}.',
-			'Action.Cut.Failed' => 'Cutting failed.',
 			'Action.Cut.Expand' => 'Expanded recording time.',
 			'RPC.Ping.Command' => 'Issued command.',
-			'Action.Check' => 'Encoding checked.',
 			'Encoding.Parent.Reset' => 'Task has been reset while recording task was beeing reset.',
-			'Action.Check.Failed' => 'Encoding check failed.',
-			'Action.Cut' => 'Recording cut.',
 			'Created' => 'Ticket created.'
 			*/
 		];
@@ -57,6 +59,13 @@ class LogEntry extends Model {
 				array($toState, mb_ucfirst($toState), $fromState, mb_ucfirst($fromState)),
 				self::$_messages[$this['event']]
 			);
+		}
+		
+		public static function createForTicket(Ticket $ticket, array $entry) {
+			return static::create(array_merge([
+				'ticket_id' => $ticket['id'],
+				'from_state' => $ticket['ticket_state'],
+			], $entry));
 		}
 
     }
