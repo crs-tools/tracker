@@ -334,44 +334,25 @@
 		
 		public static function countByNextState($project, $ticketType, $ticketState) {
 			return Ticket::findAll()
-				->where(['ticket_type' => $ticketType])
+				->where([
+					'ticket_type' => $ticketType,
+					'project_id' => $project
+				])
 				->where(
 					'(SELECT next.ticket_state FROM ticket_state_next(?, ticket_type, ticket_state) AS next) = ?',
 					[$project, $ticketState]
 				)
 				->count();
-			
-			// Ticket::findAll()->where(['ticket_'ProjectTicketState::getNextState($project_id, $ticket_type, $ticket_state);])
+		}
+		
+		public static function getTotalProgress() {
+			return self::findAll()
+				->select('SUM(ticket_progress(id)) / COUNT(id) AS progress')
+				->where(['ticket_type' => 'meta', 'ticket_state' => 'staged'])
+				->fetchRow()['progress'];
 		}
 		
 		/*
-		public function findUnassignedByState($state, $limit = null) {
-			$query = 'SELECT
-						t.*,
-						getTicketPriority(t.id) * e.priority as priority_product,
-						(SELECT count(l.id) FROM tbl_log l WHERE l.ticket_id = t.id AND l.event = \'Script.Ticket.setTicketFailed\' AND l.user_id = :user_id) as fail_count
-					FROM
-						tbl_ticket t
-					LEFT JOIN
-						tbl_ticket p ON p.id = t.parent_id
-					LEFT JOIN
-						tbl_encoding_profile e ON e.id = t.encoding_profile_id
-					WHERE
-						t.user_id IS NULL AND
-						t.state_id = :state_id AND
-						t.project_id = :project_id AND
-						t.failed IS NOT TRUE AND
-						p.failed IS NOT TRUE AND
-						(e.id IS NULL OR e.approved IS TRUE)
-					ORDER BY
-						fail_count ASC,
-						priority_product DESC';
-			if(!empty($limit)) {
-				$query .= ' LIMIT '.$limit;
-			}
-			return $this->findBySQL($query, array('user_id' => $this->User->id, 'state_id' => $state, 'project_id' => $this->Project->current()->id), array());
-		}
-		
 		public function findAbandonedByState($state, $timeout = null, $limit = null) {
 			$query = 'SELECT
 						t.*,
@@ -395,37 +376,6 @@
 				$query .= ' LIMIT '.$limit;
 			}
 			return $this->findBySQL($query, array('state_id' => $state, 'project_id' => $this->Project->current()->id, 'role' => 'worker', 'timeout' => $timeout), array());
-		}
-		
-		public function getTimeline($id) {
-			$log = $this->LogEntry->findByTicketId($id, array('LogMessage', 'User'), 'created DESC');
-			$comments = $this->Comment->findAll(array('User'), array('ticket_id' => $id), array(), 'created DESC');
-			
-			$timeline = array();
-			$i = 0;
-			
-			if (!empty($comments)) {
-				foreach ($comments as $comment) {
-					// TODO: is there a better way to compare the dates than cast the dates to Date objects?
-					while (isset($log[$i]) and strtotime($log[$i]['created']) >= strtotime($comment['created'])) {
-						$log[$i]['type'] = 'log';
-						$timeline[] = $log[$i];
-						$i++;
-					}
-
-					$comment['type'] = 'comment';
-					$timeline[] = $comment;
-				}
-			}
-			
-			if (!empty($log)) {
-				for (;$i < count($log); $i++) {
-					$log[$i]['type'] = 'log';
-					$timeline[] = $log[$i];
-				}
-			}
-			
-			return $timeline;
 		}
 		
 		public function resetRecordingTask($id) {

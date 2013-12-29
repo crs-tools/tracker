@@ -311,6 +311,8 @@
 				'fixing' => Ticket::findAll()->where(['failed' => true, 'project_id' => $this->project['id']])->count()
 			);
 			
+			$this->progress = Ticket::getTotalProgress();
+			
 			return $this->render('tickets/feed.tpl');
 		}
 		
