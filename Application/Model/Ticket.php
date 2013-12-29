@@ -139,13 +139,13 @@
 		public static function filter_releasing(Model_Resource $resource, array $arguments) {
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?,?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?,?))',
+				self::TABLE . '.ticket_state IN (?,?,?,?,?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?,?,?))',
 				[
 					'encoding',
-					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release',
+					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing',
 					'encoding',
-					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release',
+					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing'
 				]
 			);
 		}
