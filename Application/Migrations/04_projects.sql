@@ -81,7 +81,7 @@ CREATE TABLE tbl_project_encoding_profile
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT tbl_project_encoding_profile_project_id_fkey FOREIGN KEY (project_id)
       REFERENCES tbl_project (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITHOUT OIDS;
 
