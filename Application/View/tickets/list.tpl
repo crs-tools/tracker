@@ -59,7 +59,7 @@ if (!empty($tickets)) {
 				$t .= '</span><span class="view"></span>';
 			$t .= '</a><span class="other">';
 				
-				if (!empty($ticket['handle_id']) and isset($ticket['user_name'])) {
+				if (!empty($ticket['handle_id']) and isset($ticket['handle_name'])) {
 					$t .= '<span class="assignee">' . $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), $ticket['handle_name'], array('data-handle' => $ticket['handle_id'])) . '</span>';
 				}
 				
