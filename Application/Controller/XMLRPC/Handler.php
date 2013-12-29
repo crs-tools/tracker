@@ -59,8 +59,7 @@
 					'worker_group_id' => $group['id']
 				));
 			} else {
-				$this->worker->touch(['last_seen']);
-				// TODO: worker_group_id?
+				// TODO: update last_seen
 			}
 
             // store projects ids of projects assigned to parent worker group
@@ -256,7 +255,9 @@
 					));
 				}
 			}
-			
+
+			$this->worker->touch(['last_seen']);
+
 			return $cmd;
 		}
 		
@@ -514,7 +515,7 @@
          * @throws Exception
 		 */
 		public function setTicketDone($ticket_id, $log_message = null) {
-            if(!$ticket = Ticket::find(['id' => $ticket_id],['State'])->from('view_serviceable_tickets', 'tbl_ticket')) {
+            if(!$ticket = Ticket::findBy(['id' => $ticket_id],array(),['State'])->from('view_serviceable_tickets', 'tbl_ticket')->first()) {
                 throw new EntryNotFoundException(__FUNCTION__.': ticket not found or parent in wrong state',501);
             }
 
