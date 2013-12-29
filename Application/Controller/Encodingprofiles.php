@@ -10,7 +10,10 @@
 		public $requireAuthorization = true;
 		
 		public function index() {
-			$this->profiles = EncodingProfile::findAllWithVersionCount(array())->orderBy('slug');
+			$this->profiles = EncodingProfile::findAll()
+				->scoped(['with_version_count'])
+				->orderBy('slug');
+			
 			return $this->render('encoding/profiles/index.tpl');
 		}
 		
@@ -62,6 +65,11 @@
 				return $this->redirect('encodingprofiles', 'index');
 			}
 			
+			$this->profiles = EncodingProfile::findAll()
+				->select('id, name')
+				->orderBy('slug')
+				->indexBy('id', 'name');
+			
 			return $this->render('encoding/profiles/edit.tpl');
 		}
 		
@@ -98,6 +106,11 @@
 			}
 			
 			$this->versions = $this->profile->Versions; /*->select('revision, description, created') */
+			$this->profiles = EncodingProfile::findAll()
+				->select('id, name')
+				->orderBy('slug')
+				->whereNot(['id' => $this->profile['id']])
+				->indexBy('id', 'name');
 			
 			return $this->render('encoding/profiles/edit.tpl');
 		}

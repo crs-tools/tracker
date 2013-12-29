@@ -28,6 +28,8 @@
 		<ul>
 			<li><?= $f->input('name', 'Name', $profile['name'], array('class' => 'wide')); ?></li>
 			<li><?= $f->input('slug', 'Slug', $profile['slug'], array('class' => 'narrow')); ?></li>
+			
+			<li><?= $f->select('depends_on', 'Depends on', array('' => '') + $profiles->toArray(), $profile['depends_on']); ?></li>
 		</ul>
 	</fieldset>
 	
