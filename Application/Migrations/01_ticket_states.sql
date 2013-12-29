@@ -93,12 +93,12 @@ INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, servi
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'cut', 5, false);
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'finalizing', 10, true);
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'finalized', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'ready to archive', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'archiving', 30, true);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'archived', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'ready to remove', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'removing', 20, true);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'gone', 5, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'ready to archive', 0, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'archiving', 0, true);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'archived', 0, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'ready to remove', 0, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'removing', 0, true);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('recording', 'gone', 0, false);
 
 -- encoding tickets
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'material needed', 0, false);
@@ -114,9 +114,9 @@ INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, servi
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'ready to release', 5, false);
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'releasing', 20, true);
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'released', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'ready to remove', 5, false);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'removing', 20, true);
-INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'gone', 5, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'ready to remove', 0, false);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'removing', 0, true);
+INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('encoding', 'gone', 0, false);
 
 -- ingest tickets
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('ingest', 'incomplete', 0, false);
