@@ -6,16 +6,11 @@
 	} ?></span>
 	<?php if (!empty($entry['comment'])): ?>
 		<code>
-			<?php $lines = $this->h();
-			
-			echo nl2br(implode('<br />',
-				array_slice(array_filter(
-					explode("\n", $this->h($entry['comment']))),
-				0, 3)
-			));
+			<?php $lines = array_filter(explode("\n", $this->h($entry['comment'])));
+			echo nl2br(implode('<br />', array_slice($lines, 0, 3)));
 			
 			if (count($lines) > 3) {
-				echo ' ' . $this->linkTo('tickets', 'log', $ticket, array('entry' => $entry['id']), $project + array('.txt'), 'more');
+				echo ' ' . $this->linkTo('tickets', 'log', $ticket, array('entry' => $entry['id']), $project, array('.txt'), 'more');
 			} ?>
 		</code>
 	<?php endif; ?>

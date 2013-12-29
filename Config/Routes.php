@@ -8,7 +8,7 @@
 	':project_slug/ticket/:id/comment' => ['tickets', 'comment'],
 	':project_slug/ticket/:ticket_id/comment/delete/:id' => ['tickets', 'delete_comment'],
 
-	':project_slug/ticket/:id/log/:entry.txt' => ['tickets', 'log'],
+	':project_slug/ticket/:id/log/:entry' => ['tickets', 'log'],
 	':project_slug/ticket/:id' => ['tickets', 'view'],
 	':project_slug/ticket/:id/:action' => ['tickets'],
 

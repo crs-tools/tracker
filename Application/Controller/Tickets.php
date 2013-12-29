@@ -211,20 +211,23 @@
 			
 			return $this->render('tickets/view.tpl');
 		}
-		/*
-		public function log($arguments = array()) {
-			if (empty($arguments['entry']) or !$log = $this->LogEntry->find($arguments['entry'], array())) {
+		
+		public function log(array $arguments) {
+			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
-			if ($arguments['id'] != $log['ticket_id'] or !$this->Ticket->find($arguments['id'], array(), array('project_id' => $this->Project->id), array(), null, 'id')) {
+			if (!$log = LogEntry::findBy(['id' => $arguments['entry'], 'ticket_id' => $ticket['id']])) {
 				throw new EntryNotFoundException();
 			}
 			
-			$this->View->contentType('text/plain', true);
-			$this->View->output($log['comment']);
+			if (!$this->respondTo('txt')) {
+				return Response::error(400);
+			}
+			
+			$this->Response->setContent($log['comment']);
 		}
-		*/
+		
 		public function feed() {
 			
 			/*
