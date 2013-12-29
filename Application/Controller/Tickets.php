@@ -192,11 +192,11 @@
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
 			// TODO: add scopes for properties and progress
-			// TODO: joins user
+			// TODO: parent joins handle
 			$this->parent = $this->ticket->Parent;
 			$this->children = $this->ticket
 				->Children
-				->joins(['User']);
+				->joins(['Handle']);
 			
 			$this->properties = $this->ticket->Properties;
 			
@@ -306,9 +306,9 @@
 			*/
 			
 			$this->stats = array(
-				'cutting' => 0,
-				'checking' => 0,
-				'fixing' => 0
+				'cutting' => Ticket::countByNextState($this->project['id'], 'encoding', 'cutting'),
+				'checking' => Ticket::countByNextState($this->project['id'], 'encoding', 'checking'),
+				'fixing' => Ticket::findAll()->where(['failed' => true, 'project_id' => $this->project['id']])->count()
 			);
 			
 			return $this->render('tickets/feed.tpl');
@@ -368,6 +368,8 @@
 				->Parent
 				->Properties
 				->indexBy('name', 'value');
+			
+			// TODO: record properties
 			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {

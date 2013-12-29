@@ -332,6 +332,18 @@
 				);
 		}
 		
+		public static function countByNextState($project, $ticketType, $ticketState) {
+			return Ticket::findAll()
+				->where(['ticket_type' => $ticketType])
+				->where(
+					'(SELECT next.ticket_state FROM ticket_state_next(?, ticket_type, ticket_state) AS next) = ?',
+					[$project, $ticketState]
+				)
+				->count();
+			
+			// Ticket::findAll()->where(['ticket_'ProjectTicketState::getNextState($project_id, $ticket_type, $ticket_state);])
+		}
+		
 		/*
 		public function findUnassignedByState($state, $limit = null) {
 			$query = 'SELECT
