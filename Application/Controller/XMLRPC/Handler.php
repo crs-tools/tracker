@@ -504,6 +504,72 @@
 			return $ticket->toArray();
 		}
 
+        /**
+         * Get all assigned tickets in state $state
+         *
+         * @param string ticket_type type of ticket
+         * @param string ticket_state ticket state
+         * @param array filter_parameters return only tickets matching given properties
+         * @return array ticket data or false if no matching ticket found (or user is halted)
+         * @throws Exception on error
+         */
+        public function getAssignedTickets($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
+            /* TODO reintroduce worker hold
+            if(!$this->checkReadOnly()) {
+                return false;
+            }*/
+
+            if(empty($ticket_type) || empty($ticket_state)) {
+                throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
+            }
+
+            // create query: find all tickets in state
+            $tickets = Ticket::findAll(['State'])->where(array('handle_id' => $this->worker['id'], 'ticket_type' => $ticket_type, 'ticket_state' => $ticket_state));
+
+            // filter out virtual conditions used for further where conditions
+            $virtualConditions = array(
+                'Record.StartedBefore' => 'time_start < ?',
+                'Record.EndedAfter' => 'time_end > ?',
+                'Record.EndedBefore' => 'time_end < ?'
+            );
+
+            // extract virtual filter properties
+            if(!empty($filter_properties)) {
+                Log::debug('got property filter: '.var_export($filter_properties,true));
+                foreach($virtualConditions as $property => $condition) {
+                    if(array_key_exists($property, $filter_properties)) {
+                        Log::debug('found property '.$property);
+                        $tickets->where($condition,array($filter_properties[$property]));
+                        unset($filter_properties[$condition]);
+                    }
+                }
+            }
+
+            // check again if we still need to filter tickets properties
+            $tickets_matching = array();
+            if(empty($filter_properties)) {
+                $tickets_matching = $tickets->toArray();
+            } else {
+                foreach($tickets as $_ticket) {
+                    $ticket = $_ticket;
+                    $properties = $this->getTicketProperties($_ticket['id']);
+                    foreach($properties as $name => $value) {
+                        if(array_key_exists($name,$filter_properties) && $filter_properties[$name] != $value) {
+                            // if property mismatch, invalidate current ticket guess
+                            $ticket = null;
+                            break;
+                        }
+                    }
+                    if($ticket) {
+                        $tickets_matching[] = $ticket;
+                    }
+                }
+
+            }
+
+            return $tickets_matching;
+        }
+
 		/**
 		 * Unassign ticket and set state to according state after procressing by service.
 		 *
