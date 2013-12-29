@@ -345,10 +345,14 @@
 				->count();
 		}
 		
-		public static function getTotalProgress() {
+		public static function getTotalProgress($project) {
 			return self::findAll()
 				->select('SUM(ticket_progress(id)) / COUNT(id) AS progress')
-				->where(['ticket_type' => 'meta', 'ticket_state' => 'staged'])
+				->where([
+					'project_id' => $project,
+					'ticket_type' => 'meta',
+					'ticket_state' => 'staged'
+				])
 				->fetchRow()['progress'];
 		}
 		
