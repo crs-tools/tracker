@@ -124,12 +124,12 @@
 		$log = $log->getIterator();
 		
 		foreach ($comments as $comment) {
-			echo $this->render('tickets/view/comment.tpl', ['comment' => $comment]);
-			
 			while (strtotime($log->current()['created']) > strtotime($comment['created'])) {
 				echo $this->render('tickets/view/log_entry.tpl', ['entry' => $log->current()]);
 				$log->next();
 			}
+			
+			echo $this->render('tickets/view/comment.tpl', ['comment' => $comment]);
 		}
 		
 		while ($log->current()) {
