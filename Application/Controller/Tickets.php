@@ -211,6 +211,7 @@
 				->orderBy('created DESC');
 			$this->log = $this->ticket
 				->LogEntries
+				->joins(['Handle'])
 				->orderBy('created DESC');
 			
 			return $this->render('tickets/view.tpl');
