@@ -52,18 +52,6 @@
 			'EncodingProfileVersion' => true,
 			'WorkerGroup' => true
 		);
-		
-		/*
-		public function getProgress($conditions = null, array $params = array()) {
-			$query = Database_Query::selectFrom($this->table, 'SUM(getTicketProgress(tbl_ticket.id)) / COUNT(tbl_ticket.id) AS progress', $conditions, $params);
-			$query->where('type_id = ? AND state_id != ?', array(1, $this->State->getIdByName('locked')));
-			
-			$this->Database->query($query);
-			$result = $this->Database->fetchRow();
-			
-			return (float) $result['progress'];
-		}
-		*/
 	}
 	
 ?>
