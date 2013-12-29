@@ -513,7 +513,7 @@
          * @return array ticket data or false if no matching ticket found (or user is halted)
          * @throws Exception on error
          */
-        public function getAssignedTickets($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
+        public function getAssignedForState($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
             /* TODO reintroduce worker hold
             if(!$this->checkReadOnly()) {
                 return false;
@@ -524,7 +524,7 @@
             }
 
             // create query: find all tickets in state
-            $tickets = Ticket::findAll(['State'])->where(array('handle_id' => $this->worker['id'], 'ticket_type' => $ticket_type, 'ticket_state' => $ticket_state));
+            $tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('handle_id' => $this->worker['id'], 'ticket_type' => $ticket_type, 'ticket_state' => $ticket_state));
 
             // filter out virtual conditions used for further where conditions
             $virtualConditions = array(
@@ -561,7 +561,7 @@
                         }
                     }
                     if($ticket) {
-                        $tickets_matching[] = $ticket;
+                        $tickets_matching[] = $ticket->toArray();
                     }
                 }
 
