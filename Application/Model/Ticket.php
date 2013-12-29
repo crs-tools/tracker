@@ -81,6 +81,7 @@
 			
 			'with_child',
 			'with_default_properties',
+			'with_encoding_profile_name',
 			'with_progress',
 			'with_properties',
 			'with_recording',
@@ -148,12 +149,7 @@
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
 				self::TABLE . '.ticket_state IN (?)) OR ' .
 				'(child.ticket_type = ? AND child.ticket_state IN (?))',
-				[
-					'encoding',
-					'released',
-					'encoding',
-					'released'
-				]
+				['encoding', 'released', 'encoding', 'released']
 			);
 		}
 		
@@ -178,12 +174,10 @@
 		}
 		
 		public static function with_child(Model_Resource $resource, array $arguments) {
-			$resource->join(
+			$resource->leftJoin(
 				[self::TABLE, 'child'],
 				null,
-				[self::TABLE . '.id = parent_id'],
-				[],
-				'LEFT'
+				[self::TABLE . '.id = parent_id']
 			);
 		}
 		
@@ -194,6 +188,20 @@
 				'Fahrplan.Day' => 'fahrplan_day',
 				'Fahrplan.Room' => 'fahrplan_room'
 			]);
+		}
+		
+		
+		public function with_encoding_profile_name(Model_Resource $resource, array $arguments) {
+			$resource->leftJoin(
+				[EncodingProfileVersion::TABLE, 'encoding_profile_version'],
+				null,
+				[self::TABLE . '.encoding_profile_version_id = id']
+			);
+			$resource->leftJoin(
+				[EncodingProfile::TABLE],
+				'name AS encoding_profile_name',
+				['encoding_profile_version.encoding_profile_id = id']
+			);
 		}
 		
 		public static function with_progress(Model_Resource $resource, array $arguments) {

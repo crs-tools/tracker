@@ -11,6 +11,7 @@
 		'/Model/TicketState',
 		'/Model/Comment',
 		
+		'/Model/EncodingProfile',
 		'/Model/EncodingProfileVersion',
 		
 		'/Helper/Ticket'
@@ -43,6 +44,7 @@
 				->joins(['Handle'])
 				->scoped([
 					'with_default_properties',
+					'with_encoding_profile_name',
 					'with_progress',
 					'order_list'
 				]);
