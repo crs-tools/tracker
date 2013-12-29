@@ -237,7 +237,7 @@
 		
 		
 		public function apply() {
-			if (!isset($_SESSION['import']) or $_SESSION['import']['step'] == 'apply') {
+			if (!isset($_SESSION['import']) or $_SESSION['import']['step'] != 'apply') {
 				unset($_SESSION['import']);
 				return $this->redirect('import', 'index', $this->project);
 			}
