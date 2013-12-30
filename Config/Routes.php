@@ -53,6 +53,8 @@
 	':project_slug/delete' => ['projects', 'delete'],
 	'projects' => ['projects', 'index'],
 	
+	'api/v1/:project_slug/tickets/fahrplan' => ['API', 'tickets_fahrplan'],
+	
 	'login' => ['user', 'login'],
 	'logout' => ['user', 'logout'],
 	'settings' => ['user', 'settings'],
