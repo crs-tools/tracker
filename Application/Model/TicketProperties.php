@@ -17,7 +17,11 @@
         public static function buildSlug(Model $project, $properties = array()) {
             $parts = array();
 
-            array_push($parts, $project['slug']);
+            if(isset($properties['Meta.Acronym'])) {
+                array_push($parts, $properties['Meta.Acronym']);
+            } else {
+                array_push($parts, $project['slug']);
+            }
 
             if(isset($properties['Fahrplan.ID'])) {
                 array_push($parts, $properties['Fahrplan.ID']);
