@@ -54,12 +54,8 @@
 				$this->rooms[(string) $room->attributes()['name']] = true;
 			}
 			
-			/*
-				'create_recording_tickets' => $this->form->getValue('create_recording_tickets'),
-				'create_encoding_tickets' => $this->form->getValue('create_encoding_tickets')
-			*/
-			
 			requiresSession();
+			
 			$_SESSION['import'] = [
 				'step' => 'review',
 				'create_recording_tickets' => $roomForm->getValue('create_recording_tickets'),
@@ -96,9 +92,6 @@
 				->indexBy('fahrplan_id')
 				->toArray();
 			
-			// TODO: day change is missing in XML file
-			$dayChange = '04:00';
-			
 			$events = $xml->xpath('day/room/event');
 			
 			$this->tickets = array(
@@ -129,12 +122,12 @@
 					$properties['Fahrplan.GUID'] = (string) $attributes['guid'];
 				}
 				
-				if (isset($event->date)) {
-					$properties['Fahrplan.Date'] = (new DateTime($event->date))->format('Y-m-d');
-				} else {
-					$properties['Fahrplan.Date'] = (string) current($event->xpath('ancestor::day/@date'));
+				if (!isset($event->date)) {
+					// TODO: import without date is now unsupported
+					continue;
 				}
 				
+				$properties['Fahrplan.Date'] = (new DateTime($event->date))->format('Y-m-d');
 				$properties['Fahrplan.Start'] = (string) $event->start;
 				
 				$properties['Fahrplan.Day'] = (string) current($event->xpath('ancestor::day/@index'));
@@ -160,17 +153,6 @@
 				$properties['Fahrplan.Abstract'] = (string) $event->abstract;
 				
 				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
-				
-				if (!isset($event->date)) {
-					$eventStart = new DateTime($properties['Fahrplan.Date'] . ' ' . $properties['Fahrplan.Start']);
-					$eventDayChange = new DateTime($properties['Fahrplan.Date'] . ' ' . $dayChange);
-					
-					if ($eventStart < $eventDayChange) {
-						$properties['Fahrplan.Date'] = $eventStart
-							->modify('+1 day')
-							->format('Y-m-d');
-					}
-				}
 				
 				foreach ($properties as $property => $value) {
 					if (empty($value) and $value !== false) {
