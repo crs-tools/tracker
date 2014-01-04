@@ -26,7 +26,8 @@
 					'.' . $type . '.' . $state . '.next',
 				function() use ($project, $type, $state) {
 		            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$project, $type, $state]);
-		            return Database::$Instance->fetchRow();
+		            $row = Database::$Instance->fetchRow();
+					return ($row === false)? null : $row;
 				}
 			);
         }
@@ -37,7 +38,8 @@
 					'.' . $type . '.' . $state . '.previous',
 				function() use ($project, $type, $state) {
 		            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
-		            return Database::$Instance->fetchRow();
+		            $row = Database::$Instance->fetchRow();
+					return ($row === false)? null : $row;
 				}
 			);
         }
