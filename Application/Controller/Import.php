@@ -89,7 +89,10 @@
 			$xml = simplexml_load_string($_SESSION['import']['xml']);
 			
 			$tickets = Ticket::findAll(array())
-				->where(array('ticket_type' => 'meta', 'project_id' => $this->project['id']))
+				->where([
+					'ticket_type' => 'meta',
+					'project_id' => $this->project['id']
+				])
 				->indexBy('fahrplan_id')
 				->toArray();
 			
@@ -148,7 +151,10 @@
 				
 				if (isset($event->recording)) {
 					$properties['Fahrplan.Recording.License'] = (string) $event->recording->license;
-					$properties['Fahrplan.Recording.Optout'] = ((string) $event->recording->optout == 'true');
+					
+					if ((string) $event->recording->optout == 'true') {
+						$properties['Fahrplan.Recording.Optout'] = '1';
+					}
 				}
 				
 				$properties['Fahrplan.Abstract'] = (string) $event->abstract;
@@ -158,7 +164,7 @@
 				if (!isset($event->date)) {
 					$eventStart = new DateTime($properties['Fahrplan.Date'] . ' ' . $properties['Fahrplan.Start']);
 					$eventDayChange = new DateTime($properties['Fahrplan.Date'] . ' ' . $dayChange);
-				
+					
 					if ($eventStart < $eventDayChange) {
 						$properties['Fahrplan.Date'] = $eventStart
 							->modify('+1 day')
@@ -198,8 +204,8 @@
 						'database' => (isset($ticketProperties[$key]))? $ticketProperties[$key] : null
 					];
 					
-					// TODO: strcmp(null, '…')?
-					if (strcmp($property['fahrplan'], $property['database']) == 0) {
+					if ($property['fahrplan'] !== null and $property['database'] !== null and
+						strcmp($property['fahrplan'], $property['database']) === 0) {
 						continue;
 					}
 					
@@ -250,14 +256,14 @@
 			if (isset($tickets['new'])) {
 				// remove unchecked entries
 				$tickets['new'] = array_filter($tickets['new']);
-			
+				
 				foreach (array_intersect_key($_SESSION['import']['new'], $tickets['new']) as $fahrplanID => $properties) {
 					$ticketProperties = array();
-				
+					
 					foreach ($properties as $key => $value) {
 						$ticketProperties[] = ['name' => $key, 'value' => $value];
 					}
-				
+					
 					if (Ticket::create(array(
 						'project_id' => $this->project['id'],
 						'fahrplan_id' => $properties['Fahrplan.ID'],
@@ -273,13 +279,17 @@
 			
 			if (isset($tickets['change'])) {
 				$tickets['change'] = array_filter($tickets['change']);
-			
-				foreach (array_intersect_key($_SESSION['import']['changed'], $tickets['change']) as $fahrplanID => $changed) {
-					$ticket = Ticket::findBy(array('fahrplan_id' => $fahrplanID, 'project_id' => $this->project['id']), [], []);
 				
+				foreach (array_intersect_key($_SESSION['import']['changed'], $tickets['change']) as $fahrplanID => $changed) {
+					$ticket = Ticket::findBy([
+						'fahrplan_id' => $fahrplanID,
+						'ticket_type' => 'meta',
+						'project_id' => $this->project['id']
+					], [], []);
+					
 					$ticket['title'] = $changed['properties']['Fahrplan.Title'];
 					$properties = array();
-				
+					
 					foreach($changed['diff'] as $key => $property) {
 						if ($property['fahrplan'] === null) {
 							$properties[] = array(
@@ -288,17 +298,17 @@
 							);
 							continue;
 						}
-					
+						
 						$properties[] = array(
 							'name' => $key,
 							'value' => $property['fahrplan']
 						);
 					}
-				
+					
 					if (!empty($properties)) {
 						$ticket['properties'] = $properties;
 					}
-				
+					
 					if ($ticket->save()) {
 						$ticketsChanged++;
 					}
@@ -307,7 +317,7 @@
 			
 			if (isset($tickets['delete'])) {
 				$tickets['delete'] = array_filter($tickets['delete']);
-			
+				
 				foreach (array_intersect_key($_SESSION['import']['deleted'], $tickets['delete']) as $fahrplanID => $ticket) {
 					if (Ticket::delete($ticket['id'])) {
 						$ticketsChanged++;

@@ -59,12 +59,18 @@
 					<table class="diff">
 						<?php foreach($ticket['diff'] as $key => $value): ?>
 							<tr>
-								<th width="10%"><?= $this->h($key); ?></th>
+								<th width="10%">
+									<?php if ($value['fahrplan'] === null): ?>
+										<del><?= $this->h($key); ?></del>
+									<?php else: ?>
+										<?= $this->h($key); ?>
+									<?php endif; ?>
+								</th>
 								<td>
 									<code>
-										<?php if ($value['database'] == null): ?>
+										<?php if ($value['database'] === null): ?>
 											<ins><?= $this->h($value['fahrplan']); ?></ins>
-										<?php elseif ($value['fahrplan'] == null): ?>
+										<?php elseif ($value['fahrplan'] === null): ?>
 											<del><?= $this->h($value['database']); ?></del>
 										<?php else: ?>
 											<del><?= $this->h($value['database']); ?></del>
