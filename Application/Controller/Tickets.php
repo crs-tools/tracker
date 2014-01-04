@@ -736,16 +736,21 @@
 			$this->View->assign('states', $this->State->getList('name', array('ticket_type_id' => 1), array(), 'id'));
 			
 			$this->View->render('tickets/mass_edit.tpl');
-		}
+		}*/
 		
 		public function delete(array $arguments) {
-			if (!empty($arguments) and $this->Ticket->delete($arguments['id'], array('project_id' => $this->Project->id))) {
+			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
+				throw new EntryNotFoundException();
+			}
+			
+			if ($ticket->destroy()) {
 				$this->flash('Ticket deleted');
 			}
- 			
-			return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
+			
+			return $this->redirect('tickets', 'index', $this->project);
 		}
 		
+		/*
 		private function _redirectWithReferer(array $ticket) {
 			if ($referer = Request::get('ref')) { 
 				if ($this->View->isValidReferer($referer)) {
