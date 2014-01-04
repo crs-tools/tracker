@@ -74,7 +74,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->profile = EncodingProfile::find($arguments['id'], [])) {
+			if (!$this->profile = EncodingProfile::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			
@@ -116,13 +116,15 @@
 		}
 		
 		public function delete(array $arguments) {
-			/*
-			if (!empty($arguments) and $this->EncodingProfile->delete($arguments['id'], array('project_id' => $this->Project->id))) {
-				$this->flash('Encoding profile deleted');
+			if (!$profile = EncodingProfile::find($arguments['id'])) {
+				throw new EntryNotFoundException();
 			}
- 			
-			return $this->View->redirect('projects', 'view', array('project_slug' => $this->Project->slug));
-			*/
+			
+			if ($profile->destroy()) {
+				$this->flash('Encoding profile ' . $profile['name'] . ' deleted');
+			}
+			
+			return $this->View->redirect('encodingprofiles', 'index');
 		}
 		
 	}
