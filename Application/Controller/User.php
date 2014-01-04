@@ -126,7 +126,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->user = User::find($arguments['id'], array())) {
+			if (!$this->user = User::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			
@@ -146,7 +146,7 @@
 		}
 		
 		public function delete(array $arguments) {
-			if (!$user = User::find($arguments['id'], array())) {
+			if (!$user = User::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			

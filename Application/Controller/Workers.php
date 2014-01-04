@@ -40,7 +40,7 @@
 		}
 		
 		public function edit_group(array $arguments) {
-			if (!$this->group = WorkerGroup::find($arguments['id'], array())) {
+			if (!$this->group = WorkerGroup::find($arguments['id'])) {
 				throw new EntryNotFoundException();
 			}
 			

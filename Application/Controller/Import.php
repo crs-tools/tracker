@@ -84,7 +84,7 @@
 			// TODO: better solution?
 			$xml = simplexml_load_string($_SESSION['import']['xml']);
 			
-			$tickets = Ticket::findAll(array())
+			$tickets = Ticket::findAll()
 				->where([
 					'ticket_type' => 'meta',
 					'project_id' => $this->project['id']
@@ -267,7 +267,7 @@
 						'fahrplan_id' => $fahrplanID,
 						'ticket_type' => 'meta',
 						'project_id' => $this->project['id']
-					], [], []);
+					]);
 					
 					$ticket['title'] = $changed['properties']['Fahrplan.Title'];
 					$properties = array();
