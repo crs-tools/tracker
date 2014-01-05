@@ -687,11 +687,10 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
-			$this->profiles = $this->project
-				->EncodingProfileVersion
-				->joins(['EncodingProfile'])
-				->except(['fields'])
-				->select('id, revision, ' . EncodingProfile::TABLE . '.name');
+			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'name']])
+				->where(['id' => $this->ticket['encoding_profile_version_id']])
+				->select('revision, description')
+				->first();
 			
 			return $this->render('tickets/edit.tpl');
 		}

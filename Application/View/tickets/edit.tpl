@@ -68,9 +68,11 @@
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
-			<?php if ($ticket['ticket_type'] == 'encoding'/*or (empty($ticket) and User::isAllowed('tickets', 'create_all'))*/): ?>
-				<li><?php echo $f->select('encoding_profile_version_id', 'Encoding profile', $profiles->indexBy('id', 'encodingProfileTitle')->toArray(), $ticket['encoding_profile_version_id']); ?>
-			<?php endif; ?>
+			<li>
+				<label>Encoding profile</label>
+				<p><?= $profile['name'] . ' (r' . $profile['revision'] . ')' ?></p>
+				<span class="description"><?= $profile['description']; ?></span>
+			</li>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
 			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
 			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
@@ -104,26 +106,6 @@
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', $ticket['failed']); ?></li>
 		</ul>
 	</fieldset>
-	<?php if (!empty($tickets)): ?>
-		<fieldset>
-			<legend>Parent</legend>
-			<ul>
-				<li>
-					<label for="ticket-edit-parent">Parent ticket</label>
-					<select name="parent" id="ticket-edit-parent">
-						<?php if ((empty($ticket) and User::isAllowed('tickets', 'create_all')) or !empty($ticket
-							)): ?>
-							<option></option>
-						<?php endif;
-						foreach ($tickets as $t) {
-							// echo $f->option(($t['type_id'] == 3)? '–' : (($t['fahrplan_id'] === 0)? $t['id'] : $t['fahrplan_id']), $t['id'], Request::post('parent') == $t['parent_id'] or $ticket['parent_id'] == $t['id']); // TODO: better option selection
-							echo $f->option((($t['ticket_type'] == 3)? '–' : (($t['fahrplan_id'] === 0)? $t['id'] : $t['fahrplan_id'])) . ' | ' . $t['title'], $t['id'], $ticket['parent_id'] == $t['id'], null, array('name' => 'parent'));
-						} ?>
-					</select>
-				</li>
-			</ul>
-		</fieldset>
-	<?php endif; ?>
 	<fieldset class="foldable">
 		<legend>Properties</legend>
 		<?php echo $this->render('shared/form/properties.tpl', array(
