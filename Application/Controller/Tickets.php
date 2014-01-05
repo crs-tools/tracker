@@ -14,6 +14,7 @@
 		'/Model/EncodingProfile',
 		'/Model/EncodingProfileVersion',
 		
+		'/Helper/EncodingProfile',
 		'/Helper/Ticket'
 	);
 	
@@ -686,7 +687,11 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
-			$this->profiles = $this->project->EncodingProfileVersion;
+			$this->profiles = $this->project
+				->EncodingProfileVersion
+				->joins(['EncodingProfile'])
+				->except(['fields'])
+				->select('id, revision, ' . EncodingProfile::TABLE . '.name');
 			
 			return $this->render('tickets/edit.tpl');
 		}

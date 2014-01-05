@@ -68,8 +68,8 @@
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
-			<?php if ($ticket['ticket_type'] == 'encoding' or (empty($ticket) and User::isAllowed('tickets', 'create_all'))): ?>
-				<li><?php echo $f->select('encoding_profile', 'Encoding profile', array('') + $profiles->toArray(), $ticket['encoding_profile_version_id']); ?>
+			<?php if ($ticket['ticket_type'] == 'encoding'/*or (empty($ticket) and User::isAllowed('tickets', 'create_all'))*/): ?>
+				<li><?php echo $f->select('encoding_profile_version_id', 'Encoding profile', $profiles->indexBy('id', 'encodingProfileTitle')->toArray(), $ticket['encoding_profile_version_id']); ?>
 			<?php endif; ?>
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
 			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
