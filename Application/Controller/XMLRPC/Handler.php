@@ -707,7 +707,7 @@
 			foreach ($properties as $name => $value) {
 				$element = $content->createElement('property');
 				$element->setAttribute('name', $name);
-				$element->nodeValue = $value;
+				$element->appendChild(new DOMText($value));
 				
 				$parent->appendChild($element);
 			}
