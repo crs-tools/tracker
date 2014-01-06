@@ -93,6 +93,29 @@
 	<?= $this->render('tickets/list.tpl', array('tickets' => $children, 'referer' => false, 'simulateTickets' => true)); ?>
 <?php endif; ?>
 
+<?php if (isset($profile)): ?>
+	<h3 class="table">Encoding profile</h3>
+	
+	<table class="default">
+		<thead>
+			<tr>
+				<th width="20%">Name</th>
+				<th>Version</th>
+				<th width="10%"></th>
+				<th width="13%"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<td><?= $profile['name']; ?></td>
+			<td>r<?= $profile['revision'] . ' – ' . $profile['description']; ?></td>
+			<td><?= $this->linkTo('encodingprofiles', 'edit', $profile, 'edit profile'); ?></td>
+			<td class="link right">
+				<?= $this->linkTo('tickets', 'jobfile', $ticket, ['.xml'], $project, 'download jobfile'); ?>
+			</td>
+		</tbody>
+	</table>
+<?php endif; ?>
+
 <h3 class="table">Properties</h3>
 
 <?= $this->render('shared/properties.tpl'); ?>

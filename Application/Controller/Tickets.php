@@ -201,6 +201,11 @@
 			
 			$this->properties = $this->ticket->Properties;
 			
+			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'id, name']])
+				->where(['id' => $this->ticket['encoding_profile_version_id']])
+				->select('revision, description')
+				->first();
+			
 			$this->comments = $this->ticket
 				->Comments
 				->joins(['User'])
@@ -227,6 +232,18 @@
 			}
 			
 			$this->Response->setContent($log['comment']);
+		}
+		
+		public function jobfile(array $arguments) {
+			if (!$this->respondTo('xml')) {
+				return Response::error(400);
+			}
+			
+			// TODO: cleanup
+			requires('/Controller/XMLRPC/Handler');
+			
+			$handler = new Controller_XMLRPC_Handler();
+			$this->Response->setContent($handler->getJobfile($arguments['id']));
 		}
 		
 		public function feed() {
