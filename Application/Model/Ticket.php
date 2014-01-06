@@ -97,7 +97,7 @@
 					'recording',
 					'locked', 'scheduled', 'recording', 'recorded', 'preparing',
 					'recording',
-					'locked', 'scheduled', 'recording', 'recorded', 'preparing',
+					'locked', 'scheduled', 'recording', 'recorded', 'preparing'
 				]
 			);
 		}
@@ -119,13 +119,13 @@
 		public static function filter_encoding(Model_Resource $resource, array $arguments) {
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?))',
+				self::TABLE . '.ticket_state IN (?,?,?,?)) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?))',
 				[
 					'encoding',
-					'ready to encode', 'encoding', 'encoded', 'postencoding', 'postencoded',
+					'ready to encode', 'encoding', 'encoded', 'postencoding',
 					'encoding',
-					'ready to encode', 'encoding', 'encoded', 'postencoding', 'postencoded'
+					'ready to encode', 'encoding', 'encoded', 'postencoding'
 				]
 			);
 		}
