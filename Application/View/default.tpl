@@ -61,7 +61,7 @@
 			}?></h1>
 			
 			<?php if (empty($project['project_slug'])): ?>
-				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers' or ($arguments['controller'] == 'user' and $arguments['action'] != 'settings')): ?>
+				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers' or ($arguments['controller'] == 'user' and $arguments['action'] != 'settings' and $arguments['action'] != 'login')): ?>
 					<ul id="menu" class="horizontal">
 						<li id="menu-background-left"></li>
 					
