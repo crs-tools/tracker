@@ -89,8 +89,8 @@
 					'ticket_type' => 'meta',
 					'project_id' => $this->project['id']
 				])
-				->indexBy('fahrplan_id')
-				->toArray();
+				->indexBy('fahrplan_id');
+			$unchangedTickets = $tickets->toArray();
 			
 			$events = $xml->xpath('day/room/event');
 			
@@ -170,7 +170,7 @@
 					continue;
 				}
 				
-				$ticketProperties = (new Ticket($tickets[$properties['Fahrplan.ID']]))
+				$ticketProperties = $tickets[$properties['Fahrplan.ID']]
 					->Properties
 					->indexBy('name', 'value')
 					->toArray();
@@ -196,13 +196,13 @@
 				
 				if (empty($this->tickets['changed'][$properties['Fahrplan.ID']]['diff'])) {
 					// remove ticket from list, so it hides from array_diff below
-					unset($tickets[$properties['Fahrplan.ID']]);
+					unset($unchangedTickets[$properties['Fahrplan.ID']]);
 					unset($this->tickets['changed'][$properties['Fahrplan.ID']]);
 				}
 			}
 			
 			$this->tickets['deleted'] = (empty($tickets))? array() :
-				array_diff_key($tickets, $this->tickets['changed']);
+				array_diff_key($unchangedTickets, $this->tickets['changed']);
 			// TODO: array_fill_key true
 			
 			if (empty($this->tickets['new']) and empty($this->tickets['changed']) and empty($this->tickets['deleted'])) {
@@ -367,8 +367,21 @@
 			$client = new HTTP_Client();
 			$client->setUserAgent('FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)');
 			
+			if (file_exists(ROOT . 'Contribution/certs/cacert.pem')) {
+				$client->setOption(CURLOPT_CAINFO, ROOT . 'Contribution/certs/cacert.pem');
+			}
+			
 			$response = $client->get($form->getValue('url'));
-			// TODO: $response->isFailed() / 404?
+			
+			if ($response->isFailed()) {
+				$this->flash('Request failed');
+				return false;
+			}
+			
+			if ($response->isNotFound()) {
+				$this->flash('Request failed: file not found');
+				return false;
+			}
 			
 			if (!$xml = $response->toObject('application/xml')) {
 				$this->flash('Could not parse XML');
