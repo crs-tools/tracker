@@ -40,10 +40,6 @@
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
 						}*/ ?>
 					</li>
-					<?php if (User::isAllowed('user', 'index')): ?>
-						<li class="right padding">·</li>
-						<li class="right link"><?= $this->linkTo('user', 'index', 'Manage users'); ?></li>
-					<?php endif; ?>
 				<?php else: ?>
 					<li class="right link"><?= $this->linkTo('user', 'login', 'Login'); ?></li>
 				<?php endif; ?>
@@ -65,7 +61,7 @@
 			}?></h1>
 			
 			<?php if (empty($project['project_slug'])): ?>
-				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers'): ?>
+				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers' or ($arguments['controller'] == 'user' and $arguments['action'] != 'settings')): ?>
 					<ul id="menu" class="horizontal">
 						<li id="menu-background-left"></li>
 					
@@ -82,6 +78,11 @@
 						<?php if (User::isAllowed('workers', 'index')): ?>
 							<li class="last menu-services <?= (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
 								<?= $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
+							</li>
+						<?php endif; ?>
+						<?php if (User::isAllowed('user', 'index')): ?>
+							<li class="last menu-users <?= (($arguments['controller'] == 'user')? ' current' : ''); ?>">
+								<?= $this->linkTo('user', 'index', '<span>Users</span>', 'Users'); ?>
 							</li>
 						<?php endif; ?>
 						

@@ -226,7 +226,8 @@ ul#menu li.menu-tickets a:before,
 ul#menu li.menu-services a:before,
 ul#menu li.menu-project a:before,
 ul#menu li.menu-projects a:before,
-ul#menu li.menu-encodingprofiles a:before {
+ul#menu li.menu-encodingprofiles a:before,
+ul#menu li.menu-users a:before {
   content: ' ';
   float: left;
   display: block;
@@ -250,6 +251,10 @@ ul#menu li.menu-projects a:before {
 
 ul#menu li.menu-encodingprofiles a:before {
   background-position: -64px -498px;
+}
+
+ul#menu li.menu-users a:before {
+  background-position: -128px -498px;
 }
 
 ul#menu li.current {
@@ -290,6 +295,10 @@ ul#menu li.menu-projects.current a:before {
 
 ul#menu li.menu-encodingprofiles.current a:before {
   background-position: -96px -498px;
+}
+
+ul#menu li.menu-users.current a:before {
+  background-position: -160px -498px;
 }
 
 #content {
