@@ -39,7 +39,10 @@
 		<legend>Password</legend>
 		<ul>
 			<?php if (!empty($user)): ?>
-				<li><?= $f->password('user_password', 'Your password'); ?></li>
+				<li>
+					<?= $f->password('user_password', 'Your password'); ?>
+					<span class="description">To change the users password first enter your password for confirmation.</span>
+				</li>
 			<?php endif; ?>
 			<li><?= $f->password('password', (!empty($user))? 'New user password' : 'Password'); ?></li>
 		</ul>
