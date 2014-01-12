@@ -346,7 +346,7 @@
 		}
 		
 		public static function getTotalProgress($project) {
-			return self::findAll()
+			return (float) self::findAll()
 				->select('SUM(ticket_progress(id)) / COUNT(id) AS progress')
 				->where([
 					'project_id' => $project,
