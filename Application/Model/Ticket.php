@@ -251,6 +251,13 @@
 		}
 		
 		public function isEligibleAction($action) {
+			switch ($action) {
+				case 'edit':
+				case 'delete':
+					return true;
+					break;
+			}
+			
 			if (!$state = TicketState::getStateByAction($action)) {
 				return false;
 			}

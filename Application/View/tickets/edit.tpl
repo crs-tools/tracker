@@ -2,77 +2,47 @@
 	$this->title('Create new ticket | ');
 } else {
 	$this->title('Edit ticket ' . $ticket['title'] . ' | ');
-}
+} ?>
 
-/*if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
-	$referer = false;
-}*/ ?>
-
-
-<div id="ticket-header">
-	<?php if (!empty($ticket)): ?>
-		<h2 class="ticket">
-			<span class="fahrplan"><?= $this->h($ticket['fahrplan_id']); ?></span>
-			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket, $project, str_shorten($ticket['title'], 37), $ticket['title']); ?></span>
-		</h2>
-	<?php else: ?>
+<?php if (!empty($ticket)):
+	echo $this->render('tickets/view/header.tpl', [
+		'titlePrefix' => 'Edit ',
+		'showDetails' => false,
+		'currentAction' => 'edit'
+	]);
+else: ?>
+	<div id="ticket-header">
 		<h2 class="ticket"><span class="title">Create new ticket</span></h2>
-	<?php endif; ?>
 
-	<ul class="ticket-header-bar right horizontal">
-		<li class="ticket-header-bar-background-left"></li>
-			
-		<?php if (!empty($ticket)): ?>
-			<?php if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')): ?>
-				<li class="action cut"><?php echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')): ?>
-				<li class="action check"><?php echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check ticket…'); ?></li>
-			<?php endif;
-			/*if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
-				<li class="action fix"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
-				<li class="action handle"><?php echo $this->linkTo('tickets', 'handle', $ticket + $project, '<span>handle</span>', 'Handle ticket…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
-				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task'); ?></li>
-			<?php endif;*/ ?>
-			
-			<li class="action current edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, '<span>edit</span>', 'Edit ticket…'); ?></li>
-			
-			<?php if (User::isAllowed('tickets', 'delete')): ?>
-				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
-			<?php endif; ?>
-		<?php else: ?>
-			<li class="action current create"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
-		
+		<ul class="ticket-header-bar right horizontal">
+			<li class="ticket-header-bar-background-left"></li>
+			<li class="action create current"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
+	
 			<?php if (User::isAllowed('import', 'index')): ?>
 				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 			<?php endif; ?>
-		
+	
 			<?php if (User::isAllowed('export', 'index')): ?>
 				<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 			<?php endif; ?>
-		<?php endif; ?>
-		<li class="ticket-header-bar-background-right"></li>
-	</ul>
-</div>
+			<li class="ticket-header-bar-background-right"></li>
+		</ul>
+	</div>
+<?php endif; ?>
 
-<?php /*if (empty($ticket)) {
-	echo $f = $this->form('tickets', 'create', $project, array('id' => 'ticket-edit'));
-} else {
-	echo $f = $this->form('tickets', 'edit', $ticket + $project + (($referer)? array('?ref=' . $referer) : array()), array('id' => 'ticket-edit'));
-} */ ?>
 <?= $f = $form(array('id' => 'ticket-edit')); ?>
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
-			<li>
-				<label>Encoding profile</label>
-				<p><?= $profile['name'] . ' (r' . $profile['revision'] . ')' ?></p>
-				<span class="description"><?= $profile['description']; ?></span>
-			</li>
+			
+			<?php if (isset($profile)): ?>
+				<li>
+					<label>Encoding profile</label>
+					<p><?= $profile['name'] . ' (r' . $profile['revision'] . ')' ?></p>
+					<span class="description"><?= $profile['description']; ?></span>
+				</li>
+			<?php endif; ?>
+			
 			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
 			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
 			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
@@ -111,7 +81,7 @@
 		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => $ticket->Properties->orderBy('name'),
+				'for' => (!empty($ticket))? $ticket->Properties->orderBy('name') : null,
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',

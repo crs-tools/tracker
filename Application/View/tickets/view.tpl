@@ -2,82 +2,15 @@
 	$this->title($ticket['fahrplan_id'] . ' | ' . $ticket['title'] . ' | ');
 } else {
 	$this->title(mb_ucfirst($action) . ' lecture ' . $ticket['title'] . ' | ');
-}
+} ?>
 
-/*if (!$referer = Request::get('ref') or !$this->isValidReferer($referer, true)) {
-	$referer = false;
-}*/ ?>
-
-<div id="ticket-header">
-	<h2 class="ticket">
-		<span class="fahrplan"><?php if ($ticket['fahrplan_id'] !== 0) {
-			echo $ticket['fahrplan_id'];
-		} else {
-			if ($ticket['type_id'] == 3 and empty($ticket['parent_id'])) {
-				echo '–';
-			} else {
-				echo $ticket['id'];
-			}
-		} ?></span>
-		<span class="title" title="<?= $this->h($ticket['title']); ?>">
-			<?php if (!empty($action)) {
-				echo $this->h(mb_ucfirst($action)) . ' lecture ' . $this->linkTo('tickets', 'view', $ticket, $project, $this->h(str_shorten($ticket['title'], 37)));
-			} else {
-				echo $this->h(str_shorten($ticket['title'], 50));
-			} ?>
-		</span>
-	</h2>
-	
-	<?php if (empty($action)): ?>
-		<span class="date">
-			last edited <?= /* echo Date::distanceInWords(new Date($ticket['modified']));  ?> ago<span>: <?=*/ (new DateTime($ticket['modified']))->format('D, M j Y, H:i'); ?><!--</span>-->
-		</span>
-	
-		<div class="flags">
-			<?php if ($ticket['failed']): ?>
-				<span class="failed"><?= $ticket['ticket_state']; ?> failed</span>
-			<?php else: ?>
-				<span class="state"><?= $ticket['ticket_state']; ?></span>
-			<?php endif; ?>
-		
-			<?php if ($ticket['needs_attention']): ?>
-				<span class="needs_attention">needs attention</span>
-			<?php endif; ?>
-		
-			<?php if (!empty($ticket['handle_id'])): ?>
-				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), ($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name']); ?></span>
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
-	
-	<?php if (User::isLoggedIn()): ?>
-		<ul class="ticket-header-bar right horizontal">
-			<li class="ticket-header-bar-background-left"></li>
-			<?php if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')): ?>
-				<li class="action cut<?php echo (isset($action) and $action == 'cut')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut lecture…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')): ?>
-				<li class="action check<?php echo (isset($action) and $action == 'check')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check ticket…'); ?></li>
-			<?php endif;/*
-			if (User::isAllowed('tickets', 'fix') and $this->State->isEligibleAction('fix', $ticket)): ?>
-				<li class="action fix<?php echo ($action == 'fix')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'fix', $ticket + $project, '<span>fix</span>', 'Fix ticket…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'handle') and $this->State->isEligibleAction('handle', $ticket)): ?>
-				<li class="action handle<?php echo ($action == 'handle')? ' current' : ''; ?>"><?php echo $this->linkTo('tickets', 'handle', $ticket + $project, '<span>andle</span>', 'Handle ticket…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'reset') and $this->State->isResetable($ticket)): ?>
-				<li class="action reset"><?php echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', array('class' => 'confirm-ticket-reset')); ?></li>
-			<?php endif;*/
-			if (User::isAllowed('tickets', 'edit')): ?>
-				<li class="action edit"><?php echo $this->linkTo('tickets', 'edit', $ticket, $project, /*(($referer)? array('?ref=' . $referer) : array()),*/ '<span>edit</span>', 'Edit ticket…'); ?></li>
-			<?php endif;
-			if (User::isAllowed('tickets', 'delete')): ?>
-				<li class="action delete"><?php echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete')); ?></li>
-			<?php endif; ?>
-			<li class="ticket-header-bar-background-right"></li>
-		</ul>
-	<?php endif; ?>
-</div>
+<?= $this->render('tickets/view/header.tpl', [
+	'titlePrefix' => (isset($action))?
+		$this->h(mb_ucfirst($action)) . ' lecture ' :
+		null,
+	'showDetails' => !isset($action),
+	'currentAction' => (isset($action))? $action : null
+]); ?>
 
 <?php if (!empty($action)) {
 	echo $this->render('tickets/view/action.tpl');
@@ -85,12 +18,19 @@
 
 <?php if (isset($parent)): ?>
 	<h3>Parent</h3>
-	<?= $this->render('tickets/list.tpl', array('tickets' => array($parent), 'referer' => false)); ?>
+	<?= $this->render('tickets/list.tpl', [
+		'tickets' => [$parent],
+		'referer' => false
+	]); ?>
 <?php endif; ?>
 
 <?php if (isset($children) and $children->getRows() > 0): ?>
 	<h3>Children</h3>
-	<?= $this->render('tickets/list.tpl', array('tickets' => $children, 'referer' => false, 'simulateTickets' => true)); ?>
+	<?= $this->render('tickets/list.tpl', [
+		'tickets' => $children,
+		'referer' => false,
+		'simulateTickets' => true
+	]); ?>
 <?php endif; ?>
 
 <?php if (isset($profile)): ?>
