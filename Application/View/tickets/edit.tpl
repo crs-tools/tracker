@@ -13,7 +13,7 @@
 	<?php if (!empty($ticket)): ?>
 		<h2 class="ticket">
 			<span class="fahrplan"><?= $this->h($ticket['fahrplan_id']); ?></span>
-			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket, $project, str_shorten($ticket['title'], 37)); ?></span>
+			<span class="title">Edit ticket <?php echo $this->linkTo('tickets', 'view', $ticket, $project, str_shorten($ticket['title'], 37), $ticket['title']); ?></span>
 		</h2>
 	<?php else: ?>
 		<h2 class="ticket"><span class="title">Create new ticket</span></h2>
