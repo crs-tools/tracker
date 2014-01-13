@@ -70,7 +70,7 @@
 								<?= $this->linkTo('projects', 'index', '<span>Projects</span>', 'Projects'); ?>
 							</li>
 						<?php endif; ?>
-						<?php if (User::isAllowed('encodingsprofiles', 'index')): ?>
+						<?php if (User::isAllowed('encodingprofiles', 'index')): ?>
 							<li class="menu-encodingprofiles <?= (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
 								<?= $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
 							</li>
@@ -110,7 +110,7 @@
 						</li>
 					<?php endif;*/ ?>
 					
-					<?php if (User::isAllowed('project', 'view')): ?>
+					<?php if (User::isAllowed('projects', 'view')): ?>
 						<li class="last menu-project <?= (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
 							<?= $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>
 						</li>

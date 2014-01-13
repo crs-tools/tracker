@@ -108,9 +108,15 @@
 		<tbody>
 			<td><?= $profile['name']; ?></td>
 			<td>r<?= $profile['revision'] . ' – ' . $profile['description']; ?></td>
-			<td><?= $this->linkTo('encodingprofiles', 'edit', $profile, 'edit profile'); ?></td>
+			<td>
+				<?php if (User::isAllowed('encodingprofiles', 'edit')) {
+					echo $this->linkTo('encodingprofiles', 'edit', $profile, 'edit profile');
+				} ?>
+			</td>
 			<td class="link right">
-				<?= $this->linkTo('tickets', 'jobfile', $ticket, ['.xml'], $project, 'download jobfile'); ?>
+				<?php if (User::isAllowed('tickets', 'jobfile')) {
+					echo $this->linkTo('tickets', 'jobfile', $ticket, ['.xml'], $project, 'download jobfile');
+				} ?>
 			</td>
 		</tbody>
 	</table>
