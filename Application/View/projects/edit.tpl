@@ -17,7 +17,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => $project->Languages,
+				'for' => $project->Languages->orderBy('language'),
 				'field' => 'languages',
 				'description' => 'language',
 				'key' => 'language',
@@ -30,7 +30,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => $project->Properties,
+				'for' => $project->Properties->orderBy('name'),
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',

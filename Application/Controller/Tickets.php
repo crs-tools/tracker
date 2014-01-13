@@ -199,7 +199,9 @@
 				->Children
 				->joins(['Handle']);
 			
-			$this->properties = $this->ticket->Properties;
+			$this->properties = $this->ticket
+				->Properties
+				->orderBy('name');
 			
 			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'id, name']])
 				->where(['id' => $this->ticket['encoding_profile_version_id']])
@@ -386,10 +388,12 @@
 			
 			$this->properties = $this->ticket
 				->Properties
+				->orderBy('name')
 				->indexBy('name', 'value');
 			$this->parentProperties = $this->ticket
 				->Parent
 				->Properties
+				->orderBy('name')
 				->indexBy('name', 'value');
 			$this->recordingProperties = $this->ticket
 				->Parent
@@ -397,6 +401,7 @@
 				->where(['ticket_type' => 'recording'])
 				->first()
 				->Properties
+				->orderBy('name')
 				->indexBy('name', 'value');
 			
 			if ($this->actionForm->wasSubmitted()) {

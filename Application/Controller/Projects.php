@@ -20,7 +20,9 @@
 		
 		public function view() {
 			// Properties
-			$this->properties = $this->project->Properties;
+			$this->properties = $this->project
+				->Properties
+				->orderBy('name');
 			
 			// Encoding Profiles
 			$this->profilesForm = $this->form();

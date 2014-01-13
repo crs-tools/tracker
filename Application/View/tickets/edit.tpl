@@ -111,7 +111,7 @@
 		<?php echo $this->render('shared/form/properties.tpl', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => $ticket->Properties,
+				'for' => $ticket->Properties->orderBy('name'),
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',
