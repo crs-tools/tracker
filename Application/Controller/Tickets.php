@@ -587,11 +587,16 @@
 				throw new EntryNotFoundException();
 			}
 			
-			if (!$comment = Comment::findBy([
+			$comment = Comment::findAll()->where([
 				'id' => $arguments['id'],
-				'handle_id' => User::getCurrent()['id'],
 				'ticket_id' => $ticket['id']
-			])) {
+			]);
+			
+			if (!User::isAllowed('tickets', 'delete_comment')) {
+				$comment->where(['handle_id' => User::getCurrent()['id']]);
+			}
+			
+			if (!($comment = $comment->first())) {
 				throw new EntryNotFoundException();
 			}
 			
