@@ -31,7 +31,13 @@
 				<?= $f->input('name', 'Name', $user['name']); ?>
 			</li>
 			<li>
-				<?= $f->select('role', 'Role', array('restricteduser' => 'restricted user', 'user' => 'user', 'superuser' => 'superuser', 'admin' => 'admin'), $user['role']); ?>
+				<?= $f->select('role', 'Role', [
+					'read only' => 'read only',
+					'restricted' => 'restricted',
+					'user' => 'user',
+					'superuser' => 'superuser',
+					'admin' => 'admin'
+				], $user['role']); ?>
 			</li>
 		</ul>
 	</fieldset>
