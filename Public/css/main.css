@@ -91,6 +91,20 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 
 /* Main */
 
+.noscript-warning {
+  position: relative;
+  top: -1px;
+  padding: 15px;
+  background-color: #ffbb05;
+  border-bottom: 1px solid #d99e04;
+  background: -moz-linear-gradient(top, #ffbb05, #ffd71d);
+  background: -webkit-linear-gradient(top, #ffbb05, #ffd71d);
+  background: linear-gradient(to bottom, #ffbb05, #ffd71d);
+  text-align: center;
+  font-weight: bold;
+  color: #404040;
+}
+
 #projects {
 	position: relative;
 }
@@ -610,7 +624,6 @@ h2.ticket span.fahrplan {
 
 #ticket-header div.flags span.needs_attention {
 	float: right;
-	color: #B7D6FA;
 	color: #f7b320;
 }
 

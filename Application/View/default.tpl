@@ -53,6 +53,11 @@
 				}
 			</script>
 		</div>
+		<?php if (User::isLoggedIn()): ?>
+			<noscript>
+				<div class="noscript-warning">Please enable javascript, some editing forms on this site don't work without.</div>
+			</noscript>
+		<?php endif; ?>
 		<div id="header">
 			<h1><?php if (!empty($project['project_slug'])) {
 				echo $this->linkTo('tickets', 'feed', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, 'C3 Ticket Tracker');
