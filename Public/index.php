@@ -2,7 +2,7 @@
 	
 	$time = microtime(true);
 	
-	define('ROOT', realpath(dirname(__FILE__)). DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+	define('ROOT', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR);
 	define('LIBRARY', ROOT . 'Library' . DIRECTORY_SEPARATOR);
 	define('APPLICATION', ROOT . 'Application' . DIRECTORY_SEPARATOR);
 	
