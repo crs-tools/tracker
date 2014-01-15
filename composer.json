@@ -1,6 +1,21 @@
 {
+  "name": "fem/tracker",
+  "description": "A ticket tracker used for video encoding",
+  
+  "type": "project",
+  "license": "proprietary",
+  
+  "config": {
+    "vendor-dir": "Vendor"
+  },
+  
   "require": {
     "php": ">=5.5.0",
-    "ext-xdiff": "*"
+    
+    "ext-apcu": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "ext-xdiff": "*",
+    "ext-xsl": "*"
   }
 }
