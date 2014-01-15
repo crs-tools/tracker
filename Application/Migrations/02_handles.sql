@@ -29,7 +29,7 @@ END $$ LANGUAGE plpgsql;
 CREATE TABLE tbl_user
 (
   id bigint NOT NULL DEFAULT nextval('tbl_handle_id_seq'::regclass),
-  last_seen timestamp without time zone NOT NULL DEFAULT now(),
+  last_seen timestamp without time zone,
   name character varying(128) NOT NULL,
   password character(60) DEFAULT NULL::bpchar,
   persistence_token character(32) DEFAULT NULL::bpchar,
