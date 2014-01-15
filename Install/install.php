@@ -174,6 +174,6 @@
 		'admin'
 	]);
 	
-	echo " done.";
+	echo " done.\n";
 	
 ?>
