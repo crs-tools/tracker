@@ -7,10 +7,10 @@
 	Log::colorize(true);
 	
 	Database_PostgreSQL::init(
-		'localhost',
-		'c3tt',
-		'',
-		'c3tt3'
+		'__DB_HOST__',
+		'__DB_USER__',
+		'__DB_PASS__',
+		'__DB_NAME__'
 	);
 	
 	requires('Cache/Adapter/APC');
