@@ -108,8 +108,7 @@
 		
 		exec(
 			'find ' . escapeshellarg(MIGRATIONS) .
-			' -name "*.sql" ! -name "*test*" | xargs -n 1 sudo -u postgres psql --host=' .
-			escapeshellarg($database['host']) .
+			' -name "*.sql" ! -name "*test*" | sort -n | xargs -n 1 sudo -u postgres psql' .
 			' --dbname=' .
 			escapeshellarg($database['name']) .
 			' -f',
@@ -130,7 +129,7 @@
 		exec(
 			'PGPASSWORD=' . escapeshellarg($database['pass']) . ' ' .
 			'find ' . escapeshellarg(MIGRATIONS) .
-			' -name "*.sql" ! -name "*test*" | xargs -n 1 psql --host=' .
+			' -name "*.sql" ! -name "*test*" | sort -n | xargs -n 1 psql --host=' .
 			escapeshellarg($database['host']) .
 			' --username=' .
 			escapeshellarg($database['user']) .
