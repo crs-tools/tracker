@@ -1256,7 +1256,7 @@ table.diff tr td code ins {
   color: #516106;
 }
 
-table tr td.right {
+table tr .right {
 	text-align: right;
 }
 
@@ -1264,8 +1264,8 @@ table tbody tr td.link a {
 	display: block;
 }
 
-table tr td.link.hide a { color: #C1D0E1; }
-table tr:hover td.link.hide a, div.table table tr td.link.hide a:focus { color: #248fda; }
+table tr .link.hide a { color: #C1D0E1; }
+table tr:hover .link.hide a, table tr .link.hide a:focus { color: #248fda; }
 
 table.default {
   width: 100%;
@@ -1279,6 +1279,14 @@ table.default thead tr th {
   font-weight: normal;
   font-size: 1.2em;
   color: #3d464d;
+}
+
+table.default thead tr th.link {
+  padding: 0;
+}
+
+table.default thead tr th.link a {
+  padding: 0.3em 0.4em;
 }
 
 table.default tbody tr td {

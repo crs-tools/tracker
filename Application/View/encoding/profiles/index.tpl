@@ -1,3 +1,5 @@
+<?php $this->title('Encoding profiles | ') ?>
+
 <ul class="ticket-header-bar right horizontal table">
 	<li class="ticket-header-bar-background-left"></li>
 	<?php if (User::isAllowed('encodingprofiles', 'create')): ?>
@@ -7,7 +9,7 @@
 </ul>
 
 <div class="table">
-	<h2>Encoding Profiles</h2>
+	<h2>Encoding profiles</h2>
 	
 	<table>
 		<thead>
