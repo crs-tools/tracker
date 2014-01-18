@@ -8,7 +8,7 @@ DECLARE
 BEGIN
   SELECT 
 	CASE WHEN t.parent_id IS NOT NULL THEN 
-		pt.priority * t.priority * COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / ticket_fahrplan_starttime(pt.id), 1)
+		pt.priority * t.priority * COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / ticket_fahrplan_starttime(pt.id), 1) * COALESCE((SELECT priority FROM tbl_project_encoding_profile WHERE project_id = t.project_id AND encoding_profile_version_id = t.encoding_profile_version_id),1)
 	ELSE
 		t.priority * COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / ticket_fahrplan_starttime(t.id), 1)
 	END INTO priority
