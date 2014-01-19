@@ -3,7 +3,7 @@
 	error_reporting(-1);
 	
 	Log::setPath(ROOT . 'Log/application.log');
-	Log::setLevel(Log::info);
+	Log::setLevel(Log::INFO);
 	Log::colorize(true);
 	
 	Database_PostgreSQL::init(

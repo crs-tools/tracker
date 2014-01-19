@@ -22,6 +22,8 @@
 		'/Controller/Application'
 	);
 	
+	Log::enableErrorHandler();
+	
 	require ROOT . 'Config/Config.php';
 	require ROOT . 'Config/AccessControl.php';
 	
