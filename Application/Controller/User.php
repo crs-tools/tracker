@@ -9,7 +9,12 @@
 		public $requireAuthorization = true;
 		
 		public function login() {
+			if (User::isLoggedIn()) {
+				return $this->redirect();
+			}
+			
 			$this->form();
+			
 			if ($this->form->wasSubmitted()) {
 				if (User::login($this->form->getValue('user'), $this->form->getValue('password'))) {
 					$this->flash('Login successful');
