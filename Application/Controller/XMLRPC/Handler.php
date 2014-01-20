@@ -77,9 +77,8 @@
 				implode('%26', $args),
 				$secret
 			);
-
-			// TODO: compare in constant time
-			return $hash === $signature;
+			
+			return str_hash_compare($hash, $signature);
 		}
 
 		private static function _getNameFromHostName($hostName) {
