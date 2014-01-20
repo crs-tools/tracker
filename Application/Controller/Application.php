@@ -1,6 +1,8 @@
 <?php
 	
 	requires(
+		'Form',
+		
 		'/Model/User',
 		'/Model/Project'
 	);

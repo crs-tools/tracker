@@ -10,15 +10,13 @@
 	
 	require LIBRARY. 'Application.php';
 	
-	// TOOD: move some to Controller_Application
 	requires(
+		'AccessControl',
+		'Controller',
+		'Database/PostgreSQL',
 		'Log',
 		'Router',
-		'Controller',
 		'View',
-		'Form',
-		'Database/PostgreSQL',
-		'AccessControl',
 		'/Controller/Application'
 	);
 	
