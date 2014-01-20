@@ -28,34 +28,37 @@
 	require ROOT . 'Config/AccessControl.php';
 	
 	Router::addRoutes(ROOT . 'Config/Routes.php');
-	View::setTemplateDirectory(APPLICATION . 'View/'); // TODO: default?
 	
 	try {
 		$requested = Controller::runWithRequest();
+		
+		$time = microtime(true) - $time;
+		Log::info(sprintf(
+			'Processed %s::%s in %.4fs (%d reqs/sec) (View: %d%%, DB: %d%%)',
+			$requested['controller'],
+			$requested['action'],
+			$time, 1 / $time,
+			(Log::getTimer('View') / $time) * 100,
+			(Log::getTimer('Database') / $time) * 100
+		));
 	} catch (NotFoundException $exception) {
-		// TODO: init Controller_Application?
-		Controller::renderTemplate('404.tpl', array(), null, new Response(404));
+		$code = 404;
+		// TODO: Log::info?
 	} catch (ActionNotAllowedException $exception) {
-		// if (User::isLoggedIn()) {
-			Controller::renderTemplate('403.tpl', array(), null, new Response(403));
-		// } else {
-			/*
-			$app->View->flash('You have to login to view this page', View::flashWarning);
-			$app->View->redirect('user', 'login');
-			*/
-		// }
+		$code = 403;
+		// TODO: Log::info?
 	} catch (Exception $exception) {
-		var_dump($exception);
+		Log::handleException($exception);
+		$code = 500;
 	}
 	
-	$time = microtime(true) - $time;
-	Log::info(sprintf(
-		'Processed %s::%s in %.4fs (%d reqs/sec) (View: %d%%, DB: %d%%)',
-		$requested['controller'],
-		$requested['action'],
-		$time, 1 / $time,
-		(Log::getTimer('View') / $time) * 100,
-		(Log::getTimer('Database') / $time) * 100
-	));
+	if (isset($code)) {
+		echo Controller::renderTemplate(
+			$code . '.tpl',
+			[],
+			null,
+			new Response($code)
+		);
+	}
 	
 ?>
