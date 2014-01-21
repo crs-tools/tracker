@@ -8,7 +8,7 @@
 	
 	date_default_timezone_set('Europe/Berlin');
 	
-	require LIBRARY. 'Application.php';
+	require LIBRARY . 'Application.php';
 	
 	requires(
 		'AccessControl',
@@ -39,24 +39,11 @@
 			(Log::getTimer('View') / $time) * 100,
 			(Log::getTimer('Database') / $time) * 100
 		));
-	} catch (NotFoundException $exception) {
-		$code = 404;
-		// TODO: Log::info?
-	} catch (ActionNotAllowedException $exception) {
-		$code = 403;
-		// TODO: Log::info?
-	} catch (Exception $exception) {
-		Log::handleException($exception);
-		$code = 500;
-	}
-	
-	if (isset($code)) {
-		echo Controller::renderTemplate(
-			$code . '.tpl',
-			[],
-			null,
-			new Response($code)
-		);
+	} catch (Exception $e) {
+		Log::handleException($e);
+		
+		$c = ($e->getCode() > 0)? $e->getCode() : 500;
+		echo Controller::renderTemplate($c . '.tpl', [], null, new Response($c));
 	}
 	
 ?>
