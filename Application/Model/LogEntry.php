@@ -1,7 +1,11 @@
 <?php
-
-class LogEntry extends Model {
-
+	
+	requires(
+		'String'
+	);
+	
+	class LogEntry extends Model {
+		
         const TABLE = 'tbl_log';
 
         public $belongsTo = array(
