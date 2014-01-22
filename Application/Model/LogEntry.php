@@ -14,7 +14,8 @@
                 'select' => 'name AS handle_name'
             ),
             'Ticket' => array(
-                'foreign_key' => 'ticket_id'
+                'foreign_key' => 'ticket_id',
+				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id'
             ),
             'User' => array(
                 'foreign_key' => 'handle_id',
@@ -23,17 +24,111 @@
         );
 		
 		protected static $_messages = [
-			'RPC.assignNextUnassignedForState' => '{to_State} started.',
-			'RPC.ping' => 'Issued command.',
-			'RPC.setTicketFailed' => '{from_State} failed.',
-			'RPC.setTicketDone' => '{from_State} finished.',
-			'RPC.setTicketProperties' => 'Properties changed.',
+			'RPC.assignNextUnassignedForState' => [
+				'log' => '{to_State} started.',
+				'single' => '{user_name} started {to_state} ticket {id}.',
+				'multiple' => '{user_name} started {to_state} {tickets}.',
+				'message' => false
+			],
+			'RPC.ping' => [
+				'log' => 'Issued command.',
+				'single' => 'Issued command to {user_name} regarding ticket {id}:',
+				'multiple' => false,
+				'message' => true
+			],
+			'RPC.setTicketFailed' => [
+				'log' => '{from_State} failed.',
+				'single' => '{user_name} failed {from_state} ticket {id}.',
+				'multiple' => '{user_name} failed {from_state} {tickets}.',
+				'message' => false
+			],
+			'RPC.setTicketDone' => [
+				'log' => '{from_State} finished.',
+				'single' => '{user_name} finished {from_state} ticket {id}.',
+				'multiple' => '{user_name} finished {from_state} {tickets}.',
+				'message' => false
+			],
+			'RPC.setTicketProperties' => [
+				'log' => 'Properties changed.',
+				'single' => '{user_name} altered properties of ticket {id}.',
+				'multiple' => '{user_name} altered properties of {tickets}.',
+				'message' => false
+			],
 			
-			'Action.cut' => 'Recording cut.',
-			'Action.cut.failed' => 'Cutting failed.',
+			'Comment.Add' => [
+				'single' => '{user_name} commented on {id}.',
+				'multiple' => false,
+				'message' => false
+			],
 			
-			'Action.check' => 'Encoding checked.',
-			'Action.check.failed' => 'Encoding check failed.',
+			'Action.cut' => [
+				'log' => 'Recording cut.',
+				'single' => '{user_name} cut recording ticket {id}.',
+				'multiple' => '{user_name} cut {tickets}.',
+				'message' => false
+			],
+			'Action.cut.failed' => [
+				'log' => 'Cutting failed.',
+				'single' => '{user_name} failed to cut {id}.',
+				'multiple' => '{user_name} failed to cut {tickets}.',
+				'message' => false
+			],
+			
+			'Action.check' => [
+				'log' => 'Encoding checked.',
+				'single' => '{user_name} checked encoding ticket {id}.',
+				'multiple' => '{user_name} checked {tickets}.',
+				'message' => false
+			],
+			'Action.check.failed' => [
+				'log' => 'Encoding check failed.',
+				'single' => '{user_name} failed to check encoding ticket {id}.',
+				'multiple' => '{user_name} failed to check {tickets}.',
+				'message' => false
+			]
+			
+			/*
+			'RPC.Log' => [
+				'single' => '',
+				'multiple' => '',
+				'message' => false
+			],
+			'Action.Fix' => [
+				'single' => '{user_name} fixed ticket {id}.',
+				'multiple' => '',
+				'message' => false
+			],
+			'Encoding.Reset' => [
+				'single' => '{user_name} reset encoding task {id}.',
+				'multiple' => '',
+				'message' => false
+			],
+			'Recording.Reset' => [
+				'single' => '{user_name} reset recording task {id}.',
+				'multiple' => '',
+				'message' => false
+			],
+			'RPC.State.Next' => [
+				'single' => '{user_name} set ticket {id} as {to_state}.',
+				'multiple' => '{user_name} set {tickets} as {to_state}.',
+				'message' => false
+			],
+			'Action.Cut.Expand' => [
+				'single' => '{user_name} expanded ticket {id} recording time.',
+				'multiple' => '',
+				'message' => false
+			],
+			'Encoding.Parent.Reset' => [
+				'single' => '{user_name} reset ticket {id} while recording task was beeing reset.',
+				'multiple' => '{user_name} reset {tickets} while recording tasks were beeing reset.',
+				'message' => false
+			],
+			'Created' => [
+				'single' => '{user_name} created ticket {id}.',
+				'multiple' => '{user_name} created {tickets}.',
+				'message' => false
+			]
+			*/
 			
 			/*
 			'RPC.Log' => '',
@@ -49,20 +144,30 @@
 			*/
 		];
 		
-		public function getMessage() {
+		public function getEventMessage($type = 'log') {
 			$toState = ($this['to_state'] !== null)? $this['to_state'] : 'unknown state';
 			$fromState = ($this['from_state'] !== null)? $this['from_state'] : 'unknown state';
 			
-			if (!isset(self::$_messages[$this['event']])) {
-				Log::info('Log message for event ' . $this['event'] . ' missing.');
+			if (!isset(self::$_messages[$this['event']][$type])) {
+				Log::info('Log message for event ' . $this['event'] . ' (' . $type . ') missing.');
 				return false;
 			}
 			
 			return str_replace(
-				array('{to_state}', '{to_State}', '{from_state}', '{from_State}'),
-				array($toState, mb_ucfirst($toState), $fromState, mb_ucfirst($fromState)),
-				self::$_messages[$this['event']]
+				['{to_state}', '{to_State}', '{from_state}', '{from_State}'],
+				[$toState, mb_ucfirst($toState), $fromState, mb_ucfirst($fromState)],
+				self::$_messages[$this['event']][$type]
 			);
+		}
+		
+		public function includesMessage() {
+			return isset(self::$_messages[$this['event']]) and
+				self::$_messages[$this['event']]['message'];
+		}
+		
+		public function isSupportingMerge() {
+			return isset(self::$_messages[$this['event']]) and
+				self::$_messages[$this['event']]['multiple'] !== false;
 		}
 		
 		public static function createForTicket(Ticket $ticket, array $entry) {
@@ -71,6 +176,36 @@
 				'from_state' => $ticket['ticket_state'],
 			], $entry));
 		}
+		
+		/*
+		if (!empty($log)) {
+			foreach ($log as $entry) {
+				if (!isset($entries[$entryIndex])) {
+					$entryIndex++;
+					$entries[$entryIndex] = $entry;
+					continue;
+				}
+				
+				if (
+					$entries[$entryIndex]['event'] !== $entry['event']
+					or $entries[$entryIndex]['from_state_id'] !== $entry['from_state_id']
+					or $entries[$entryIndex]['to_state_id'] !== $entry['to_state_id']
+					or $entries[$entryIndex]['event'] == 'RPC.Ping.Command'
+					or $entries[$entryIndex]['event'] == 'Comment.Add'
+				) {
+					$entryIndex++;
+					$entries[$entryIndex] = $entry;
+					continue;
+				}
+			
+				if (!isset($entries[$entryIndex]['children'])) {
+					$entries[$entryIndex]['children'] = array();
+				}
+			
+				$entries[$entryIndex]['children'][] = $entry;
+			}
+		}
+		*/
 
     }
 

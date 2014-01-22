@@ -15,6 +15,7 @@
 		'/Model/EncodingProfileVersion',
 		
 		'/Helper/EncodingProfile',
+		'/Helper/Log',
 		'/Helper/Ticket'
 	);
 	
@@ -259,92 +260,30 @@
 		}
 		
 		public function feed() {
+			$this->log = LogEntry::findAll()
+				->joins(['Handle', 'Ticket'])
+				->where(['tbl_ticket.project_id' => $this->project['id']])
+				->orderBy('created DESC, id DESC')
+				->limit(100);
 			
-			/*
-			$conditions = null;
-			$params = array();
-			
-			if (Request::get('before', Request::int)) {
-				$conditions = 'id < ?';
-				$params[] = Request::get('before', Request::int);
-			} elseif (Request::get('after', Request::int)) {
-				$conditions = 'id > ?';
-				$params[] = Request::get('after', Request::int);
+			if (isset($_GET['before'])) {
+				$this->log->where('id < ?', [$_GET['before']]);
 			}
 			
-			$log = $this->LogEntry->findByProjectId($this->Project->id, array('User', 'Comment'), $conditions, $params);
-			
-			$entries = array();
-			$entryIndex = -1;
-			
-			if (!empty($log)) {
-				foreach ($log as $entry) {
-					if (!isset($entries[$entryIndex])) {
-						$entryIndex++;
-						$entries[$entryIndex] = $entry;
-						continue;
-					}
-					
-					if (
-						$entries[$entryIndex]['event'] !== $entry['event']
-						or $entries[$entryIndex]['from_state_id'] !== $entry['from_state_id']
-						or $entries[$entryIndex]['to_state_id'] !== $entry['to_state_id']
-						or $entries[$entryIndex]['event'] == 'RPC.Ping.Command'
-						or $entries[$entryIndex]['event'] == 'Comment.Add'
-					) {
-						$entryIndex++;
-						$entries[$entryIndex] = $entry;
-						continue;
-					}
-				
-					if (!isset($entries[$entryIndex]['children'])) {
-						$entries[$entryIndex]['children'] = array();
-					}
-				
-					$entries[$entryIndex]['children'][] = $entry;
-				}
+			if (isset($_GET['after'])) {
+				$this->log->where('id > ?', [$_GET['after']]);
 			}
-			*/
-			/*
-			if ($numberOfEntries > 0) {
-				$lastEntry = &$log[0];
-				$lastEntry['tickets'] = array($lastEntry['ticket_fahrplan_id']);
-				
-				for ($entry = 1; $entry < $numberOfEntries; $entry++) {
-					if ($lastEntry['event'] !== $log[$entry]['event']
-						or $lastEntry['from_state_id'] !== $log[$entry]['from_state_id']
-						or $lastEntry['to_state_id'] !== $log[$entry]['to_state_id']) {
-						$lastEntry = &$log[$entry];
-						$lastEntry['tickets'] = array($lastEntry['ticket_fahrplan_id']);
-						continue;
-					}
-					
-					$lastEntry['tickets'][] = $log[$entry]['ticket_fahrplan_id'];
-					
-					unset($log[$entry]);
-				}
-			}
-			*/
-			
-			// var_dump($log);
-			/*
-			$this->View->assign('log', $entries);
-			$this->View->assign('messages', Model::indexByField($this->LogMessage->findAll(array(), null, array(), null, null, 'event, feed_message, feed_message_multiple, feed_include_log'), 'event'));
-			$this->View->assign('stats', array(
-				'cutting' => $this->Ticket->getRows(array('state_id' => $this->State->getIdByName('merged'), 'project_id' => $this->Project->id)),
-				'checking' => $this->Ticket->getRows(array('state_id' => $this->State->getIdByName('tagged'), 'project_id' => $this->Project->id)),
-				'fixing' => $this->Ticket->getRows(array('failed' => true, 'project_id' => $this->Project->id)),
-			));
-			$this->View->assign('progress', $this->Ticket->getProgress(array('project_id' => $this->Project->id)));
-			*/
-			
+						
 			$this->stats = array(
 				'cutting' => Ticket::countByNextState($this->project['id'], 'recording', 'cutting'),
 				'checking' => Ticket::countByNextState($this->project['id'], 'encoding', 'checking'),
 				'fixing' => Ticket::findAll()->where(['failed' => true, 'project_id' => $this->project['id']])->count()
 			);
-			
 			$this->progress = Ticket::getTotalProgress($this->project['id']);
+			
+			if ($this->respondTo('json')) {
+				$this->json = [];
+			}
 			
 			return $this->render('tickets/feed.tpl');
 		}

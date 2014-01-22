@@ -1,5 +1,5 @@
 <li class="event log right">
-	<span class="title"><?php if (($message = $entry->getMessage()) !== false) {
+	<span class="title"><?php if (($message = $entry->getEventMessage()) !== false) {
 		echo $message;
 	} else {
 		echo '<em>' . $entry['event'] . '</em>';
