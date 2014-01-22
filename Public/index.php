@@ -22,12 +22,12 @@
 	
 	Log::enableErrorHandler();
 	
-	require ROOT . 'Config/Config.php';
-	require ROOT . 'Config/AccessControl.php';
-	
-	Router::addRoutes(ROOT . 'Config/Routes.php');
-	
 	try {
+		require ROOT . 'Config/Config.php';
+		require ROOT . 'Config/AccessControl.php';
+	
+		Router::addRoutes(ROOT . 'Config/Routes.php');
+		
 		$requested = Controller::runWithRequest();
 		
 		$time = microtime(true) - $time;
