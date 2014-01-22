@@ -885,7 +885,7 @@ $(function() {
   }
   
   if ($('#tickets-filter')[0]) {
-    // Tracker.Tickets.init();
+    Tracker.Tickets.init();
   }
   
   if ($('#feed')[0]) {

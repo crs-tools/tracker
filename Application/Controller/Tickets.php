@@ -181,8 +181,13 @@
 			/*if ($this->View->respondTo('json')) {
 				$this->render('tickets/table.tpl');
 			} else {*/
-			
-			return $this->render('tickets/index.tpl');
+				
+			if ($this->respondTo('json')) {
+				$this->json = [];
+				return $this->render('tickets/list.tpl');
+			} else {
+				return $this->render('tickets/index.tpl');
+			}
 		}
 		
 		public function view(array $arguments) {
@@ -197,6 +202,11 @@
 			$this->parent = $this->ticket->Parent;
 			$this->children = $this->ticket
 				->Children
+				->scoped([
+					'with_encoding_profile_name',
+					'with_progress'
+				])
+				->orderBy('ticket_type, title')
 				->joins(['Handle']);
 			
 			$this->properties = $this->ticket

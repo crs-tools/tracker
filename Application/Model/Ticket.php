@@ -75,6 +75,7 @@
 			'filter_encoding',
 			'filter_releasing',
 			'filter_released',
+			'filter_state',
 			'filter_handle',
 			
 			'order_list',
@@ -89,67 +90,60 @@
 		);
 		
 		public static function filter_recording(Model_Resource $resource, array $arguments) {
-			$resource->where(
-				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?))',
-				[
-					'recording',
-					'locked', 'scheduled', 'recording', 'recorded', 'preparing',
-					'recording',
-					'locked', 'scheduled', 'recording', 'recorded', 'preparing'
-				]
-			);
+			self::filter_state($resource, [
+				'type' => 'recording',
+				'states' => ['locked', 'scheduled', 'recording', 'recorded', 'preparing']
+			]);
 		}
 		
 		public static function filter_cutting(Model_Resource $resource, array $arguments) {
-			$resource->where(
-				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?))',
-				[
-					'recording',
-					'prepared', 'cutting', 'cut',
-					'recording',
-					'prepared', 'cutting', 'cut'
-				]
-			);
+			self::filter_state($resource, [
+				'type' => 'recording',
+				'states' => ['prepared', 'cutting', 'cut']
+			]);
 		}
 		
 		public static function filter_encoding(Model_Resource $resource, array $arguments) {
-			$resource->where(
-				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?))',
-				[
-					'encoding',
-					'ready to encode', 'encoding', 'encoded', 'postencoding',
-					'encoding',
-					'ready to encode', 'encoding', 'encoded', 'postencoding'
-				]
-			);
+			self::filter_state($resource, [
+				'type' => 'encoding',
+				'states' => ['ready to encode', 'encoding', 'encoded', 'postencoding']
+			]);
 		}
 		
 		public static function filter_releasing(Model_Resource $resource, array $arguments) {
-			$resource->where(
-				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?,?,?,?,?,?,?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?,?,?,?,?,?,?))',
-				[
-					'encoding',
-					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing',
-					'encoding',
-					'postencoded', 'checking', 'checked', 'postprocessing', 'postprocessed', 'ready to release', 'releasing'
+			self::filter_state($resource, [
+				'type' => 'encoding',
+				'states' => [
+					'postencoded',
+					'checking',
+					'checked',
+					'postprocessing',
+					'postprocessed',
+					'ready to release',
+					'releasing'
 				]
-			);
+			]);
 		}
 		
 		public static function filter_released(Model_Resource $resource, array $arguments) {
+			self::filter_state($resource, [
+				'type' => 'encoding',
+				'states' => ['released']
+			]);
+		}
+		
+		public static function filter_state(Model_Resource $resource, array $arguments) {
+			$marks = substr(str_repeat('?,', count($arguments['states'])), 0, -1);
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
-				self::TABLE . '.ticket_state IN (?)) OR ' .
-				'(child.ticket_type = ? AND child.ticket_state IN (?))',
-				['encoding', 'released', 'encoding', 'released']
+				self::TABLE . '.ticket_state IN (' . $marks . ')) OR ' .
+				'(child.ticket_type = ? AND child.ticket_state IN (' . $marks . '))',
+				array_merge(
+					[$arguments['type']],
+					$arguments['states'],
+					[$arguments['type']],
+					$arguments['states']
+				)
 			);
 		}
 		
@@ -166,7 +160,7 @@
 		
 		public function order_list(Model_Resource $resource, array $arguments) {
 			$resource->orderBy(
-				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, title'
+				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, ticket_type, title'
 			);
 			
 			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,

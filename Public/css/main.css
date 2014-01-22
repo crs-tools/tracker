@@ -568,6 +568,62 @@ form fieldset ul.edit-properties li a.delete.restore {
 	background-position: -110px -46px;
 }
 
+/* Tooltips */
+
+[data-tooltip] {
+  position: relative;
+  display: inline-block;
+}
+
+[data-tooltip]:before, [data-tooltip]:after {
+  position: absolute;
+  top: 100%;
+  left: 10px;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+h2.ticket span[data-tooltip]:before, h2.ticket span[data-tooltip]:after {
+  left: 13px;
+  top: 95%;
+}
+
+[data-tooltip]:before {
+  content: '';
+  margin-top: -6px;
+  position: absolute;
+  border: 5px solid transparent;
+  border-bottom-color: rgba(31, 30, 37, 0.85);
+  z-index: 10001;
+}
+
+[data-tooltip]:after {
+  content: attr(aria-label);
+  margin: 4px 0 0 -10px;
+  padding: 6px 7px;
+  background-color: rgba(31, 30, 37, 0.85);
+  text-shadow: 0 -1px 0px black;
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+  white-space: pre;
+  color: #fff;
+}
+
+[data-tooltip]:not([data-tooltip=true]):after {
+  content: attr(data-tooltip);
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after,
+[data-tooltip]:focus:before,
+[data-tooltip]:focus:after {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* Tickets */
 
 h2.ticket {
