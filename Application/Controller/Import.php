@@ -152,6 +152,7 @@
 				
 				$properties['Fahrplan.Abstract'] = (string) $event->abstract;
 				
+				// TODO: move to Fahrplan.Persons
 				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
 				
 				foreach ($properties as $property => $value) {
@@ -313,7 +314,7 @@
 			
 			unset($_SESSION['import']);
 			
-			$this->flash('Updated ' . $ticketsChanged . ' ticket' . (($ticketsChanged > 1)? 's' : ''));
+			$this->flash('Updated ' . $ticketsChanged . ' ticket' . (($ticketsChanged != 1)? 's' : ''));
 			return $this->redirect('import', 'index', $this->project);
 		}
 		
