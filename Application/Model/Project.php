@@ -47,9 +47,10 @@
 		);
 		
 		public $acceptNestedEntriesFor = array(
-			'Properties' => true,
-			'Languages' => true,
 			'EncodingProfileVersion' => true,
+			'Languages' => true,
+			'Properties' => true,
+			'States' => true,
 			'WorkerGroup' => true
 		);
 	}

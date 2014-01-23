@@ -1,10 +1,15 @@
 <?php
 	
 	requires(
+		'String',
+		
 		'/Model/Project',
 		
 		'/Model/EncodingProfile',
 		'/Helper/EncodingProfile',
+		
+		'/Model/TicketState',
+		'/Model/ProjectTicketState',
 		
 		'/Model/WorkerGroup'
 	);
@@ -37,11 +42,12 @@
 				->orderBy(EncodingProfile::TABLE . '.name');
 			$this->versions->fetch();
 			
-			$this->versionsLeft = EncodingProfileVersion::findAll(array(
-				'EncodingProfile' => array(
-					'select' => 'name'
-				)
-			))
+			$this->versionsLeft = EncodingProfileVersion::findAll()
+				->joins([
+					'EncodingProfile' => [
+						'select' => 'name'
+					]
+				])
 				->select('id, encoding_profile_id, revision, created, description')
 				->orderBy('encoding_profile_id, revision DESC'); // TODO: order by encoding_profile_name
 			
@@ -51,6 +57,20 @@
 				$this->versionsLeft->whereNot([
 					'encoding_profile_id' => $versions
 				]);
+			}
+			
+			// States
+			$this->stateForm = $this->form();
+			
+			$this->states = TicketState::findAll()
+				->joins(['ProjectTicketState' => [
+					'where' => ['project_id' => $this->project['id']]
+				]])
+				->select('ticket_type, ticket_state, service_executable')
+				->orderBy('ticket_type, sort');
+
+			if ($this->stateForm->wasSubmitted() and $this->project->save($this->stateForm->getValues())) {
+				$this->flashNow('Updated enabled states');
 			}
 			
 			// Worker Groups
@@ -75,6 +95,8 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted() and ($project = Project::create($this->form->getValues()))) {
+				// TODO: enable all states
+				
 				$this->flash('Project created');
 				return $this->redirect('projects', 'view', $project);
 			}

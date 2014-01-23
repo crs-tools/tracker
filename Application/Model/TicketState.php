@@ -4,13 +4,20 @@
 		
 		const TABLE = 'tbl_ticket_state';
 		
-		public $primaryKey = array('ticket_type', 'ticket_state');
+		public $primaryKey = ['ticket_type', 'ticket_state'];
 		
-		public $hasMany = array(
-			'Ticket' => array(
-				'foreign_key' => array('ticket_type', 'ticket_state')
-			)
-		);
+		public $hasOne = [
+			'ProjectTicketState' => [
+				'foreign_key' => ['ticket_type', 'ticket_state'],
+				'select' => '(ticket_state IS NOT NULL) AS project_enabled, service_executable AS project_service_executable'
+			]	
+		];
+		
+		public $hasMany = [
+			'Ticket' => [
+				'foreign_key' => ['ticket_type', 'ticket_state']
+			]
+		];
 		
 		protected static $_actions = [
 			'cut' => 'cutting',

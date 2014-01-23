@@ -1029,7 +1029,7 @@ $(function() {
     input.parent('td').addClass('link');  
   });
   
-  $('input[data-worker-group-destroy]')
+  $('input[data-association-destroy]')
     .change(function(event) {
       var target = $(event.target);
     
@@ -1039,7 +1039,7 @@ $(function() {
           $('<input>')
             .attr({
               'type': 'hidden',
-              'name': target.data('worker-group-destroy'),
+              'name': target.data('association-destroy'),
               'value': 1
             })
             .insertAfter(target)
