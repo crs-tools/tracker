@@ -15,9 +15,10 @@
 		</code>
 	<?php endif; ?>
 
+	<span class="description">by <?= $entry['handle_name']; ?></span>
 	<span class="date">
-		<?php echo /*Date::distanceInWords(new Date($entry['created'])); ?> ago<span>: <?php echo*/ (new DateTime($entry['created']))->format('D, M j Y, H:i'); ?><!--</span>-->
+		<?= timeAgo($entry['created']); ?>
 	</span>
-	<span class="description"> by <?php echo $entry['handle_name']; ?></span>
+	
 	<span class="spine"></span>
 </li>

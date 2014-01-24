@@ -16,7 +16,8 @@
 		
 		'/Helper/EncodingProfile',
 		'/Helper/Log',
-		'/Helper/Ticket'
+		'/Helper/Ticket',
+		'/Helper/Time'
 	);
 	
 	class Controller_Tickets extends Controller_Application {

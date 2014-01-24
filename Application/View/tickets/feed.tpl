@@ -73,7 +73,7 @@ foreach ($log as $entry) {
 		$e .= '<em>' . $entry['event'] . '</em>';
 	}
 	
-	$e .= '<span class="date">' . $created->format('H:i') . '</span></li>';
+	$e .= '<span class="date">' . timeAgo($created) . '</span></li>';
 	
 	if (isset($json)) {
 		$json['entries'][] = $e;

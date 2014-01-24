@@ -12,7 +12,7 @@
 	
 	<?php if (isset($showDetails) and $showDetails): ?>
 		<span class="date">
-			last edited <?= /* echo Date::distanceInWords(new Date($ticket['modified']));  ?> ago<span>: <?=*/ (new DateTime($ticket['modified']))->format('D, M j Y, H:i'); ?><!--</span>-->
+			last edited <?= timeAgo($ticket['modified']); ?>
 		</span>
 	
 		<div class="flags">
