@@ -10,10 +10,23 @@
 	border-left: 1px solid #d0d0d0;
 	border-right: 1px solid #d0d0d0;
 	border-top: 1px solid #B2B2B2;
+}
+
+form fieldset ul li .CodeMirror {
+  top: 15px;
+  margin-bottom: 15px;
   width: 650px;
 }
 
-.CodeMirror.CodeMirror-fullscreen {
+div.table table tr.encoding-profile-version td .CodeMirror {
+  width: 830px;
+  height: auto;
+  border: none;
+}
+
+.CodeMirror-fullscreen,
+form fieldset ul li .CodeMirror-fullscreen,
+div.table table tr.encoding-profile-version td .CodeMirror-fullscreen {
   position: fixed;
   top: 0;
   left: 0;
@@ -22,18 +35,8 @@
   margin: 0;
   height: auto;
   width: auto;
-  z-index: 1000;
-}
-
-form fieldset ul li .CodeMirror {
-  top: 15px;
-  margin-bottom: 15px;
-}
-
-div.table table tr.encoding-profile-version td .CodeMirror {
-  width: 830px;
-  height: auto;
   border: none;
+  z-index: 1000;
 }
 
 .CodeMirror-scroll {
