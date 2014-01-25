@@ -16,6 +16,11 @@
   };
 }());
 
+/*
+  
+  Search
+  
+*//*
 (function() {
   var conditionCount = 0,
       dropdowns = {
@@ -151,23 +156,15 @@
     } else {
       addCondition();
     }
-    
-    /*
-    $(document).keydown(function(event) {
-      if (event.altKey) { // keyCode == 18
-        $('.tickets-search-add').addClass('more');
-      }
-    });
-    
-    $(document).keyup(function(event) {
-      if (event.keyCode == 18) {
-        $('.tickets-search-add').removeClass('more');
-      }
-    });
-    */
   };
 }());
+*/
 
+/*
+  
+  Edit ticket
+  
+*/
 (function() {
   var assignee = {
         select: null,
@@ -334,7 +331,7 @@
             }
           })
         );
-    },
+    }/*,
     
     Mass: {
       init: function() {
@@ -348,9 +345,15 @@
         needsAttention.checkbox[0].indeterminate = true;
       }
     }
+    */
   };
 }());
 
+/*
+  
+  Ticket index
+  
+*/
 (function() {
   var content = null,
       tickets = null,
@@ -494,6 +497,11 @@
   };
 }());
 
+/*
+  
+  View ticket
+  
+*/
 (function() {
   Tracker.Ticket = {
     init: function() {
@@ -507,12 +515,15 @@
           $(event.target).remove();
         });
       });
-      
-      
     }
   };
 }());
 
+/*
+  
+  Ticket actions
+  
+*/
 (function() {
   var comment = null,
       failed = null,
@@ -619,6 +630,11 @@
   };
 }());
 
+/*
+  
+  Feed
+  
+*/
 (function() {
   var actions = null,
       feed = null,
@@ -758,6 +774,11 @@
   };
 }());
 
+/*
+  
+  Property editor
+  
+*/
 (function() {
   function appendDeleteButton(input) {
     var deleteField,
@@ -864,6 +885,66 @@
   };
 })();
 
+/*
+  
+  Editor
+  
+*/
+(function() {
+  function enterFullscreen() {
+    this.editor.setOption("fullScreen", true);
+    this.button
+      .addClass('CodeMirror-fullscreen-button-exit')
+      .attr('title', 'Exit fullscren (Esc)');
+  }
+  
+  function exitFullscreen() {
+    this.editor.setOption("fullScreen", false);
+    this.button
+      .removeClass('CodeMirror-fullscreen-button-exit')
+      .attr('title', 'Enter fullscreen (Esc to exit)');
+  }
+  
+  Tracker.Editor = function(textarea) {
+    this.editor = CodeMirror.fromTextArea(textarea, {
+      lineNumbers: true,
+      // may affect performance but is needed to fit content
+      viewportMargin: Infinity,
+      readOnly: textarea.readOnly,
+      autoCloseTags: true,
+      extraKeys: {
+        "Esc": function(editor) {
+          if (!this.editor.getOption("fullScreen")) {
+            return;
+          }
+          
+          exitFullscreen.call(this);
+        }.bind(this)
+      }
+    });
+    
+    this.button = $('<a></a>')
+      .attr({
+        'href': '#',
+        'class': 'CodeMirror-fullscreen-button',
+        'title': 'Enter fullscreen (Esc to exit)'
+      })
+      .text('fullscreen')
+      .click(function(event) {
+        if (!this.editor.getOption("fullScreen")) {
+          enterFullscreen.call(this);
+        } else {
+          exitFullscreen.call(this);
+        }
+        
+        event.preventDefault();
+      }.bind(this))
+      .appendTo(this.editor.display.wrapper);
+    
+    $(textarea).data('editor', this.editor);
+  };
+})();
+
 $(function() {
   $('#ticket-action-comment.hidden').parent().hide();
   // $('#ticket-action-expand_by').parent().hide();
@@ -907,6 +988,10 @@ $(function() {
   if ($('#ticket-action')[0]) {
     Tracker.Action.init();
   }
+  
+  $('textarea[data-has-editor]').each(function(i, textarea) {
+    new Tracker.Editor(textarea);
+  });
   
   if ($('#ticket-import-list')[0]) {
     $('<a></a>').attr('href', '#').text('Invert selection').click(function(event) {
@@ -967,21 +1052,9 @@ $(function() {
         );
     });
   
-  $('textarea[data-has-editor]').each(function(i, textarea) {
-    $(textarea).data('editor', CodeMirror.fromTextArea(textarea, {
-      lineNumbers: true,
-      // may affect performance but is needed to fit content
-      viewportMargin: Infinity,
-      readOnly: textarea.readOnly,
-      autoCloseTags: true
-    }));
-  });
-  
   $('select[data-submit-on-change], input[type="checkbox"][data-submit-on-change]')
-    .each(function(i, field) { // TODO: remove each
-      $(field).change(function(event) {
-        event.target.form.submit();
-      });
+    .change(function(event) {
+      event.target.form.submit();
     });
   
   $('select[data-encoding-profile-version-id]').change(function(event) {
@@ -1093,22 +1166,5 @@ $(function() {
     $(a).click(function(event) {
       return confirm($(a).data('dialog-confirm'));
     });
-  });
-  
-  // TODO: convert
-  $('a.confirm-ticket-delete').click(function(event) {
-    return confirm('Are you sure you want to permanently delete this ticket?');
-  });
-  
-  $('a.confirm-user-delete').click(function(event) {
-    return confirm('Are you sure you want to permanently delete this user?');
-  });
-  
-  $('a.confirm-user-unregister').click(function(event) {
-    return confirm('Are you sure you want to unregister this worker?');
-  });
-  
-  $('a.confirm-ticket-reset').click(function(event) {
-    return confirm('Are you sure you want to reset this encoding task?');
   });
 });

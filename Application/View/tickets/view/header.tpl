@@ -48,10 +48,10 @@
 							echo $this->linkTo('tickets', $action, $ticket, $project, '<span>' . $action . '</span>', ucfirst($action) . '…');
 							break;
 						case 'reset':
-							echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', array('class' => 'confirm-ticket-reset'));
+							echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', ['data-dialog-confirm' => 'Are you sure you want to reset this encoding task?']);
 							break;
 						case 'delete':
-							echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', array('class' => 'confirm-ticket-delete'));
+							echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this ticket?']);
 							break;
 					} ?>
 				</li>

@@ -29,7 +29,7 @@
 					<td><?= $this->h($user['role']); ?></td>
 					<td></td>
 					<td class="link hide right"><?php if (User::isAllowed('user', 'delete') and !$user->isCurrent()) {
-						echo $this->linkTo('user', 'delete', $user, 'delete', array('class' => 'confirm-user-delete'));
+						echo $this->linkTo('user', 'delete', $user, 'delete', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this user?']);
 					} ?></td>
 					<td class="link hide right">
 						<?php /*if (AccessControl::isAllowed($user['role'], 'user', 'act_as_substitute')) {

@@ -14,7 +14,7 @@
 		<?php if (User::isAllowed('user', 'delete')): ?>
 			<ul class="ticket-header-bar right horizontal">
 				<li class="ticket-header-bar-background-left"></li>
-					<li class="action delete"><?= $this->linkTo('user', 'delete', $user, '<span>delete</span>', 'Delete user', array('class' => 'confirm-user-delete')); ?></li>
+					<li class="action delete"><?= $this->linkTo('user', 'delete', $user, '<span>delete</span>', 'Delete user', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this user?']); ?></li>
 				<li class="ticket-header-bar-background-right"></li>
 			</ul>
 		<?php endif; ?>

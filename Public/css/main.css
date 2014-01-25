@@ -609,6 +609,7 @@ h2.ticket span[data-tooltip]:before, h2.ticket span[data-tooltip]:after {
   line-height: 16px;
   white-space: nowrap;
   white-space: pre;
+  text-indent: 0;
   color: #fff;
 }
 

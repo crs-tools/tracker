@@ -143,7 +143,7 @@
 			<?= $this->content(); ?>
 		</div>
 		
-		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-1.7.min.js" type="text/javascript"></script>
+		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-2.1.0.min.js" type="text/javascript"></script>
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
 		<?php if (User::isLoggedIn()): ?>
 			<script type="text/javascript">
