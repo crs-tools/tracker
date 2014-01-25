@@ -46,11 +46,6 @@
 			</ul>
 			<script type="text/javascript" charset="utf-8">
 				var Tracker = {User: {}, Search: {}};
-				
-				if (document.cookie.indexOf('p=0') != -1) {
-					document.getElementsByTagName('body')[0].className = 'full';
-					document.getElementById('projects').getElementsByTagName('ul')[0].style.display = 'none';
-				}
 			</script>
 		</div>
 		<?php if (User::isLoggedIn()): ?>

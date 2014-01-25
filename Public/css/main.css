@@ -12,8 +12,6 @@ body {
 	font-size: 80.00%;
 }
 
-body.full { background-position: left -32px; }
-
 img, fieldset {border: none}
 p {margin: 0.3em 0 0;line-height: 1.5em;}
 ul, ol, dl {padding-left: 1.5em}
@@ -141,26 +139,6 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 
 #projects ul li.padding { margin: 0 -0.4em 0 0.6em; color: #B8C4D2; }
 #projects ul li.right.padding { margin: 0 0.6em 0 -0.4em; }
-
-#projects a#projects-hide {
-	display: block;
-	position: absolute;
-	height: 18px;
-	bottom: -23px;
-	left: 0;
-	right: 0;
-	padding: 0.5em 0 0;
-	margin: 0;
-	z-index: 10;
-	text-align: center;
-	font-size: 0.85em;
-	color: #707070;
-	background: transparent url(../images/main.png) repeat-x left -323px;
-}
-
-#projects a#projects-hide:hover, #projects a#projects-hide:focus {
-	text-decoration: none;
-}
 
 #header, #content {
 	position: relative;

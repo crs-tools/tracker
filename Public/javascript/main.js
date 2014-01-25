@@ -1131,35 +1131,6 @@ $(function() {
         .insertAfter(input);
     });
   
-  var projectBarHidden = $.cookie('p') == '0',
-      basePath = /https?\:\/\/(.*?)(\/.*)/.exec($('base')[0].href);
-  
-  $('<a></a>').attr({href: '#', id: 'projects-hide'}).appendTo($('#projects'))
-    .text((projectBarHidden)? 'Show project bar' : 'Hide project bar').click(function(event) {
-      event.preventDefault();
-      
-      if (!projectBarHidden) {
-        $('#projects ul').animate({'margin-top': '-32'}, 400, function() {
-          $('#projects ul').css('margin-top', '0px').hide();
-          $(event.target).text('Show project bar');
-        });
-        $('body').addClass('full');
-        $.cookie('p', 0, {path: basePath[2]});
-        projectBarHidden = true;
-      } else {
-        $('#projects ul').css('margin-top', '-32px').show().animate({'margin-top': '0'}, 400, function() {
-          $('body').removeClass('full');
-          $(event.target).text('Hide project bar');
-        });
-        $.cookie('p', 1, {path: basePath[2]});
-        projectBarHidden = false;
-      }
-    }).css('opacity', 0).hover(function(event) {
-      $(event.target).animate({opacity: 1}, 300);
-    }, function(event) {
-      $(event.target).clearQueue().animate({opacity: 0}, 300);
-    });
-  
   $('#user-login-user').focus();
   
   $('a[data-dialog-confirm]').each(function(i, a) {
