@@ -13,7 +13,9 @@
 		<div id="projects">
 			<ul class="horizontal">
 				<?php if (User::isAllowed('projects', 'index')): ?>
-					<li class="link<?= ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>"><?= $this->linkTo('projects', 'index', 'All projects'); ?></li>
+					<li class="link<?= ($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''; ?>">
+						<?= $this->linkTo('projects', 'index', 'All projects'); ?>
+					</li>
 				<?php endif; ?>
 				
 				<?php if (isset($project)): ?>
@@ -44,9 +46,6 @@
 					<li class="right link"><?= $this->linkTo('user', 'login', 'Login'); ?></li>
 				<?php endif; ?>
 			</ul>
-			<script type="text/javascript" charset="utf-8">
-				var Tracker = {User: {}, Search: {}};
-			</script>
 		</div>
 		<?php if (User::isLoggedIn()): ?>
 			<noscript>
@@ -55,7 +54,7 @@
 		<?php endif; ?>
 		<div id="header">
 			<h1><?php if (!empty($project['project_slug'])) {
-				echo $this->linkTo('tickets', 'feed', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, 'C3 Ticket Tracker');
+				echo $this->linkTo('tickets', 'feed', $project, 'C3 Ticket Tracker');
 			} else {
 				echo $this->linkTo('projects', 'index', 'C3 Ticket Tracker');
 			}?></h1>
@@ -128,7 +127,7 @@
 					$flash = array(array('type' => 2, 'text' => mb_ucfirst(current($flash))));
 				}
 			}*/
-		
+			
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
 				<div id="flash">
@@ -140,11 +139,6 @@
 		
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-2.1.0.min.js" type="text/javascript"></script>
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
-		<?php if (User::isLoggedIn()): ?>
-			<script type="text/javascript">
-				Tracker.User.data = <?= json_encode(array('id' => User::getCurrent()['id'], 'name' => User::getCurrent()['name'])); ?>;
-			</script>
-		<?php endif; ?>
 		<?= $this->content('scripts'); ?>
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/main.js" type="text/javascript"></script>
 	</body>

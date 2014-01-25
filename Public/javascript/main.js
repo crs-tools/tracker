@@ -1,20 +1,4 @@
-(function() {
-  Tracker.User.getID = function() {
-    if (!Tracker.User.data || !Tracker.User.data.id) {
-      return false;
-    }
-    
-    return Tracker.User.data.id;
-  };
-  
-  Tracker.User.getName = function() {
-    if (!Tracker.User.data || !Tracker.User.data.name) {
-      return false;
-    }
-    
-    return Tracker.User.data.name;
-  };
-}());
+var Tracker = {};
 
 /*
   
@@ -148,17 +132,20 @@
     $('<a></a>').attr('href', '#').addClass('tickets-search-add').click(addCondition).appendTo(li);
   }
   
-  Tracker.Search.init = function() {
-    if (search && (search.fields && search.operators && search.values)) {
-      $.each(search.fields, function(i, field) {
-        addCondition(null, field, search.operators[i], search.values[i]);
-      });
-    } else {
-      addCondition();
+  Tracker.Search = {
+    init: function() {
+      if (search && (search.fields && search.operators && search.values)) {
+        $.each(search.fields, function(i, field) {
+          addCondition(null, field, search.operators[i], search.values[i]);
+        });
+      } else {
+        addCondition();
+      }
     }
   };
 }());
 */
+
 
 /*
   
@@ -201,7 +188,7 @@
   function assignToUser(event) {
     event.preventDefault();
 
-    for (var i = 0, id = Tracker.User.getID(); i < assignee.select[0].options.length; i++) {
+    for (var i = 0, id = assignee.select.data('current-user-id'); i < assignee.select[0].options.length; i++) {
       if (assignee.select[0].options[i].value == id) {
         assignee.select[0].options[i].selected = true;
         break;
@@ -294,7 +281,7 @@
       assignee.description = $('<span> or </span>').addClass('description').insertAfter(assignee.select);
       
       $('<a></a>').attr('href', '#').text('Remove assignee').click(removeAssignee).prependTo(assignee.description);
-      $('<a></a>').attr('href', '#').text('assign to me (' + Tracker.User.getName() + ')').click(assignToUser).appendTo(assignee.description);
+      $('<a></a>').attr('href', '#').text('assign to me (' + assignee.select.data('current-user-name') + ')').click(assignToUser).appendTo(assignee.description);
       
       failed.checkbox = $('#ticket-edit-failed').change(updateCommentField);;
       failed.initial = failed.checkbox[0].checked;

@@ -43,8 +43,20 @@ else: ?>
 				</li>
 			<?php endif; ?>
 			
-			<li><?php echo $f->select('priority', 'Priority', array('0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'), (!empty($ticket))? $ticket['priority'] : '1'); ?>
-			<li><?php echo $f->select('handle_id', 'Assignee', array('' => '–') + $users->toArray(), $ticket['handle_id']); ?></li>
+			<li><?=$f->select(
+				'priority', 'Priority',
+				['0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'],
+				(!empty($ticket))? $ticket['priority'] : '1'
+			); ?></li>
+			<li><?= $f->select(
+				'handle_id', 'Assignee',
+				['' => '–'] + $users->toArray(),
+				$ticket['handle_id'],
+				[
+					'data-current-user-id' => User::getCurrent()['id'],
+					'data-current-user-name' => User::getCurrent()['name']
+				]
+			); ?></li>
 			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
 			<?php $f->register('comment'); ?>
 		</ul>
