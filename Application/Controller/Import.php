@@ -336,7 +336,7 @@
 		}
 		
 		public function _loadXML(Form $form) {
-			if ($file = $form->getvalue('file')) {
+			if ($file = $form->getValue('file')) {
 				$files = $this->_getFiles();
 				
 				if (!isset($files[$file])) {

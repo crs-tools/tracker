@@ -33,43 +33,24 @@
             }
 
             // generate slug from ticket title (and ignore the one from the frab)
-            $slug = preg_replace(['/[.:"]/','/[^a-zA-Z_\-0-9]/','/_+/'],['','_','_'],iconv("utf-8","ascii//TRANSLIT",$properties['Fahrplan.Title']));
-            array_push($parts, $slug);
+             array_push($parts, preg_replace([
+				'/[.:"\']/',
+				'/[^a-zA-Z_\-0-9]/',
+				'/_+/'
+			],[
+				'',
+				'_',
+				'_'
+			], iconv(
+				'utf-8',
+				'ascii//TRANSLIT//IGNORE',
+				$properties['Fahrplan.Title']
+			)));
 
             return implode('-', $parts);
         }
 		
-		/*
-		public function getFilename($properties = array()) {
-			$parts = array();
-
-			// prepend project slug if active project available
-			if($this->Project->current()) {
-				$parts[] = $this->Project->current()->slug;
-			}
-
-			if(isset($properties['Fahrplan.ID'])) {
-				$parts[] = $properties['Fahrplan.ID'];
-			}
-
-			// add language if project has multiple languages
-			if($this->Project->current() and count($this->Project->current()->languages) > 0) {
-				if(!isset($properties['Record.Language'])) {
-					// error: language is not set, return empty string
-					return '';
-				} else {
-					$parts[] = $properties['Record.Language'];
-				}
-			}
-
-			if(isset($properties['Fahrplan.Slug'])) {
-				$parts[] = $properties['Fahrplan.Slug'];
-			}
-
-			return implode('-', $parts);
-		}
-		*/
-		
+		// TODO: add default scope: orderBy('name')
 	}
 	
 ?>
