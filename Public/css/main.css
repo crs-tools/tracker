@@ -603,6 +603,20 @@ h2.ticket span[data-tooltip]:before, h2.ticket span[data-tooltip]:after {
   opacity: 1;
 }
 
+/* Columns */
+
+.column-50 {
+  box-sizing: border-box;
+  float: left;
+  width: 50%;
+  padding-right: 15px;
+}
+
+.column-50 + .column-50 {
+  padding-right: 0;
+  padding-left: 15px;
+}
+
 /* Tickets */
 
 h2.ticket {
@@ -1329,6 +1343,10 @@ table.default tbody tr td {
   border-bottom: 1px solid #e0e0e0;
 }
 
+table.default tbody tr td.empty {
+  border-bottom: none;
+}
+
 table.default tbody tr:last-child td {
   border-bottom: none;
 }
@@ -1339,6 +1357,10 @@ table.default tbody tr td.link {
 
 table.default tbody tr td.link a {
 	padding: 0.4em;
+}
+
+table.default tbody tr td input + label {
+  margin-left: 0.5em;
 }
 
 form fieldset ul.comments li {
