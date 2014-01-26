@@ -9,7 +9,10 @@
 	
 	abstract class Controller_Application extends Controller {
 		
-		protected $beforeAction = ['setProject' => true];
+		protected $beforeAction = [
+			'addHeaders' => true,
+			'setProject' => true
+		];
 		
 		protected $catch = [
 			'NotFound' => 'notFound',
@@ -18,6 +21,15 @@
 		
 		public function __construct() {
 			User::recall();
+		}
+		
+		protected function addHeaders() {
+			$this->Response->addHeader(
+				'Content-Security-Policy',
+				'default-src \'self\'; font-src \'none\'; frame-src \'none\'; object-src \'none\'; style-src \'self\' \'unsafe-inline\''
+			);
+			$this->Response->addHeader('X-Content-Type-Options', 'nosniff');
+			$this->Response->addHeader('X-Frame-Options', 'DENY');
 		}
 		
 		protected function setProject($action, array $arguments) {
