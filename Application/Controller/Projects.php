@@ -95,7 +95,7 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted() and ($project = Project::create($this->form->getValues()))) {
-				// TODO: enable all states
+				ProjectTicketState::createAll($project['id']);
 				
 				$this->flash('Project created');
 				return $this->redirect('projects', 'view', $project);

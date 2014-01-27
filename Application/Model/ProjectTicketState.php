@@ -25,8 +25,12 @@
 				Cache::ns('project.' . $project . '.states') .
 					'.' . $type . '.' . $state . '.next',
 				function() use ($project, $type, $state) {
-		            Database::$Instance->query('SELECT * FROM ticket_state_next(?, ?, ?)', [$project, $type, $state]);
+		            Database::$Instance->query(
+						'SELECT * FROM ticket_state_next(?, ?, ?)',
+						[$project, $type, $state]
+					);
 		            $row = Database::$Instance->fetchRow();
+					
 					return ($row === false)? null : $row;
 				}
 			);
@@ -37,12 +41,26 @@
 				Cache::ns('project.' . $project . '.states') .
 					'.' . $type . '.' . $state . '.previous',
 				function() use ($project, $type, $state) {
-		            Database::$Instance->query('SELECT * FROM ticket_state_previous(?, ?, ?)', [$project_id, $ticket_type, $ticket_state]);
+		            Database::$Instance->query(
+						'SELECT * FROM ticket_state_previous(?, ?, ?)',
+						[$project, $ticket, $state]
+					);
+					
 		            $row = Database::$Instance->fetchRow();
 					return ($row === false)? null : $row;
 				}
 			);
         }
+		
+		public static function createAll($project) {
+			return (new Database_Query(self::TABLE))
+				->insertFrom(TicketState::findAll()->select(
+					// TODO: this needs better support
+					Database::$Instance->quote($project) .
+					' AS project_id, ticket_type, ticket_state, service_executable'
+				))
+				->execute();
+		}
 	}
 	
 ?>
