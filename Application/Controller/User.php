@@ -19,44 +19,20 @@
 				if (User::login($this->form->getValue('user'), $this->form->getValue('password'))) {
 					$this->flash('Login successful');
 					
-					// TODO: return to last page
+					
+					if (isset($_SESSION['return_to'])) {
+						$this->redirect($_SESSION['return_to']);
+						unset($_SESSION['return_to']);
+						
+						return $this->Response;
+					}
+					
 					return $this->redirect();
 				} else {
 					$this->flashNow('Login failed, check user and password', self::FLASH_WARNING);
 				}
 			}
 			
-			/*
-			if ($this->User->isLoggedIn()) {
-				return $this->View->redirect();
-			}
-			
-			if ($referer = Request::getLocalReferer() and $referer != 'login') {
-				$_SESSION['return_to'] = Request::getLocalReferer();
-			}
-			
-			if (Request::isPostRequest()) {
-				if ($this->User->login(Request::post('user'), Request::post('password'), Request::post('remember', Request::checkbox))) {
-					if (User::isAllowed('user', 'login_complete')) {
-						$this->flash('Login successful');
-
-						if (isset($_SESSION['return_to'])) {
-							$this->View->redirect($_SESSION['return_to']);
-							unset($_SESSION['return_to']);
-
-							return true;
-						} else {						
-							return $this->View->redirect();
-						}
-					} else {
-						$this->User->logout();
-						$this->flashNow('You are unable to login with this user');
-					}
-				} else {
-					$this->flashNow('Login failed, check name and password', self::FLASH_WARNING);
-				}
-			}
-			*/
 			return $this->render('user/login.tpl');
 		}
 		
