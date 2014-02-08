@@ -4,7 +4,7 @@
 	$this->title(mb_ucfirst($action) . ' lecture ' . $ticket['title'] . ' | ');
 } ?>
 
-<?= $this->render('tickets/view/header.html.php', [
+<?= $this->render('tickets/view/header', [
 	'titlePrefix' => (isset($action))?
 		h(mb_ucfirst($action)) . ' lecture ' :
 		null,
@@ -13,12 +13,12 @@
 ]); ?>
 
 <?php if (!empty($action)) {
-	echo $this->render('tickets/view/action.html.php');
+	echo $this->render('tickets/view/action');
 } ?>
 
 <?php if (isset($parent)): ?>
 	<h3>Parent</h3>
-	<?= $this->render('tickets/list.html.php', [
+	<?= $this->render('tickets/list', [
 		'tickets' => [$parent],
 		'referer' => false
 	]); ?>
@@ -26,7 +26,7 @@
 
 <?php if (isset($children) and $children->getRows() > 0): ?>
 	<h3>Children</h3>
-	<?= $this->render('tickets/list.html.php', [
+	<?= $this->render('tickets/list', [
 		'tickets' => $children,
 		'referer' => false,
 		'simulateTickets' => true
@@ -64,14 +64,14 @@
 
 <h3 class="table">Properties</h3>
 
-<?= $this->render('shared/properties.html.php'); ?>
+<?= $this->render('shared/properties'); ?>
 
 <?php if (isset($parentProperties)) {
-	echo $this->render('shared/properties.html.php', ['properties' => $parentProperties]);
+	echo $this->render('shared/properties', ['properties' => $parentProperties]);
 }
 
 if (isset($recordingProperties)) {
-	echo $this->render('shared/properties.html.php', ['properties' => $recordingProperties]);
+	echo $this->render('shared/properties', ['properties' => $recordingProperties]);
 } ?>
 
 <div id="timeline">
@@ -98,15 +98,15 @@ if (isset($recordingProperties)) {
 		
 		foreach ($comments as $comment) {
 			while (strtotime($log->current()['created']) > strtotime($comment['created'])) {
-				echo $this->render('tickets/view/log_entry.html.php', ['entry' => $log->current()]);
+				echo $this->render('tickets/view/log_entry', ['entry' => $log->current()]);
 				$log->next();
 			}
 			
-			echo $this->render('tickets/view/comment.html.php', ['comment' => $comment]);
+			echo $this->render('tickets/view/comment', ['comment' => $comment]);
 		}
 		
 		while ($log->current()) {
-			echo $this->render('tickets/view/log_entry.html.php', ['entry' => $log->current()]);
+			echo $this->render('tickets/view/log_entry', ['entry' => $log->current()]);
 			$log->next();
 		} ?>
 	</ul>

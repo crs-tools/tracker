@@ -4,7 +4,7 @@
 	<fieldset>
 		<h2>Edit multiple tickets</h2>
 		
-		<?php $this->render('tickets/table.html.php', array('tickets' => $tickets)); ?>
+		<?php $this->render('tickets/table', array('tickets' => $tickets)); ?>
 	</fieldset>
 	<fieldset>
 		<legend></legend>

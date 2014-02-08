@@ -14,7 +14,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 	</fieldset>
 	<fieldset>
 		<legend>Languages</legend>
-		<?php echo $this->render('shared/form/properties.html.php', array(
+		<?php echo $this->render('shared/form/properties', array(
 			'f' => $f,
 			'properties' => array(
 				'for' => (!empty($project))? $project->Languages->orderBy('language') : null,
@@ -27,7 +27,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 	</fieldset>
 	<fieldset>
 		<legend>Properties</legend>
-		<?php echo $this->render('shared/form/properties.html.php', array(
+		<?php echo $this->render('shared/form/properties', array(
 			'f' => $f,
 			'properties' => array(
 				'for' => (!empty($project))? $project->Properties->orderBy('name') : null,

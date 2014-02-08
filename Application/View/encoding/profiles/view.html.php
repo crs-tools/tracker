@@ -52,4 +52,4 @@
 	</form>
 </div>
 
-<?php $this->render('shared/editor.html.php'); ?>
+<?php $this->render('shared/editor'); ?>
