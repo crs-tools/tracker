@@ -23,9 +23,6 @@
 					<?php if (User::isAllowed('projects', 'view')): ?>
 						<li><?= $this->linkTo('projects', 'view', ['project_slug' => $project['slug']], 'project settings'); ?></li>
 					<?php endif; ?>
-					<?php if (User::isAllowed('projects', 'delete')): ?>
-						<li><?= $this->linkTo('projects', 'delete', ['project_slug' => $project['slug']], 'delete project'); ?></li>
-					<?php endif; ?>
 				</ul>
 			</li>
 		<?php endforeach; ?>
