@@ -28,9 +28,9 @@
 			<ul class="tickets">
 				<?php foreach ($tickets['new'] as $id => $ticket): ?>
 					<li>
-						<a class="link" title="<?php foreach($ticket as $key => $value) { echo $this->h($key . ': ' . $value) . "\n"; } ?>">
+						<a class="link" title="<?php foreach($ticket as $key => $value) { echo h($key . ': ' . $value) . "\n"; } ?>">
 							<span class="vid"><?= $id; ?></span>
-							<span class="title"><?= $this->h(str_truncate($ticket['Fahrplan.Title'], 45, '…')); ?></span>
+							<span class="title"><?= h(str_truncate($ticket['Fahrplan.Title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
 							<span class="checkbox"><?= $f->checkbox('tickets[new][' . $id . ']', null, true, [], false); ?></span>
@@ -49,7 +49,7 @@
 					<li>
 						<a class="link">
 							<span class="vid"><?= $id; ?></span>
-							<span class="title"><?= $this->h(str_truncate($ticket['properties']['Fahrplan.Title'], 45, '…')); ?></span>
+							<span class="title"><?= h(str_truncate($ticket['properties']['Fahrplan.Title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
 							<span class="checkbox"><?= $f->checkbox('tickets[change][' . $id . ']', null, true, [], false); ?></span>
@@ -61,21 +61,21 @@
 							<tr>
 								<th width="10%">
 									<?php if ($value['fahrplan'] === null): ?>
-										<del><?= $this->h($key); ?></del>
+										<del><?= h($key); ?></del>
 									<?php else: ?>
-										<?= $this->h($key); ?>
+										<?= h($key); ?>
 									<?php endif; ?>
 								</th>
 								<td>
 									<code>
 										<?php if ($value['database'] === null): ?>
-											<ins><?= $this->h($value['fahrplan']); ?></ins>
+											<ins><?= h($value['fahrplan']); ?></ins>
 										<?php elseif ($value['fahrplan'] === null): ?>
-											<del><?= $this->h($value['database']); ?></del>
+											<del><?= h($value['database']); ?></del>
 										<?php else: ?>
-											<del><?= $this->h($value['database']); ?></del>
+											<del><?= h($value['database']); ?></del>
 											</code><code>
-											<ins><?= $this->h($value['fahrplan']); ?></ins>
+											<ins><?= h($value['fahrplan']); ?></ins>
 										<?php endif; ?>
 									</code><br />
 								</td>
@@ -95,7 +95,7 @@
 					<li>
 						<a class="link">
 							<span class="vid"><?= $id; ?></span>
-							<span class="title"><?= $this->h(str_truncate($ticket['title'], 45, '…')); ?></span>
+							<span class="title"><?= h(str_truncate($ticket['title'], 45, '…')); ?></span>
 						</a>
 						<span class="other">
 							<span class="checkbox"><?= $f->checkbox('tickets[delete][' . $id . ']', null, true, [], false); ?></span>

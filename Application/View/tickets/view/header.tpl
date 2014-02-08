@@ -1,11 +1,11 @@
 <div id="ticket-header">
 	<h2 class="ticket">
-		<span class="fahrplan"><?= $this->h($ticket['fahrplan_id']); ?></span>
-		<span class="title"<?= (empty($titlePrefix) and mb_strlen($ticket['title']) > 50)? ' aria-label="' . $this->h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
+		<span class="fahrplan"><?= h($ticket['fahrplan_id']); ?></span>
+		<span class="title"<?= (empty($titlePrefix) and mb_strlen($ticket['title']) > 50)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
 			<?php if (!empty($titlePrefix)) {
-				echo $titlePrefix . $this->linkTo('tickets', 'view', $ticket, $project, $this->h(str_shorten($ticket['title'], 37)), null, array('aria-label' => $ticket['title'], 'data-tooltip' => true));
+				echo $titlePrefix . $this->linkTo('tickets', 'view', $ticket, $project, h(str_shorten($ticket['title'], 37)), null, array('aria-label' => $ticket['title'], 'data-tooltip' => true));
 			} else {
-				echo $this->h(str_shorten($ticket['title'], 50));
+				echo h(str_shorten($ticket['title'], 50));
 			} ?>
 		</span>
 	</h2>

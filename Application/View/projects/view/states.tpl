@@ -26,7 +26,7 @@ $typeRows = 0; ?>
 				<?php endif;
 				$typeRows++; ?>
 				<tr>
-					<td><?= $this->h(mb_ucfirst($type)); ?></td>
+					<td><?= h(mb_ucfirst($type)); ?></td>
 			<?php else: ?>
 				<tr>
 					<td class="empty"></td>

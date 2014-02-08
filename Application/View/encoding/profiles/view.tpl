@@ -13,7 +13,7 @@
 </ul>
 
 <div class="table" id="encoding-profile-versions">
-	<h2><?php echo $this->h($profile['name']); ?></h2>
+	<h2><?php echo h($profile['name']); ?></h2>
 	
 	<?= $f = $form(); ?>
 		<table class="double-stripe">
@@ -32,13 +32,13 @@
 						<td><?= $f->radio('version_a', null, $version['id']) . $f->radio('version_b', null, $version['id']); ?>
 						<td><strong>r<?= $version['revision']; ?></strong></td>
 						<td><?= (new Datetime($version['created']))->format('d.m.Y H:i'); ?></td>
-						<td><?= $this->h($version['description']); ?></td>
+						<td><?= h($version['description']); ?></td>
 						<td></td>
 						<td class="link hide right encoding-profile-version-show"></td>
 					</tr>
 					<tr class="table-ignore encoding-profile-version">
 						<td colspan="6">
-							<textarea readonly data-has-editor="true"><?php echo $this->h($version['xml_template']); ?></textarea>
+							<textarea readonly data-has-editor="true"><?php echo h($version['xml_template']); ?></textarea>
 						</td>
 					</tr>
 				<?php endforeach; ?>

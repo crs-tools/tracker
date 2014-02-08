@@ -26,9 +26,9 @@
 		<tbody>
 			<?php foreach ($profiles as $profile): ?>
 				<tr>
-					<td><?= $this->h($profile['name']); ?></td>
-					<td><?= $this->h($profile['slug']); ?></td>
-					<td><?= $this->h($profile['extension']); ?></td>
+					<td><?= h($profile['name']); ?></td>
+					<td><?= h($profile['slug']); ?></td>
+					<td><?= h($profile['extension']); ?></td>
 					<td class="link"><?php if (User::isAllowed('encodingprofiles', 'view')) {
 						echo $this->linkTo('encodingprofiles', 'view', $profile, 'Show ' . $profile['versions_count'] . ' version' . (($profile['versions_count'] == 1)? '' : 's'));
 					} ?></td>

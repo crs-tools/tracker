@@ -6,7 +6,7 @@
 
 <?= $this->render('tickets/view/header.tpl', [
 	'titlePrefix' => (isset($action))?
-		$this->h(mb_ucfirst($action)) . ' lecture ' :
+		h(mb_ucfirst($action)) . ' lecture ' :
 		null,
 	'showDetails' => !isset($action),
 	'currentAction' => (isset($action))? $action : null

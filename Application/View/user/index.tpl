@@ -25,8 +25,8 @@
 		<tbody>
 			<?php foreach ($users as $user): ?>
 				<tr>
-					<td><?= $this->h($user['name']); ?></td>
-					<td><?= $this->h($user['role']); ?></td>
+					<td><?= h($user['name']); ?></td>
+					<td><?= h($user['role']); ?></td>
 					<td></td>
 					<td class="link hide right"><?php if (User::isAllowed('user', 'delete') and !$user->isCurrent()) {
 						echo $this->linkTo('user', 'delete', $user, 'delete', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this user?']);

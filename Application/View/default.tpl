@@ -131,7 +131,7 @@
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
 				<div id="flash">
-					<?= $this->h($flash[0]['message']); ?>
+					<?= h($flash[0]['message']); ?>
 				</div>
 			<?php endif; ?>
 			<?= $this->content(); ?>

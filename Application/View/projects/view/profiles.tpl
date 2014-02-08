@@ -53,7 +53,7 @@
 									</optgroup>
 								<?php endif;
 								$name = $version['name']; ?>
-								<optgroup label="<?= $this->h($name); ?>">
+								<optgroup label="<?= h($name); ?>">
 							<?php endif;?>
 							<?= View::tag('option', array('value' => $version['id']), encodingProfileVersionTitle($version->toArray())); ?>
 						<?php endforeach; ?>

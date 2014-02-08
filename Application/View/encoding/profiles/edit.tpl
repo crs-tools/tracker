@@ -2,7 +2,7 @@
 
 <?php if (isset($profile)): ?>
 	<div id="ticket-header">
-		<h2 class="ticket"><span>Edit encoding profile <?= $this->h($profile['name']); ?></span></h2>
+		<h2 class="ticket"><span>Edit encoding profile <?= h($profile['name']); ?></span></h2>
 		
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>

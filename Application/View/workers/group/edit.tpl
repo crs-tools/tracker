@@ -2,7 +2,7 @@
 
 <?= $f = $form(); ?>
 	<fieldset>
-		<h2><?= (isset($group))? $this->h('Edit worker group ' . $group['title']) : 'Create new worker group'; ?></h2>
+		<h2><?= (isset($group))? h('Edit worker group ' . $group['title']) : 'Create new worker group'; ?></h2>
 		<ul>
 			<li><?= $f->input('title', 'Title', $group['title']); ?></li>
 		</ul>

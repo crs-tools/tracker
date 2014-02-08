@@ -6,7 +6,7 @@
 	} ?></span>
 	<?php if (!empty($entry['comment'])): ?>
 		<code>
-			<?php $lines = array_filter(explode("\n", $this->h($entry['comment'])));
+			<?php $lines = array_filter(explode("\n", h($entry['comment'])));
 			echo nl2br(implode('<br />', array_slice($lines, 0, 3)));
 			
 			if (count($lines) > 3) {

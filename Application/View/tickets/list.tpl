@@ -18,14 +18,14 @@ if (!empty($tickets)) {
 				'">';
 			/*
 				title="' . (($ticket['fahrplan_id'] === 0)? $ticket['id'] : $ticket['fahrplan_id']) .
-				' – ' . $this->h($ticket['title']) . ((!empty($ticket['encoding_profile_name']))? ' (' . $ticket['encoding_profile_name'] . ')' : '')
+				' – ' . h($ticket['title']) . ((!empty($ticket['encoding_profile_name']))? ' (' . $ticket['encoding_profile_name'] . ')' : '')
 				. (($ticket['failed'])? ' (' . $ticket['ticket_state'] . ' failed)' : (($ticket['needs_attention'])? ' (needs attention)' : '')) . '"
 			*/
 				
 				$t .= '<span class="vid' . (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : '') . '">';
 				
 				if (empty($ticket['parent_id']) or isset($simulateTickets)) {
-					$t .= $this->h($ticket['fahrplan_id']);
+					$t .= h($ticket['fahrplan_id']);
 				} else {
 					$t .=  '&nbsp;';
 				}
@@ -33,7 +33,7 @@ if (!empty($tickets)) {
 				$t .= '</span><span class="title"';
 				
 				if (empty($ticket['parent_id']) and mb_strlen($ticket['title']) > 40) {
-					$t .= ' aria-label="' . $this->h($ticket['title']) . '" data-tooltip="true"';
+					$t .= ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"';
 				}
 				
 				$t .= '>';
@@ -45,26 +45,26 @@ if (!empty($tickets)) {
 				} elseif ($ticket['ticket_type'] == 'ingest') {
 					$t .= 'Ingest';
 				} else {
-					$t .= $this->h(str_shorten($ticket['title'], 40));
+					$t .= h(str_shorten($ticket['title'], 40));
 				}
 				
 				$t .= '</span><span class="state' . (($ticket['failed'])? ' failed' : '') . '">' . $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : '');
 				$t .= '</span><span class="day">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
-					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . $this->h($ticket['fahrplan_day'])) : '-'; 
+					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-'; 
 				}
 				
 				$t .= '</span><span class="start">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_start'])) {
-					$t .= $this->h($ticket['fahrplan_start']);
+					$t .= h($ticket['fahrplan_start']);
 				}
 				
 				$t .= '</span><span class="room">';
 				
 				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
-					$t .= $this->h($ticket['fahrplan_room']);
+					$t .= h($ticket['fahrplan_room']);
 				}
 				
 				$t .= '</span><span class="view"></span>';

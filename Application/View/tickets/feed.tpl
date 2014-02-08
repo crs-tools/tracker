@@ -59,7 +59,7 @@ foreach ($log as $entry) {
 		*/
 		
 		if ($entry->includesMessage()) {
-			$lines = array_filter(explode("\n", $this->h($entry['comment'])));
+			$lines = array_filter(explode("\n", h($entry['comment'])));
 	
 			$e .= '<code>' . nl2br(implode('<br />', array_slice($lines, 0, 3)));
 	
