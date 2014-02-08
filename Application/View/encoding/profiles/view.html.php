@@ -52,4 +52,4 @@
 	</form>
 </div>
 
-<?php $this->render('shared/editor.tpl'); ?>
+<?php $this->render('shared/editor.html.php'); ?>

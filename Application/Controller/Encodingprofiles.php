@@ -14,7 +14,7 @@
 				->scoped(['with_version_count'])
 				->orderBy('slug');
 			
-			return $this->render('encoding/profiles/index.tpl');
+			return $this->render('encoding/profiles/index');
 		}
 		
 		public function view(array $arguments) {
@@ -25,7 +25,7 @@
 			$this->form('encodingprofiles', 'compare', $this->profile);
 			$this->versions = $this->profile->Versions->orderBy('revision DESC');
 			
-			return $this->render('encoding/profiles/view.tpl');
+			return $this->render('encoding/profiles/view');
 		}
 		
 		public function compare(array $arguments) {
@@ -70,7 +70,7 @@
 				->orderBy('slug')
 				->indexBy('id', 'name');
 			
-			return $this->render('encoding/profiles/edit.tpl');
+			return $this->render('encoding/profiles/edit');
 		}
 		
 		public function edit(array $arguments) {
@@ -112,7 +112,7 @@
 				->whereNot(['id' => $this->profile['id']])
 				->indexBy('id', 'name');
 			
-			return $this->render('encoding/profiles/edit.tpl');
+			return $this->render('encoding/profiles/edit');
 		}
 		
 		public function delete(array $arguments) {

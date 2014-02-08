@@ -33,7 +33,7 @@
 				}
 			}
 			
-			return $this->render('user/login.tpl');
+			return $this->render('user/login');
 		}
 		
 		public function logout() {
@@ -59,13 +59,13 @@
 				}
 			}
 			
-			return $this->render('user/settings.tpl');
+			return $this->render('user/settings');
 		}
 		
 		
 		public function index() {
 			$this->users = User::findAll()->orderBy('name');
-			return $this->render('user/index.tpl');
+			return $this->render('user/index');
 		}
 		/*
 		public function substitute(array $arguments) {
@@ -103,7 +103,7 @@
 				return $this->redirect('user', 'index');
 			}
 			
-			return $this->render('user/edit.tpl');
+			return $this->render('user/edit');
 		}
 		
 		public function edit(array $arguments) {
@@ -123,7 +123,7 @@
 				}
 			}
 			
-			return $this->render('user/edit.tpl');
+			return $this->render('user/edit');
 		}
 		
 		public function delete(array $arguments) {

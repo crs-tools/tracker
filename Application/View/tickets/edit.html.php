@@ -5,7 +5,7 @@
 } ?>
 
 <?php if (!empty($ticket)):
-	echo $this->render('tickets/view/header.tpl', [
+	echo $this->render('tickets/view/header.html.php', [
 		'titlePrefix' => 'Edit ',
 		'showDetails' => false,
 		'currentAction' => 'edit'
@@ -90,7 +90,7 @@ else: ?>
 	</fieldset>
 	<fieldset class="foldable">
 		<legend>Properties</legend>
-		<?php echo $this->render('shared/form/properties.tpl', array(
+		<?php echo $this->render('shared/form/properties.html.php', array(
 			'f' => $f,
 			'properties' => array(
 				'for' => (!empty($ticket))? $ticket->Properties->orderBy('name') : null,

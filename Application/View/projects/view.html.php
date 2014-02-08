@@ -17,13 +17,13 @@
 
 <h3 class="table">Properties</h3>
 
-<?= $this->render('shared/properties.tpl'); ?>
+<?= $this->render('shared/properties.html.php'); ?>
 
 <h3 class="table">Encoding profiles</h3>
-<?= $this->render('projects/view/profiles.tpl'); ?>
+<?= $this->render('projects/view/profiles.html.php'); ?>
 
 <h3 class="table">States</h3>
-<?= $this->render('projects/view/states.tpl'); ?>
+<?= $this->render('projects/view/states.html.php'); ?>
 
 <h3 class="table">Worker groups</h3>
-<?= $this->render('projects/view/worker.tpl'); ?>
+<?= $this->render('projects/view/worker.html.php'); ?>

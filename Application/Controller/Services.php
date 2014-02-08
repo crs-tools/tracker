@@ -10,7 +10,7 @@
 				return $this->View->redirect('services', 'workers', array('project_slug' => $this->Project->slug));
 			}
 			
-			$this->View->render('services/hold.tpl');
+			$this->View->render('services/hold');
 		}
 		
 		public function resume() {

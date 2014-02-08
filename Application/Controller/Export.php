@@ -21,7 +21,7 @@
 			}
 			*/
 			
-			return $this->render('export/index.tpl');
+			return $this->render('export/index');
 		}
 		
 		public function wiki() {			
@@ -33,7 +33,7 @@
 			
 			if ($this->View->respondTo('txt')) {
 				$this->View->contentType('text/plain', true);
-				return $this->View->render('tickets/export/wiki.tpl');
+				return $this->View->render('tickets/export/wiki');
 			}
 			
 			if (!Request::isPostRequest()) {
@@ -113,7 +113,7 @@
 			$this->View->assign('encodings', Model::groupByField($this->Ticket->findAll(array(), 'parent_id IS NOT NULL AND state_id = ? AND encoding_profile_id = ?', array(23, $profile['id']), null, null, 'fahrplan_id, modified'), 'fahrplan_id'));
 			
 			$this->View->contentType('application/rss+xml', true);
-			$this->View->render('export/podcast.tpl');
+			$this->View->render('export/podcast');
 		}
 		
 	}

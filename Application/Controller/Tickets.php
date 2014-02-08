@@ -181,14 +181,14 @@
 			}
 			*/
 			/*if ($this->View->respondTo('json')) {
-				$this->render('tickets/table.tpl');
+				$this->render('tickets/table');
 			} else {*/
 				
 			if ($this->respondTo('json')) {
 				$this->json = [];
-				return $this->render('tickets/list.tpl');
+				return $this->render('tickets/list');
 			} else {
-				return $this->render('tickets/index.tpl');
+				return $this->render('tickets/index');
 			}
 		}
 		
@@ -229,7 +229,7 @@
 				->joins(['Handle'])
 				->orderBy('created DESC');
 			
-			return $this->render('tickets/view.tpl');
+			return $this->render('tickets/view');
 		}
 		
 		public function log(array $arguments) {
@@ -286,7 +286,7 @@
 				$this->json = [];
 			}
 			
-			return $this->render('tickets/feed.tpl');
+			return $this->render('tickets/feed');
 		}
 		
 		public function cut(array $arguments) {
@@ -475,7 +475,7 @@
 			
 			// $this->comments = $this->ticket->Comments->joins(['User']);
 			
-			return $this->render('tickets/view.tpl');
+			return $this->render('tickets/view');
 		}
 		
 		private function _undoAction($action, array $arguments) {
@@ -633,7 +633,7 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
-			return $this->render('tickets/edit.tpl');
+			return $this->render('tickets/edit');
 		}
 		
 		public function edit(array $arguments) {
@@ -669,7 +669,7 @@
 				->select('revision, description')
 				->first();
 			
-			return $this->render('tickets/edit.tpl');
+			return $this->render('tickets/edit');
 		}
 		
 		/*public function mass_edit(array $arguments) {
@@ -716,7 +716,7 @@
 			$this->View->assign('types', $this->Type->getList('name'));
 			$this->View->assign('states', $this->State->getList('name', array('ticket_type_id' => 1), array(), 'id'));
 			
-			$this->View->render('tickets/mass_edit.tpl');
+			$this->View->render('tickets/mass_edit');
 		}*/
 		
 		public function delete(array $arguments) {

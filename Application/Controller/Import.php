@@ -36,7 +36,7 @@
 			
 			$this->source = $this->project->Properties->where(['name' => 'Fahrplan.XML'])->first();
 			
-			return $this->render('import/index.tpl');
+			return $this->render('import/index');
 		}
 		
 		public function rooms() {
@@ -63,7 +63,7 @@
 				'xml' => $xml->asXML()
 			];
 			
-			return $this->render('import/rooms.tpl');
+			return $this->render('import/rooms');
 		}
 		
 		public function review() {
@@ -221,7 +221,7 @@
 			// TODO: should we add a project wide lock?
 			$_SESSION['import'] = $this->tickets;
 			
-			return $this->render('import/review.tpl');
+			return $this->render('import/review');
 		}
 		
 		

@@ -68,7 +68,7 @@
 	</form>
 <?php endif;*/ ?>
 
-<?= $this->render('tickets/list.tpl'); ?>
+<?= $this->render('tickets/list.html.php'); ?>
 
 <?php /*if (Request::exists(Request::get, 'search')): ?>
 	<script type="text/javascript">

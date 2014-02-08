@@ -22,7 +22,7 @@
 				<?php switch ($action) {
 					case 'cut':
 					case 'check':
-						echo $this->render('tickets/view/action/' . $action . '.tpl', ['f' => $f]);
+						echo $this->render('tickets/view/action/' . $action . '.html.php', ['f' => $f]);
 						break;
 				} ?>
 					<?php

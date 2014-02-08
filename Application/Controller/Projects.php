@@ -20,7 +20,7 @@
 		
 		public function index() {
 			$this->projects = Project::findAll();
-			return $this->render('projects/index.tpl');
+			return $this->render('projects/index');
 		}
 		
 		public function view() {
@@ -88,7 +88,7 @@
 				->indexBy('id')
 				->toArray();
 			
-			return $this->render('projects/view.tpl');
+			return $this->render('projects/view');
 		}
 		
 		public function create() {
@@ -101,7 +101,7 @@
 				return $this->redirect('projects', 'view', $project);
 			}
 			
-			return $this->render('projects/edit.tpl');
+			return $this->render('projects/edit');
 		}
 		
 		public function edit(array $arguments) {
@@ -112,7 +112,7 @@
 				return $this->redirect('projects', 'view', $this->project);
 			}
 			
-			return $this->render('projects/edit.tpl');
+			return $this->render('projects/edit');
 		}
 		
 		public function delete(array $arguments) {
@@ -123,7 +123,7 @@
 				return $this->redirect('projects', 'index');
 			}
 			
-			return $this->render('projects/delete.tpl');
+			return $this->render('projects/delete');
 		}
 		
 	}
