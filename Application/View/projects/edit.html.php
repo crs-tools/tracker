@@ -2,7 +2,7 @@
 echo $f = $form(array('id' => 'project-edit')); ?>
 	<fieldset>
 		<?php if (!empty($project)): ?>
-			<h2>Edit project <?php echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), $project['title']); ?></h2>
+			<h2>Edit project <?php echo $this->linkTo('projects', 'view', array('project_slug' => $project['slug']), h($project['title'])); ?></h2>
 		<?php else: ?>
 			<h2>Create new project</h2>
 		<?php endif; ?>

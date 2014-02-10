@@ -22,7 +22,7 @@
 					<li class="padding">›</li>
 					<?php /* ($arguments['controller'] != 'projects' or $arguments['action'] != 'view')? ' current' : ''; */ ?>
 					<li class="link current">
-						<?php echo $this->linkTo('tickets', 'feed', $project, $project['title']);
+						<?php echo $this->linkTo('tickets', 'feed', $project, h($project['title']));
 						
 						if (User::isAllowed('projects', 'edit')) {
 							echo ' ' . $this->linkTo('projects', 'view', $project, '(settings)');
