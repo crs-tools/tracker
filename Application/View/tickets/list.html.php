@@ -83,11 +83,11 @@ if (!empty($tickets)) {
 					) . '</span>';
 				}
 				
-				if (User::isAllowed('tickets', 'cut') and $ticket->isEligibleAction('cut')) {
+				if ($ticket->isEligibleAction('cut') and User::isAllowed('tickets', 'cut')) {
 					$t .= $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut recording "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
-				if (User::isAllowed('tickets', 'check') and $ticket->isEligibleAction('check')) {
+				if ($ticket->isEligibleAction('check') and User::isAllowed('tickets', 'check')) {
 					$t .= $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check "' . $ticket['title'] . '"', array('class' => 'action'));
 				}
 				
