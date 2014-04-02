@@ -840,7 +840,10 @@ var Tracker = {};
           .appendTo(container);
         
         $('<a></a>')
-          .attr('href', '#')
+          .attr({
+            'href': '#',
+            'title': 'Delete ' + this.description
+          })
           .addClass('delete')
           .text('Delete ' + this.description)
           .click(function(event) {
