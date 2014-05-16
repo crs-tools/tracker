@@ -28,7 +28,7 @@
 	
 		Router::addRoutes(ROOT . 'Config/Routes.php');
 		
-		$requested = Controller::runWithRequest();
+		$requested = Controller::run();
 		
 		$time = microtime(true) - $time;
 		Log::info(sprintf(
@@ -41,8 +41,8 @@
 	} catch (Exception $e) {
 		Log::handleException($e);
 		
-		$c = ($e->getCode() > 0)? $e->getCode() : 500;
-		echo Controller::renderTemplate($c . '.tpl', [], null, new Response($c));
+		$c = ($e->getCode() > 400)? $e->getCode() : 500;
+		echo Controller::renderTemplate($c, [], null, new Response($c));
 	}
 	
 ?>
