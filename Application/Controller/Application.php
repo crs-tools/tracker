@@ -26,7 +26,8 @@
 		protected function addHeaders() {
 			$this->Response->addHeader(
 				'Content-Security-Policy',
-				'default-src \'self\'; font-src \'none\'; frame-src \'none\'; object-src \'none\'; style-src \'self\' \'unsafe-inline\''
+				'default-src \'self\'; font-src \'none\'; frame-src \'none\';' .
+					'object-src \'none\'; style-src \'self\' \'unsafe-inline\''
 			);
 			$this->Response->addHeader('X-Content-Type-Options', 'nosniff');
 			$this->Response->addHeader('X-Frame-Options', 'DENY');
@@ -48,7 +49,7 @@
 		
 		public function notFound() {
 			$this->Response->setCode(404);
-			return $this->render('404.tpl');
+			return $this->render('404');
 		}
 		
 		public function notAllowed() {
@@ -60,7 +61,7 @@
 			}
 			
 			$this->Response->setCode(403);
-			return $this->render('403.tpl');
+			return $this->render('403');
 		}
 		
 		// TODO: redirectWithReference($default, array('ref1' => […], 'ref2' => …))
