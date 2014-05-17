@@ -286,7 +286,7 @@
 				$this->json = [];
 			}
 			
-			return $this->render('tickets/feed');
+			return $this->render('tickets/feed', ['format' => ['html', 'json']]);
 		}
 		
 		public function cut(array $arguments) {
