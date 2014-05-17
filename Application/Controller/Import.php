@@ -353,7 +353,13 @@
 				
 				libxml_use_internal_errors(true);
 				
-				if (!$xml = simplexml_load_file(realpath($path))) {
+				if (!$xml = file_get_contents(realpath($path))) {
+					$this->flash('Could not read file');
+					return false;
+				}
+				
+				// TODO: load file via file_get_contents
+				if (!$xml = simplexml_load_string($xml)) {
 					$errors = libxml_get_errors();
 					$this->flash('Could not parse XML' . ((count($errors) > 0)? (': ' . $errors[0]->message) : ''));
 					
