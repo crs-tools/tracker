@@ -282,10 +282,6 @@
 			);
 			$this->progress = Ticket::getTotalProgress($this->project['id']);
 			
-			if ($this->respondTo('json')) {
-				$this->json = [];
-			}
-			
 			return $this->render('tickets/feed', ['format' => ['html', 'json']]);
 		}
 		
