@@ -49,12 +49,12 @@
 		} elseif ($days < 2) {
 			return 'yesterday at ' . $dateTime->format('H:i');
 		} elseif ($days < 7) {
-			return $dateTime->format('l');
+			return $dateTime->format('l') . ' at ' . $dateTime->format('H:i');
 		}
 		
 		$year = $dateTime->format('Y');
 		
-		return 'on ' . $dateTime->format('D j') .
+		return 'on ' . $dateTime->format('M j') .
 			(($now->format('Y') != $year)? (', ' . $year) : '');
 	}
 	
