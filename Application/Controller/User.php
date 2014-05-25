@@ -16,7 +16,11 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
-				if (User::login($this->form->getValue('user'), $this->form->getValue('password'))) {
+				if (User::login(
+					$this->form->getValue('user'),
+					$this->form->getValue('password'),
+					$this->form->getValue('remember')
+				)) {
 					$this->flash('Login successful');
 					
 					
@@ -87,7 +91,6 @@
 				throw new ActionNotAllowedException();
 			}
 			
-			// TODO: redirect back to last URL?
 			if (Request::getReferer(true)) {
 				return $this->View->redirect(Request::getReferer(true));
 			} else {
