@@ -44,7 +44,7 @@
 			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
 				->where(['project_id' => $this->project['id']])
-				->joins(['Handle'])
+				->join(['Handle'])
 				->scoped([
 					'with_default_properties',
 					'with_encoding_profile_name',
@@ -209,11 +209,9 @@
 					'with_progress'
 				])
 				->orderBy('ticket_type, title')
-				->joins(['Handle']);
+				->join(['Handle']);
 			
-			$this->properties = $this->ticket
-				->Properties
-				->orderBy('name');
+			$this->properties = $this->ticket->Properties;
 			
 			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'id, name']])
 				->where(['id' => $this->ticket['encoding_profile_version_id']])
@@ -222,11 +220,11 @@
 			
 			$this->comments = $this->ticket
 				->Comments
-				->joins(['User'])
+				->join(['User'])
 				->orderBy('created DESC');
 			$this->log = $this->ticket
 				->LogEntries
-				->joins(['Handle'])
+				->join(['Handle'])
 				->orderBy('created DESC');
 			
 			return $this->render('tickets/view');
@@ -262,7 +260,7 @@
 		
 		public function feed() {
 			$this->log = LogEntry::findAll()
-				->joins(['Handle', 'Ticket'])
+				->join(['Handle', 'Ticket'])
 				->where(['tbl_ticket.project_id' => $this->project['id']])
 				->orderBy('created DESC, id DESC')
 				->limit(100);
@@ -334,20 +332,19 @@
 			
 			$this->properties = $this->ticket
 				->Properties
-				->orderBy('name')
 				->indexBy('name', 'value');
+			
 			$this->parentProperties = $this->ticket
 				->Parent
 				->Properties
-				->orderBy('name')
 				->indexBy('name', 'value');
+			
 			$this->recordingProperties = $this->ticket
 				->Parent
 				->Children
 				->where(['ticket_type' => 'recording'])
 				->first()
 				->Properties
-				->orderBy('name')
 				->indexBy('name', 'value');
 			
 			if ($this->actionForm->wasSubmitted()) {
@@ -431,7 +428,7 @@
 			
 			$this->comments = $this->ticket
 				->Comments
-				->joins(['User'])
+				->join(['User'])
 				->orderBy('created DESC');
 			$this->log = $this->ticket
 				->LogEntries
@@ -469,7 +466,7 @@
 			}
 			*/
 			
-			// $this->comments = $this->ticket->Comments->joins(['User']);
+			// $this->comments = $this->ticket->Comments->join(['User']);
 			
 			return $this->render('tickets/view');
 		}

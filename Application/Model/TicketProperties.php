@@ -4,17 +4,17 @@
         'String'
     );
 
-	class TicketProperties extends Model/*_Properties*/ {
+	class TicketProperties extends Model {
 		
 		const TABLE = 'tbl_ticket_property';
 		
-		public $primaryKey = array('ticket_id', 'name');
+		public $primaryKey = ['ticket_id', 'name'];
 		
 		const CREATE_IF_NOT_EXISTS = true;
 		
-		public $belongsTo = array('Ticket' => array('foreign_key' => 'ticket_id'));
+		public $belongsTo = ['Ticket' => ['foreign_key' => ['ticket_id']]];
 
-        public static function buildSlug(Model $project, $properties = array()) {
+        public static function buildSlug(Model $project, $properties = []) {
             $parts = array();
 
             if(isset($properties['Meta.Acronym'])) {
@@ -50,7 +50,9 @@
             return implode('-', $parts);
         }
 		
-		// TODO: add default scope: orderBy('name')
+		public function defaultScope(Model_Resource $resource) {
+			$resource->orderBy('name');
+		}
 	}
 	
 ?>

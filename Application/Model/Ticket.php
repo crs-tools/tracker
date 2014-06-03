@@ -14,62 +14,62 @@
 		
 		const CLASS_RESOURCE = 'Ticket_Resource';
 		
-		public $hasMany = array(
-			'Children' => array(
+		public $hasMany = [
+			'Children' => [
 				'class_name' => 'Ticket',
-				'foreign_key' => 'parent_id'
-			),
-			'Comments' => array(
+				'foreign_key' => ['parent_id']
+			],
+			'Comments' => [
 				'class_name' => 'Comment',
-				'foreign_key' => 'ticket_id'
-			),
-			'LogEntries' => array(
+				'foreign_key' => ['ticket_id']
+			],
+			'LogEntries' => [
 				'class_name' => 'LogEntry',
-				'foreign_key' => 'ticket_id'
-			),
-			'Properties' => array(
+				'foreign_key' => ['ticket_id']
+			],
+			'Properties' => [
 				'class_name' => 'TicketProperties',
-				'foreign_key' => 'ticket_id',
+				'foreign_key' => ['ticket_id'],
 				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
-			)
-		);
+			]
+		];
 		
-		public $belongsTo = array(
-			'EncodingProfileVersion' => array(
-				'foreign_key' => 'encoding_profile_version_id'
-			),
-            'Handle' => array(
-                'foreign_key' => 'handle_id',
+		public $belongsTo = [
+			'EncodingProfileVersion' => [
+				'foreign_key' => ['encoding_profile_version_id']
+			],
+            'Handle' => [
+                'foreign_key' => ['handle_id'],
                 'select' => 'name AS handle_name'
-            ),
-			'Parent' => array(
+            ],
+			'Parent' => [
 				'class_name' => 'Ticket',
-				'foreign_key' => 'parent_id',
+				'foreign_key' => ['parent_id'],
 				'join' => false
-			),
-            'Project' => array(
-                'foreign_key' => 'project_id'
-            ),
-			'State' => array(
+			],
+            'Project' => [
+                'foreign_key' => ['project_id']
+            ],
+			'State' => [
 				'class_name' => 'ProjectTicketState',
-				'primary_key' => array('project_id', 'ticket_type', 'ticket_state'),
-				'foreign_key' => array('project_id', 'ticket_type', 'ticket_state')
-			),
-			'User' => array(
-				'foreign_key' => 'handle_id',
+				'primary_key' => ['project_id', 'ticket_type', 'ticket_state'],
+				'foreign_key' => ['project_id', 'ticket_type', 'ticket_state']
+			],
+			'User' => [
+				'foreign_key' => ['handle_id'],
 				'select' => 'name as user_name'
-			),
-			'Worker' => array(
-				'foreign_key' => 'handle_id',
+			],
+			'Worker' => [
+				'foreign_key' => ['handle_id'],
                 'select' => 'name as worker_name'
-			)
-		);
+			]
+		];
 		
-		public $acceptNestedEntriesFor = array(
+		public $acceptNestedEntriesFor = [
 			'Properties' => true
-		);
+		];
 		
-		public $scopes = array(
+		public $scopes = [
 			'filter_recording',
 			'filter_cutting',
 			'filter_encoding',
@@ -87,7 +87,7 @@
 			'with_properties',
 			'with_recording',
 			'without_locked'
-		);
+		];
 		
 		public static function filter_recording(Model_Resource $resource, array $arguments) {
 			self::filter_state($resource, [
@@ -380,11 +380,11 @@
 			if(!empty($limit)) {
 				$query .= ' LIMIT '.$limit;
 			}
-			return $this->findBySQL($query, array('state_id' => $state, 'project_id' => $this->Project->current()->id, 'role' => 'worker', 'timeout' => $timeout), array());
+			return $this->findBySQL($query, ['state_id' => $state, 'project_id' => $this->Project->current(]->id, 'role' => 'worker', 'timeout' => $timeout), []);
 		}
 		
 		public function resetRecordingTask($id) {
-			if (!$this->Database->query(Database_Query::updateTable($this->table, array('state_id' => $this->State->getIdByName('cutting'), 'failed' => true, 'user_id' => null), array('id' => $id, 'type_id' => 1)))) {
+			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('cutting'], 'failed' => true, 'user_id' => null), ['id' => $id, 'type_id' => 1]))) {
 				return false;
 			}
 			
@@ -394,11 +394,11 @@
 				'event' => 'Recording.Reset'
 			));
 			
-			if (!$this->Database->query(Database_Query::updateTable($this->table, array('state_id' => $this->State->getIdByName('material needed'), 'failed' => false, 'user_id' => null), array('parent_id' => $id, 'type_id' => 2)))) {
+			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('material needed'], 'failed' => false, 'user_id' => null), ['parent_id' => $id, 'type_id' => 2]))) {
 				return false;
 			}
 			
-			$this->Database->query(Database_Query::selectFrom($this->table, 'id', array('parent_id' => $id, 'state_id' => $this->State->getIdByName('material needed'), 'failed' => false)));
+			$this->Database->query(Database_Query::selectFrom($this->table, 'id', ['parent_id' => $id, 'state_id' => $this->State->getIdByName('material needed'], 'failed' => false)));
 			
 			foreach ($this->Database->fetch() as $encodingTask) {
 				$this->LogEntry->create(array(
@@ -412,7 +412,7 @@
 		}
 		
 		public function resetEncodingTask($id) {
-			if (!$this->Database->query(Database_Query::updateTable($this->table, array('state_id' => $this->State->getIdByName('ready to encode'), 'failed' => false, 'user_id' => null), array('id' => $id, 'type_id' => 2)))) {
+			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('ready to encode'], 'failed' => false, 'user_id' => null), ['id' => $id, 'type_id' => 2]))) {
 				return false;
 			}
 			

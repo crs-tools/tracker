@@ -19,15 +19,25 @@
 		public $requireAuthorization = true;
 		
 		public function index() {
+			// var_dump(User::getCurrent());
+			/*
+			$u = User::getCurrent();
+			$u = clone $u;
+			$u['role'] = 'user';
+			var_dump($u);
+			var_dump(serialize($u));
+			// var_dump(unserialize(serialize($u)));
+			*/
+			
+			// return [200, [], ''];
+			
 			$this->projects = Project::findAll();
 			return $this->render('projects/index');
 		}
 		
 		public function view() {
 			// Properties
-			$this->properties = $this->project
-				->Properties
-				->orderBy('name');
+			$this->properties = $this->project->Properties;
 			
 			// Encoding Profiles
 			$this->profilesForm = $this->form();
@@ -38,12 +48,12 @@
 			
 			$this->versions = $this->project
 				->EncodingProfileVersion
-				->joins(['EncodingProfile'])
+				->join(['EncodingProfile'])
 				->orderBy(EncodingProfile::TABLE . '.name');
 			$this->versions->fetch();
 			
 			$this->versionsLeft = EncodingProfileVersion::findAll()
-				->joins([
+				->join([
 					'EncodingProfile' => [
 						'select' => 'name'
 					]
@@ -63,13 +73,15 @@
 			$this->stateForm = $this->form();
 			
 			$this->states = TicketState::findAll()
-				->joins(['ProjectTicketState' => [
+				->join(['ProjectTicketState' => [
 					'where' => ['project_id' => $this->project['id']]
 				]])
 				->select('ticket_type, ticket_state, service_executable')
 				->orderBy('ticket_type, sort');
 
 			if ($this->stateForm->wasSubmitted() and $this->project->save($this->stateForm->getValues())) {
+				// TODO: move to Model?
+				Cache::invalidateNamespace('project.' . $this->project['id'] . '.states');
 				$this->flashNow('Updated enabled states');
 			}
 			

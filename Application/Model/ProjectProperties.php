@@ -1,6 +1,6 @@
 <?php
 	
-	class ProjectProperties extends Model/*_Properties*/ {
+	class ProjectProperties extends Model {
 		
 		const TABLE = 'tbl_project_property';
 		
@@ -9,6 +9,10 @@
 		const CREATE_IF_NOT_EXISTS = true;
 		
 		public $belongsTo = array('Project' => array());
+		
+		public function defaultScope(Model_Resource $resource) {
+			$resource->orderBy('name');
+		}
 		
 	}
 	

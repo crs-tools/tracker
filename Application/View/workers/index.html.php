@@ -41,7 +41,7 @@
 				<?php foreach ($group->Worker->orderBy('last_seen') as $worker): ?>
 					<tr>
 						<td><?= h($worker['name']); ?></td>
-						<td><?= h($worker['hostname']); ?></td>
+						<td></td>
 						<td><?= (new DateTime($worker['last_seen']))->format('d.m.Y H:i:s'); ?></td>
 						<td colspan="4"></td>
 					</tr>

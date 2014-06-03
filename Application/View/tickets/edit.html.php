@@ -33,7 +33,7 @@ else: ?>
 <?= $f = $form(array('id' => 'ticket-edit')); ?>
 	<fieldset>
 		<ul>
-			<li><?php echo $f->input('title', 'Title', $ticket['title'], array('class' => 'wide')); ?></li>
+			<li><?php echo $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', array('class' => 'wide')); ?></li>
 			
 			<?php if (isset($profile)): ?>
 				<li>
@@ -51,13 +51,13 @@ else: ?>
 			<li><?= $f->select(
 				'handle_id', 'Assignee',
 				['' => '–'] + $users->toArray(),
-				$ticket['handle_id'],
+				(!empty($ticket))? $ticket['handle_id'] : '',
 				[
 					'data-current-user-id' => User::getCurrent()['id'],
 					'data-current-user-name' => User::getCurrent()['name']
 				]
 			); ?></li>
-			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']); ?></li>
+			<li class="checkbox"><?php echo $f->checkbox('needs_attention', 'Ticket needs attention', (!empty($ticket))? $ticket['needs_attention'] : false); ?></li>
 			<?php $f->register('comment'); ?>
 		</ul>
 	</fieldset>
@@ -85,7 +85,7 @@ else: ?>
 					<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), $ticket['ticket_state'], array('id' => 'ticket-edit-state')) ?>
 				<?php endif; ?>
 			</li>
-			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', $ticket['failed']); ?></li>
+			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>
 	</fieldset>
 	<fieldset class="foldable">
@@ -93,7 +93,7 @@ else: ?>
 		<?php echo $this->render('shared/form/properties', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => (!empty($ticket))? $ticket->Properties->orderBy('name') : null,
+				'for' => (!empty($ticket))? $ticket->Properties : null,
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',

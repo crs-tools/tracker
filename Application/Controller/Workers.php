@@ -12,16 +12,7 @@
 		
 		public function index() {
 			$this->groups = WorkerGroup::findAll();
-			return $this->render('workers/index.tpl');
-		}
-		
-		public function project() {
-			/*if (Request::get('t')) {
-				$this->View->assign('service', $this->State->getService(Request::get('t')));
-			}*/
-			
-			//$this->View->assign('workers', $this->User->findAll(array('Ticket' => array('limit' => 1)/*, 'ServiceLogEntry'*/), 'role = ? AND last_seen IS NOT NULL AND AGE(last_seen) < ?', array('worker', '1 week'), 'name'));
-			return $this->render('workers/project.tpl');
+			return $this->render('workers/index');
 		}
 		
 		public function create_group() {
@@ -36,7 +27,7 @@
 				return $this->redirect('workers', 'index');
 			}
 			
-			return $this->render('workers/group/edit.tpl');
+			return $this->render('workers/group/edit');
 		}
 		
 		public function edit_group(array $arguments) {
@@ -61,7 +52,7 @@
 				}
 			}
 			
-			return $this->render('workers/group/edit.tpl');
+			return $this->render('workers/group/edit');
 		}
 		
 		public function delete_group(array $arguments) {
@@ -71,6 +62,16 @@
 			
 			$this->flash('Worker group deleted');
 			return $this->redirect('workers', 'index');
+		}
+		
+		public function queue(array $arguments) {
+			if (!$this->group = WorkerGroup::find($arguments['id'])) {
+				throw new EntryNotFoundException();
+			}
+			
+			// TODO: fetch queue
+			
+			return $this->render('workers/group/queue');
 		}
 		
 	}

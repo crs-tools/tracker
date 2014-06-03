@@ -10,6 +10,10 @@
 		
 		public $belongsTo = array('Project' => array());
 			
+		public function defaultScope(Model_Resource $resource) {
+			$resource->orderBy('language');
+		}
+		
 	}
 	
 ?>

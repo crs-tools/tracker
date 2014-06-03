@@ -7,9 +7,9 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 			<h2>Create new project</h2>
 		<?php endif; ?>
 		<ul>
-			<li><?php echo $f->input('title', 'Title', $project['title'], array('class' => 'wide')); ?></li>
-			<li><?php echo $f->input('slug', 'Slug', $project['slug'], array('class' => 'narrow')); ?></li>
-			<li class="checkbox"><?php echo $f->checkbox('read_only', 'Disable write access to this project.', $project['read_only']); ?></li>
+			<li><?php echo $f->input('title', 'Title', (!empty($project))? $project['title'] : '', array('class' => 'wide')); ?></li>
+			<li><?php echo $f->input('slug', 'Slug', (!empty($project))? $project['slug'] : '', array('class' => 'narrow')); ?></li>
+			<li class="checkbox"><?php echo $f->checkbox('read_only', 'Disable write access to this project.', (!empty($project))? $project['read_only'] : false); ?></li>
 		</ul>
 	</fieldset>
 	<fieldset>
@@ -17,7 +17,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 		<?php echo $this->render('shared/form/properties', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => (!empty($project))? $project->Languages->orderBy('language') : null,
+				'for' => (!empty($project))? $project->Languages : null,
 				'field' => 'languages',
 				'description' => 'language',
 				'key' => 'language',
@@ -30,7 +30,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 		<?php echo $this->render('shared/form/properties', array(
 			'f' => $f,
 			'properties' => array(
-				'for' => (!empty($project))? $project->Properties->orderBy('name') : null,
+				'for' => (!empty($project))? $project->Properties : null,
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',

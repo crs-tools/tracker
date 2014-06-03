@@ -8,25 +8,25 @@
 		
 		const TABLE = 'tbl_encoding_profile';
 		
-		public $hasOne = array(
-			'LatestVersion' => array(
+		public $hasOne = [
+			'LatestVersion' => [
 				'class_name' => 'EncodingProfileVersion',
-				'foreign_key' => 'encoding_profile_id',
+				'foreign_key' => ['encoding_profile_id'],
 				'order_by' => 'tbl_encoding_profile_version.revision DESC',
 				'join' => false
-			)
-		);
+			]
+		];
 		
-		public $hasMany = array(
-			'Versions' => array(
+		public $hasMany = [
+			'Versions' => [
 				'class_name' => 'EncodingProfileVersion',
-				'foreign_key' => 'encoding_profile_id'
-			)
-		);
+				'foreign_key' => ['encoding_profile_id']
+			]
+		];
 		
-		public $acceptNestedEntriesFor = array(
+		public $acceptNestedEntriesFor = [
 			'Versions' => true // TODO: disable destroy
-		);
+		];
 		
 		public $scopes = [
 			'with_version_count'
@@ -35,7 +35,7 @@
 		public static function with_version_count(Model_Resource $resource, array $arguments) {
 			$resource->select(
 				'*',
-				EncodingProfileVersion::findAll(array())
+				EncodingProfileVersion::findAll()
 					->select('COUNT(*)')
 					->where('encoding_profile_id = ' . self::TABLE . '.id')
 					->selectAs('versions_count')
