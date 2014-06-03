@@ -14,7 +14,9 @@
 	
 	// Read only
 	AccessControl::allow('read only', ['projects'], ['index']);
-	AccessControl::allow('read only', ['user'], ['settings', 'logout']);
+	AccessControl::allow('read only', ['user'], [
+		'settings', 'logout', 'changeback', 'act_as_substitute'
+	]);
 	
 	AccessControl::allow(
 		'read only',
@@ -44,5 +46,7 @@
 	
 	// Admin
 	AccessControl::allow('admin');
+	
+	AccessControl::deny('admin', ['user'], ['act_as_substitute']);
 	
 ?>

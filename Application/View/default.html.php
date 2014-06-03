@@ -38,9 +38,9 @@
 					<li class="right padding">·</li>
 					<li class="right text">
 						Signed in as <strong><?= User::getCurrent()['name']; ?></strong>
-						<?php /*if ($this->User->isSubstitute()) {
+						<?php if (User::isSubstitute()) {
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
-						}*/ ?>
+						} ?>
 					</li>
 				<?php else: ?>
 					<li class="right link"><?= $this->linkTo('user', 'login', 'Login'); ?></li>

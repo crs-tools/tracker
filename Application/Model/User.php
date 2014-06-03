@@ -2,10 +2,13 @@
 	
 	requires(
 		'Model/Authentication/User',
+		'Model/Authentication/Substitution',
 		'/Model/Worker'
 	);
 	
 	class User extends Model_Authentication_User {
+		
+		use Model_Authentication_Substitution;
 		
 		const TABLE = 'tbl_user';
 		

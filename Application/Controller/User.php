@@ -71,33 +71,40 @@
 			$this->users = User::findAll()->orderBy('name');
 			return $this->render('user/index');
 		}
-		/*
+		
 		public function substitute(array $arguments) {
-			if (empty($arguments['id'])) {
-				return $this->View->redirect('user', 'index');
+			if (!$user = User::find($arguments['id'])) {
+				throw new EntryNotFoundException();
 			}
 			
-			if (!$this->User->substitute($arguments['id'])) {
+			if (!AccessControl::isAllowed($user['role'], 'user', 'act_as_substitute')) {
+				$this->flash('You are not allowed to login in the name of this user');
+				return $this->redirect('user', 'index');
+			}
+			
+			if (!$user->substitute()) {
 				$this->flash('You cannot login in the name of this user');
-				return $this->View->redirect('user', 'index');
+				return $this->redirect('user', 'index');
 			}
 			
-			$this->flash('You are now logged in as ' . $this->User->get('name'));
-			return $this->View->redirect('projects', 'index');
+			$this->flash('You are now logged in as ' . User::getCurrent()['name']);
+			return $this->redirect('projects', 'index');
 		}
 		
 		public function changeback() {
-			if (!$this->User->changeback()) {
-				throw new ActionNotAllowedException();
+			if (!User::isSubstitute()) {
+				return $this->redirect();
 			}
 			
-			if (Request::getReferer(true)) {
-				return $this->View->redirect(Request::getReferer(true));
-			} else {
-				return $this->View->redirect('user', 'index');
+			if (!User::getCurrent()->changeback()) {
+				$this->Flash('Failed to return to previous user.');
+				return $this->redirect();
 			}
+			
+			$this->flash('You are now logged in as ' . User::getCurrent()['name']);
+			return $this->redirect('user', 'index');
 		}
-		*/
+		
 		public function create() {
 			$this->form();
 			
