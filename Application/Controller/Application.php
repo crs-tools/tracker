@@ -48,8 +48,7 @@
 		}
 		
 		public function notFound() {
-			$this->Response->setCode(404);
-			return $this->render('404');
+			return $this->render('404', ['responseCode' => 404]);
 		}
 		
 		public function notAllowed() {
@@ -60,8 +59,7 @@
 				return $this->redirect('user', 'login');
 			}
 			
-			$this->Response->setCode(403);
-			return $this->render('403');
+			return $this->render('403', ['responseCode' => 403]);
 		}
 		
 		// TODO: redirectWithReference($default, array('ref1' => […], 'ref2' => …))

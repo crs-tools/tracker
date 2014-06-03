@@ -32,7 +32,7 @@
 		
 		$time = microtime(true) - $time;
 		Log::info(sprintf(
-			'Processed %s::%s in %.4fs (%d reqs/sec) (Database: %d%%)',
+			'Processed %s::%s in %.4fs (%d reqs/s) (Database: %d%%)',
 			$requested['controller'],
 			$requested['action'],
 			$time, 1 / $time,
@@ -42,7 +42,12 @@
 		Log::handleException($e);
 		
 		$c = ($e->getCode() > 400)? $e->getCode() : 500;
-		echo Controller::renderTemplate($c, [], null, new Response($c));
+		echo Controller::renderTemplate(
+			$c,
+			['exception' => $e],
+			null,
+			new Response($c)
+		);
 	}
 	
 ?>
