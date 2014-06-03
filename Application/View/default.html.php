@@ -32,18 +32,18 @@
 				
 			
 				<?php if (User::isLoggedIn()): ?>
-					<li class="right link"><?= $this->linkTo('user', 'logout', 'Logout'); ?></li>
+					<li class="right link"><?= $this->linkTo('user', 'logout', 'Log out'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right link"><?= $this->linkTo('user', 'settings', 'Settings'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right text">
-						Signed in as <strong><?= User::getCurrent()['name']; ?></strong>
+						Logged in as <strong><?= User::getCurrent()['name']; ?></strong>
 						<?php if (User::isSubstitute()) {
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
 						} ?>
 					</li>
 				<?php else: ?>
-					<li class="right link"><?= $this->linkTo('user', 'login', 'Login'); ?></li>
+					<li class="right link"><?= $this->linkTo('user', 'login', 'Log in'); ?></li>
 				<?php endif; ?>
 			</ul>
 		</div>

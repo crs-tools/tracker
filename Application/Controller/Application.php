@@ -56,7 +56,7 @@
 			if (!User::isLoggedIn()) {
 				$_SESSION['return_to'] = $this->Request->getURI();
 				
-				$this->flash('You have to login to view this page');
+				$this->flash('You have to log in to view this page');
 				return $this->redirect('user', 'login');
 			}
 			

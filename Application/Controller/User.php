@@ -21,7 +21,7 @@
 					$this->form->getValue('password'),
 					$this->form->getValue('remember')
 				)) {
-					$this->flash('Login successful');
+					$this->flash('Logged in successfully');
 					
 					
 					if (isset($_SESSION['return_to'])) {
@@ -78,12 +78,12 @@
 			}
 			
 			if (!AccessControl::isAllowed($user['role'], 'user', 'act_as_substitute')) {
-				$this->flash('You are not allowed to login in the name of this user');
+				$this->flash('You are not allowed to log in the name of this user');
 				return $this->redirect('user', 'index');
 			}
 			
 			if (!$user->substitute()) {
-				$this->flash('You cannot login in the name of this user');
+				$this->flash('You cannot log in the name of this user');
 				return $this->redirect('user', 'index');
 			}
 			
