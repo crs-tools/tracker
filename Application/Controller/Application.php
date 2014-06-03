@@ -41,6 +41,7 @@
 			$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
 			
 			if (!$this->project) {
+				$this->keepFlash();
 				return $this->redirect('projects', 'index');
 			} else {
 				$this->project['project_slug'] = $this->project['slug'];
