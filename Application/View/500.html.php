@@ -18,6 +18,7 @@
 		</div>
 		<div id="content" class="clearfix">
 			<h2>Server error</h2>
+			<h3><?php echo get_class($exception); ?></h3>
 			<p><?= $exception->getMessage(); ?></p>
 		</div>
 	</body>
