@@ -32,11 +32,10 @@
 		
 		$time = microtime(true) - $time;
 		Log::info(sprintf(
-			'Processed %s::%s in %.4fs (%d reqs/s) (Database: %d%%)',
+			'Processed %s::%s in %.4fs (%d reqs/s)',
 			$requested['controller'],
 			$requested['action'],
-			$time, 1 / $time,
-			(Log::getTimer('Database') / $time) * 100
+			$time, 1 / $time
 		));
 	} catch (Exception $e) {
 		Log::handleException($e);
