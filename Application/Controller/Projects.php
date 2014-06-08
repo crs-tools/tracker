@@ -18,19 +18,7 @@
 		
 		public $requireAuthorization = true;
 		
-		public function index() {
-			// var_dump(User::getCurrent());
-			/*
-			$u = User::getCurrent();
-			$u = clone $u;
-			$u['role'] = 'user';
-			var_dump($u);
-			var_dump(serialize($u));
-			// var_dump(unserialize(serialize($u)));
-			*/
-			
-			// return [200, [], ''];
-			
+		public function index() {			
 			$this->projects = Project::findAll();
 			return $this->render('projects/index');
 		}
