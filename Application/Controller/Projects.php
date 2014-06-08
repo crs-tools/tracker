@@ -50,7 +50,7 @@
 				->EncodingProfileVersion
 				->join(['EncodingProfile'])
 				->orderBy(EncodingProfile::TABLE . '.name');
-			$this->versions->fetch();
+			$this->versions->fetchAll();
 			
 			$this->versionsLeft = EncodingProfileVersion::findAll()
 				->join([
