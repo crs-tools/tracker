@@ -40,12 +40,12 @@
 			
 			$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
 			
-			if (!$this->project) {
+			if ($this->project === null) {
 				$this->keepFlash();
 				return $this->redirect('projects', 'index');
-			} else {
-				$this->project['project_slug'] = $this->project['slug'];
 			}
+			
+			$this->project['project_slug'] = $this->project['slug'];
 		}
 		
 		public function notFound() {
