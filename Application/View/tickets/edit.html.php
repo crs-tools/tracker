@@ -83,7 +83,7 @@ else: ?>
 				<?php endif ?>
 				
 				<label for="ticket-edit-state">State</label>
-				<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), $ticket['ticket_state'], array('id' => 'ticket-edit-state')) ?>
+				<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), (!empty($ticket))? $ticket['ticket_state'] : '', array('id' => 'ticket-edit-state')) ?>
 			</li>
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>

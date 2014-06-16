@@ -558,7 +558,6 @@
 		public function create() {
 			$this->form();
 			
-			// select values for template
 			$this->states = $this->project
 				->States
 				->where(['ticket_type' => 'meta']);
@@ -570,28 +569,27 @@
 			if ($this->form->wasSubmitted()) {
 				$values = $this->form->getValues();
 				
-				// System-Internal Fahrplan-ID is mandatory and can't be changed later -- and it must be unique
-				if (
-					( $fahrplan_id = $this->form->getValue('fahrplan_id') ) == '' ||
-					Ticket::findAll()->where(['project_id' => $this->project['id'], 'fahrplan_id' => $fahrplan_id])->exists()
+				$fahrplanId = (isset($values['fahrplan_id']))?
+					$values['fahrplan_id'] : '';
+				
+				// Internal fahrplan id is mandatory, must be unique and can't be changed later
+				if (empty($fahrplanId) or
+					Ticket::exists([
+						'project_id' => $this->project['id'],
+						'fahrplan_id' => $fahrplanId
+					])
 				) {
-					// it is either empty or already in use
-					$this->flashNow('You must fill in a uniqe Fahrplan ID');
-					return $this->render('tickets/edit.tpl');
+					$this->flashNow('Please fill in a uniqe Fahrplan ID');
+					return $this->render('tickets/edit');
 				}
 				
-				// copy relevant project related information
 				$values['project_slug'] = $this->project['project_slug'];
 				$values['project_id'] = $this->project['id'];
-				
-				// initialize new ticket with a fahrplan-id of 0
 				$values['ticket_type'] = 'meta';
 				
-				// try to create ticket
 				if($ticket = Ticket::create($values)) {
 					$this->flash('Ticket created');
 					
-					// if a comment was set, create that too
 					if ($this->form->getValue('comment')) {
 						Comment::create([
 							'ticket_id' => $ticket['id'],
@@ -600,15 +598,20 @@
 						]);
 					}
 					
-					// Create subtickets if requestd
+					// Create child tickets
+					// FIXME: this creates children for all tickets, add additional argument for function
 					if ($this->form->getValue('create_encoding_tickets')) {
-						Ticket::createMissingEncodingTickets($this->project['id']);
-					}
-					if ($this->form->getValue('create_recording_tickets')) {
-						Ticket::createMissingRecordingTickets($this->project['id']);
+						Ticket::createMissingEncodingTickets(
+							$this->project['id']
+						);
 					}
 					
-					// redirect to ticket detail view
+					if ($this->form->getValue('create_recording_tickets')) {
+						Ticket::createMissingRecordingTickets(
+							$this->project['id']
+						);
+					}
+					
 					return $this->redirect('tickets', 'view', $ticket);
 				}
 			}
@@ -644,10 +647,12 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
-			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'name']])
-				->where(['id' => $this->ticket['encoding_profile_version_id']])
-				->select('revision, description')
-				->first();
+			if (!empty($this->ticket['encoding_profile_version_id'])) {
+				$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'name']])
+					->where(['id' => $this->ticket['encoding_profile_version_id']])
+					->select('revision, description')
+					->first();
+			}
 			
 			return $this->render('tickets/edit');
 		}
