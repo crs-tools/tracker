@@ -13,15 +13,15 @@
 else: ?>
 	<div id="ticket-header">
 		<h2 class="ticket"><span class="title">Create new ticket</span></h2>
-
+		
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
 			<li class="action create current"><?php echo $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
-	
+			
 			<?php if (User::isAllowed('import', 'index')): ?>
 				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 			<?php endif; ?>
-	
+			
 			<?php if (User::isAllowed('export', 'index')): ?>
 				<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
 			<?php endif; ?>
@@ -34,6 +34,10 @@ else: ?>
 	<fieldset>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', array('class' => 'wide')); ?></li>
+			
+			<?php if (empty($ticket)): ?>
+				<li><?php echo $f->input('fahrplan_id', 'Fahrplan ID'); ?></li>
+			<?php endif ?>
 			
 			<?php if (isset($profile)): ?>
 				<li>
@@ -61,29 +65,25 @@ else: ?>
 			<?php $f->register('comment'); ?>
 		</ul>
 	</fieldset>
+	<?php if (empty($ticket)): ?>
+		<fieldset>
+			<legend>Subtickets</legend>
+			<ul>
+				<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create missing recording ticket', true); ?></li>
+				<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create missing tickets for encoding profiles', true); ?></li>
+			</ul>
+		</fieldset>
+	<?php endif ?>
 	<fieldset>
 		<legend>State</legend>
 		<ul>
 			<li>
 				<?php if (!empty($ticket)): ?>
-			        <?php echo $ticket['ticket_state']; ?><span class="description-color">  ⟶ </span>
-				<?php endif; ?>
+					<?php echo $ticket['ticket_state']; ?><span class="description-color">  ⟶ </span>
+				<?php endif ?>
+				
 				<label for="ticket-edit-state">State</label>
-				<?php if (empty($ticket)): /* ?>
-					<select name="ticket_state" id="ticket-edit-state">
-						<?php foreach($types as $id => $name): ?>
-							<?php if (!empty($states[$id])): ?>
-								<optgroup label="<?php echo $name; ?>">
-									<?php foreach ($states[$id] as $state) {
-										echo $f->option($state['name'], $state['id'], Request::post('state') == $state['id'] or $ticket['state_id'] == $state['id']);
-									} ?>
-								</optgroup>
-							<?php endif; ?>
-						<?php endforeach; ?>
-					</select>
-				<?php */ else: ?>
-					<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), $ticket['ticket_state'], array('id' => 'ticket-edit-state')) ?>
-				<?php endif; ?>
+				<?php echo $f->select('ticket_state', null, $states->indexBy('ticket_state', 'ticket_state')->toArray(), $ticket['ticket_state'], array('id' => 'ticket-edit-state')) ?>
 			</li>
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>

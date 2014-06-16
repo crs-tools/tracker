@@ -558,73 +558,60 @@
 		public function create() {
 			$this->form();
 			
-			// TODO: check if encoding_profile_id is set for tickets with type_id = 2
-			//       perhaps we have do set a custom validation in model 
-			/*if (Request::isPostRequest()) {
-				$this->Ticket->project_id = $this->Project->id;
-				
-				// temporary fix
-				$this->Ticket->fahrplan_id = 0;
-				
-				$this->Ticket->title = Request::post('title');
-				$this->Ticket->slug = Request::post('title');
-				$this->Ticket->priority = Request::post('priority', Request::float);
-				
-				$this->Ticket->needs_attention = Request::post('needs_attention', Request::checkbox);
-				
-				$this->Ticket->type_id = $this->State->getTypeById(Request::post('state', Request::int));
-				$this->Ticket->state_id = Request::post('state', Request::int);
-				$this->Ticket->failed = Request::post('failed', Request::checkbox);
-				
-				if ($this->Ticket->type_id == 2) {
-					$this->Ticket->encoding_profile_id = Request::post('encoding_profile', Request::int);
-				}
-				
-				if (Request::post('comment', Request::unfiltered)) {
-					$this->Comment->create(array(
-						'ticket_id' => $ticket['id'],
-						'user_id' => $this->User->get('id'),
-						'comment' => Request::post('comment', Request::unfiltered),
-						'user_set_needs_attention' => Request::post('needs_attention', Request::checkbox),
-						'user_set_failed' => Request::post('failed', Request::checkbox),
-					));
-				}
-				
-				if ($this->Ticket->type_id != 3 and !User::isAllowed('tickets', 'create_all')) {
-					$this->flash('You are not allowed to create a ticket of this type', View::flashError);
-					return $this->View->redirect('tracker', 'index', array('project_slug' => $this->Project->slug));
-				}
-				
-				if (Request::post('assignee', Request::int)) {
-					$this->Ticket->user_id = Request::post('assignee', Request::int);
-				}
-				
-				if (Request::post('parent', Request::int)) {
-					$this->Ticket->parent_id = Request::post('parent', Request::int);
-				}
-				
-				
-				if ($this->Ticket->save()) {
-					$this->Properties->update($this->Ticket->id, Request::post('property_name'), Request::post('property_value'));
-					// TODO: set Fahrplan.ID as fahrplan_id
-					
-					$this->flash('Ticket created');
-					return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
-				}
-			}
-			
-			$this->View->assign('types', $this->Type->getList('name'));
-			$this->View->assign('profiles', Model::indexByField($this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id), array(), null, null, 'id, name'), 'id', 'name'));
-			// TODO: perhaps order by name instead of vid?
-			$this->View->assign('tickets', $this->Ticket->findAll(array(), array('project_id' => $this->Project->id, 'parent_id IS NULL'), array(), 'fahrplan_id', null, 'id, type_id, fahrplan_id, title'));
-			$this->View->assign('states', Model::groupByField($this->State->findAll(array(), (User::isAllowed('tickets', 'create_all'))? array() : array('ticket_type_id' => 3), array(), 'id'), 'ticket_type_id'));
-			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
-			*/
-			$this->states = $this->project->States;
+			// select values for template
+			$this->states = $this->project
+				->States
+				->where(['ticket_type' => 'meta']);
 			
 			$this->users = User::findAll()
 				->select('id, name')
 				->indexBy('id', 'name');
+			
+			if ($this->form->wasSubmitted()) {
+				$values = $this->form->getValues();
+				
+				// System-Internal Fahrplan-ID is mandatory and can't be changed later -- and it must be unique
+				if (
+					( $fahrplan_id = $this->form->getValue('fahrplan_id') ) == '' ||
+					Ticket::findAll()->where(['project_id' => $this->project['id'], 'fahrplan_id' => $fahrplan_id])->exists()
+				) {
+					// it is either empty or already in use
+					$this->flashNow('You must fill in a uniqe Fahrplan ID');
+					return $this->render('tickets/edit.tpl');
+				}
+				
+				// copy relevant project related information
+				$values['project_slug'] = $this->project['project_slug'];
+				$values['project_id'] = $this->project['id'];
+				
+				// initialize new ticket with a fahrplan-id of 0
+				$values['ticket_type'] = 'meta';
+				
+				// try to create ticket
+				if($ticket = Ticket::create($values)) {
+					$this->flash('Ticket created');
+					
+					// if a comment was set, create that too
+					if ($this->form->getValue('comment')) {
+						Comment::create([
+							'ticket_id' => $ticket['id'],
+							'handle_id' => User::getCurrent()['id'],
+							'comment' => $this->form->getValue('comment')
+						]);
+					}
+					
+					// Create subtickets if requestd
+					if ($this->form->getValue('create_encoding_tickets')) {
+						Ticket::createMissingEncodingTickets($this->project['id']);
+					}
+					if ($this->form->getValue('create_recording_tickets')) {
+						Ticket::createMissingRecordingTickets($this->project['id']);
+					}
+					
+					// redirect to ticket detail view
+					return $this->redirect('tickets', 'view', $ticket);
+				}
+			}
 			
 			return $this->render('tickets/edit');
 		}
