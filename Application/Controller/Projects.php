@@ -162,11 +162,7 @@
 				$i++;
 				$slug = 'duplicate-' . (($i > 1)? ($i . '-') : '') .
 					'of-' . $project['slug'];
-				
-				$slugExists = Project::findAll()
-					->where(['slug' => $slug])
-					->exists();
-			} while ($slugExists);
+			} while (Project::exists(['slug' => $slug]));
 			
 			$project['title'] = 'Duplicate ' . (($i > 1)? ($i . ' ') : '') .
 				'of ' . $project['title'];
