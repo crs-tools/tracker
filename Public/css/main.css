@@ -844,6 +844,9 @@ ul.ticket-header-bar li.action.current.fix a:before { background-position: -270p
 ul.ticket-header-bar li.action.versions a:before { background-position: -300px -202px; }
 ul.ticket-header-bar li.action.current.versions a:before { background-position: -300px -290px; }
 
+ul.ticket-header-bar li.action.duplicate a:before { background-position: -330px -202px; }
+ul.ticket-header-bar li.action.current.versions a:before { background-position: -330px -290px; }
+
 /*
 ul.ticket-header-bar li.edit { background-position: left -202px; }
 ul.ticket-header-bar li.edit:nth-child(2) { background-position: -2px -202px; }
