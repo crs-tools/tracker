@@ -65,15 +65,6 @@ else: ?>
 			<?php $f->register('comment'); ?>
 		</ul>
 	</fieldset>
-	<?php if (empty($ticket)): ?>
-		<fieldset>
-			<legend>Subtickets</legend>
-			<ul>
-				<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create missing recording ticket', true); ?></li>
-				<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create missing tickets for encoding profiles', true); ?></li>
-			</ul>
-		</fieldset>
-	<?php endif ?>
 	<fieldset>
 		<legend>State</legend>
 		<ul>
@@ -88,6 +79,15 @@ else: ?>
 			<li class="checkbox"><?php echo $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>
 	</fieldset>
+	<?php if (empty($ticket)): ?>
+		<fieldset>
+			<legend>Children</legend>
+			<ul>
+				<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create recording ticket', true); ?></li>
+				<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create tickets for encoding profiles', true); ?></li>
+			</ul>
+		</fieldset>
+	<?php endif; ?>
 	<fieldset class="foldable">
 		<legend>Properties</legend>
 		<?php echo $this->render('shared/form/properties', array(
