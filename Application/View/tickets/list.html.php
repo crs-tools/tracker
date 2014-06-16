@@ -99,7 +99,7 @@ if (!empty($tickets)) {
 			if (empty($ticket['parent_id']) or isset($simulateTickets)) {
 				$t .= $this->linkTo(
 					'tickets', 'view', $ticket, $project,
-					(isset($ticket['progress']))? ('<span style="width: ' . round($ticket['progress']) . '%;">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>') : '',
+					(isset($ticket['progress']))? ('<span class="progress-width" data-progress="' . round($ticket['progress']) . '">' . (($ticket['progress'] != '0')? '<span></span>' : '') . '</span>') : '',
 					(isset($ticket['progress']))? (round($ticket['progress']) . '%') : '',
 					['class' => 'progress']
 				);
