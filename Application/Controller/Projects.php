@@ -103,90 +103,6 @@
 			
 			return $this->render('projects/edit');
 		}
-		
-		// duplicate a project with all its associated informations but without the tickets
-		public function duplicate() {
-			// create an array with all information of the selected project
-			$project = $this->project->toArray();
-
-			// unset the old project id -- this will force a creation instead of a save
-			unset($project['id']);
-
-			// copy languages
-			$project['Languages'] = $this->project->Languages->toArray();
-
-			// copy encoder-profile, ticket-state and worker-group association
-			$project['EncodingProfileVersion'] = $this
-				->project
-				->EncodingProfileVersion
-				->except(['fields'])
-				->select('id AS encoding_profile_version_id')
-				->toArray();
-
-			$project['States'] = $this
-				->project
-				->States
-				->select('ticket_type, ticket_state, service_executable')
-				->toArray();
-
-			$project['WorkerGroup'] = $this
-				->project
-				->WorkerGroup
-				->except(['fields'])
-				->select('id AS worker_group_id')
-				->toArray();
-
-			// read project slug
-			$slug = $this->project['slug'];
-
-			// select a duplication-counter (avoids dulicate-key-errors when pressing the clone-button twice without renaming first)
-			for ($try = 0; $try < 100; $try++) {
-				// construct the new slug
-				$newSlug = 'duplicate-'.($try ? "$try-" : '').'of-'.$slug;
-
-				// try to find a project with this slug
-				$existingProject = Project::findAll()->where(['slug' => $newSlug])->exists();
-
-				// nothing found? we'll use that.
-				if(!$existingProject)
-					break;
-			}
-
-			// warn of too many duplicates
-			if($existingProject)
-			{
-				$this->flashNow("You can't have more then $try duplicates of a project. Rename one of them first.");
-				return $this->index();
-			}
-
-			// modify project title & slug
-			$project['title'] = 'Duplicate '.($try ? "$try " : '').'of '.$this->project['title'];
-			$project['slug'] = $newSlug;
-			$project['project_slug'] = $newSlug;
-
-			// copy properties with modified Meta.Acronym
-			$properties = $this->project->Properties->indexBy('name')->toArray();
-			if(isset($properties['Meta.Acronym']))
-			{
-				$properties['Meta.Acronym'] = [
-					'name' => 'Meta.Acronym',
-					'value' => 'duplicate-'.($try ? "$try-" : '').'of-'.$properties['Meta.Acronym']['value']
-				];
-			}
-			$project['properties'] = $properties;
-
-			// create that new project
-			if ($newProject = Project::create($project)) {
-				$this->flashNow('Project duplicated');
-			}
-
-			// assign for editing
-			$this->project = $newProject;
-
-			// open post-clone edit-form
-			$this->form();
-			return $this->render('projects/edit.tpl');
-		}
 
 		public function edit(array $arguments) {
 			$this->form();
@@ -197,6 +113,76 @@
 			}
 			
 			return $this->render('projects/edit');
+		}
+		
+		/*
+			Duplicate project, copy languages, associated encoding profiles,
+			selected states and worker groups
+		*/
+		public function duplicate() {
+			$project = $this->project->duplicate();
+			
+			// Copy associated entries
+			
+			$project['Languages'] = $this->project
+				->Languages
+				->toArray();
+			
+			$project['EncodingProfileVersion'] = $this->project
+				->EncodingProfileVersion
+				->except(['fields'])
+				->select('id AS encoding_profile_version_id')
+				->toArray();
+			
+			$project['States'] = $this->project
+				->States
+				->select('ticket_type, ticket_state, service_executable')
+				->toArray();
+			
+			$project['WorkerGroup'] = $this->project
+				->WorkerGroup
+				->except(['fields'])
+				->select('id AS worker_group_id')
+				->toArray();
+			
+			// Ensure unique slug
+			$i = 0;
+			
+			do {
+				$i++;
+				$slug = 'duplicate-' . (($i > 1)? ($i . '-') : '') .
+					'of-' . $project['slug'];
+				
+				$slugExists = Project::findAll()
+					->where(['slug' => $slug])
+					->exists();
+			} while ($slugExists);
+			
+			$project['title'] = 'Duplicate ' . (($i > 1)? ($i . ' ') : '') .
+				'of ' . $project['title'];
+			$project['slug'] = $project['project_slug'] = $slug;
+			
+			// Copy properties
+			
+			$properties = $this->project
+				->Properties
+				->indexBy('name')
+				->toArray();
+			
+			if (isset($properties['Meta.Acronym'])) {
+				$properties['Meta.Acronym']['value'] = 'duplicate-' .
+					(($i > 1)? ($i . '-') : '') . 'of-' .
+					$properties['Meta.Acronym']['value'];
+			}
+			
+			$project['properties'] = $properties;
+			
+			if (!$project->save()) {
+				return $this->redirect('projects', 'view', $this->project);
+			}
+			
+			$this->flash('Project duplicated');
+			return $this->redirect('projects', 'edit', $project);
 		}
 		
 		public function delete(array $arguments) {

@@ -5,8 +5,9 @@
 		<li class="ticket-header-bar-background-left"></li>
 		
 		<?php if (User::isAllowed('projects', 'duplicate')): ?>
-			<li class="action duplicate"><?= $this->linkTo('projects', 'duplicate', $project, '<span>duplicate</span>', 'duplicate project'); ?></li>
+			<li class="action duplicate"><?= $this->linkTo('projects', 'duplicate', $project, '<span>duplicate</span>', 'Duplicate project'); ?></li>
 		<?php endif; ?>
+		
 		<?php if (User::isAllowed('projects', 'edit')): ?>
 			<li class="action edit"><?php echo $this->linkTo('projects', 'edit', $project, '<span>edit</span>', 'Edit project'); ?></li>
 		<?php endif; ?>
