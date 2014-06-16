@@ -640,6 +640,8 @@ h2.ticket span.fahrplan {
 	width: 2.3em;
 	border-right: 1px solid #e0e0e0;
 	background-color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #ticket-header {
@@ -1058,7 +1060,7 @@ ul.tickets li a.link {
 	position: absolute;
 	top: 0;
 	left: 0;
-	right: 190px;
+	right: 130px;
 	background: transparent url(../images/main.png) no-repeat left -92px;
 }
 
@@ -1094,7 +1096,9 @@ ul.tickets li span.vid {
 	margin-left: 6px;
 	padding-right: 5px;
 	border-right: 1px solid #e4e4e4;
+  overflow: hidden;
 	text-align: center;
+  text-overflow: ellipsis;
 }
 
 ul.tickets li span.vid.needs_attention {
@@ -1130,8 +1134,19 @@ ul.tickets li span.state {
 ul.tickets li span.state.failed { color: #FF3E43; }
 
 ul.tickets li span.start, ul.tickets li span.state, ul.tickets li span.day, ul.tickets li span.room {
-	padding-left: 5px;
-	padding-right: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+ul.tickets li span.day, ul.tickets li span.room {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+ul.tickets li span.room {
+  text-overflow: clip;
+  max-width: 7.4em;
 }
 
 ul.tickets li span.assignee {
@@ -1142,7 +1157,7 @@ ul.tickets li span.assignee {
 ul.tickets li a.link span.view, ul.tickets li a.edit, ul.tickets li a.action {
 	position: absolute;
 	top: 7px;
-	right: -184px;
+	right: -124px;
 	height: 22px;
 	z-index: 100;
 	background: transparent url(../images/main.png) no-repeat 0 -46px;
