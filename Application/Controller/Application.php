@@ -27,7 +27,7 @@
 			$this->Response->addHeader(
 				'Content-Security-Policy',
 				'default-src \'self\'; font-src \'none\'; frame-src \'none\';' .
-					'object-src \'none\'; style-src \'self\' \'unsafe-inline\''
+					'object-src \'none\'; style-src \'self\''
 			);
 			$this->Response->addHeader('X-Content-Type-Options', 'nosniff');
 			$this->Response->addHeader('X-Frame-Options', 'DENY');
