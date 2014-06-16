@@ -637,9 +637,13 @@ h2.ticket span.title {
 }
 
 h2.ticket span.fahrplan {
+  display: block;
 	width: 2.3em;
 	border-right: 1px solid #e0e0e0;
-	background-color: #fff;
+  background-color: #fff;
+  line-height: 120%;
+  margin-right: 0.2em;
+  float: left;
   overflow: hidden;
   text-overflow: ellipsis;
 }
