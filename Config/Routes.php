@@ -51,6 +51,7 @@
 	
 	'project/create' => ['projects', 'create'],
 	':project_slug/settings/general' => ['projects', 'edit'],
+	':project_slug/duplicate' => ['projects', 'duplicate'],
 	':project_slug/delete' => ['projects', 'delete'],
 	'projects' => ['projects', 'index'],
 	
