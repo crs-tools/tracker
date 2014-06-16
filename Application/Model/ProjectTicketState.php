@@ -25,11 +25,11 @@
 				Cache::ns('project.' . $project . '.states') .
 					'.' . $type . '.' . $state . '.next',
 				function() use ($project, $type, $state) {
-		            Database::$Instance->query(
+		            $handle = Database::$Instance->query(
 						'SELECT * FROM ticket_state_next(?, ?, ?)',
 						[$project, $type, $state]
 					);
-		            $row = Database::$Instance->fetchRow();
+		            $row = $handle->fetch();
 					
 					return ($row === false)? null : $row;
 				}
@@ -41,12 +41,12 @@
 				Cache::ns('project.' . $project . '.states') .
 					'.' . $type . '.' . $state . '.previous',
 				function() use ($project, $type, $state) {
-		            Database::$Instance->query(
+		            $handle = Database::$Instance->query(
 						'SELECT * FROM ticket_state_previous(?, ?, ?)',
 						[$project, $ticket, $state]
 					);
 					
-		            $row = Database::$Instance->fetchRow();
+		            $row = $handle->fetch();
 					return ($row === false)? null : $row;
 				}
 			);
