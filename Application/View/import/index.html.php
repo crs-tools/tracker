@@ -38,8 +38,8 @@
 					<?= $f->select('file', 'import existing file', $files); ?>
 				</li>
 			<?php endif; ?>
-			<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create missing recording tickets'); ?></li>
-			<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create missing tickets for encoding profiles'); ?></li>
+			<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create missing recording tickets', true); ?></li>
+			<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create missing tickets for encoding profiles', true); ?></li>
 			<li><?= $f->submit('Check for updates'); ?></li>
 		</ul>
 	</fieldset>		
