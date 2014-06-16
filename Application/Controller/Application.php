@@ -38,11 +38,17 @@
 				return;
 			}
 			
-			$this->project = Project::findBy(array('slug' => $arguments['project_slug']));
-			
-			if ($this->project === null) {
+			if (empty($arguments['project_slug'])) {
 				$this->keepFlash();
 				return $this->redirect('projects', 'index');
+			}
+			
+			$this->project = Project::findBy([
+				'slug' => $arguments['project_slug']
+			]);
+			
+			if ($this->project === null) {
+				throw new EntryNotFoundException();
 			}
 			
 			$this->project['project_slug'] = $this->project['slug'];
