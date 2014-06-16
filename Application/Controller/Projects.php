@@ -30,7 +30,8 @@
 			// Encoding Profiles
 			$this->profilesForm = $this->form();
 			
-			if ($this->profilesForm->wasSubmitted() and $this->project->save($this->profilesForm->getValues())) {
+			if ($this->profilesForm->wasSubmitted() and
+				$this->project->save($this->profilesForm->getValues())) {
 				$this->flashNow('Updated encoding profiles');
 			}
 			
@@ -46,8 +47,11 @@
 						'select' => 'name'
 					]
 				])
-				->select('id, encoding_profile_id, revision, created, description')
-				->orderBy('encoding_profile_id, revision DESC'); // TODO: order by encoding_profile_name
+				->select(
+					'id, encoding_profile_id, revision, created, description'
+				)
+				// TODO: order by encoding_profile_name
+				->orderBy('encoding_profile_id, revision DESC');
 			
 			$versions = $this->versions->pluck('encoding_profile_id');
 			
@@ -67,16 +71,20 @@
 				->select('ticket_type, ticket_state, service_executable')
 				->orderBy('ticket_type, sort');
 
-			if ($this->stateForm->wasSubmitted() and $this->project->save($this->stateForm->getValues())) {
+			if ($this->stateForm->wasSubmitted() and
+				$this->project->save($this->stateForm->getValues())) {
 				// TODO: move to Model?
-				Cache::invalidateNamespace('project.' . $this->project['id'] . '.states');
+				Cache::invalidateNamespace(
+					'project.' . $this->project['id'] . '.states'
+				);
 				$this->flashNow('Updated enabled states');
 			}
 			
 			// Worker Groups
 			$this->workerGroupForm = $this->form();
 			
-			if ($this->workerGroupForm->wasSubmitted() and $this->project->save($this->workerGroupForm->getValues())) {
+			if ($this->workerGroupForm->wasSubmitted() and
+				$this->project->save($this->workerGroupForm->getValues())) {
 				$this->flashNow('Updated project worker group assignment');
 			}
 			
@@ -94,7 +102,8 @@
 		public function create() {
 			$this->form();
 			
-			if ($this->form->wasSubmitted() and ($project = Project::create($this->form->getValues()))) {
+			if ($this->form->wasSubmitted() and
+				($project = Project::create($this->form->getValues()))) {
 				ProjectTicketState::createAll($project['id']);
 				
 				$this->flash('Project created');
@@ -107,7 +116,8 @@
 		public function edit(array $arguments) {
 			$this->form();
 			
-			if ($this->form->wasSubmitted() and $this->project->save($this->form->getValues())) {
+			if ($this->form->wasSubmitted() and
+				$this->project->save($this->form->getValues())) {
 				$this->flash('Project updated');
 				return $this->redirect('projects', 'view', $this->project);
 			}
