@@ -1031,7 +1031,7 @@ ul.tickets {
 ul.tickets li {
 	position: relative;
 	height: 39px;
-  margin: 0 0 10px 0;
+	margin: 0 0 10px 0;
 	clear: both;
 	list-style-type: none;
 }
