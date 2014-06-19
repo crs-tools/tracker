@@ -1062,6 +1062,22 @@ ul.tickets li a.link {
 	background: transparent url(../images/main.png) no-repeat left -92px;
 }
 
+ul.tickets li.no-properties a.link {
+	right: 220px;
+}
+
+ul.tickets li.no-properties a.link {
+	right: 205px;
+}
+
+ul.tickets li.no-properties a.link span.view {
+	right: -200px;
+}
+
+ul.tickets li.no-properties span.other {
+	width: 205px;
+}
+
 ul.tickets li a.link:hover, ul.tickets li a.link:focus {
 	text-decoration: none;
 }
