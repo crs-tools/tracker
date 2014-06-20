@@ -237,7 +237,7 @@
 				// lose ticket if error occurred
 				if(!empty($reason)) {
 					$cmd = 'Ticket lost';
-					Log::warn('[RPC] ping: '.$reason);
+					Log::warning('[RPC] ping: '.$reason);
 				}
 			} else {
 				$ticket_id = null;
@@ -375,7 +375,7 @@
             $log_message[] = __FUNCTION__.': changing properties';
             foreach($properties as $name => $value) {
                 if(in_array($name,$this->virtual_properties)) {
-                    Log::warn('[RPC] setTicketProperties: ingored virtual property '.$name);
+                    Log::warning('[RPC] setTicketProperties: ingored virtual property '.$name);
                     continue;
                 } elseif($value !== '') {
                     $ticket_properties[] = array('name' => $name, 'value' => $value);
@@ -615,7 +615,7 @@
             );
 
             if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $next_state))) {
-                Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
+                Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
                 return false;
             }
 
@@ -662,7 +662,7 @@
             );
 
             if (!$save = $ticket->save(array('handle_id' => null, 'failed' => true))) {
-                Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
+                Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
                 return false;
             }
 
