@@ -497,7 +497,7 @@
             );
 
 			if (!$save = $ticket->save(array('handle_id' => $this->worker['id'], 'ticket_state' => $ticket['next_state']))) {
-				Log::warn(__FUNCTION__.': race condition with other request. delaying new request');
+				Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
 				return false;
 			}
 
