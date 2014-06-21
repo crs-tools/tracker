@@ -193,9 +193,10 @@
 		}
 		
 		public function view(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['Handle'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			], [], ['Handle']);
 			
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
@@ -231,13 +232,15 @@
 		}
 		
 		public function log(array $arguments) {
-			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
-			if (!$log = LogEntry::findBy(['id' => $arguments['entry'], 'ticket_id' => $ticket['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$log = LogEntry::findByOrThrow([
+				'id' => $arguments['entry'],
+				'ticket_id' => $ticket['id']
+			]);
 			
 			if (!$this->respondTo('txt')) {
 				return Response::error(400);
@@ -273,11 +276,11 @@
 				$this->log->where('id > ?', [$_GET['after']]);
 			}
 						
-			$this->stats = array(
+			$this->stats = [
 				'cutting' => Ticket::countByNextState($this->project['id'], 'recording', 'cutting'),
 				'checking' => Ticket::countByNextState($this->project['id'], 'encoding', 'checking'),
 				'fixing' => Ticket::findAll()->where(['failed' => true, 'project_id' => $this->project['id']])->count()
-			);
+			];
 			$this->progress = Ticket::getTotalProgress($this->project['id']);
 			
 			return $this->render('tickets/feed', ['format' => ['html', 'json']]);
@@ -300,9 +303,10 @@
 		}
 		
 		private function _action($action, array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']], [], ['Handle'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			], [], ['Handle']);
 			
 			if (!$this->ticket->isEligibleAction($action)) {
 				$this->flash('Ticket is not in the required state to execute the action ' . $action);
@@ -472,9 +476,10 @@
 		}
 		
 		private function _undoAction($action, array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$this->ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			if (!$this->ticket->isEligibleAction($action)) {
 				$this->flash('Ticket is not in the required state to undo the action ' . $action);
@@ -507,9 +512,10 @@
 		}*/
 		
 		public function comment(array $arguments) {
-			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			$this->form();
 			
@@ -531,9 +537,10 @@
 		}
 		
 		public function delete_comment(array $arguments) {
-			if (!$ticket = Ticket::findBy(['id' => $arguments['ticket_id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$ticket = Ticket::findByOrThrow([
+				'id' => $arguments['ticket_id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			$comment = Comment::findAll()->where([
 				'id' => $arguments['id'],
@@ -615,9 +622,10 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$this->ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			$this->form();
 			
@@ -665,9 +673,10 @@
 		}
 		
 		public function duplicate(array $arguments) {
-			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$this->ticket = Ticket::findBy([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			$this->form();
 			
@@ -777,9 +786,10 @@
 		}*/
 		
 		public function delete(array $arguments) {
-			if (!$ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
-				throw new EntryNotFoundException();
-			}
+			$ticket = Ticket::findByOrThrow([
+				'id' => $arguments['id'],
+				'project_id' => $this->project['id']
+			]);
 			
 			if ($ticket->destroy()) {
 				$this->flash('Ticket deleted');
