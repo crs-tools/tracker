@@ -19,6 +19,8 @@
 			'ActionNotAllowed' => 'notAllowed'
 		];
 		
+		protected $projectReadOnlyAccess = null;
+		
 		public function __construct() {
 			User::recall();
 		}
@@ -52,6 +54,13 @@
 			}
 			
 			$this->project['project_slug'] = $this->project['slug'];
+			
+			if ($this->project['read_only'] and
+				$this->projectReadOnlyAccess !== null and
+				empty($this->projectReadOnlyAccess[$action])) {
+				$this->flash('You can\'t alter tickets in this project because it\'s read only');
+				return $this->redirect('tickets', 'index', $this->project);
+			}
 		}
 		
 		public function notFound() {

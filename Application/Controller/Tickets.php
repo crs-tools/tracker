@@ -22,23 +22,15 @@
 	
 	class Controller_Tickets extends Controller_Application {
     	
-		public $requireAuthorization = true;
+		protected $requireAuthorization = true;
 		
-		/*
-		public $beforeFilter = true;
-		
-		private static $_searchMapping = array('title' => 'title', 'assignee' => 'user_id', 'type' => 'type_id', 'state' => 'state_id', 'encoding_profile' => 'encoding_profile_id', 'fahrplan_id' => 'fahrplan_id');
-		
-		public function beforeFilter($arguments, $action) {
-			if ($this->Project->read_only and !in_array($action, array('index', 'view', 'log', 'export', 'export_wiki', 'export_podcast'))) {
-				$this->flash('You can\'t alter tickets in this project because it\'s locked');
-				$this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
-				return false;
-			}
-			
-			return true;
-		}
-		*/
+		protected $projectReadOnlyAccess = [
+			'index' => true,
+			'view' => true,
+			'log' => true,
+			'jobfile' => true,
+			'feed' => true
+		];
 		
 		public function index() {
 			// TODO: join encoding profile?

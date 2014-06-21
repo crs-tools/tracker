@@ -1,6 +1,12 @@
 <div id="ticket-header">
 	<h2 class="ticket"><span class="title"><?= h($project['title']); ?></span></h2>
-
+	
+	<?php if ($project['read_only']): ?>
+		<div class="flags">
+			<span class="failed">read only</span>
+		</div>
+	<?php endif; ?>
+	
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
 		

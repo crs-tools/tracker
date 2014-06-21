@@ -8,23 +8,11 @@
 	
 	class Controller_Import extends Controller_Application {
 		
-		public $requireAuthorization = true;
+		protected $requireAuthorization = true;
+		
+		protected $projectReadOnlyAccess = [];
 		
 		const FAHRPLAN_FILES = 'Public/fahrplan/';
-		
-		/*
-		public $beforeFilter = true;
-		
-		public function beforeFilter($arguments, $action) {
-			if ($this->Project->read_only) {
-				$this->flash('You can\'t import tickets to this project because it\'s locked');
-				$this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
-				return false;
-			}
-			
-			return true;
-		}
-		*/
 		
 		public function index() {
 			$this->form('import', 'rooms', $this->project);
