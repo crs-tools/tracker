@@ -684,8 +684,8 @@
 					->indexBy('name')
 					->toArray();
 				
-				if (isset($properties['Fahrplan.Id'])) {
-					$properties['Fahrplan.Id'] =
+				if (isset($properties['Fahrplan.ID'])) {
+					$properties['Fahrplan.ID']['value'] =
 						$this->form->getValue('fahrplan_id');
 				}
 				
