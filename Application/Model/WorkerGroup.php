@@ -10,7 +10,8 @@
 		
 		public $hasMany = array(
 			'Worker' => array(
-				'foreign_key' => ['worker_group_id']
+				'foreign_key' => ['worker_group_id'],
+				'order_by' => 'last_seen DESC'
 			)
 		);
 		

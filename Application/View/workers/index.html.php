@@ -38,7 +38,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($group->Worker->orderBy('last_seen') as $worker): ?>
+				<?php foreach ($group->Worker as $worker): ?>
 					<tr>
 						<td><?= h($worker['name']); ?></td>
 						<td></td>
