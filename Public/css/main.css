@@ -453,19 +453,23 @@ form fieldset ul li select {
 	margin: 1.4em 0 0 0;
 }
 
-form fieldset ul li.checkbox {
+form fieldset ul li.checkbox,
+form fieldset ul li.radio {
 	padding-bottom: 0.5em;
 }
 
-form fieldset ul li.checkbox + li.checkbox label {
+form fieldset ul li.checkbox + li.checkbox label,
+form fieldset ul li.radio + li.radio label {
 	padding-top: 0.5em;
 }
 
-form fieldset ul li.checkbox + li.checkbox input.checkbox {
+form fieldset ul li.checkbox + li.checkbox input.checkbox,
+form fieldset ul li.radio + li.radio input.radio {
 	margin-top: 0.8em;
 }
 
-form fieldset ul li.checkbox label {
+form fieldset ul li.checkbox label,
+form fieldset ul li.radio label {
 	left: 10.5em;
 	right: 0;
 	padding: 1.15em 0 0 2.6em;
@@ -477,7 +481,8 @@ form fieldset ul li.checkbox label {
 	color: #3d464d;
 }
 
-form fieldset ul li.checkbox input.checkbox {
+form fieldset ul li.checkbox input.checkbox,
+form fieldset ul li.radio input.radio {
 	margin: 1.45em 0 0 0;
 }
 
@@ -851,7 +856,7 @@ ul.ticket-header-bar li.action.versions a:before { background-position: -300px -
 ul.ticket-header-bar li.action.current.versions a:before { background-position: -300px -290px; }
 
 ul.ticket-header-bar li.action.duplicate a:before { background-position: -330px -202px; }
-ul.ticket-header-bar li.action.current.versions a:before { background-position: -330px -290px; }
+ul.ticket-header-bar li.action.current.duplicate a:before { background-position: -330px -290px; }
 
 /*
 ul.ticket-header-bar li.edit { background-position: left -202px; }

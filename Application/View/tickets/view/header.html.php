@@ -35,7 +35,7 @@
 	<?php if (User::isLoggedIn()): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
-			<?php foreach (['cut', 'check', 'edit', 'delete'] as $action):
+			<?php foreach (['cut', 'check', 'duplicate', 'edit', 'delete'] as $action):
 				if (!User::isAllowed('tickets', $action) or !$ticket->isEligibleAction($action)) {
 					continue;
 				} ?>
@@ -44,12 +44,13 @@
 					<?php switch ($action) {
 						case 'cut':
 						case 'check':
+						case 'duplicate':
 						case 'edit':
 							echo $this->linkTo('tickets', $action, $ticket, $project, '<span>' . $action . '</span>', ucfirst($action) . '…');
 							break;
-						case 'reset':
+						/*case 'reset':
 							echo $this->linkTo('tickets', 'reset', $ticket + $project, '<span>reset</span>', 'Reset encoding task', ['data-dialog-confirm' => 'Are you sure you want to reset this encoding task?']);
-							break;
+							break;*/
 						case 'delete':
 							echo $this->linkTo('tickets', 'delete', $ticket, $project, '<span>delete</span>', 'Delete ticket', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this ticket?']);
 							break;

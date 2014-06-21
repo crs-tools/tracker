@@ -567,6 +567,7 @@
 					$values['fahrplan_id'] : '';
 				
 				// Internal fahrplan id is mandatory, must be unique and can't be changed later
+				// TODO: move to Model/Validation
 				if (empty($fahrplanId) or
 					Ticket::exists([
 						'project_id' => $this->project['id'],
@@ -594,14 +595,14 @@
 					
 					// Create child tickets
 					// FIXME: this creates children for all tickets, add additional argument for function
-					if ($this->form->getValue('create_encoding_tickets')) {
-						Ticket::createMissingEncodingTickets(
+					if ($this->form->getValue('create_recording_tickets')) {
+						Ticket::createMissingRecordingTickets(
 							$this->project['id']
 						);
 					}
 					
-					if ($this->form->getValue('create_recording_tickets')) {
-						Ticket::createMissingRecordingTickets(
+					if ($this->form->getValue('create_encoding_tickets')) {
+						Ticket::createMissingEncodingTickets(
 							$this->project['id']
 						);
 					}
@@ -661,6 +662,71 @@
 					->select('revision, description')
 					->first();
 			}
+		}
+		
+		public function duplicate(array $arguments) {
+			if (!$this->ticket = Ticket::findBy(['id' => $arguments['id'], 'project_id' => $this->project['id']])) {
+				throw new EntryNotFoundException();
+			}
+			
+			$this->form();
+			
+			if ($this->form->wasSubmitted()) {
+				$ticket = $this->ticket->duplicate();
+				
+				// We don't need a unique title here, titles are less important for tickets since we have the fahrplan id
+				$ticket['title'] = 'Duplicate of ' . $ticket['title'];
+				
+				// Copy properties
+				
+				$properties = $this->ticket
+					->Properties
+					->indexBy('name')
+					->toArray();
+				
+				if (isset($properties['Fahrplan.Id'])) {
+					$properties['Fahrplan.Id'] =
+						$this->form->getValue('fahrplan_id');
+				}
+				
+				$ticket['properties'] = $properties;
+				
+				if ($ticket->save($this->form->getValues())) {
+					if (empty($this->form->getValue('duplicate_recording_ticket'))) {
+						Ticket::createMissingRecordingTickets(
+							$this->project['id']
+						);
+					} else {
+						$recordingTicket = $this->ticket
+							->RecordingTicket
+							->duplicate();
+						
+						
+						$recordingTicket->save([
+							'parent_id' => $ticket['id'],
+							'fahrplan_id' => $ticket['fahrplan_id'],
+							'title' => $ticket['title'] . ' (Recording)'
+						]);
+					}
+					
+					Ticket::createMissingEncodingTickets(
+						$this->project['id']
+					);
+					
+					$this->flash('Ticket duplicated');
+					return $this->redirect(
+						'tickets', 'view', $ticket, $this->project
+					);
+				}
+			}
+			
+			$this->states = $this->project
+				->States
+				->where([
+					'ticket_type' => $this->ticket['ticket_type']
+				]);
+			
+			return $this->render('tickets/duplicate');
 		}
 		
 		/*public function mass_edit(array $arguments) {

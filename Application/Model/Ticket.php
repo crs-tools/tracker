@@ -14,6 +14,14 @@
 		
 		const CLASS_RESOURCE = 'Ticket_Resource';
 		
+		public $hasOne = [
+			'RecordingTicket' => [
+				'class_name' => 'Ticket',
+				'foreign_key' => ['parent_id'],
+				'where' => ['ticket_type' => 'recording']
+			]
+		];
+		
 		public $hasMany = [
 			'Children' => [
 				'class_name' => 'Ticket',
@@ -258,6 +266,9 @@
 				case 'delete':
 					return true;
 					break;
+				case 'duplicate':
+					return ($this['ticket_type'] === 'meta');
+					break;
 			}
 			
 			if (!$state = TicketState::getStateByAction($action)) {
@@ -280,7 +291,7 @@
 				return false;
 			}
 			
-			$existingProperties = $this->properties->indexBy('name', 'value');
+			$existingProperties = $this->Properties->indexBy('name', 'value');
 			$properties = [];
 			
 			if ($expand[0] > 0) {
