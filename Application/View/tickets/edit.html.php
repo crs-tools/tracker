@@ -42,7 +42,15 @@ else: ?>
 			<?php if (isset($profile)): ?>
 				<li>
 					<label>Encoding profile</label>
-					<p><?= $profile['name'] . ' (r' . $profile['revision'] . ')' ?></p>
+					<p>
+						<?php if (User::isAllowed('encodingprofiles', 'view')) {
+							echo $this->linkTo('encodingprofiles', 'view', $profile, $profile['name']);
+						} else {
+							echo $profile['name'];
+						}
+						
+						echo ' (r' . $profile['revision'] . ')'; ?>
+					</p>
 					<span class="description"><?= $profile['description']; ?></span>
 				</li>
 			<?php endif; ?>

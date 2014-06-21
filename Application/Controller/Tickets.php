@@ -558,13 +558,7 @@
 		public function create() {
 			$this->form();
 			
-			$this->states = $this->project
-				->States
-				->where(['ticket_type' => 'meta']);
-			
-			$this->users = User::findAll()
-				->select('id, name')
-				->indexBy('id', 'name');
+			$this->_assignSelectValues();
 			
 			if ($this->form->wasSubmitted()) {
 				$values = $this->form->getValues();
@@ -639,6 +633,12 @@
 				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
+			$this->_assignSelectValues();
+			
+			return $this->render('tickets/edit');
+		}
+		
+		private function _assignSelectValues() {
 			$this->states = $this->project
 				->States
 				->where(['ticket_type' => $this->ticket['ticket_type']]);
@@ -647,14 +647,17 @@
 				->select('id, name')
 				->indexBy('id', 'name');
 			
-			if (!empty($this->ticket['encoding_profile_version_id'])) {
-				$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'name']])
-					->where(['id' => $this->ticket['encoding_profile_version_id']])
+			if (isset($this->ticket) and
+				!empty($this->ticket['encoding_profile_version_id'])) {
+				$this->profile = EncodingProfileVersion::findAll(
+					['EncodingProfile' => ['select' => 'id, name']]
+				)
+					->where([
+						'id' => $this->ticket['encoding_profile_version_id']
+					])
 					->select('revision, description')
 					->first();
 			}
-			
-			return $this->render('tickets/edit');
 		}
 		
 		/*public function mass_edit(array $arguments) {
