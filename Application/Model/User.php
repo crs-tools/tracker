@@ -14,9 +14,13 @@
 		
 		const FIELD_USER = 'name';
 		const FIELD_ACL_TOKEN = 'role';
+		
 		const FIELD_PERSISTENCE_TOKEN = 'persistence_token';
 		const FIELD_LAST_REQUEST = 'last_seen';
 		const FIELD_LAST_LOGIN = 'last_login';
+		
+		const FIELD_ACTIVE = false;
+		const FIELD_LOGIN_COUNT = false;
 		
 		/*public $hasMany = array(
 			'ServiceLogEntry' => array('key' => 'user_id'),
