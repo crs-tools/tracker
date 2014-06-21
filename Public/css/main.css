@@ -1069,7 +1069,7 @@ ul.tickets li a.link {
 	position: absolute;
 	top: 0;
 	left: 0;
-	right: 130px;
+	right: 190px;
 	background: transparent url(../images/main.png) no-repeat left -92px;
 }
 
@@ -1155,7 +1155,7 @@ ul.tickets li span.day, ul.tickets li span.room {
 
 ul.tickets li span.room {
   text-overflow: clip;
-  max-width: 7.4em;
+  max-width: 4.7em;
 }
 
 ul.tickets li span.assignee {
@@ -1166,7 +1166,7 @@ ul.tickets li span.assignee {
 ul.tickets li a.link span.view, ul.tickets li a.edit, ul.tickets li a.action {
 	position: absolute;
 	top: 7px;
-	right: -124px;
+	right: -184px;
 	height: 22px;
 	z-index: 100;
 	background: transparent url(../images/main.png) no-repeat 0 -46px;
