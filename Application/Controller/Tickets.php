@@ -656,6 +656,7 @@
 			
 			$this->users = User::findAll()
 				->select('id, name')
+				->orderBy('name')
 				->indexBy('id', 'name');
 			
 			if (isset($this->ticket) and
