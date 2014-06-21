@@ -45,13 +45,9 @@
 				return $this->redirect('projects', 'index');
 			}
 			
-			$this->project = Project::findBy([
+			$this->project = Project::findByOrThrow([
 				'slug' => $arguments['project_slug']
 			]);
-			
-			if ($this->project === null) {
-				throw new EntryNotFoundException();
-			}
 			
 			$this->project['project_slug'] = $this->project['slug'];
 			

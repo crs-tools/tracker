@@ -18,9 +18,7 @@
 		}
 		
 		public function view(array $arguments) {
-			if (!$this->profile = EncodingProfile::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->profile = EncodingProfile::findOrThrow($arguments['id']);
 			
 			$this->form('encodingprofiles', 'compare', $this->profile);
 			$this->versions = $this->profile->Versions->orderBy('revision DESC');
@@ -29,9 +27,7 @@
 		}
 		
 		public function compare(array $arguments) {
-			if (!$this->profile = EncodingProfile::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->profile = EncodingProfile::findOrThrow($arguments['id']);
 			
 			$values = $this->form()->getValues();
 			
@@ -74,9 +70,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->profile = EncodingProfile::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->profile = EncodingProfile::findOrThrow($arguments['id']);
 			
 			$this->form();
 			
@@ -116,9 +110,7 @@
 		}
 		
 		public function delete(array $arguments) {
-			if (!$profile = EncodingProfile::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$profile = EncodingProfile::findOrThrow($arguments['id']);
 			
 			if ($profile->destroy()) {
 				$this->flash('Encoding profile ' . $profile['name'] . ' deleted');

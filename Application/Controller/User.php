@@ -73,9 +73,7 @@
 		}
 		
 		public function substitute(array $arguments) {
-			if (!$user = User::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$user = User::findOrThrow($arguments['id']);
 			
 			if (!AccessControl::isAllowed($user['role'], 'user', 'act_as_substitute')) {
 				$this->flash('You are not allowed to log in the name of this user');
@@ -117,9 +115,7 @@
 		}
 		
 		public function edit(array $arguments) {
-			if (!$this->user = User::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->user = User::findOrThrow($arguments['id']);
 			
 			$this->form();
 			
@@ -137,9 +133,7 @@
 		}
 		
 		public function delete(array $arguments) {
-			if (!$user = User::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$user = User::findOrThrow($arguments['id']);
 			
 			$name = $user['name'];
 			

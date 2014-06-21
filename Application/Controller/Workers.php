@@ -31,9 +31,7 @@
 		}
 		
 		public function edit_group(array $arguments) {
-			if (!$this->group = WorkerGroup::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->group = WorkerGroup::findOrThrow($arguments['id']);
 			
 			$this->form();
 			
@@ -65,9 +63,7 @@
 		}
 		
 		public function queue(array $arguments) {
-			if (!$this->group = WorkerGroup::find($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			$this->group = WorkerGroup::findOrThrow($arguments['id']);
 			
 			// TODO: fetch queue
 			
