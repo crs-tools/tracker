@@ -16,10 +16,6 @@
 	':project_slug/tickets/import/rooms' => ['import', 'rooms'],
 	':project_slug/tickets/import/review' => ['import', 'review'],
 	':project_slug/tickets/import/apply' => ['import', 'apply'],
-	':project_slug/tickets/export' => ['export', 'index'],
-	':project_slug/tickets/export/wiki' => ['export', 'wiki'],
-	':project_slug/tickets/export/podcast/:profile_slug' => ['export', 'podcast'],
-	':project_slug/tickets/export/feedback' => ['export', 'feedback'],
 	
 	':project_slug/workers' => ['workers', 'project'],
 	':project_slug/services/hold' => ['services', 'hold'],

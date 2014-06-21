@@ -36,7 +36,6 @@
 	
 	// User
 	AccessControl::allow('user', ['tickets'], ['edit']);
-	AccessControl::allow('user', ['export'], ['index']);
 	
 	// Superuser
 	AccessControl::allow('superuser', ['projects'], ['view', 'edit']);

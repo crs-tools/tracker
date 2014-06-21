@@ -21,10 +21,6 @@ else: ?>
 			<?php if (User::isAllowed('import', 'index')): ?>
 				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
 			<?php endif; ?>
-			
-			<?php if (User::isAllowed('export', 'index')): ?>
-				<li class="action export"><?php echo $this->linkTo('export', 'index', $project, '<span>export</span>'); ?></li>
-			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
 		</ul>
 	</div>
