@@ -11,7 +11,9 @@
 		public $requireAuthorization = true;
 		
 		public function index() {
-			$this->groups = WorkerGroup::findAll();
+			$this->groups = WorkerGroup::findAll()
+				->includes(['Worker']);
+			
 			return $this->render('workers/index');
 		}
 		
@@ -54,9 +56,7 @@
 		}
 		
 		public function delete_group(array $arguments) {
-			if (!WorkerGroup::delete($arguments['id'])) {
-				throw new EntryNotFoundException();
-			}
+			WorkerGroup::deleteOrThrow($arguments['id']);
 			
 			$this->flash('Worker group deleted');
 			return $this->redirect('workers', 'index');
