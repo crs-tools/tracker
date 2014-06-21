@@ -641,7 +641,10 @@
 		private function _assignSelectValues() {
 			$this->states = $this->project
 				->States
-				->where(['ticket_type' => $this->ticket['ticket_type']]);
+				->where([
+					'ticket_type' => (isset($this->ticket))?
+						$this->ticket['ticket_type'] : 'meta'
+				]);
 			
 			$this->users = User::findAll()
 				->select('id, name')

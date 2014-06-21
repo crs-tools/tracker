@@ -33,11 +33,11 @@ else: ?>
 <?= $f = $form(array('id' => 'ticket-edit')); ?>
 	<fieldset>
 		<ul>
-			<li><?php echo $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', array('class' => 'wide')); ?></li>
-			
 			<?php if (empty($ticket)): ?>
-				<li><?php echo $f->input('fahrplan_id', 'Fahrplan ID'); ?></li>
+				<li><?php echo $f->input('fahrplan_id', 'Fahrplan ID', null, ['class' => 'narrow']); ?></li>
 			<?php endif ?>
+			
+			<li><?php echo $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', array('class' => 'wide')); ?></li>
 			
 			<?php if (isset($profile)): ?>
 				<li>
