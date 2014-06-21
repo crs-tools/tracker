@@ -192,24 +192,31 @@
 			
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
-			// TODO: add scopes for properties and progress
-			// TODO: parent joins handle
-			$this->parent = $this->ticket->Parent;
-			$this->children = $this->ticket
-				->Children
-				->scoped([
-					'with_encoding_profile_name',
-					'with_progress'
-				])
-				->orderBy('ticket_type, title')
-				->join(['Handle']);
+			if (!empty($this->ticket['parent_id'])) {
+				// TODO: add scopes for properties and progress
+				// TODO: parent joins handle
+				$this->parent = $this->ticket->Parent;
+			} else {
+				$this->children = $this->ticket
+					->Children
+					->scoped([
+						'with_encoding_profile_name',
+						'with_progress'
+					])
+					->orderBy('ticket_type, title')
+					->join(['Handle']);
+			}
 			
 			$this->properties = $this->ticket->Properties;
 			
-			$this->profile = EncodingProfileVersion::findAll(['EncodingProfile' => ['select' => 'id, name']])
-				->where(['id' => $this->ticket['encoding_profile_version_id']])
-				->select('revision, description')
-				->first();
+			if (!empty($this->ticket['encoding_profile_version_id'])) {
+				$this->profile = EncodingProfileVersion::findAll([
+					'EncodingProfile' => ['select' => 'id, name']
+				])
+					->where(['id' => $this->ticket['encoding_profile_version_id']])
+					->select('revision, description')
+					->first();
+			}
 			
 			$this->comments = $this->ticket
 				->Comments
