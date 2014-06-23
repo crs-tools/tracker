@@ -13,6 +13,8 @@
 		const CREATE_IF_NOT_EXISTS = true;
 		
 		public $belongsTo = ['Ticket' => ['foreign_key' => ['ticket_id']]];
+		
+		// TODO: add some magic to handle changing Fahrplan.Id Property?
 
         public static function buildSlug(Model $project, $properties = []) {
             $parts = array();

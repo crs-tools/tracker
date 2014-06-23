@@ -11,31 +11,29 @@
 	);
 	
 	class Controller_XMLRPC_Handler extends Controller_XMLRPC {
-		
-		protected $beforeAction = array('authenticate' => true);
+		protected $beforeAction = [
+			'authenticate' => true
+		];
 		
 		const XMLRPC_PREFIX = 'C3TT.';
 		
-		private $virtual_properties = array(
+		private $virtual_properties = [
             'Encoding.Basename',
             'Project.Slug',
             'EncodingProfile.Basename',
             'EncodingProfile.Extension'
-        );
-
-        /**
-         * constructor
-         *
-         * set error reporting to suppress notices, since error messages break XML output
-         */
+		];
+		
         public function __construct() {
+			// TODO: move to Controller_XMLRPC
+			// set error reporting to suppress notices, since error messages break XML output
             error_reporting(E_ALL & ~ E_NOTICE);
         }
 
         protected function authenticate($method, array $arguments) {
 			if (empty($_GET['group']) or empty($_GET['hostname'])) {
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');
-			}
+			}†
 			
 			if (!$group = WorkerGroup::findBy(array('token' => $_GET['group']))) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
@@ -60,6 +58,7 @@
 				));
 			} else {
 				// TODO: update last_seen
+				// $this->worker->touch(['last_seen' => true]);
 			}
 
             // store projects ids of projects assigned to parent worker group
@@ -69,7 +68,14 @@
 		private static function _validateSignature($secret, $signature, $arguments) {
             $args = array();
             foreach($arguments as $argument) {
-                $args[] = is_array($argument) ? http_build_query(['' => $argument], null, '&', PHP_QUERY_RFC3986) : rawurlencode($argument);
+                $args[] = (is_array($argument))?
+					http_build_query(
+						['' => $argument],
+						null,
+						'&',
+						PHP_QUERY_RFC3986
+					) :
+					rawurlencode($argument);
             }
 
 			$hash = hash_hmac(
@@ -78,6 +84,7 @@
 				$secret
 			);
 			
+			// TODO: replace with hash_equals from PHP 5.6 on
 			return str_hash_compare($hash, $signature);
 		}
 

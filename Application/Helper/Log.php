@@ -29,4 +29,6 @@
 		], $message);
 	}
 	
+	// TODO: parse "Done in (\d+)s"
+	
 ?>

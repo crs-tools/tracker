@@ -41,7 +41,6 @@
 			return $hours . ' hours ago';
 		}
 		
-		// $days = ($seconds / (60 * 60 * 24));
 		$days = ($hours / 24);
 		
 		if ($days < 1) {

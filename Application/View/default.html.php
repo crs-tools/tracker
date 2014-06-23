@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?= $this->title((!empty($project))? $project['title'] : 'C3 Ticket Tracker'); ?></title>
-		<meta charset="utf-8" />
+		<title><?= $this->title(
+			(!empty($project))? $project['title'] : 'C3 Ticket Tracker'
+		); ?></title>
 		
+		<meta charset="utf-8" />
 		<base href="<?= $this->Request->getRootURL(); ?>" />
+		
 		<link rel="shortcut icon" type="image/x-icon" href="<?= $this->Request->getRootURL(); ?>favicon.ico" />
 		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
 		<?= $this->content('stylesheets'); ?>
@@ -20,7 +23,6 @@
 				
 				<?php if (isset($project)): ?>
 					<li class="padding">›</li>
-					<?php /* ($arguments['controller'] != 'projects' or $arguments['action'] != 'view')? ' current' : ''; */ ?>
 					<li class="link current">
 						<?php echo $this->linkTo('tickets', 'feed', $project, h($project['title']));
 						
@@ -30,7 +32,6 @@
 					</li>
 				<?php endif; ?>
 				
-			
 				<?php if (User::isLoggedIn()): ?>
 					<li class="right link"><?= $this->linkTo('user', 'logout', 'Log out'); ?></li>
 					<li class="right padding">·</li>
@@ -102,13 +103,6 @@
 							<?= $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php // TODO: rename to jobs
-					/*if (User::isAllowed('services', 'workers')): ?>
-						<li class="menu-services <?= (($arguments['controller'] == 'workers' and $arguments['action'] == 'project')? ' current' : ''); ?>">
-							<?= $this->linkTo('workers', 'project', $project, '<span>Workers</span>', 'Workers') ?>
-						</li>
-					<?php endif;*/ ?>
-					
 					<?php if (User::isAllowed('projects', 'view')): ?>
 						<li class="last menu-project <?= (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
 							<?= $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>

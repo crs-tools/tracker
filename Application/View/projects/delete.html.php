@@ -3,6 +3,7 @@
 		<h2>Delete project <?= $this->linkTo('projects', 'view', $project, $project['title']); ?>?</h2>
 		<ul>
 			<li>
+				<label></label>
 				<p>
 					<strong>Are you sure you want to delete this project?</strong>
 					<span class="description">

@@ -1,5 +1,7 @@
 <?php
 	
+	// TODO: prefix with "ticket"
+	
 	function delayToMilliseconds($delay) {
 		return ((float) $delay) * 1000;
 	}
