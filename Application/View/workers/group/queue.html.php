@@ -19,8 +19,12 @@
 	</ul>
 </div>
 
-<?php if (isset($queue)) {
-	echo $this->render('tickets/list', [
-		'tickets' => $queue
-	]);
-} ?>
+<?php if (isset($queue)): ?>
+	<ul class="tickets">
+		<?php foreach ($queue as $ticket) {
+			echo $this->render('tickets/ticket', [
+				'ticket' => $ticket
+			]);
+		} ?>
+	</ul>
+<?php endif; ?>

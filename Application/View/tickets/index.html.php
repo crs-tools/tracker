@@ -64,7 +64,13 @@
 	</form>
 <?php endif;*/ ?>
 
-<?= $this->render('tickets/list'); ?>
+<ul class="tickets">
+	<?php foreach ($tickets as $ticket) {
+		echo $this->render('tickets/ticket', [
+			'ticket' => $ticket
+		]);
+	} ?>
+</ul>
 
 <?php /*if (Request::exists(Request::get, 'search')): ?>
 	<script type="text/javascript">

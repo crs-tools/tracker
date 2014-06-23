@@ -18,19 +18,23 @@
 
 <?php if (isset($parent)): ?>
 	<h3>Parent</h3>
-	<?= $this->render('tickets/list', [
-		'tickets' => [$parent],
-		'referer' => false
-	]); ?>
+	<ul class="tickets">
+		<?= $this->render('tickets/ticket', [
+			'ticket' => $parent
+		]); ?>
+	</ul>
 <?php endif; ?>
 
 <?php if (isset($children) and $children->getRows() > 0): ?>
 	<h3>Children</h3>
-	<?= $this->render('tickets/list', [
-		'tickets' => $children,
-		'referer' => false,
-		'simulateTickets' => true
-	]); ?>
+	<ul class="tickets">
+		<?php foreach ($children as $child) {
+			echo $this->render('tickets/ticket', [
+				'ticket' => $child,
+				'simulateTickets' => true
+			]);
+		} ?>
+	</ul>
 <?php endif; ?>
 
 <?php if (isset($profile)): ?>
