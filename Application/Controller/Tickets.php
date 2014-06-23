@@ -33,7 +33,6 @@
 		];
 		
 		public function index() {
-			// TODO: join encoding profile?
 			$this->tickets = Ticket::findAll()
 				->where(['project_id' => $this->project['id']])
 				->join(['Handle'])
@@ -70,7 +69,9 @@
 			}
 			
 			if (isset($_GET['u'])) {
-				$this->tickets->scoped(['filter_handle' => ['handle' => $_GET['u']]]);
+				$this->tickets->scoped([
+					'filter_handle' => ['handle' => $_GET['u']]
+				]);
 			}
 			
 			/*
@@ -172,16 +173,10 @@
 				return $this->View->redirect('tickets', 'edit', array('project_slug' => $this->Project->slug, 'id' => implode(Model::indexByField($tickets,'id', 'id'), ',')));
 			}
 			*/
-			/*if ($this->View->respondTo('json')) {
-				$this->render('tickets/table');
-			} else {*/
-				
-			if ($this->respondTo('json')) {
-				$this->json = [];
-				return $this->render('tickets/list');
-			} else {
-				return $this->render('tickets/index');
-			}
+			
+			return $this->render('tickets/index', [
+				'format' => ['html', 'json']
+			]);
 		}
 		
 		public function view(array $arguments) {
