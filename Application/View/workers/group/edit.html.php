@@ -9,7 +9,7 @@
 			<li class="ticket-header-bar-background-left"></li>
 		
 			<?php if (User::isAllowed('workers', 'queue')): ?>
-				<li class="action versions"><?= $this->linkTo('workers', 'queue', $group, '<span>queue</span>', 'Show worker group queue'); ?></li>
+				<li class="action queue"><?= $this->linkTo('workers', 'queue', $group, '<span>queue</span>', 'Show worker group queue'); ?></li>
 			<?php endif; ?>
 			
 			<li class="action edit current"><?= $this->linkTo('workers', 'edit_group', $group, '<span>edit</span>', 'Edit worker group…'); ?></li>

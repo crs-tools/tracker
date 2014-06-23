@@ -6,7 +6,7 @@
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-background-left"></li>
 		
-		<li class="action versions current"><?= $this->linkTo('workers', 'queue', $group, '<span>queue</span>', 'Show worker group queue'); ?></li>
+		<li class="action queue current"><?= $this->linkTo('workers', 'queue', $group, '<span>queue</span>', 'Show worker group queue'); ?></li>
 		
 		<?php if (User::isAllowed('workers', 'edit')): ?>
 			<li class="action edit"><?= $this->linkTo('workers', 'edit_group', $group, '<span>edit</span>', 'Edit worker group…'); ?></li>
