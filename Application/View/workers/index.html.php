@@ -17,11 +17,13 @@
 					<th colspan="3"><?= h($group['title']); ?></th>
 					<th></th>
 					<th width="15%" class="link right small">
-						<?php echo $this->linkTo('workers', 'queue', $group, 'show queue'); ?>
+						<?php if (User::isAllowed('workers', 'queue')) {
+							echo $this->linkTo('workers', 'queue', $group, 'show queue');
+						} ?>
 					</th>
 					<th width="5%" class="link right">
 						<?php if (User::isAllowed('workers', 'delete_group')) {
-							echo $this->linkTo('workers', 'delete_group', $group, 'delete', array('data-dialog-confirm' => 'Are you sure you want to permanently delete this worker group?'));
+							echo $this->linkTo('workers', 'delete_group', $group, 'delete', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this worker group?']);
 						} ?>
 					</th>
 					<th width="5%" class="link right">

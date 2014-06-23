@@ -1,8 +1,34 @@
 <?php $this->title((isset($group))? ('Edit worker group ' . $group['title'] . ' | ') : 'Create new worker group | '); ?>
 
+
+<?php if (isset($group)): ?>
+	<div id="ticket-header">
+		<h2 class="ticket"><span><?= h('Edit worker group ' . $group['title']); ?></span></h2>
+		
+		<ul class="ticket-header-bar right horizontal">
+			<li class="ticket-header-bar-background-left"></li>
+		
+			<?php if (User::isAllowed('workers', 'queue')): ?>
+				<li class="action versions"><?= $this->linkTo('workers', 'queue', $group, '<span>queue</span>', 'Show worker group queue'); ?></li>
+			<?php endif; ?>
+			
+			<li class="action edit current"><?= $this->linkTo('workers', 'edit_group', $group, '<span>edit</span>', 'Edit worker group…'); ?></li>
+			
+			<?php if (User::isAllowed('workers', 'delete')): ?>
+				<li class="action delete"><?= $this->linkTo('workers', 'delete_group', $group, '<span>delete</span>', 'Delete worker group', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this worker group?']); ?></li>
+			<?php endif; ?>
+		
+			<li class="ticket-header-bar-background-right"></li>
+		</ul>
+	</div>
+<?php endif; ?>
+
 <?= $f = $form(); ?>
 	<fieldset>
-		<h2><?= (isset($group))? h('Edit worker group ' . $group['title']) : 'Create new worker group'; ?></h2>
+		<?php if (!isset($group)): ?>
+			<h2>Create new worker group</h2>
+		<?php endif; ?>
+		
 		<ul>
 			<li><?= $f->input('title', 'Title', $group['title']); ?></li>
 		</ul>

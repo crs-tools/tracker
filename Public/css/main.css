@@ -1128,7 +1128,7 @@ ul.tickets li span.day, ul.tickets li span.start, ul.tickets li span.assignee, u
 	color: #707070;
 }
 
-ul.tickets li span.state, ul.tickets li span.day, ul.tickets li span.start {
+ul.tickets li span.state, ul.tickets li span.day, ul.tickets li span.start, ul.tickets li span.priority {
 	width: 2.9em;
 	border-right: 1px solid #e4e4e4;
 	text-align: center;
@@ -1142,7 +1142,7 @@ ul.tickets li span.state {
 
 ul.tickets li span.state.failed { color: #FF3E43; }
 
-ul.tickets li span.start, ul.tickets li span.state, ul.tickets li span.day, ul.tickets li span.room {
+ul.tickets li span.start, ul.tickets li span.state, ul.tickets li span.day, ul.tickets li span.room, ul.tickets li span.priority {
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -1151,6 +1151,17 @@ ul.tickets li span.day, ul.tickets li span.room {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+ul.tickets li span.priority strong {
+  display: inline-block;
+  margin-top: -2px;
+  padding: 2px 4px;
+  background-color: #59b0fa;
+  border-radius: 3px;
+  font-weight: normal;
+  text-decoration: none;
+  color: #fff;
 }
 
 ul.tickets li span.room {
@@ -1221,7 +1232,7 @@ ul.tickets li.child a.link, ul.tickets li.child span.other {
 	background: transparent;
 }
 
-ul.tickets li.child span.state, ul.tickets li.child span.day, ul.tickets li.child span.start, ul.tickets li.child span.assignee, ul.tickets li.no-properties span.state, ul.tickets li.no-properties span.day, ul.tickets li.no-properties span.assignee {
+ul.tickets li.child span.state, ul.tickets li.child span.day, ul.tickets li.child span.start, ul.tickets li.child span.assignee, ul.tickets li.no-properties span.state, ul.tickets li.no-properties span.day, ul.tickets li.no-properties span.assignee, ul.tickets li.child span.priority {
 	border: none;
 }
 

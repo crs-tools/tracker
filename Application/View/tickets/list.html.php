@@ -11,7 +11,13 @@ if (!empty($tickets)) {
 		echo '<ul class="tickets">';
 	}
 	
+	$isInProject = (isset($project));
+	
 	foreach ($tickets as $i => $ticket) {
+		if (!$isInProject) {
+			$project = $ticket->Project;
+		}
+		
 		$t = '<li data-id="' . $ticket['id'] . '"' . ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child') . '"' : '') . '>';
 			$t .= '<a class="link" href="' . $this->Request->getRootURL() .
 				Router::reverse('tickets', 'view', $ticket->toArray() + array('project_slug' => $project['slug'])) .
@@ -49,10 +55,17 @@ if (!empty($tickets)) {
 				}
 				
 				$t .= '</span><span class="state' . (($ticket['failed'])? ' failed' : '') . '">' . $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : '');
-				$t .= '</span><span class="day">';
 				
-				if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
-					$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-'; 
+				if (!empty($ticket['parent_id']) and isset($ticket['priority_product'])) {
+					$t .= '</span><span class="priority">';
+					$t .= '<strong aria-label="Priority: ' . $ticket['priority_product'] . '" data-tooltip="true">' .
+						round((((float) $ticket['priority_product']) - 1) * 100 + 1, 2) . '</strong>';
+				} else {
+					$t .= '</span><span class="day">';
+				
+					if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
+						$t .= (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-'; 
+					}
 				}
 				
 				$t .= '</span><span class="start">';

@@ -87,6 +87,7 @@
 			'filter_handle',
 			
 			'order_list',
+			'order_priority',
 			
 			'with_child',
 			'with_default_properties',
@@ -166,13 +167,29 @@
 			);
 		}
 		
-		public function order_list(Model_Resource $resource, array $arguments) {
-			$resource->orderBy(
-				'fahrplan_date, fahrplan_start, fahrplan_room, fahrplan_id, parent_id DESC, ticket_type, title'
-			);
-			
+		public static function order_list(Model_Resource $resource, array $arguments) {
+			$resource
+				->andSelect(
+					'COALESCE(' . self::TABLE . '.parent_id, ' .
+						self::TABLE . '.id) AS sort_id'
+				)
+				->orderBy(
+					'fahrplan_date, fahrplan_start, fahrplan_room,
+					 sort_id, parent_id DESC, ticket_type, title'
+				);
 			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
 			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
+		}
+		
+		public static function order_priority(Model_Resource $resource, array $arguments) {
+			$resource->orderBy(
+				'CASE WHEN child.id IS NULL
+					THEN ticket_priority(id)
+					ELSE ticket_priority(child.id)
+				 END DESC,
+				 COALESCE(parent_id, id), COALESCE(child.id, id),
+				 parent_id DESC
+			');
 		}
 		
 		public static function with_child(Model_Resource $resource, array $arguments) {
@@ -207,7 +224,9 @@
 		}
 		
 		public static function with_progress(Model_Resource $resource, array $arguments) {
-			$resource->select(self::TABLE . '.*, ticket_progress(' . self::TABLE . '.id) AS progress');
+			$resource->andSelect(
+				self::TABLE . '.*, ticket_progress(' . self::TABLE . '.id) AS progress'
+			);
 		}
 		
 		public static function with_properties(Model_Resource $resource, array $arguments) {
