@@ -12,10 +12,14 @@
 							[]),
 					false
 				); ?>
+				
+				<?php if (User::isAllowed('workers', 'queue')) {
+					echo $this->linkTo('workers', 'queue', $group, 'Show queue');
+				} ?>
 			</li>
 		<?php $f->register('WorkerGroup[' . $index . '][_destroy]');
 		endforeach; ?>
 	</ul>
 	
-	<?= $f->submit('Save assignment'); ?> or <?= $this->linkTo('projects', 'view', $project, 'discard changes', array('class' => 'reset')); ?>
+	<?= $f->submit('Save assignment'); ?> or <?= $this->linkTo('projects', 'view', $project, 'discard changes', ['class' => 'reset']); ?>
 </form>

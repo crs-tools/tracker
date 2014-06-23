@@ -1797,6 +1797,11 @@ ul.worker-groups li label {
 	font-size: 1.2em;
 }
 
+ul.worker-groups li a {
+  float: right;
+  margin: 4px 20px 0 0;
+}
+
 ul.worker-groups + input.submit {
   margin: 0.7em 0.4em;
 }
