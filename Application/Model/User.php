@@ -22,12 +22,6 @@
 		const FIELD_ACTIVE = false;
 		const FIELD_LOGIN_COUNT = false;
 		
-		/*public $hasMany = array(
-			'ServiceLogEntry' => array('key' => 'user_id'),
-			'LogEntry' => array('key' => 'user_id'),
-			'Ticket' => array('key' => 'user_id')
-		);
-		*/
 	}
 	
 ?>

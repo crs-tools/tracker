@@ -8,20 +8,20 @@
 		
         const TABLE = 'tbl_log';
 
-        public $belongsTo = array(
-            'Handle' => array(
+        public $belongsTo = [
+            'Handle' => [
                 'foreign_key' => ['handle_id'],
                 'select' => 'name AS handle_name'
-            ),
-            'Ticket' => array(
+			],
+            'Ticket' => [
                 'foreign_key' => ['ticket_id'],
 				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id'
-            ),
-            'User' => array(
+			],
+            'User' => [
                 'foreign_key' => ['handle_id'],
                 'select' => 'name AS user_name'
-            )
-        );
+			]
+        ];
 		
 		protected static $_messages = [
 			'RPC.assignNextUnassignedForState' => [

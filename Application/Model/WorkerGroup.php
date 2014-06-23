@@ -8,20 +8,20 @@
 		
 		const TABLE = 'tbl_worker_group';
 		
-		public $hasMany = array(
-			'Worker' => array(
+		public $hasMany = [
+			'Worker' => [
 				'foreign_key' => ['worker_group_id'],
 				'order_by' => 'last_seen DESC'
-			)
-		);
+			]
+		];
 		
-		public $hasAndBelongsToMany = array(
-			'Project' => array(
+		public $hasAndBelongsToMany = [
+			'Project' => [
 				'foreign_key' => ['project_id'],
 				'self_key' => ['worker_group_id'],
 				'via' => 'tbl_project_worker_group'
-			)
-		);
+			]
+		];
 		
 	}
 	

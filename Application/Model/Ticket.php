@@ -177,8 +177,8 @@
 					'fahrplan_date, fahrplan_start, fahrplan_room,
 					 sort_id, parent_id DESC, ticket_type, title'
 				);
-			//to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
-			//SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
+				// to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
+				// SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
 		}
 		
 		public static function order_priority(Model_Resource $resource, array $arguments) {

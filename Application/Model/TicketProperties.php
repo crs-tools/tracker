@@ -12,30 +12,34 @@
 		
 		const CREATE_IF_NOT_EXISTS = true;
 		
-		public $belongsTo = ['Ticket' => ['foreign_key' => ['ticket_id']]];
+		public $belongsTo = [
+			'Ticket' => [
+				'foreign_key' => ['ticket_id']
+			]
+		];
 		
 		// TODO: add some magic to handle changing Fahrplan.Id Property?
-
+		
         public static function buildSlug(Model $project, $properties = []) {
-            $parts = array();
+            $parts = [];
 
-            if(isset($properties['Meta.Acronym'])) {
-                array_push($parts, $properties['Meta.Acronym']);
+            if (isset($properties['Meta.Acronym'])) {
+                $parts[] = $properties['Meta.Acronym'];
             } else {
-                array_push($parts, $project['slug']);
+                $parts[] = $project['slug'];
             }
 
-            if(isset($properties['Fahrplan.ID'])) {
-                array_push($parts, $properties['Fahrplan.ID']);
+            if (isset($properties['Fahrplan.ID'])) {
+                $parts[] = $properties['Fahrplan.ID'];
             }
 
             // add language if project has multiple languages
-            if(count($project->Languages) > 0 && isset($properties['Record.Language'])) {
-                array_push($parts, $properties['Record.Language']);
+            if (count($project->Languages) > 0 && isset($properties['Record.Language'])) {
+                $parts[] = $properties['Record.Language'];
             }
 
             // generate slug from ticket title (and ignore the one from the frab)
-             array_push($parts, preg_replace([
+             $parts[] = preg_replace([
 				'/[.:"\']/',
 				'/[^a-zA-Z_\-0-9]/',
 				'/_+/'
@@ -47,7 +51,7 @@
 				'utf-8',
 				'ascii//TRANSLIT//IGNORE',
 				$properties['Fahrplan.Title']
-			)));
+			));
 
             return implode('-', $parts);
         }
