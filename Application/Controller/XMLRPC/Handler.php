@@ -33,7 +33,7 @@
         protected function authenticate($method, array $arguments) {
 			if (empty($_GET['group']) or empty($_GET['hostname'])) {
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');
-			}†
+			}
 			
 			if (!$group = WorkerGroup::findBy(array('token' => $_GET['group']))) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
