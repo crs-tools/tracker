@@ -725,8 +725,10 @@
 
             // pretty print
             $output = $processor->transformToDoc($content);
+			
             $output->formatOutput = true;
-
+			$output->encoding = 'UTF-8';
+			
 			return $output->saveXml();
 		}
 		
