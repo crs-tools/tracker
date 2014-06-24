@@ -107,7 +107,9 @@
 				ProjectTicketState::createAll($project['id']);
 				
 				$this->flash('Project created');
-				return $this->redirect('projects', 'view', $project);
+				return $this->redirect('projects', 'view', [
+					'project_slug' => $project['slug']
+				]);
 			}
 			
 			return $this->render('projects/edit');
