@@ -281,19 +281,19 @@
 		}
 		
 		public function cut(array $arguments) {
-			$this->_action('cut', $arguments);
+			return $this->_action('cut', $arguments);
 		}
 		
 		public function uncut(array $arguments) {
-			$this->_undoAction('cut', $arguments);
+			return $this->_undoAction('cut', $arguments);
 		}
 		
 		public function check(array $arguments) {
-			$this->_action('check', $arguments);
+			return $this->_action('check', $arguments);
 		}
 		
 		public function uncheck(array $arguments) {
-			$this->_undoAction('check', $arguments);
+			return $this->_undoAction('check', $arguments);
 		}
 		
 		private function _action($action, array $arguments) {
