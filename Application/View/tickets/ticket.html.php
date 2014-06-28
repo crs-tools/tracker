@@ -6,7 +6,7 @@ if (!isset($project)) {
 <li data-id="<?= $ticket['id']; ?>"<?= ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child') . '"' : ''); ?>>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 		
-		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>">
+		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
 		
 		<?php if (empty($ticket['parent_id']) or isset($simulateTickets)) {
 			echo h($ticket['fahrplan_id']);
@@ -46,10 +46,11 @@ if (!isset($project)) {
 			echo h($ticket['fahrplan_start']);
 		} ?>
 		
-		</span><span class="room">
-		
-		<?php if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
+		</span><span class="room"<?php if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
+			echo ' title="' . h($ticket['fahrplan_room']) . '">';
 			echo h($ticket['fahrplan_room']);
+		} else {
+			echo '>';
 		} ?>
 		
 		</span><span class="view"></span>

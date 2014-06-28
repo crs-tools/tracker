@@ -912,7 +912,6 @@ ul.ticket-header-bar li.edit.current a, ul.ticket-header-bar li.action.current a
 ul.ticket-header-bar li.ticket-header-bar-search {
 	height: 32px;
 	width: 118px;
-  margin-left: 0.5em;
 	background: transparent url(../images/main.png) no-repeat -464px -170px;
 }
 
@@ -928,6 +927,7 @@ ul.ticket-header-bar li.ticket-header-bar-search input:focus { outline: none; }
 
 ul.ticket-header-bar li.ticket-header-bar-search-button {
 	padding: 0;
+  margin-right: 0.7em;
 	background: none;
 }
 
@@ -1150,7 +1150,7 @@ ul.tickets li span.start, ul.tickets li span.state, ul.tickets li span.day, ul.t
   padding-right: 5px;
 }
 
-ul.tickets li span.day, ul.tickets li span.room {
+ul.tickets li span.day {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -1169,6 +1169,8 @@ ul.tickets li span.priority strong {
 
 ul.tickets li span.room {
   text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
   max-width: 4.7em;
 }
 
