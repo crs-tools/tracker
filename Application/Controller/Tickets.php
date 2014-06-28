@@ -401,7 +401,7 @@
 						];
 					}
 					
-					$oldState = $ticket['ticket_state'];
+					$oldState = $this->ticket['ticket_state'];
 					
 					if ($this->ticket->save([
 						'ticket_state' => $this->ticket->queryNextState($state),
