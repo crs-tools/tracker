@@ -430,6 +430,7 @@
 				->orderBy('created DESC');
 			$this->log = $this->ticket
 				->LogEntries
+				->join(['Handle'])
 				->orderBy('created DESC');
 			
 			/*
