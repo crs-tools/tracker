@@ -249,12 +249,12 @@ var Tracker = {};
             clearSearch();
           }
           
-          if (event.altKey || event.metaKey) {
+          if (event.altKey || event.ctrlKey || event.metaKey) {
             return;
           }
           
-          // Backspace, Delete
-          if (event.which == 8 || event.which == 48) {
+          // Not A-Z or 0-9
+          if ((event.which < 65 && (event.which < 49 || event.which > 57)) || event.which > 90) {
             quicksearch.repeat = true;
             return;
           }
