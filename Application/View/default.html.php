@@ -66,7 +66,7 @@
 						<li id="menu-background-left"></li>
 					
 						<?php if (User::isAllowed('projects', 'index')): ?>
-							<li class="first menu-projects <?= (($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''); ?>">
+							<li class="menu-projects <?= (($arguments['controller'] == 'projects' and $arguments['action'] == 'index')? ' current' : ''); ?>">
 								<?= $this->linkTo('projects', 'index', '<span>Projects</span>', 'Projects'); ?>
 							</li>
 						<?php endif; ?>
@@ -76,12 +76,12 @@
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('workers', 'index')): ?>
-							<li class="last menu-services <?= (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
+							<li class="menu-services <?= (($arguments['controller'] == 'workers')? ' current' : ''); ?>">
 								<?= $this->linkTo('workers', 'index', '<span>Workers</span>', 'Workers'); ?>
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('user', 'index')): ?>
-							<li class="last menu-users <?= (($arguments['controller'] == 'user')? ' current' : ''); ?>">
+							<li class="menu-users <?= (($arguments['controller'] == 'user')? ' current' : ''); ?>">
 								<?= $this->linkTo('user', 'index', '<span>Users</span>', 'Users'); ?>
 							</li>
 						<?php endif; ?>
@@ -94,7 +94,7 @@
 					<li id="menu-background-left"></li>
 					
 					<?php if (User::isAllowed('tickets', 'feed')): ?>
-						<li class="first menu-feed <?= (($arguments['controller'] == 'tickets' and $arguments['action'] == 'feed')? ' current' : ''); ?>">
+						<li class="menu-feed <?= (($arguments['controller'] == 'tickets' and $arguments['action'] == 'feed')? ' current' : ''); ?>">
 							<?= $this->linkTo('tickets', 'feed', $project, '<span>Feed</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
