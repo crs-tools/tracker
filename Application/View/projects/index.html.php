@@ -7,7 +7,7 @@
 	<?php if (User::isAllowed('projects', 'create')): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
-			<li class="action create"><?php echo $this->linkTo('projects', 'create', '<span>create</span>', 'Create new project'); ?></li>
+			<li class="action create"><?= $this->linkTo('projects', 'create', '<span>create</span>', 'Create new project'); ?></li>
 			<li class="ticket-header-bar-background-right"></li>
 		</ul>
 	<?php endif; ?>
@@ -17,9 +17,11 @@
 	<?php if (!empty($projects)): ?>
 		<?php foreach ($projects as $project): ?>
 			<li>
-				<?php echo $this->linkTo('tickets', 'feed', array('project_slug' => $project['slug']), $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', array('class' => 'link', 'title' => $project['title'])); ?>
+				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', ['class' => 'link', 'title' => $project['title']]); ?>
 				
 				<ul class="actions horizontal">
+					<li><?= $this->linkTo('tickets', 'index', ['project_slug' => $project['slug']], 'tickets'); ?></li>
+					
 					<?php if (User::isAllowed('projects', 'view')): ?>
 						<li><?= $this->linkTo('projects', 'view', ['project_slug' => $project['slug']], 'project settings'); ?></li>
 					<?php endif; ?>
