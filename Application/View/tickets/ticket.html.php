@@ -3,7 +3,17 @@ if (!isset($project)) {
 	$project = $ticket->Project;
 } ?>
 
-<li data-id="<?= $ticket['id']; ?>"<?= ((!empty($ticket['parent_id']))? ' class="' . ((!empty($simulateTickets))? 'no-properties' : 'child') . '"' : ''); ?>>
+<?php echo '<li data-id="' . h($ticket['id']) . '" data-fahrplan-id="' .
+	h($ticket['fahrplan_id']) . '"';
+
+if (empty($ticket['parent_id'])) {
+	echo ' data-title="' . h($ticket['title']) . '"';
+} else {
+	echo ' class="' .
+		((!empty($simulateTickets))? 'no-properties' : 'child') . '"';
+}
+
+echo '>'; ?>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 		
 		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">

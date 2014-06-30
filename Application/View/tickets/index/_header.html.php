@@ -1,4 +1,4 @@
-<?= $f = $searchForm(); ?>
+<?= $f = $searchForm(['id' => 'tickets-quicksearch']); ?>
 	<ul class="ticket-header-bar right horizontal">
 		<li class="ticket-header-bar-search"><?= $f->input('q', null, '', array('placeholder' => 'Search')); ?></li>
 		<li class="ticket-header-bar-search-button <?= ($arguments['action'] == 'search')? 'current' : ''; ?>">

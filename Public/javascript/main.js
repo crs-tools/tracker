@@ -53,6 +53,13 @@ var Tracker = {};
         days: $('#tickets-search-days'),
         assignees: $('#tickets-search-assignees'),
         profiles: $('#tickets-search-profiles')
+      },
+      quicksearch = {
+        forbiddenCharacters: /[^\w\u0080-\u00FF\u0100-\u017F\u0180-\u024F\-\_\:]/g,
+        numbers: /^[0-9]+$/,
+        q: null,
+        repeat: false,
+        tickets: null
       };
   
   function addCondition(event, postField, postOperator, postValue) {
@@ -184,24 +191,94 @@ var Tracker = {};
     $('<a></a>').attr('href', '#').addClass('tickets-search-add').click(addCondition).appendTo(li);
   }
   
+  function clearSearch() {
+    quicksearch.tickets.find('li').show();
+  }
+  
+  function doSearch(q) {
+    var isFahrplanId = quicksearch.numbers.test(q),
+        regexp = new RegExp(((isFahrplanId)? '^' : '') +
+          q.replace(quicksearch.forbiddenCharacters, ''), 'i');
+    
+    if (q === '') {
+      clearSearch();
+      return;
+    }
+    
+    quicksearch.tickets.find('li:not(.child)').each(function(i, ticket) {
+      ticket = $(ticket);
+      
+      var tickets = quicksearch.tickets
+            .find('li[data-fahrplan-id=' + ticket.data('fahrplan-id') + ']'),
+          match = false;
+      
+      if (isFahrplanId) {
+        match = regexp.test(ticket.data('fahrplan-id'));
+      } else {
+        match = regexp.test(ticket.data('title'));
+      }
+      
+      if (match) {
+        tickets.show();
+      } else {
+        tickets.hide();
+      }
+    });
+  }
+  
   Tracker.Search = {
     init: function() {
-      var search = $('#tickets-search').data('search');
-      if (search && (search.fields && search.operators && search.values)) {
-        $.each(search.fields, function(i, field) {
-          addCondition(null, field, search.operators[i], search.values[i]);
-        });
-      } else {
-        addCondition();
+      if ($('#tickets-search')[0]) {
+        var search = $('#tickets-search').data('search');
+        
+        if (search && (search.fields && search.operators && search.values)) {
+          $.each(search.fields, function(i, field) {
+            addCondition(null, field, search.operators[i], search.values[i]);
+          });
+        } else {
+          addCondition();
+        }
       }
+      
+      quicksearch.q = $('#tickets-quicksearch-q')
+        .keydown(function(event) {
+          // Esc
+          if (event.which == 27) {
+            quicksearch.q.val('');
+            quicksearch.q.blur();
+            clearSearch();
+          }
+          
+          if (event.altKey || event.metaKey) {
+            return;
+          }
+          
+          // Backspace, Delete
+          if (event.which == 8 || event.which == 48) {
+            quicksearch.repeat = true;
+            return;
+          }
+          
+          doSearch(quicksearch.q.val() + String.fromCharCode(event.which));
+        })
+        .keyup(function(event) {
+          if (quicksearch.repeat) {
+            quicksearch.repeat = false;
+            doSearch(quicksearch.q.val());
+          }
+        });
+      
+      quicksearch.tickets = $('ul.tickets');
+      
+      $(document).on('keydown', function(event) {
+        // Ctrl/Cmd + F
+        if (event.metaKey && event.which == 70) {
+          quicksearch.q.focus();
+          event.preventDefault();
+        }
+      });
     }
   };
-  
-  $(document).on('keydown', function(e) {
-    if((e.altKey || e.ctrlKey) && e.which == 75 /*k*/) {
-      $('#form-q').focus();
-    }
-  });
 }());
 
 
@@ -1001,7 +1078,7 @@ $(function() {
     $('#ticket-edit-encoding_profile').parent().hide();
   }
   
-  if ($('#tickets-search')[0]) {
+  if ($('#tickets-quicksearch')[0]) {
     Tracker.Search.init();
   }
   
