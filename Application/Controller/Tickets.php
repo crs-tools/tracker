@@ -31,10 +31,10 @@
 			'state' => 'ticket_state',
 			'encoding_profile' => 'encoding_profile_version_id',
 			'fahrplan_id' => 'fahrplan_id',
-			'date' => 'fahrplan_date_join.value',
-			'day' => 'fahrplan_day_join.value',
-			'time' => 'fahrplan_start_join.value',
-			'room' => 'fahrplan_room_join.value',
+			'date' => 'property_fahrplan_date.value',
+			'day' => 'property_fahrplan_day.value',
+			'time' => 'property_fahrplan_start.value',
+			'room' => 'property_fahrplan_room.value',
 			'modified' => 'modified'
 		];
 		
@@ -64,7 +64,7 @@
 					'order_list'
 				]);
 			
-			$this->form(null, null, Request::METHOD_GET);
+			$this->form(null, null, Request::METHOD_GET);			
 			$this->searchForm = $this->form('tickets', 'search');
 			
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);

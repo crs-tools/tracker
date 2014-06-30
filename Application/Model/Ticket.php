@@ -232,7 +232,7 @@
 		public static function with_properties(Model_Resource $resource, array $arguments) {
 			foreach ($arguments as $property => $as) {
 				$resource->leftJoin(
-					[TicketProperties::TABLE, $as.'_join'],
+					[TicketProperties::TABLE, 'property_' . $as],
 					'value AS ' . $as,
 					'((ticket_id = ' .
 						self::TABLE .
