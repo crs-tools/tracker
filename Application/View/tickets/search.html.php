@@ -1,34 +1,46 @@
-<?php
+<?php $this->title('Ticket search | '); ?>
 
-$this->title('Tickets | ');
+<div id="ticket-header" class="clearfix">
+	<h2 class="ticket"><span class="title">Search</span></h2>
+	
+	<?= $this->render('tickets/index/_header'); ?>
+</div>
 
-echo $f = $searchForm(array('id' => 'tickets-search', 'data-search' => json_encode($searchForm->wasSubmitted() ? array(
+<?php echo $f = $searchForm([
+	'id' => 'tickets-search',
+	'data-search' => json_encode(($searchForm->wasSubmitted())? [
 		'fields' => $fields,
 		'operators' => $operators,
 		'values' => $values
-) : null)));
-
-$f->register('fields[]');
-$f->register('operators[]');
-$f->register('values[]');
-
-?>
-
+	] : null)
+]); ?>
 	<fieldset>
-		<legend>Search</legend>
-		
 		<ul id="tickets-search-conditions">
-			<li class="borderless searchrow">
-				<?php echo $f->submit('Search'); ?>
+			<li class="submit">
+				<?= $f->submit('Search'); ?>
 			</li>
 		</ul>
 	</fieldset>
 	<fieldset id="tickets-search-selects">
-		<?php echo $f->select('types', '', $types, null, array('id' => 'tickets-search-types')); ?>
-		<?php echo $f->select('states', '', $states, null, array('id' => 'tickets-search-states')); ?>
-		<?php echo $f->select('users', '', $users, null, array('id' => 'tickets-search-assignees')); ?>
-		<?php echo $f->select('profiles', '', $profiles, null, array('id' => 'tickets-search-profiles')); ?>
-		<?php echo $f->select('rooms', '', $rooms, null, array('id' => 'tickets-search-rooms')); ?>
-		<?php echo $f->select('days', '', $days, null, array('id' => 'tickets-search-days')); ?>
+		<?= $f->select('types', '', ['meta' => 'meta', 'recording' => 'recording', 'ingest' => 'ingest', 'encoding' => 'encoding'], null, ['id' => 'tickets-search-types']); ?>
+		<?= $f->select('states', '', $states, null, ['id' => 'tickets-search-states']); ?>
+		<?= $f->select('users', '', $users, null, ['id' => 'tickets-search-assignees']); ?>
+		<?= $f->select('profiles', '', $profiles->toArray(), null, ['id' => 'tickets-search-profiles']); ?>
+		<?= $f->select('rooms', '', $rooms->toArray(), null, ['id' => 'tickets-search-rooms']); ?>
+		<?= $f->select('days', '', $days->toArray(), null, ['id' => 'tickets-search-days']); ?>
 	</fieldset>
+	
+	<?php $f->register('fields[]');
+	$f->register('operators[]');
+	$f->register('values[]'); ?>
 </form>
+
+<?php if(!empty($tickets)): ?>
+	<ul class="tickets">
+		<?php foreach ($tickets as $ticket) {
+			echo $this->render('tickets/ticket', [
+				'ticket' => $ticket
+			]);
+		} ?>
+	</ul>
+<?php endif ?>

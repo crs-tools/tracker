@@ -186,8 +186,7 @@ ul#menu li {
 	background: transparent url(../images/main.png) no-repeat -216px 0;
 }
 
-
-ul#menu li.first { background-position: -218px 0; }
+ul#menu #menu-background-left + li { background-position: -218px 0; }
 
 ul#menu li a { display: block; }
 
@@ -743,7 +742,7 @@ ul.ticket-header-bar li {
 	background: transparent url(../images/main.png) no-repeat -17px -170px;
 }
 
-ul.ticket-header-bar li.first, ul.ticket-header-bar li:nth-child(2) { background-position: -19px -170px; }
+ul.ticket-header-bar li.ticket-header-bar-background-left + li  { background-position: -19px -170px; }
 
 ul.ticket-header-bar li.ticket-header-bar-background-left, ul.ticket-header-bar li.ticket-header-bar-background-right {
 	height: 32px;
@@ -958,8 +957,9 @@ form fieldset ul#tickets-search-conditions li {
 	border-bottom: 1px solid #e0e0e0;
 }
 
-form fieldset ul#tickets-search-conditions li.borderless { border: none; }
-form fieldset ul#tickets-search-conditions li.searchrow { height: 25px; }
+form fieldset ul#tickets-search-conditions li.submit {
+  border: none;
+}
 
 form fieldset ul#tickets-search-conditions li:nth-last-child(2) {
 	border: none;
@@ -975,15 +975,9 @@ form fieldset ul#tickets-search-conditions li input.text {
 	font-size: 1em;
 }
 
-form fieldset ul#tickets-search-conditions li input.submit {
-	position: absolute;
-	top: 0;
-	right: 0;
-	margin: 0.3em 0 0 0;
-}
-
-form fieldset ul#tickets-search-conditions li input.submit#tickets-search-mass-edit {
-	right: 58px;
+form fieldset ul#tickets-search-conditions li.submit input.submit {
+  display: block;
+  margin: -5px 0 0 0;
 }
 
 form fieldset ul#tickets-search-conditions li span.description {

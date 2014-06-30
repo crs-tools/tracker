@@ -20,6 +20,18 @@
 		
 		// TODO: add some magic to handle changing Fahrplan.Id Property?
 		
+		public static function findUniqueValues($property, $projectId) {
+			return TicketProperties::findAll()
+				->withoutDefaultScope()
+				->distinct()
+				->join(Ticket::TABLE, [
+					'id = ' . self::TABLE . '.ticket_id',
+					'project_id' => $projectId
+				])
+				->where(['name' => $property])
+				->orderBy('value');
+		}
+		
         public static function buildSlug(Model $project, $properties = []) {
             $parts = [];
 

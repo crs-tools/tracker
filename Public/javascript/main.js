@@ -1,3 +1,5 @@
+"use strict";
+
 var Tracker = {};
 
 /*
@@ -6,13 +8,44 @@ var Tracker = {};
   
 */
 (function() {
-  var conditionCount = 0,
+  var conditionCount = -1,
       dropdowns = {
-        fields: $('<select><optgroup label="Ticket"><option value="title">Title</option><option value="assignee">Assignee</option><option value="type">Type</option><option value="state">State</option><option value="encoding_profile">Encoding profile</option></optgroup><optgroup label="Properties"><option value="fahrplan_id">Fahrplan ID</option><option value="date">Date</option><option value="time">Time</option><option value="room">Room</option><option value="day">Day</option></optgroup><optgroup label="Other"><option value="modified">Modified</option></optgroup></select>'),
+        fields: $('<select>\
+          <optgroup label="Ticket">\
+            <option value="title">Title</option>\
+            <option value="assignee">Assignee</option>\
+            <option value="type">Type</option>\
+            <option value="state">State</option>\
+            <option value="encoding_profile">Encoding profile</option>\
+          </optgroup>\
+          <optgroup label="Properties">\
+            <option value="fahrplan_id">Fahrplan ID</option>\
+            <option value="date">Date</option>\
+            <option value="time">Time</option>\
+            <option value="room">Room</option>\
+            <option value="day">Day</option>\
+          </optgroup>\
+          <optgroup label="Other">\
+            <option value="modified">Modified</option>\
+          </optgroup>\
+        </select>'),
         operators: {
-          basic: $('<select><option value="is">is</option><option value="is_not">is not</option></select>'),
-          multiple: $('<select><option value="is">is</option><option value="is_not">is not</option><option value="is_in">is in</option><option value="is_not_in">is not in</option></select>'),
-          text: $('<select><option value="contains">contains</option><option value="begins_with">begins with</option><option value="ends_with">ends with</option><option value="is">is</option></select>')
+          basic: $('<select>\
+            <option value="is" selected>is</option>\
+            <option value="is_not">is not</option>\
+          </select>'),
+          multiple: $('<select>\
+            <option value="is" selected>is</option>\
+            <option value="is_not">is not</option>\
+            <option value="is_in">is in</option>\
+            <option value="is_not_in">is not in</option>\
+          </select>'),
+          text: $('<select>\
+            <option value="contains" selected>contains</option>\
+            <option value="begins_with">begins with</option>\
+            <option value="ends_with">ends with</option>\
+            <option value="is">is</option>\
+          </select>')
         },
         states: $('#tickets-search-states'),
         types: $('#tickets-search-types'),
@@ -95,7 +128,10 @@ var Tracker = {};
               value = $('<input></input>').addClass('text');
           }
 
-          value.attr('name', 'values[' + conditionCount + ']').insertAfter(event.target);
+          value
+            .attr('name', 'values[' + conditionCount + ']')
+            .prop('selectedIndex', 0)
+            .insertAfter(event.target);
         }
         
         if (postValue) {
@@ -127,7 +163,7 @@ var Tracker = {};
               break;
           }
           
-        })
+        });
       }).insertAfter(event.target);
       
       if (postOperator) {
@@ -141,10 +177,10 @@ var Tracker = {};
       event.preventDefault();
       li.remove();
       conditionCount--;
-      $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 1);
+      $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 0);
     }).appendTo(li);
     
-    $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 1);
+    $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 0);
     $('<a></a>').attr('href', '#').addClass('tickets-search-add').click(addCondition).appendTo(li);
   }
   

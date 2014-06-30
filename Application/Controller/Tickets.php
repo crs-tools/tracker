@@ -149,75 +149,65 @@
 		}
 		
 		public function search() {
-			$this->form('tickets', 'index');
-			$this->searchForm = $this->form('tickets', 'search');
+			$this->searchForm = $this->form();
 			
 			$this->users = User::findAll()
 					->select('id, name')
 					->indexBy('id', 'name')
 					->toArray();
 			
-			$types = ['meta', 'recording', 'encoding'];
-			$this->types = array_combine($types, $types);
-			
 			$states = [];
-			foreach(TicketState::findAll() as $state) {
-					$states[$state['ticket_type']][$state['ticket_type'].'.'.$state['ticket_state']] = $state['ticket_state'];
+			
+			foreach ($this->project->States as $state) {
+				if (!isset($states[$state['ticket_type']])) {
+					$states[$state['ticket_type']] = [];
+				}
+				
+				$states[$state['ticket_type']][$state['ticket_type'] . '.' . $state['ticket_state']] =
+					$state['ticket_state'];
 			}
+			
 			$this->states = $states;
 			
-			$rooms = $days = [];
-			$tickets = Ticket::findAll()
-				->where([
-					'project_id' => $this->project['id'],
-					'ticket_type' => 'meta',
-				]);
+			$this->rooms = TicketProperties::findUniqueValues('Fahrplan.Room', $this->project['id'])
+				->select('value')
+				->indexBy('value', 'value');
 			
-			foreach ($tickets as $ticket) {
-				$properties = $ticket->Properties
-					->indexBy('name', 'value');
-				
-				if(isset($properties['Fahrplan.Room']))
-					$rooms[$properties['Fahrplan.Room']] = $properties['Fahrplan.Room'];
-				
-				if(isset($properties['Fahrplan.Day']))
-					$days[$properties['Fahrplan.Day']] = 'Day '.$properties['Fahrplan.Day'];
-			}
-			$this->rooms = $rooms;
-			$this->days = $days;
-			
+			$this->days = TicketProperties::findUniqueValues('Fahrplan.Day', $this->project['id'])
+				->select('value::int, \'Day \' || value AS day')
+				->indexBy('value', 'day')
+				->orderBy('value::int');
+		
 			$this->profiles = $this->project
-					->EncodingProfileVersion
-					->indexBy('id', 'description')
-					->toArray();
-			
-			// list ticket without type-filter // TODO: hide filter bar?
-			$this->filter = 'search';
+				->EncodingProfileVersion
+				->indexBy('id', 'description');
 			
 			$this->fields = $this->searchForm->getValue('fields');
 			$this->operators = $this->searchForm->getValue('operators');
 			$this->values = $this->searchForm->getValue('values');
 			
-			if($q = $this->searchForm->getValue('q')) {
+			if ($q = $this->searchForm->getValue('q')) {
 				// quicksearch-queries consisting only of numbers are interpreted as searches for a fahrplan-id
-				if(is_numeric($q)) {
+				if (ctype_digit($q)) {
 					$this->fields[] = 'fahrplan_id';
 					$this->operators[] = 'is';
 					$this->values[] = $q;
-				}
-				else
-				{
+				} else {
 					$this->fields[] = 'title';
 					$this->operators[] = 'contains';
 					$this->values[] = $q;
 				}
 			}
 			
-			if($this->searchForm->wasSubmitted() && $this->fields && $this->operators && $this->values && count($this->fields) == count($this->operators) && count($this->fields) == count($this->values)) {
+			if ($this->searchForm->wasSubmitted() and
+				$this->fields and $this->operators and $this->values and
+				count($this->fields) == count($this->operators) and
+				count($this->fields) == count($this->values)
+			) {
 				$this->evaluateSearch($this->fields, $this->operators, $this->values);
 			}
 			
-			return $this->render('tickets/index');
+			return $this->render('tickets/search');
 		}
 		
 		protected function evaluateSearch($fields, $operators, $values) {
@@ -232,15 +222,6 @@
 					'order_list'
 				]);
 			
-			if ($query = $this->searchForm->getValue('q')) {
-				if (ctype_digit($query)) {
-					$tickets->where(array('fahrplan_id' => (int)$query));
-				} else {
-					$tickets->where('title ILIKE ?', array('%' . $query . '%'));
-				}
-			}
-			
-
 			/*
 			 * this join results in a query like this:
 			 *	 SELECT
@@ -362,6 +343,10 @@
 			
 			if (count($subCondition) > 0) {
 				$subq[] = implode(' AND ', $subCondition);
+			}
+			
+			if (empty($subq)) {
+				return;
 			}
 			
 			$tickets->where(
