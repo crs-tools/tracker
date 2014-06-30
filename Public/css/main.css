@@ -763,9 +763,15 @@ ul.ticket-header-bar li button, ul.ticket-header-bar li a {
 	color: #444;
 }
 
-ul.ticket-header-bar li button {
+ul.ticket-header-bar.left li button,
+ul.ticket-header-bar.left li a {
   padding: 8px 7px 8px 6px;
   cursor: pointer;
+}
+
+ul.ticket-header-bar.left li.current a {
+	padding-top: 9px;
+	padding-right: 8px;
 }
 
 ul.ticket-header-bar li button:hover, ul.ticket-header-bar li button:focus, ul.ticket-header-bar li a:hover, ul.ticket-header-bar li a:focus {
@@ -944,10 +950,6 @@ ul.ticket-header-bar li.ticket-header-bar-search-button.current button, ul.ticke
 	background: transparent url(../images/main.png) no-repeat -583px -170px;
 }
 
-form#tickets-search {
-	margin: -3em 0 2em;
-}
-
 form#tickets-search fieldset#tickets-search-selects { display: none; }
 
 form fieldset ul#tickets-search-conditions li {
@@ -957,6 +959,7 @@ form fieldset ul#tickets-search-conditions li {
 }
 
 form fieldset ul#tickets-search-conditions li.borderless { border: none; }
+form fieldset ul#tickets-search-conditions li.searchrow { height: 25px; }
 
 form fieldset ul#tickets-search-conditions li:nth-last-child(2) {
 	border: none;
@@ -993,6 +996,10 @@ form fieldset ul#tickets-search-conditions li label {
 	padding: 0.65em 0 0 1.6em;
 	padding: 0.15em 0 0 1.6em;
 	border: none;
+}
+
+form fieldset ul#tickets-search-conditions.single-filter li a.tickets-search-remove {
+	display: none;
 }
 
 form fieldset ul#tickets-search-conditions li a.tickets-search-remove, form fieldset ul#tickets-search-conditions li a.tickets-search-add {

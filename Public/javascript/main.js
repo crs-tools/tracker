@@ -4,11 +4,11 @@ var Tracker = {};
   
   Search
   
-*//*
+*/
 (function() {
   var conditionCount = 0,
       dropdowns = {
-        fields: $('<select><optgroup label="Ticket"><option value="title">Title</option><option value="assignee">Assignee</option><option value="type">Type</option><option value="state">State</option><option value="encoding_profile">Encoding profile</option></optgroup><optgroup label="Properties"><option value="fahrplan_id">Fahrplan ID</option><option value="date">Date</option><option value="time">Time</option><option value="room">Room</option></optgroup><optgroup label="Other"><option value="modified">Modified</option></optgroup></select>'),
+        fields: $('<select><optgroup label="Ticket"><option value="title">Title</option><option value="assignee">Assignee</option><option value="type">Type</option><option value="state">State</option><option value="encoding_profile">Encoding profile</option></optgroup><optgroup label="Properties"><option value="fahrplan_id">Fahrplan ID</option><option value="date">Date</option><option value="time">Time</option><option value="room">Room</option><option value="day">Day</option></optgroup><optgroup label="Other"><option value="modified">Modified</option></optgroup></select>'),
         operators: {
           basic: $('<select><option value="is">is</option><option value="is_not">is not</option></select>'),
           multiple: $('<select><option value="is">is</option><option value="is_not">is not</option><option value="is_in">is in</option><option value="is_not_in">is not in</option></select>'),
@@ -16,7 +16,8 @@ var Tracker = {};
         },
         states: $('#tickets-search-states'),
         types: $('#tickets-search-types'),
-        rooms: $('<select></select>'),
+        rooms: $('#tickets-search-rooms'),
+        days: $('#tickets-search-days'),
         assignees: $('#tickets-search-assignees'),
         profiles: $('#tickets-search-profiles')
       };
@@ -39,8 +40,8 @@ var Tracker = {};
       li.insertBefore('#tickets-search-conditions li:last-child');
     }
     
-    dropdowns.fields.clone().change(function(event) {
-      field = event.target.options[event.target.selectedIndex].value;
+    dropdowns.fields.clone().change(function(event, field) {
+      field = field || event.target.options[event.target.selectedIndex].value;
       
       if (operator) {
         operator.remove();
@@ -84,6 +85,12 @@ var Tracker = {};
             case 'encoding_profile':
               value = dropdowns.profiles.clone();
               break;
+            case 'room':
+              value = dropdowns.rooms.clone();
+              break;
+            case 'day':
+              value = dropdowns.days.clone();
+              break;
             default:
               value = $('<input></input>').addClass('text');
           }
@@ -92,7 +99,7 @@ var Tracker = {};
         }
         
         if (postValue) {
-          value.attr('value', postValue);
+          value.val(postValue);
         }
         
         if (extra) {
@@ -100,40 +107,50 @@ var Tracker = {};
           extra = null;
         }
         
-        switch (field) {
-          case 'fahrplan_id':
-            switch (event.target.options[event.target.selectedIndex].value) {
-              case 'is_in':
-              case 'is_not_in':                    
-                extra = $('<span class="description">Separate multiple entries by comma</span>').insertAfter(value);
-                value.addClass('wide');
-                break;
-              default:
-                value.removeClass('wide');
-            }
-            break;
-        }
+        operator.change(function() {
+          if (extra) {
+            extra.remove();
+            extra = null;
+          }
+          
+          switch (field) {
+            case 'fahrplan_id':
+              switch (this.value) {
+                case 'is_in':
+                case 'is_not_in':
+                  extra = $('<span class="description">Separate multiple entries by comma</span>').insertAfter(value);
+                  value.addClass('wide');
+                  break;
+                default:
+                  value.removeClass('wide');
+              }
+              break;
+          }
+          
+        })
       }).insertAfter(event.target);
       
       if (postOperator) {
-        operator.attr('value', postOperator);
+        operator.val(postOperator);
       }
       
       operator.trigger('change');
-    }).appendTo(li).attr('name','fields[' + conditionCount + ']').attr('value', (postField)? postField : null).trigger('change');
+    }).appendTo(li).attr('name','fields[' + conditionCount + ']').val(postField || 'title').trigger('change', [postField]);
     
-    if (conditionCount > 1) {
-      $('<a></a>').attr('href', '#').addClass('tickets-search-remove').click(function(event) {
-        event.preventDefault();
-        li.remove();
-        conditionCount--;
-      }).appendTo(li);
-    }
+    $('<a></a>').attr('href', '#').addClass('tickets-search-remove').click(function(event) {
+      event.preventDefault();
+      li.remove();
+      conditionCount--;
+      $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 1);
+    }).appendTo(li);
+    
+    $('#tickets-search-conditions').toggleClass('single-filter', conditionCount <= 1);
     $('<a></a>').attr('href', '#').addClass('tickets-search-add').click(addCondition).appendTo(li);
   }
   
   Tracker.Search = {
     init: function() {
+      var search = $('#tickets-search').data('search');
       if (search && (search.fields && search.operators && search.values)) {
         $.each(search.fields, function(i, field) {
           addCondition(null, field, search.operators[i], search.values[i]);
@@ -143,8 +160,13 @@ var Tracker = {};
       }
     }
   };
+  
+  $(document).on('keydown', function(e) {
+    if((e.altKey || e.ctrlKey) && e.which == 75 /*k*/) {
+      $('#form-q').focus();
+    }
+  });
 }());
-*/
 
 
 /*
@@ -452,7 +474,7 @@ var Tracker = {};
         currentIndex = 1;
       }
       
-      $('#tickets-header .ticket-header-bar button').each(function(i, button) {
+      $('#tickets-filter .ticket-header-bar button').each(function(i, button) {
         if (button.id != 'tickets-filter-search') {
           $(button).click(function(event) {
             if (!event.metaKey && !event.controlKey) {

@@ -21,8 +21,29 @@
 	);
 	
 	class Controller_Tickets extends Controller_Application {
-    	
+		
 		protected $requireAuthorization = true;
+		
+		private static $searchMapping = [
+			'title' => 'title',
+			'assignee' => 'handle_id',
+			'type' => 'ticket_type',
+			'state' => 'ticket_state',
+			'encoding_profile' => 'encoding_profile_version_id',
+			'fahrplan_id' => 'fahrplan_id',
+			'date' => 'fahrplan_date_join.value',
+			'day' => 'fahrplan_day_join.value',
+			'time' => 'fahrplan_start_join.value',
+			'room' => 'fahrplan_room_join.value',
+			'modified' => 'modified'
+		];
+		
+		private static $searchPropertyFields = [
+			'date',
+			'day',
+			'time',
+			'room'
+		];
 		
 		protected $projectReadOnlyAccess = [
 			'index' => true,
@@ -44,6 +65,8 @@
 				]);
 			
 			$this->form(null, null, Request::METHOD_GET);
+			$this->searchForm = $this->form('tickets', 'search');
+			
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
 			
 			if ($this->filter !== null or isset($_GET['u'])) {
@@ -73,106 +96,6 @@
 					'filter_handle' => ['handle' => $_GET['u']]
 				]);
 			}
-			
-			/*
-			$tickets = $this->Ticket->getAsTable(array('project_id' => $this->Project->id));
-			
-			if ($query = Request::get('q')) {
-				if (mb_strlen($query) == 4 and ctype_digit($query)) {
-					$tickets->where(array('fahrplan_id' => Request::get('q', Request::int)));
-				} else {
-					$tickets->where('title ILIKE ?', array('%' . Request::get('q') . '%'));
-				}
-			}
-			
-			// TODO: move this to Model_Searchable or Database_Query_Search
-			if (Request::exists(Request::get, 'search')) {
-				$fields = Request::post('fields');
-				$operators = Request::post('operators');
-				$values = Request::post('values');
-				
-				if ($fields and $operators and $values and count($fields) == count($operators) and count($fields) == count($values)) {
-					$tickets->join('tbl_ticket', '', 'parent_id = tbl_ticket.id', array(), 'LEFT');
-					
-					foreach ($fields as $i => $key) {
-						$condition = '';
-						$params = array();
-						
-						if (empty($operators[$i]) or empty($values[$i])) {
-							continue;
-						}
-						
-						if (!isset(self::$_searchMapping[$key])) {
-							continue;
-						}
-						
-						switch ($operators[$i]) {
-							case 'is':
-								$condition = self::$_searchMapping[$key] . ' = ?';
-								$params[] = $values[$i];
-								break;
-							case 'is_not':
-								$condition = self::$_searchMapping[$key] . ' != ?';
-								$params[] = $values[$i];
-								break;
-							case 'is_in':
-							case 'is_not_in':
-								$parts = explode(',', $values[$i]);
-								$condition = self::$_searchMapping[$key] . (($operators[$i] == 'is_not_in')? 'NOT ' : '') . ' IN (' . substr(str_repeat('? , ', count($parts)), 0, -3) . ')';
-								
-								foreach ($parts as $part) {
-									$params[] = trim($part);
-								}
-								break;
-							case 'contains':
-								$condition = self::$_searchMapping[$key] . ' ILIKE ?';
-								$params[] = '%' . $values[$i] . '%';
-								break;
-							case 'begins_with':
-								$condition = self::$_searchMapping[$key] . ' ILIKE ?';
-								$params[] = $values[$i] . '%';
-								break;
-							case 'ends_with':
-								$condition = self::$_searchMapping[$key] . ' ILIKE ?';
-								$params[] = '%' . $values[$i];
-								break;
-							default:
-								continue 2;
-						}
-						
-						switch ($key) {
-							case 'state':
-								if ($this->State->getTypeById($values[$i]) == 1) {
-									$condition .= ' AND type_id = ?';
-									$params[] .= 1;
-									break;
-								} else {
-									$condition = '(' . $condition . ' AND type_id != ?) OR tbl_ticket_2.' . $condition;
-									$params[] .= 1;
-									$params[] .= $values[$i];
-									break;
-								}
-							case 'type':
-							case 'encoding_profile':
-								$condition .= ' OR tbl_ticket_2.' . $condition;
-								$params = array_merge($params, $params);
-								break;
-						}
-						
-						$tickets->where($condition, $params);
-					}
-				}
-				
-				$this->View->assign('types', $this->Type->getList('name'));
-				$this->View->assign('states', Model::groupByField($this->State->findAll(array()), 'ticket_type_id'));
-				$this->View->assign('profiles', Model::indexByField($this->EncodingProfile->findAll(array(), array('project_id' => $this->Project->id), array(), null, null, 'id, name'), 'id', 'name'));
-				$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
-			}
-			
-			if (Request::isPostRequest() and Request::post('edit')) {
-				return $this->View->redirect('tickets', 'edit', array('project_slug' => $this->Project->slug, 'id' => implode(Model::indexByField($tickets,'id', 'id'), ',')));
-			}
-			*/
 			
 			return $this->render('tickets/index', [
 				'format' => ['html', 'json']
@@ -223,6 +146,235 @@
 				->orderBy('created DESC');
 			
 			return $this->render('tickets/view');
+		}
+		
+		public function search() {
+			$this->form('tickets', 'index');
+			$this->searchForm = $this->form('tickets', 'search');
+			
+			$this->users = User::findAll()
+					->select('id, name')
+					->indexBy('id', 'name')
+					->toArray();
+			
+			$types = ['meta', 'recording', 'encoding'];
+			$this->types = array_combine($types, $types);
+			
+			$states = [];
+			foreach(TicketState::findAll() as $state) {
+					$states[$state['ticket_type']][$state['ticket_type'].'.'.$state['ticket_state']] = $state['ticket_state'];
+			}
+			$this->states = $states;
+			
+			$rooms = $days = [];
+			$tickets = Ticket::findAll()
+				->where([
+					'project_id' => $this->project['id'],
+					'ticket_type' => 'meta',
+				]);
+			
+			foreach ($tickets as $ticket) {
+				$properties = $ticket->Properties
+					->indexBy('name', 'value');
+				
+				if(isset($properties['Fahrplan.Room']))
+					$rooms[$properties['Fahrplan.Room']] = $properties['Fahrplan.Room'];
+				
+				if(isset($properties['Fahrplan.Day']))
+					$days[$properties['Fahrplan.Day']] = 'Day '.$properties['Fahrplan.Day'];
+			}
+			$this->rooms = $rooms;
+			$this->days = $days;
+			
+			$this->profiles = $this->project
+					->EncodingProfileVersion
+					->indexBy('id', 'description')
+					->toArray();
+			
+			// list ticket without type-filter // TODO: hide filter bar?
+			$this->filter = 'search';
+			
+			$this->fields = $this->searchForm->getValue('fields');
+			$this->operators = $this->searchForm->getValue('operators');
+			$this->values = $this->searchForm->getValue('values');
+			
+			if($q = $this->searchForm->getValue('q')) {
+				// quicksearch-queries consisting only of numbers are interpreted as searches for a fahrplan-id
+				if(is_numeric($q)) {
+					$this->fields[] = 'fahrplan_id';
+					$this->operators[] = 'is';
+					$this->values[] = $q;
+				}
+				else
+				{
+					$this->fields[] = 'title';
+					$this->operators[] = 'contains';
+					$this->values[] = $q;
+				}
+			}
+			
+			if($this->searchForm->wasSubmitted() && $this->fields && $this->operators && $this->values && count($this->fields) == count($this->operators) && count($this->fields) == count($this->values)) {
+				$this->evaluateSearch($this->fields, $this->operators, $this->values);
+			}
+			
+			return $this->render('tickets/index');
+		}
+		
+		protected function evaluateSearch($fields, $operators, $values) {
+			$tickets = Ticket::findAll()
+				->where(['project_id' => $this->project['id']])
+				->join(['Handle'])
+				->distinct()
+				->scoped([
+					'with_default_properties',
+					'with_encoding_profile_name',
+					'with_progress',
+					'order_list'
+				]);
+			
+			if ($query = $this->searchForm->getValue('q')) {
+				if (ctype_digit($query)) {
+					$tickets->where(array('fahrplan_id' => (int)$query));
+				} else {
+					$tickets->where('title ILIKE ?', array('%' . $query . '%'));
+				}
+			}
+			
+
+			/*
+			 * this join results in a query like this:
+			 *	 SELECT
+			 *		main.id AS main_id,
+			 *		main.parent_id AS main_parent_id,
+			 *		main.ticket_type AS main_ticket_type,
+			 *		main.title AS main_title,
+			 *
+			 *		sub.id AS sub_id,
+			 *		sub.parent_id AS sub_parent_id,
+			 *		sub.ticket_type AS sub_ticket_type,
+			 *		sub.title AS sub_title
+			 *
+			 *	FROM tbl_ticket main
+			 *	LEFT JOIN tbl_ticket sub ON sub.parent_id = main.id
+			 *
+			 *	WHERE main.fahrplan_id = 38
+			 *	AND main.project_id = 8;
+			 *
+			 *
+			 * which will result in a result-set like this:
+			 *
+			 *  main_id | main_parent_id | main_ticket_type |              main_title               | sub_id | sub_parent_id | sub_ticket_type |               sub_title               
+			 * ---------+----------------+------------------+---------------------------------------+--------+---------------+-----------------+---------------------------------------
+			 *     1225 |                | meta             | Opengeofiction                        |   1267 |          1225 | encoding        | Opengeofiction (H.264-MP4 from DV HQ)
+			 *     1225 |                | meta             | Opengeofiction                        |   1268 |          1225 | encoding        | Opengeofiction (WebM from DV)
+			 *     1225 |                | meta             | Opengeofiction                        |   1364 |          1225 | recording       | Opengeofiction (Recording)
+			 *     1364 |           1225 | recording        | Opengeofiction (Recording)            |        |               |                 | 
+			 *     1267 |           1225 | encoding         | Opengeofiction (H.264-MP4 from DV HQ) |        |               |                 | 
+			 *     1268 |           1225 | encoding         | Opengeofiction (WebM from DV)         |        |               |                 | 
+			 *
+			 * when we test the main- and the sub-fields, psql will return all matching subtickets and their main-tickets with a condition like
+			 *
+			 * AND (
+			 *         "main"."handle_id" = ? AND
+			 *         "main"."ticket_type"
+			 *     ) OR (
+			 *         "sub".handle_id = ? AND
+			 *         "sub".ticket_type = ?
+			 *     )
+			 * )
+			 */
+
+			$tickets->join(['tbl_ticket', 'tbl_ticket_subticket'], 'parent_id = tbl_ticket.id', array(), null, 'LEFT');
+			
+			$mainCondition = $subCondition = [];
+			$mainParams = $subParams = [];
+			
+			reset($fields);
+			while (list($i, $key) = each($fields)) {
+				$condition = '';
+				$params = [];
+				
+				if (empty($operators[$i]) or empty($values[$i])) {
+					continue;
+				}
+				
+				if (!isset(self::$searchMapping[$key])) {
+					continue;
+				}
+				
+				if ($key == 'state') {
+					list($type, $state) = explode('.', $values[$i], 2);
+					$values[$i] = $state;
+					
+					$fields[] = 'type';
+					$operators[] = 'is';
+					$values[] = $type;
+				}
+				
+				switch ($operators[$i]) {
+					case 'is':
+						$condition = self::$searchMapping[$key] . ' = ?';
+						$params[] = $values[$i];
+						break;
+					case 'is_not':
+						$condition = self::$searchMapping[$key] . ' != ?';
+						$params[] = $values[$i];
+						break;
+					case 'is_in':
+					case 'is_not_in':
+						$parts = explode(',', $values[$i]);
+						$condition = self::$searchMapping[$key] . (($operators[$i] == 'is_not_in')? 'NOT ' : '') . ' IN (' . substr(str_repeat('? , ', count($parts)), 0, -3) . ')';
+						
+						foreach ($parts as $part) {
+							$params[] = trim($part);
+						}
+						break;
+					case 'contains':
+						$condition = self::$searchMapping[$key] . ' ILIKE ?';
+						$params[] = '%' . $values[$i] . '%';
+						break;
+					case 'begins_with':
+						$condition = self::$searchMapping[$key] . ' ILIKE ?';
+						$params[] = $values[$i] . '%';
+						break;
+					case 'ends_with':
+						$condition = self::$searchMapping[$key] . ' ILIKE ?';
+						$params[] = '%' . $values[$i];
+						break;
+					default:
+						continue 2;
+				}
+				
+				$mainCondition[] = $condition;
+				$mainParams = array_merge($mainParams, $params);
+				
+				// property-fields are joined in from the property-table and does not exist as field of the sub-table
+				if (!in_array($key, self::$searchPropertyFields)) {
+					$subCondition[] = 'tbl_ticket_subticket.' . $condition;
+					$subParams = array_merge($subParams, $params);
+				}
+			}
+			
+			$subq = [];
+			if (count($mainCondition) > 0) {
+				$subq[] = implode(' AND ', $mainCondition);
+			}
+			
+			if (count($subCondition) > 0) {
+				$subq[] = implode(' AND ', $subCondition);
+			}
+			
+			$tickets->where(
+				'('.implode(' OR ', $subq).')',
+				array_merge($mainParams, $subParams)
+			);
+			
+			$this->tickets = $tickets;
+			
+			// Mass Edit
+			//if (Request::isPostRequest() and Request::post('edit')) {
+			//	return $this->View->redirect('tickets', 'edit', array('project_slug' => $this->Project->slug, 'id' => implode(Model::indexByField($tickets,'id', 'id'), ',')));
+			//}
 		}
 		
 		public function log(array $arguments) {

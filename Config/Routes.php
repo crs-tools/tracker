@@ -4,6 +4,7 @@
 	':project_slug/tickets' => ['tickets', 'index'],
 	
 	':project_slug/ticket/create' => ['tickets', 'create'],
+	':project_slug/tickets/search' => ['tickets', 'search'],
 	
 	':project_slug/ticket/:id/comment' => ['tickets', 'comment'],
 	':project_slug/ticket/:ticket_id/comment/delete/:id' => ['tickets', 'delete_comment'],
