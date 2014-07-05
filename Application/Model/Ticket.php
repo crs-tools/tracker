@@ -192,6 +192,38 @@
 			');
 		}
 		
+		/*
+		 * This join results in a query like this:
+		 *
+		 *	 SELECT
+		 *		parent.id AS id,
+		 *		parent.parent_id AS parent_id,
+		 *		parent.ticket_type AS ticket_type,
+		 *		parent.title AS title,
+		 *
+		 *		child.id AS child_id,
+		 *		child.parent_id AS child_parent_id,
+		 *		child.ticket_type AS child_ticket_type,
+		 *		child.title AS child_title
+		 *
+		 *	FROM tbl_ticket parent
+		 *	LEFT JOIN tbl_ticket child ON child.parent_id = parent.id
+		 *
+		 *	WHERE parent.fahrplan_id = 38
+		 *	AND parent.project_id = 8;
+		 *
+		 * which gives results like these:
+		 *
+		 *  id   | parent_id | ticket_type | title                         | child_id | child_parent_id | child_ticket_type | child_title               
+		 * ------+-----------+-------------+-------------------------------+----------+-----------------+-------------------+-------------------------------
+		 *  1225 |           | meta        | Ticket                        |     1267 |            1225 | encoding          | Ticket (H.264-MP4 from DV HQ)
+		 *  1225 |           | meta        | Ticket                        |     1268 |            1225 | encoding          | Ticket (WebM from DV)
+		 *  1225 |           | meta        | Ticket                        |     1364 |            1225 | recording         | Ticket (Recording)
+		 *  1364 |      1225 | recording   | Ticket (Recording)            |          |                 |                   | 
+		 *  1267 |      1225 | encoding    | Ticket (H.264-MP4 from DV HQ) |          |                 |                   | 
+		 *  1268 |      1225 | encoding    | Ticket (WebM from DV)         |          |                 |                   | 
+		 * 
+		 */
 		public static function with_child(Model_Resource $resource, array $arguments) {
 			$resource->leftJoin(
 				[self::TABLE, 'child'],
@@ -277,6 +309,10 @@
 			);
 			
 			return $handle->fetch()['create_missing_encoding_tickets'];
+		}
+		
+		public function allProperties() {
+			// TODO: implement
 		}
 		
 		public function isEligibleAction($action) {

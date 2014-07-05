@@ -16,6 +16,7 @@ var Tracker = {};
             <option value="assignee">Assignee</option>\
             <option value="type">Type</option>\
             <option value="state">State</option>\
+            <option value="failed">State failed</option>\
             <option value="encoding_profile">Encoding profile</option>\
           </optgroup>\
           <optgroup label="Properties">\
@@ -48,6 +49,7 @@ var Tracker = {};
           </select>')
         },
         states: $('#tickets-search-states'),
+        bool: $('<select><option value="1">true</option><option value="0">false</option></select>'),
         types: $('#tickets-search-types'),
         rooms: $('#tickets-search-rooms'),
         days: $('#tickets-search-days'),
@@ -115,6 +117,9 @@ var Tracker = {};
           switch (field) {
             case 'state':
               value = dropdowns.states.clone();
+              break;
+            case 'failed':
+              value = dropdowns.bool.clone();
               break;
             case 'type':
               value = dropdowns.types.clone();

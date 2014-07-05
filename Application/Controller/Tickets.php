@@ -29,6 +29,7 @@
 			'assignee' => 'handle_id',
 			'type' => 'ticket_type',
 			'state' => 'ticket_state',
+			'failed' => 'failed',
 			'encoding_profile' => 'encoding_profile_version_id',
 			'fahrplan_id' => 'fahrplan_id',
 			'date' => 'property_fahrplan_date.value',
@@ -219,53 +220,9 @@
 					'with_default_properties',
 					'with_encoding_profile_name',
 					'with_progress',
+					'with_child',
 					'order_list'
 				]);
-			
-			/*
-			 * this join results in a query like this:
-			 *	 SELECT
-			 *		main.id AS main_id,
-			 *		main.parent_id AS main_parent_id,
-			 *		main.ticket_type AS main_ticket_type,
-			 *		main.title AS main_title,
-			 *
-			 *		sub.id AS sub_id,
-			 *		sub.parent_id AS sub_parent_id,
-			 *		sub.ticket_type AS sub_ticket_type,
-			 *		sub.title AS sub_title
-			 *
-			 *	FROM tbl_ticket main
-			 *	LEFT JOIN tbl_ticket sub ON sub.parent_id = main.id
-			 *
-			 *	WHERE main.fahrplan_id = 38
-			 *	AND main.project_id = 8;
-			 *
-			 *
-			 * which will result in a result-set like this:
-			 *
-			 *  main_id | main_parent_id | main_ticket_type |              main_title               | sub_id | sub_parent_id | sub_ticket_type |               sub_title               
-			 * ---------+----------------+------------------+---------------------------------------+--------+---------------+-----------------+---------------------------------------
-			 *     1225 |                | meta             | Opengeofiction                        |   1267 |          1225 | encoding        | Opengeofiction (H.264-MP4 from DV HQ)
-			 *     1225 |                | meta             | Opengeofiction                        |   1268 |          1225 | encoding        | Opengeofiction (WebM from DV)
-			 *     1225 |                | meta             | Opengeofiction                        |   1364 |          1225 | recording       | Opengeofiction (Recording)
-			 *     1364 |           1225 | recording        | Opengeofiction (Recording)            |        |               |                 | 
-			 *     1267 |           1225 | encoding         | Opengeofiction (H.264-MP4 from DV HQ) |        |               |                 | 
-			 *     1268 |           1225 | encoding         | Opengeofiction (WebM from DV)         |        |               |                 | 
-			 *
-			 * when we test the main- and the sub-fields, psql will return all matching subtickets and their main-tickets with a condition like
-			 *
-			 * AND (
-			 *         "main"."handle_id" = ? AND
-			 *         "main"."ticket_type"
-			 *     ) OR (
-			 *         "sub".handle_id = ? AND
-			 *         "sub".ticket_type = ?
-			 *     )
-			 * )
-			 */
-
-			$tickets->join(['tbl_ticket', 'tbl_ticket_subticket'], 'parent_id = tbl_ticket.id', array(), null, 'LEFT');
 			
 			$mainCondition = $subCondition = [];
 			$mainParams = $subParams = [];
@@ -329,9 +286,9 @@
 				$mainCondition[] = $condition;
 				$mainParams = array_merge($mainParams, $params);
 				
-				// property-fields are joined in from the property-table and does not exist as field of the sub-table
+				// property-fields are joined from the property-table and do not exist as field of the sub-table
 				if (!in_array($key, self::$searchPropertyFields)) {
-					$subCondition[] = 'tbl_ticket_subticket.' . $condition;
+					$subCondition[] = 'child.' . $condition;
 					$subParams = array_merge($subParams, $params);
 				}
 			}
