@@ -56,9 +56,9 @@
 					'name' => $name,
 					'worker_group_id' => $group['id']
 				));
-			} else {
-				// TODO: update last_seen
-				// $this->worker->touch(['last_seen' => true]);
+			} elseif($this->worker['worker_group_id'] != $group['id']) {
+				// update group id, if mismatching with group related to given credentials
+				$this->worker->save(['worker_group_id' => $group['id']]);
 			}
 
             // store projects ids of projects assigned to parent worker group
