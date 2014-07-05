@@ -138,16 +138,22 @@ var Tracker = {};
               break;
             default:
               value = $('<input></input>').addClass('text');
+              break;
           }
 
           value
+            .removeAttr('id')
             .attr('name', 'values[' + conditionCount + ']')
-            .prop('selectedIndex', 0)
             .insertAfter(event.target);
-        }
-        
-        if (postValue) {
-          value.val(postValue);
+          
+          if (postField == field && postValue ) {
+            value.val(postValue);
+          }
+          
+          if (value.is('select')) {
+            value.prop('selectedIndex', 0);
+            console.log(value[0].selectedIndex);
+          }
         }
         
         if (extra) {
@@ -155,30 +161,22 @@ var Tracker = {};
           extra = null;
         }
         
-        operator.change(function() {
-          if (extra) {
-            extra.remove();
-            extra = null;
-          }
-          
-          switch (field) {
-            case 'fahrplan_id':
-              switch (this.value) {
-                case 'is_in':
-                case 'is_not_in':
-                  extra = $('<span class="description">Separate multiple entries by comma</span>').insertAfter(value);
-                  value.addClass('wide');
-                  break;
-                default:
-                  value.removeClass('wide');
-              }
-              break;
-          }
-          
-        });
+        switch (field) {
+          case 'fahrplan_id':
+            switch (this.value) {
+              case 'is_in':
+              case 'is_not_in':
+                extra = $('<span class="description">Separate multiple entries by comma</span>').insertAfter(value);
+                value.addClass('wide');
+                break;
+              default:
+                value.removeClass('wide');
+            }
+            break;
+        }
       }).insertAfter(event.target);
       
-      if (postOperator) {
+      if (postField == field && postOperator) {
         operator.val(postOperator);
       }
       
