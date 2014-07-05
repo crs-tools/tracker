@@ -146,12 +146,8 @@ var Tracker = {};
             .attr('name', 'values[' + conditionCount + ']')
             .insertAfter(event.target);
           
-          if (postField == field && postValue ) {
+          if (postField == field && postValue) {
             value.val(postValue);
-          }
-          
-          if (value.is('select')) {
-            value.prop('selectedIndex', 0);
           }
         }
         
