@@ -232,7 +232,7 @@
 				$condition = '';
 				$params = [];
 				
-				if (empty($operators[$i]) or empty($values[$i])) {
+				if (empty($operators[$i]) or !isset($values[$i])) {
 					continue;
 				}
 				
