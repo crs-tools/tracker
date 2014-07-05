@@ -152,7 +152,6 @@ var Tracker = {};
           
           if (value.is('select')) {
             value.prop('selectedIndex', 0);
-            console.log(value[0].selectedIndex);
           }
         }
         
