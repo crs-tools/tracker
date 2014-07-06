@@ -434,23 +434,28 @@ var Tracker = {};
       
       updateState();
       
-      $('fieldset.foldable').addClass('folded')
-        .find('legend').append(
-          $('<a></a>').attr({'href': '#', 'title': 'Expand section'}).text('expand').click(function(event) {
-            event.preventDefault();
+      $('fieldset.foldable')
+        .addClass('folded')
+        .each(function() {
+          $(this).find('legend')
+            .append(' (' + $(this).find('li').length + ')')
+            .append(
+              $('<a></a>').attr({'href': '#', 'title': 'Expand section'}).text('expand').click(function(event) {
+                event.preventDefault();
             
-            event.target = $(event.target);
-            var section = event.target.parent().parent();
+                event.target = $(event.target);
+                var section = event.target.parent().parent();
             
-            if (section.hasClass('folded')) {
-              event.target.attr('title', 'Fold section').text('fold');
-              section.removeClass('folded').addClass('expanded');
-            } else {
-              event.target.attr('title', 'Expand section').text('expand');
-              section.removeClass('expanded').addClass('folded');
-            }
-          })
-        );
+                if (section.hasClass('folded')) {
+                  event.target.attr('title', 'Fold section').text('fold');
+                  section.removeClass('folded').addClass('expanded');
+                } else {
+                  event.target.attr('title', 'Expand section').text('expand');
+                  section.removeClass('expanded').addClass('folded');
+                }
+              })
+            );
+        });
     }/*,
     
     Mass: {
@@ -646,6 +651,11 @@ var Tracker = {};
 */
 (function() {
   var comment = null,
+      delay = null,
+      delayBy = null,
+      expand = null,
+      expandLeft = null,
+      expandRight = null,
       failed = null,
       reset = null,
       submit = {
