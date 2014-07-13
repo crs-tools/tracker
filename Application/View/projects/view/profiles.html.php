@@ -1,4 +1,4 @@
-<?= $f = $profilesForm() ?>
+<?= $f = $profilesForm(['class' => 'clearfix']) ?>
 	<table class="default">
 		<thead>
 			<tr>

@@ -610,6 +610,7 @@ h2.ticket span[data-tooltip]:before, h2.ticket span[data-tooltip]:after {
 /* Columns */
 
 .column-50 {
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   float: left;
   width: 50%;
