@@ -434,9 +434,7 @@
 			if ($this->ticket['ticket_type'] !== 'recording') {
 				$this->recordingProperties = $this->ticket
 					->Parent
-					->Children
-					->where(['ticket_type' => 'recording'])
-					->first()
+					->RecordingTicket
 					->Properties
 					->indexBy('name', 'value');
 			}
