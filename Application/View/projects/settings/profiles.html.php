@@ -1,3 +1,4 @@
+<?php $this->title('Encoding profiles | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
 <?= $f = $profilesForm() ?>

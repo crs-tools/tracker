@@ -1,3 +1,4 @@
+<?php $this->title('Settings | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
 <h3 class="table">Statistics</h3>

@@ -1,3 +1,4 @@
+<?php $this->title('Worker groups | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
 <?= $f = $workerGroupForm(); ?>

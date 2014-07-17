@@ -28,7 +28,7 @@
 <ul class="project-settings-header horizontal clearfix">
 	<li<?= ($arguments['action'] === 'settings')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'settings', $project, 'Info/<br />Statistics', 'Info/Statistics', ['class' => 'info']); ?></li>
 	<li<?= ($arguments['action'] === 'properties')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'properties', $project, 'Properties/<br />Languages', 'Properties/Languages', ['class' => 'properties']); ?></li>
-	<li<?= ($arguments['action'] === 'profiles')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'profiles', $project, 'Encoding Profiles', ['class' => 'encoding']); ?></li>
+	<li<?= ($arguments['action'] === 'profiles')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'profiles', $project, 'Encoding profiles', ['class' => 'encoding']); ?></li>
 	<li<?= ($arguments['action'] === 'states')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'states', $project, 'States', ['class' => 'states']); ?></li>
 	<li<?= ($arguments['action'] === 'worker')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'worker', $project, 'Worker groups', ['class' => 'worker']); ?></li>
 	<?php /*<li<?= ($arguments['action'] === 'webhooks')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'webhooks', $project, 'Webhooks', ['class' => 'hooks']); ?></li>*/ ?>

@@ -1,3 +1,4 @@
+<?php $this->title('States | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
 <?php $type = null;
