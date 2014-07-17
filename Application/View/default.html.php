@@ -27,7 +27,7 @@
 						<?php echo $this->linkTo('tickets', 'feed', $project, h($project['title']));
 						
 						if (User::isAllowed('projects', 'edit')) {
-							echo ' ' . $this->linkTo('projects', 'view', $project, '(settings)');
+							echo ' ' . $this->linkTo('projects', 'settings', $project, '(settings)');
 						} ?>
 					</li>
 				<?php endif; ?>
@@ -103,9 +103,9 @@
 							<?= $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
 						</li>
 					<?php endif; ?>
-					<?php if (User::isAllowed('projects', 'view')): ?>
+					<?php if (User::isAllowed('projects', 'settings')): ?>
 						<li class="last menu-project <?= (($arguments['controller'] == 'projects')? ' current' : ''); ?>">
-							<?= $this->linkTo('projects', 'view', $project, '<span>Settings</span>', 'Settings') ?>
+							<?= $this->linkTo('projects', 'settings', $project, '<span>Settings</span>', 'Settings') ?>
 						</li>
 					<?php endif; ?>
 				

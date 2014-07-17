@@ -22,8 +22,11 @@
 	':project_slug/services/hold' => ['services', 'hold'],
 	':project_slug/services/resume' => ['services', 'resume'],
 	
-	':project_slug/settings' => ['projects', 'view'],
-	':project_slug/settings/encoding/profiles/add' => ['projects', 'add_encoding_profile'],
+	':project_slug/settings' => ['projects', 'settings'],
+	':project_slug/settings/properties' => ['projects', 'properties'],
+	':project_slug/settings/encoding/profiles' => ['projects', 'profiles'],
+	':project_slug/settings/states' => ['projects', 'states'],
+	':project_slug/settings/worker' => ['projects', 'worker'],
 	
 	'encoding/profiles' => ['encodingprofiles', 'index'],
 	'encoding/profile/create' => ['encodingprofiles', 'create'],

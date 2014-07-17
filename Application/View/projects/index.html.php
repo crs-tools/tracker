@@ -22,8 +22,8 @@
 				<ul class="actions horizontal">
 					<li><?= $this->linkTo('tickets', 'index', ['project_slug' => $project['slug']], 'tickets'); ?></li>
 					
-					<?php if (User::isAllowed('projects', 'view')): ?>
-						<li><?= $this->linkTo('projects', 'view', ['project_slug' => $project['slug']], 'project settings'); ?></li>
+					<?php if (User::isAllowed('projects', 'settings')): ?>
+						<li><?= $this->linkTo('projects', 'settings', ['project_slug' => $project['slug']], 'project settings'); ?></li>
 					<?php endif; ?>
 				</ul>
 			</li>

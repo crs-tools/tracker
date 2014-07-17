@@ -1,7 +1,14 @@
+<?= $this->render('projects/settings/_header'); ?>
+
 <?php $type = null;
 $typeRows = 0; ?>
 
 <?= $f = $stateForm(); ?>
+	<div class="project-settings-save">
+		<fieldset>
+			<?= $f->submit('Save changes'); ?>
+		</fieldset>
+	</div>
 		<?php foreach ($states as $index => $state): ?>
 			<?php if ($type != $state['ticket_type']):
 				$type = $state['ticket_type'];
@@ -53,6 +60,4 @@ $typeRows = 0; ?>
 			</tbody>
 		</table>
 	</div>
-	
-	<?= $f->submit('Save changes'); ?> or <?= $this->linkTo('projects', 'view', $project, 'discard changes', array('class' => 'reset')); ?>
 </form>

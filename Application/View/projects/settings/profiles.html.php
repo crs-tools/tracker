@@ -1,4 +1,6 @@
-<?= $f = $profilesForm(['class' => 'clearfix']) ?>
+<?= $this->render('projects/settings/_header'); ?>
+
+<?= $f = $profilesForm() ?>
 	<table class="default">
 		<thead>
 			<tr>

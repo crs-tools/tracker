@@ -1,4 +1,4 @@
-<?= $this->render('import/header', ['title' => 'Select rooms']); ?>
+<?= $this->render('import/_header', ['title' => 'Select rooms']); ?>
 
 <?= $f = $reviewForm(); ?>
 	<fieldset>

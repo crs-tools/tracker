@@ -1,6 +1,6 @@
 <?php $this->title('Duplicate ticket ' . $ticket['title'] . ' | '); ?>
 
-<?= $this->render('tickets/view/header', [
+<?= $this->render('tickets/view/_header', [
 	'titlePrefix' => 'Duplicate ',
 	'showDetails' => false,
 	'currentAction' => 'duplicate'

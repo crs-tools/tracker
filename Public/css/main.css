@@ -1952,6 +1952,93 @@ ul.projects li ul.actions li a:hover, ul.projects li ul.actions li a:focus {
   color: #248fda;
 }
 
+ul.project-settings-header {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+ul.project-settings-header li a {
+  display: table-cell;
+  position: relative;
+  padding: 43px 6px 6px 6px;
+  width: 80px;
+  height: 32px;
+  border-right: 1px solid #e0e0e0;
+  text-align: center;
+  line-height: 16px;
+  color: #acacac;
+}
+
+ul.project-settings-header li a:before {
+  content: ' ';
+  position: absolute;
+  top: 7px;
+  left: 31px;
+  width: 28px;
+  height: 28px;
+  background: url(../images/main.png) no-repeat left -350px;
+}
+
+ul.project-settings-header li a.properties:before { background-position: -60px -350px; }
+ul.project-settings-header li a.encoding:before { background-position: -120px -350px; }
+ul.project-settings-header li a.states:before { background-position: -180px -350px; }
+ul.project-settings-header li a.worker:before { background-position: -240px -350px; }
+ul.project-settings-header li a.hooks:before { background-position: -300px -350px; }
+
+ul.project-settings-header li:last-child a {
+  border-right: none;
+}
+
+ul.project-settings-header li a:hover,
+ul.project-settings-header li a:focus,
+ul.project-settings-header li.current a {
+  background-color: #fff;
+  text-decoration: none;
+  color: #248fda;
+}
+
+ul.project-settings-header li a:hover:before,
+ul.project-settings-header li a:focus:before,
+ul.project-settings-header li.current a:before {
+  background-position: -30px -350px;
+}
+
+ul.project-settings-header li a.properties:hover:before,
+ul.project-settings-header li a.properties:focus:before,
+ul.project-settings-header li.current a.properties:before {
+  background-position: -90px -350px;
+}
+
+ul.project-settings-header li a.encoding:hover:before,
+ul.project-settings-header li a.encoding:focus:before,
+ul.project-settings-header li.current a.encoding:before {
+  background-position: -150px -350px;
+}
+
+ul.project-settings-header li a.states:hover:before,
+ul.project-settings-header li a.states:focus:before,
+ul.project-settings-header li.current a.states:before {
+  background-position: -210px -350px;
+}
+
+ul.project-settings-header li a.worker:hover:before,
+ul.project-settings-header li a.worker:focus:before,
+ul.project-settings-header li.current a.worker:before {
+  background-position: -270px -350px;
+}
+
+ul.project-settings-header li a.hooks:hover:before,
+ul.project-settings-header li a.hooks:focus:before,
+ul.project-settings-header li.current a.hooks:before {
+  background-position: -330px -350px;
+}
+
+.project-settings-save {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: right;
+}
+
 .progress-width[data-progress="0"] { width: 0%; }
 .progress-width[data-progress="1"] { width: 1%; }
 .progress-width[data-progress="2"] { width: 2%; }

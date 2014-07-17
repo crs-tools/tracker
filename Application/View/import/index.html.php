@@ -1,6 +1,6 @@
 <?php $this->title('Import | '); ?>
 
-<?= $this->render('import/header', ['title' => 'Import']); ?>
+<?= $this->render('import/_header', ['title' => 'Import']); ?>
 
 <?= $f = $form(array('id' => 'ticket-import')); ?>
 	<fieldset>

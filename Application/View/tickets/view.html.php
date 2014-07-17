@@ -4,7 +4,7 @@
 	$this->title(mb_ucfirst($action) . ' lecture ' . $ticket['title'] . ' | ');
 } ?>
 
-<?= $this->render('tickets/view/header', [
+<?= $this->render('tickets/view/_header', [
 	'titlePrefix' => (isset($action))?
 		h(mb_ucfirst($action)) . ' lecture ' :
 		null,
@@ -13,7 +13,7 @@
 ]); ?>
 
 <?php if (!empty($action)) {
-	echo $this->render('tickets/view/action');
+	echo $this->render('tickets/view/_action');
 } ?>
 
 <?php if (isset($parent)): ?>
@@ -102,15 +102,15 @@ if (isset($recordingProperties)) {
 		
 		foreach ($comments as $comment) {
 			while (strtotime($log->current()['created']) > strtotime($comment['created'])) {
-				echo $this->render('tickets/view/log_entry', ['entry' => $log->current()]);
+				echo $this->render('tickets/view/_log_entry', ['entry' => $log->current()]);
 				$log->next();
 			}
 			
-			echo $this->render('tickets/view/comment', ['comment' => $comment]);
+			echo $this->render('tickets/view/_comment', ['comment' => $comment]);
 		}
 		
 		while ($log->current()) {
-			echo $this->render('tickets/view/log_entry', ['entry' => $log->current()]);
+			echo $this->render('tickets/view/_log_entry', ['entry' => $log->current()]);
 			$log->next();
 		} ?>
 	</ul>

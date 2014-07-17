@@ -5,7 +5,7 @@
 } ?>
 
 <?php if (!empty($ticket)):
-	echo $this->render('tickets/view/header', [
+	echo $this->render('tickets/view/_header', [
 		'titlePrefix' => 'Edit ',
 		'showDetails' => false,
 		'currentAction' => 'edit'

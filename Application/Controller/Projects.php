@@ -23,16 +23,31 @@
 			return $this->render('projects/index');
 		}
 		
-		public function view() {
-			// Properties
+		public function settings() {
 			$this->properties = $this->project->Properties;
+			return $this->render('projects/settings');
+		}	
 			
+		public function properties() {
+			$this->form();
+			
+			if ($this->form->wasSubmitted() and
+				$this->project->save($this->form->getValues())) {
+				$this->flash('Properties updated');
+				return $this->redirect('projects', 'properties', $this->project);
+			}
+			
+			$this->properties = $this->project->Properties;
+			return $this->render('projects/settings/properties');
+		}
+		
+		public function profiles() {
 			// Encoding Profiles
 			$this->profilesForm = $this->form();
 			
 			if ($this->profilesForm->wasSubmitted() and
 				$this->project->save($this->profilesForm->getValues())) {
-				$this->flashNow('Updated encoding profiles');
+				$this->flashNow('Encoding profiles updated');
 			}
 			
 			$this->versions = $this->project
@@ -50,8 +65,7 @@
 				->select(
 					'id, encoding_profile_id, revision, created, description'
 				)
-				// TODO: order by encoding_profile_name
-				->orderBy('encoding_profile_id, revision DESC');
+				->orderBy(EncodingProfile::TABLE . '.name, revision DESC');
 			
 			$versions = $this->versions->pluck('encoding_profile_id');
 			
@@ -61,6 +75,10 @@
 				]);
 			}
 			
+			return $this->render('projects/settings/profiles');
+		}
+		
+		public function states() {
 			// States
 			$this->stateForm = $this->form();
 			
@@ -77,15 +95,19 @@
 				Cache::invalidateNamespace(
 					'project.' . $this->project['id'] . '.states'
 				);
-				$this->flashNow('Updated enabled states');
+				$this->flashNow('States updated');
 			}
 			
+			return $this->render('projects/settings/states');
+		}
+		
+		public function worker() {
 			// Worker Groups
 			$this->workerGroupForm = $this->form();
 			
 			if ($this->workerGroupForm->wasSubmitted() and
 				$this->project->save($this->workerGroupForm->getValues())) {
-				$this->flashNow('Updated project worker group assignment');
+				$this->flashNow('Worker group assignment updated');
 			}
 			
 			$this->workerGroups = WorkerGroup::findAll()
@@ -96,7 +118,7 @@
 				->indexBy('id')
 				->toArray();
 			
-			return $this->render('projects/view');
+			return $this->render('projects/settings/worker');
 		}
 		
 		public function create() {
@@ -107,7 +129,7 @@
 				ProjectTicketState::createAll($project['id']);
 				
 				$this->flash('Project created');
-				return $this->redirect('projects', 'view', [
+				return $this->redirect('projects', 'settings', [
 					'project_slug' => $project['slug']
 				]);
 			}
@@ -121,7 +143,7 @@
 			if ($this->form->wasSubmitted() and
 				$this->project->save($this->form->getValues())) {
 				$this->flash('Project updated');
-				return $this->redirect('projects', 'view', $this->project);
+				return $this->redirect('projects', 'settings', $this->project);
 			}
 			
 			return $this->render('projects/edit');
@@ -186,7 +208,7 @@
 			$project['properties'] = $properties;
 			
 			if (!$project->save()) {
-				return $this->redirect('projects', 'view', $this->project);
+				return $this->redirect('projects', 'settings', $this->project);
 			}
 			
 			$this->flash('Project duplicated');

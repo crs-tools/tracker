@@ -1,4 +1,12 @@
+<?= $this->render('projects/settings/_header'); ?>
+
 <?= $f = $workerGroupForm(); ?>
+	<div class="project-settings-save">
+		<fieldset>
+			<?= $f->submit('Save assignment'); ?>
+		</fieldset>
+	</div>
+		
 	<ul class="worker-groups clearfix">
 		<?php foreach ($workerGroups as $index => $group): ?>
 			<li>
@@ -20,6 +28,4 @@
 		<?php $f->register('WorkerGroup[' . $index . '][_destroy]');
 		endforeach; ?>
 	</ul>
-	
-	<?= $f->submit('Save assignment'); ?> or <?= $this->linkTo('projects', 'view', $project, 'discard changes', ['class' => 'reset']); ?>
 </form>

@@ -1,4 +1,4 @@
-<?= $this->render('import/header', ['title' => 'Check for Fahrplan updates']); ?>
+<?= $this->render('import/_header', ['title' => 'Check for Fahrplan updates']); ?>
 
 <?= $f = $applyForm(array('id' => 'ticket-import-list')); ?>
 	<?php if (!empty($tickets['new'])): ?>
