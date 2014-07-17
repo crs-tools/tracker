@@ -28,11 +28,13 @@
 		protected function addHeaders() {
 			$this->Response->addHeader(
 				'Content-Security-Policy',
-				'default-src \'self\'; font-src \'none\'; frame-src \'none\';' .
-					'object-src \'none\'; style-src \'self\''
+				'default-src \'self\';' .
+					'font-src \'none\'; frame-src \'none\'; object-src \'none\';'
 			);
+			
 			$this->Response->addHeader('X-Content-Type-Options', 'nosniff');
 			$this->Response->addHeader('X-Frame-Options', 'DENY');
+			$this->Response->addHeader('X-XSS-Protection', '1; mode=block');
 		}
 		
 		protected function setProject($action, array $arguments) {
