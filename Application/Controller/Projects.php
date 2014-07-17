@@ -4,6 +4,7 @@
 		'String',
 		
 		'/Model/Project',
+		'/Model/Ticket',
 		
 		'/Model/EncodingProfile',
 		'/Helper/EncodingProfile',
@@ -25,6 +26,14 @@
 		
 		public function settings() {
 			$this->properties = $this->project->Properties;
+			
+			$this->duration = Ticket::getRecordingDurationByProject(
+				$this->project['id']
+			);
+			$this->encodingProfileCount = $this->project
+				->EncodingProfileVersion
+				->count();
+			
 			return $this->render('projects/settings');
 		}	
 			

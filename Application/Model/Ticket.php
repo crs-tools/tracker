@@ -431,6 +431,23 @@
 				->fetchRow()['progress'];
 		}
 		
+		public static function getRecordingDurationByProject($project) {
+			return (int) Ticket::findAll()
+		   		->select(
+					'EXTRACT(epoch FROM SUM(' . TicketProperties::TABLE .
+						'.value::INTERVAL)) AS duration'
+				)
+				->join(
+		   			TicketProperties::TABLE,
+		   			[
+		   				Ticket::TABLE . '.id = ticket_id',
+		   				'name' => 'Fahrplan.Duration'
+		   			]
+		   		)
+		   		->where(['project_id' => $project])
+				->fetchRow()['duration'];
+		}
+		
 		/*
 		public function findAbandonedByState($state, $timeout = null, $limit = null) {
 			$query = 'SELECT
