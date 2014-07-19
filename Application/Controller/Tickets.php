@@ -407,7 +407,7 @@
 				$this->flash('Ticket is not in the required state to execute this action');
 			}
 			
-		    if ($this->ticket['ticket_state'] != $state) {
+			if ($this->ticket['ticket_state'] != $state) {
 				$this->ticket->save([
 					'handle_id' => User::getCurrent()['id'],
 					'ticket_state' => $state,
@@ -736,18 +736,89 @@
 			return $this->render('tickets/edit');
 		}
 		
+		public function edit_multiple(array $arguments) {
+			$ids = explode(',', $arguments['ids']);
+			
+			$this->tickets = Ticket::findAll()->where([
+				'id' => $ids,
+				'project_id' => $this->project['id']
+			]);
+			
+			$type = null;
+			$properties = [];
+			foreach ($this->tickets as $ticket) {
+				if ($type && $type != $ticket['ticket_type']) {
+					$this->flash("Can't edit multiple ticket types at once.");
+					return $this->redirect('tickets', 'index', $this->project);
+				}
+				$type = $ticket['ticket_type'];
+				
+				foreach ($ticket->Properties as $property) {
+					$properties[$property['name']] = [
+						'name' => $property['name'],
+						'value' => ''
+					];
+				}
+			}
+			$this->properties = array_values($properties);
+			
+			$this->form();
+			$this->_assignSelectValues();
+			
+			$this->priorities = ['_' => "don't change"] + $this->priorities;
+			$this->users = ['_' => "don't change"] + $this->users;
+			$this->states = ['_' => "don't change"] + $this->states;
+			
+			if ($this->form->wasSubmitted()) {
+				if ($this->form->getValue('multisave')) {
+					$values = $this->form->getValues();
+					
+					foreach($this->tickets as $ticket) {
+						$ticket->save($values);
+						if(!empty($values['comment'])) {
+							Comment::create([
+								'ticket_id' => $ticket['id'],
+								'handle_id' => User::getCurrent()['id'],
+								'comment' => $values['comment']
+							]);
+						}
+					}
+					
+					$this->flash(count($ids).' Tickets updated');
+					return $this->redirect('tickets', 'index', $this->project);
+				}
+				else {
+					return $this->render('tickets/preview');
+				}
+			}
+			
+			return $this->render('tickets/edit');
+		}
+		
 		private function _assignSelectValues() {
+			$ticket_type = 'meta';
+			if(isset($this->ticket)) {
+				$ticket_type = $this->ticket['ticket_type'];
+			}
+			else if(isset($this->tickets)) {
+				$ticket_type = $this->tickets->first()['ticket_type'];
+			}
+			
 			$this->states = $this->project
 				->States
 				->where([
-					'ticket_type' => (isset($this->ticket))?
-						$this->ticket['ticket_type'] : 'meta'
-				]);
+					'ticket_type' => $ticket_type
+				])
+				->indexBy('ticket_state', 'ticket_state')
+				->toArray();
 			
-			$this->users = User::findAll()
+			$this->users = ['' => '–'] + User::findAll()
 				->select('id, name')
 				->orderBy('name')
-				->indexBy('id', 'name');
+				->indexBy('id', 'name')
+				->toArray();
+			
+			$this->priorities = ['0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'];
 			
 			if (isset($this->ticket) and
 				!empty($this->ticket['encoding_profile_version_id'])) {
@@ -827,53 +898,6 @@
 			
 			return $this->render('tickets/duplicate');
 		}
-		
-		/*public function mass_edit(array $arguments) {
-			if (empty($arguments['id']) or !$tickets = $this->Ticket->findAll(array(), array('id' => explode(',', $arguments['id'])))) {
-				throw new EntryNotFoundException();
-			}
-			
-			if (count($tickets) < 2) {
-				return $this->View->redirect('tickets', 'view', $tickets[0] + array('project_id' => $this->Project->id));
-			}
-			
-			if (Request::isPostRequest()) {
-				foreach ($tickets as $ticket) {
-					$this->Ticket->clear();
-					$this->Ticket->id = $ticket['id'];
-					
-					if (Request::post('assignee') == '–') {
-						$this->Ticket->user_id = null;
-					} elseif (Request::post('assignee', Request::int)) {
-						$this->Ticket->user_id = Request::post('assignee', Request::int);
-					}
-					
-					if (Request::post('priority', Request::float)) {
-						$this->Ticket->priority = Request::post('priority', Request::float);
-					}
-					
-					if (Request::post('set_needs_attention', Request::checkbox)) {
-						$this->Ticket->needs_attention = Request::post('needs_attention', Request::checkbox);
-					}
-					
-					if (Request::post('set_failed', Request::checkbox)) {
-						$this->Ticket->failed = Request::post('failed', Request::checkbox);
-					}
-					
-					$this->Ticket->save();
-				}
-				
-				$this->flash('Tickets updated');
-				return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug));
-			}
-			
-			$this->View->assign('tickets', $tickets);
-			$this->View->assign('users', $this->User->getList('name', null, array(), 'role, name'));
-			$this->View->assign('types', $this->Type->getList('name'));
-			$this->View->assign('states', $this->State->getList('name', array('ticket_type_id' => 1), array(), 'id'));
-			
-			$this->View->render('tickets/mass_edit');
-		}*/
 		
 		public function delete(array $arguments) {
 			$ticket = Ticket::findByOrThrow([

@@ -461,6 +461,10 @@ form fieldset ul li.checkbox + li.checkbox label,
 form fieldset ul li.radio + li.radio label {
 	padding-top: 0.5em;
 }
+form fieldset ul li.checkbox input[disabled] + label,
+form fieldset ul li.radio input[disabled] + label {
+	color: #707070;
+}
 
 form fieldset ul li.checkbox + li.checkbox input.checkbox,
 form fieldset ul li.radio + li.radio input.radio {
@@ -507,6 +511,10 @@ form fieldset ul li span.description {
 	margin-top: 0.4em;
 	font-size: 0.9em;
 	color: #707070;
+}
+
+form fieldset ul li span.description a {
+	position: relative;
 }
 
 form fieldset ul li span.description-color {
@@ -1038,6 +1046,11 @@ form#ticket-action fieldset ul li label.ticket-action-forward {
 	border: none;
 }
 
+form#ticket-preview fieldset ul li span.text {
+	padding: 16px 0 4px 0;
+	display: block;
+}
+
 ul.tickets {
 	position: relative;
 	margin-top: 0.5em;
@@ -1113,6 +1126,22 @@ ul.tickets li span.vid {
   overflow: hidden;
 	text-align: center;
   text-overflow: ellipsis;
+}
+
+ul.tickets li span.vid.has_checkbox {
+	width: 3.5em;
+	text-align: left;
+}
+
+ul.tickets li span.vid.has_checkbox input {
+	position: absolute;
+	left: 3em;
+	margin-top: 2px;
+}
+
+#tickets-search .selection-helper {
+	margin: 10px;
+	text-align: right;
 }
 
 ul.tickets li span.vid.needs_attention {

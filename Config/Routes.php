@@ -8,11 +8,13 @@
 	
 	':project_slug/ticket/:id/comment' => ['tickets', 'comment'],
 	':project_slug/ticket/:ticket_id/comment/delete/:id' => ['tickets', 'delete_comment'],
-
+	
 	':project_slug/ticket/:id/log/:entry' => ['tickets', 'log'],
 	':project_slug/ticket/:id' => ['tickets', 'view'],
 	':project_slug/ticket/:id/:action' => ['tickets'],
-
+	
+	':project_slug/tickets/:ids/edit' => ['tickets', 'edit_multiple'],
+	
 	':project_slug/tickets/import' => ['import', 'index'],
 	':project_slug/tickets/import/rooms' => ['import', 'rooms'],
 	':project_slug/tickets/import/review' => ['import', 'review'],

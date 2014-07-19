@@ -12,7 +12,8 @@
 		'fields' => $fields,
 		'operators' => $operators,
 		'values' => $values
-	] : null)
+	] : null),
+	'data-editurltpl' => $this->Request->getRootURL() . Router::reverse('tickets', 'edit_multiple', ['ids' => '{ids}', 'project_slug' => $project['slug']]),
 ]); ?>
 	<fieldset>
 		<ul id="tickets-search-conditions">
@@ -33,14 +34,16 @@
 	<?php $f->register('fields[]');
 	$f->register('operators[]');
 	$f->register('values[]'); ?>
-</form>
 
-<?php if(!empty($tickets)): ?>
-	<ul class="tickets">
-		<?php foreach ($tickets as $ticket) {
-			echo $this->render('tickets/ticket', [
-				'ticket' => $ticket
-			]);
-		} ?>
-	</ul>
-<?php endif ?>
+	<?php if(!empty($tickets)): ?>
+		<ul class="tickets">
+			<?php
+			foreach ($tickets as $ticket) {
+				echo $this->render('tickets/ticket', [
+					'ticket' => $ticket
+				]);
+			}
+			?>
+		</ul>
+	<?php endif ?>
+</form>
