@@ -62,8 +62,8 @@
 			$this->versions = $this->project
 				->EncodingProfileVersion
 				->join(['EncodingProfile'])
-				->orderBy(EncodingProfile::TABLE . '.name');
-			$this->versions->fetchAll();
+				->orderBy(EncodingProfile::TABLE . '.name')
+				->load();
 			
 			$this->versionsLeft = EncodingProfileVersion::findAll()
 				->join([
