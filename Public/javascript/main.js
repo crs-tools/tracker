@@ -62,7 +62,10 @@ var Tracker = {};
         q: null,
         repeat: false,
         tickets: null
-      };
+      },
+      ticketEditButton = null,
+      ticketEditSelect = null,
+      tickets = null;
   
   function addCondition(event, postField, postOperator, postValue) {
     if (event) {
@@ -224,6 +227,112 @@ var Tracker = {};
     });
   }
   
+  function uncheckNotOfType(type) {
+    tickets
+      .filter('[data-ticket-type!="' + type + '"]')
+      .find('input.ticket-search-edit-select')
+      .prop('checked', false);
+  }
+  
+  function updateEditButton() {
+    ticketEditButton
+      .prop(
+        'disabled',
+        tickets.find('input.ticket-search-edit-select:checked').length <= 0
+      );
+  }
+  
+  function initTicketEdit() {
+    tickets = $('ul.tickets li')
+      .prepend(
+        $('<input></input>')
+          .attr({
+            'type': 'checkbox',
+            'class': 'ticket-search-edit-select'
+          })
+          .change(function(event) {
+            ticketEditSelect.val('');
+            
+            if (!event.target.checked) {
+              updateEditButton();
+              return;
+            }
+            
+            uncheckNotOfType($(event.target).parent().data('ticket-type'));
+            updateEditButton();
+          })
+      );
+    
+    ticketEditButton = $('<input></input>')
+      .attr({
+        'type': 'button',
+        'value': 'Edit selected' 
+      })
+      .prop('disabled', true)
+      .click(function(event) {
+        var url = $('#tickets-search')
+          .data('edit-url')
+          .replace(
+            '{tickets}',
+            tickets
+              .find('input.ticket-search-edit-select:checked')
+              .parents()
+              .map(function() {
+                return $(this).data('id');
+              })
+              .get()
+              .join(',')
+          );
+        
+        if (event.metaKey) {
+          window.open(url, '_blank');
+        } else {
+          window.location.href = url;
+        }
+      });
+    
+    ticketEditSelect = dropdowns.types
+      .clone();
+    
+    ticketEditSelect
+      .find('option')
+      .each(function() {
+        if (tickets.filter('[data-ticket-type="' + this.value + '"]').length <= 0) {
+          this.disabled = true;
+        }
+      });
+    
+    ticketEditSelect
+      .prepend($('<option value="">-</option>'))
+      .val('')
+      .prop('disabled', tickets.length <= 0)
+      .change(function(event) {
+        if (event.target.value) {
+          tickets
+            .filter('[data-ticket-type="' + event.target.value + '"]')
+            .find('input.ticket-search-edit-select')
+            .prop('checked', true);
+        
+          uncheckNotOfType(event.target.value);
+        } else {
+          tickets
+            .find('input.ticket-search-edit-select')
+            .prop('checked', false);
+        }
+      
+        updateEditButton();
+      });
+    
+    $('#tickets-search-conditions li.submit')
+      .append(
+        $('<div></div>')
+          .attr({'class': 'ticket-search-edit-multiple'})
+          .append('Select ')
+          .append(ticketEditSelect)
+          .append(ticketEditButton)
+      );
+  }
+  
   Tracker.Search = {
     init: function() {
       if ($('#tickets-search')[0]) {
@@ -236,6 +345,8 @@ var Tracker = {};
         } else {
           addCondition();
         }
+        
+        initTicketEdit();
       }
       
       quicksearch.q = $('#tickets-quicksearch-q')
@@ -275,55 +386,6 @@ var Tracker = {};
           event.preventDefault();
         }
       });
-      
-      var $ticketsSearchList = $('#tickets-search > ul');
-      $ticketsSearchList.on('click', '.has_checkbox input', function(e) {
-        var
-          type = $(this).closest('li').data('type'),
-          count = $ticketsSearchList.find('> li[data-type="'+type+'"] .has_checkbox input:checked').length;
-        
-        $ticketsSearchList.find('> li[data-type!="'+type+'"] .has_checkbox input')
-          .prop(count > 0 ? {checked: false, disabled: true} : {disabled: false});
-        
-        $('#tickets-search .edit-btn').toggle(count > 0).find('a').text('edit '+count+' tickets');
-      });
-      
-      $('#tickets-search').on('click', '.selection-helper > a', function(e) {
-        e.preventDefault();
-        
-        var
-          type = $(this).text(),
-          count = $ticketsSearchList.find('> li[data-type="'+type+'"] .has_checkbox input').prop({
-            checked: true,
-            disabled: false
-          }).length;
-
-        $ticketsSearchList.find('> li[data-type!="'+type+'"] .has_checkbox input').prop({
-          checked: false,
-          disabled: (count > 0 && type != 'no')
-        });
-        
-        $('#tickets-search .edit-btn').toggle(count > 0).find('a').text('edit '+count+' tickets');
-      }).on('click', '.selection-helper .edit-btn > a', function(e) {
-        e.preventDefault();
-        var values = $.map($ticketsSearchList.find('.has_checkbox input:checked'), function(input) { return input.value });;
-        window.location.href = $('#tickets-search').data('editurltpl').replace('{ids}', values.join(','));
-      });
-      
-      $('<div class="selection-helper"/>').append(
-        'Select [ ',
-        $('<a href="#"></a>').text('meta'),
-        ' | ',
-        $('<a href="#"></a>').text('recording'),
-        ' | ',
-        $('<a href="#"></a>').text('encoding'),
-        ' | ',
-        $('<a href="#"></a>').text('no'),
-        ' ] tickets ',
-        $('<span class="edit-btn">and </span>').append(
-          $('<a href="#"></a>').text('edit tickets')
-        ).hide()
-      ).prependTo('#tickets-search > ul').clone().appendTo('#tickets-search > ul')
     }
   };
 }());
@@ -389,14 +451,6 @@ var Tracker = {};
     } else {
       state.next.text('Select first state (' + state.select[0].options[0].text + ')');
     }
-    
-    if (state.showEncodingProfile) {
-      if ($('#ticket-edit-state option[value="' + state.select[0].options[state.select[0].selectedIndex + 1].value + '"]').parent().attr('label') == 'encoding task') {
-        state.encodingProfile.show();
-      } else {
-        state.encodingProfile.hide();
-      }
-    }
   }
   
   function nextState(event) {
@@ -455,110 +509,157 @@ var Tracker = {};
   // TODO: implement stale ticket tracking and display
   Tracker.Edit = {
     init: function() {
-      if ($('#ticket-edit').hasClass('mass')) {
-        Tracker.Edit.Mass.init();
-      }
-      
       assignee.select = $('#ticket-edit-handle_id');
-      assignee.description = $('<span> or </span>').addClass('description').insertAfter(assignee.select);
+      assignee.description = $('<span> or </span>')
+        .addClass('description')
+        .insertAfter(assignee.select);
       
-      $('<a></a>').attr('href', '#').text('Remove assignee').click(removeAssignee).prependTo(assignee.description);
-      $('<a></a>').attr('href', '#').text('assign to me (' + assignee.select.data('current-user-name') + ')').click(assignToUser).appendTo(assignee.description);
+      $('<a></a>')
+        .attr('href', '#')
+        .text('Remove assignee')
+        .click(removeAssignee)
+        .prependTo(assignee.description);
+      $('<a></a>')
+        .attr('href', '#')
+        .text('assign to me (' + assignee.select.data('current-user-name') + ')')
+        .click(assignToUser)
+        .appendTo(assignee.description);
       
-      failed.checkbox = $('#ticket-edit-failed').change(updateCommentField);;
+      failed.checkbox = $('#ticket-edit-failed')
+        .change(updateCommentField);;
       failed.initial = failed.checkbox[0].checked;
       
-      needsAttention.checkbox = $('#ticket-edit-needs_attention').change(updateCommentField);
+      needsAttention.checkbox = $('#ticket-edit-needs_attention')
+        .change(updateCommentField);
       
-      state.showEncodingProfile = !!$('#ticket-edit-state optgroup')[0];
       state.select = $('#ticket-edit-state').change(updateState);
       state.initial = state.select[0].selectedIndex;
       
       // TODO: add class "disable" if ticket is in intial state
-      state.description = $('<span> or </span>').addClass('description').insertAfter(state.select);
-      state.next = $('<a></a>').attr('href', '#').click(nextState).prependTo(state.description);
-      $('<a></a>').attr('href', '#').text('reset to initial').click(resetState).appendTo(state.description);
+      state.description = $('<span> or </span>')
+        .addClass('description')
+        .insertAfter(state.select);
+      state.next = $('<a></a>')
+        .attr('href', '#')
+        .click(nextState)
+        .prependTo(state.description);
+      $('<a></a>')
+        .attr('href', '#')
+        .text('reset to initial')
+        .click(resetState)
+        .appendTo(state.description);
       
       state.encodingProfile = $('#ticket-edit-encoding_profile').parent();
       
       updateState();
-      
-      $('fieldset.foldable')
-        .addClass('folded')
-        .each(function() {
-          $(this).find('legend')
-            .append(' (' + $(this).find('li').length + ')')
-            .append(
-              $('<a></a>').attr({'href': '#', 'title': 'Expand section'}).text('expand').click(function(event) {
-                event.preventDefault();
-            
-                event.target = $(event.target);
-                var section = event.target.parent().parent();
-            
-                if (section.hasClass('folded')) {
-                  event.target.attr('title', 'Fold section').text('fold');
-                  section.removeClass('folded').addClass('expanded');
-                } else {
-                  event.target.attr('title', 'Expand section').text('expand');
-                  section.removeClass('expanded').addClass('folded');
-                }
+    },
+    
+    Multiple: {
+      init: function() {
+        var fields = $('#ticket-edit-multiple fieldset:not(.ticket-edit-multiple-exclude) ul li')
+          .prepend(
+            $('<input></input>')
+              .attr({
+                'type': 'checkbox',
+                'class': 'ticket-edit-multiple-enable'
               })
-            );
-        });
-      },
-      
-      Mass: {
-        init: function() {
-          $('input[data-multi] + label').each(function() {
-            var
-              $label = $(this),
-              $input = $label.prevAll('input'),
-              name = 'change_'+$input.prop('name');
+              .change(function(event) {
+                $(this)
+                  .parent()
+                  .find('input:not(.ticket-edit-multiple-enable), select')
+                  .prop('disabled', function(i, value) {
+                    return !value;
+                  });
+              })
+          );
+        
+        fields
+          .find('input.checkbox')
+          .each(function() {
+            var checkbox = $(this),
+                hiddenField = $('<input></input>')
+                  .attr({
+                    'type': 'hidden',
+                    'name': checkbox.prop('name'),
+                    'value': '0'
+                  })
+                  .insertAfter(checkbox);
             
-            var $a = $('<a href="#"/>').text('Change all Tickets').on('click', function(e) {
-              e.preventDefault();
-              
-              var
-                $a = $(this),
-                $parent = $a.parent('.description'),
-                $input = $parent.prevAll('input'),
-                disabled = !$input.prop('disabled'),
-                name = 'change_'+$input.prop('name');
-              
-              $input.prop('disabled', disabled);
-              if(disabled) {
-                $input.prop('checked', false).trigger('change');
-                $parent.next('input[type=hidden]').remove();
-              }
-              else {
-                $('<input type="hidden" value="true" />').attr('name', name).insertAfter($parent);
-              }
-              
-              if(window.history.replaceState) {
-                var state = window.history.state || {};
-                state[name] = !disabled;
-                window.history.replaceState(state);
-              }
-              
-              $a.text(disabled ? 'Change all Tickets' : "Don't change");
-            }).insertAfter($label).wrap( $('<span class="description"/>') );
+            checkbox.change(function(event) {
+              hiddenField.val((checkbox.is(':checked'))? '1' : '0');
+            });
+          })
+          .removeAttr('name');
+        
+        fields
+          .find('input:not(.ticket-edit-multiple-enable), select')
+          .prop('disabled', true);
+        
+        fields
+          .find('label')
+          .click(function(event) {
+            var fieldEnable = $(this).siblings('.ticket-edit-multiple-enable');
             
-            // re-enable checkboxes if they were
-            if(window.history.state && window.history.state[name]){
-              $a.trigger('click');
-            }
-            
-            // re-enable comment-field if it was
-            if($input.prop('checked')){
-              // insert at the end pf the event-loop to give the script time to bind its event-handlers
-              setTimeout(function() {
-                $input.trigger('change');
-              }, 0);
+            if (!fieldEnable.is(':checked')) {
+              fieldEnable
+                .prop('checked', true)
+                .trigger('change');
+              event.preventDefault();
             }
           });
-        }
+        
+        /*
+        $('input[data-multi] + label').each(function() {
+          var
+            $label = $(this),
+            $input = $label.prevAll('input'),
+            name = 'change_'+$input.prop('name');
+          
+          var $a = $('<a href="#"/>').text('Change all Tickets').on('click', function(e) {
+            e.preventDefault();
+            
+            var
+              $a = $(this),
+              $parent = $a.parent('.description'),
+              $input = $parent.prevAll('input'),
+              disabled = !$input.prop('disabled'),
+              name = 'change_'+$input.prop('name');
+            
+            $input.prop('disabled', disabled);
+            if(disabled) {
+              $input.prop('checked', false).trigger('change');
+              $parent.next('input[type=hidden]').remove();
+            }
+            else {
+              $('<input type="hidden" value="true" />').attr('name', name).insertAfter($parent);
+            }
+            
+            if(window.history.replaceState) {
+              var state = window.history.state || {};
+              state[name] = !disabled;
+              window.history.replaceState(state);
+            }
+            
+            $a.text(disabled ? 'Change all Tickets' : "Don't change");
+          }).insertAfter($label).wrap( $('<span class="description"/>') );
+          
+          // re-enable checkboxes if they were
+          if(window.history.state && window.history.state[name]){
+            $a.trigger('click');
+          }
+          
+          // re-enable comment-field if it was
+          if($input.prop('checked')){
+            // insert at the end pf the event-loop to give the script time to bind its event-handlers
+            setTimeout(function() {
+              $input.trigger('change');
+            }, 0);
+          }
+        });
+      */
       }
-    };
+    }
+  };
 }());
 
 /*
@@ -669,6 +770,11 @@ var Tracker = {};
       if (!tickets[0]) {
         tickets = $('<ul class="tickets"></ul>').insertAfter($('#tickets-header'));
       }
+      
+      tickets.wrap(
+        $('<div></div>')
+          .css({'overflow': 'hidden'})
+      );
       
       url = $('#tickets-filter')[0].action;
       currentIndex = $('.ticket-header-bar li.current').data('ai');
@@ -993,6 +1099,41 @@ var Tracker = {};
 
 /*
   
+  Foldables
+  
+*/
+(function() {
+  Tracker.Foldable = function(fieldset) {
+    fieldset = $(fieldset);
+    
+    fieldset
+      .addClass('folded')
+      .find('legend')
+      .append(' (' + fieldset.find('li').length + ')')
+      .append(
+        $('<a></a>')
+          .attr({'href': '#', 'title': 'Expand section'})
+          .text('expand')
+          .click(function(event) {
+            event.preventDefault();
+
+            event.target = $(event.target);
+            var section = event.target.parent().parent();
+
+            if (section.hasClass('folded')) {
+              event.target.attr('title', 'Fold section').text('fold');
+              section.removeClass('folded').addClass('expanded');
+            } else {
+              event.target.attr('title', 'Expand section').text('expand');
+              section.removeClass('expanded').addClass('folded');
+            }
+          })
+      );
+  };
+})();
+
+/*
+  
   Property editor
   
 */
@@ -1179,6 +1320,8 @@ $(function() {
   
   if ($('#ticket-edit')[0]) {
     Tracker.Edit.init();
+  } else if ($('#ticket-edit-multiple')[0]) {
+    Tracker.Edit.Multiple.init();
   }
   
   if ($('#timeline')[0]) {
@@ -1193,8 +1336,13 @@ $(function() {
     Tracker.Feed.init();
   }
   
-  $('ul.edit-properties').each(function(i, ul) {
-    new Tracker.Properties(ul);
+  
+  $('fieldset.foldable').each(function() {
+    new Tracker.Foldable(this);
+  });
+  
+  $('ul.edit-properties').each(function() {
+    new Tracker.Properties(this);
   });
   
   $('#ticket-import-file').change(function(event) {

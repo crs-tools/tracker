@@ -154,6 +154,7 @@
 			
 			$this->users = User::findAll()
 					->select('id, name')
+					->orderBy('name')
 					->indexBy('id', 'name')
 					->toArray();
 			
@@ -654,7 +655,7 @@
 		public function create() {
 			$this->form();
 			
-			$this->_assignSelectValues();
+			$this->_assignSelectValues('meta');
 			
 			if ($this->form->wasSubmitted()) {
 				$values = $this->form->getValues();
@@ -731,94 +732,93 @@
 				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
-			$this->_assignSelectValues();
+			$this->_assignSelectValues($this->ticket['ticket_type']);
 			
 			return $this->render('tickets/edit');
 		}
 		
 		public function edit_multiple(array $arguments) {
-			$ids = explode(',', $arguments['ids']);
+			$tickets = explode(',', $arguments['tickets']);
 			
-			$this->tickets = Ticket::findAll()->where([
-				'id' => $ids,
-				'project_id' => $this->project['id']
-			]);
-			
-			$type = null;
-			$properties = [];
-			foreach ($this->tickets as $ticket) {
-				if ($type && $type != $ticket['ticket_type']) {
-					$this->flash("Can't edit multiple ticket types at once.");
-					return $this->redirect('tickets', 'index', $this->project);
-				}
-				$type = $ticket['ticket_type'];
-				
-				foreach ($ticket->Properties as $property) {
-					$properties[$property['name']] = [
-						'name' => $property['name'],
-						'value' => ''
-					];
-				}
+			if (empty($tickets)) {
+				throw new EntryNotFoundException();
 			}
-			$this->properties = array_values($properties);
+			
+			$this->tickets = Ticket::findAll()
+				->where([
+					'id' => $tickets,
+					'project_id' => $this->project['id']
+				])
+				// load entries here to avoid extra query for pluck later
+				->load();
+			
+			$rows = $this->tickets->getRows();
+			
+			if ($rows <= 0) {
+				throw new EntryNotFoundException();
+			}
+			
+			if ($rows === 1) {
+				return $this->redirect(
+					'tickets',
+					'edit',
+					$this->tickets->first(),
+					$this->project
+				);
+			}
+			
+			if (count(array_unique($this->tickets->pluck('ticket_type'))) > 1) {
+				$this->flash(
+					'Cannot edit multiple tickets with different types at the same time.'
+				);
+				return $this->redirect('tickets', 'index', $this->project);
+			}
 			
 			$this->form();
-			$this->_assignSelectValues();
 			
-			$this->priorities = ['_' => "don't change"] + $this->priorities;
-			$this->users = ['_' => "don't change"] + $this->users;
-			$this->states = ['_' => "don't change"] + $this->states;
+			$this->ticketType = $this->tickets->first()['ticket_type'];
+			$this->properties = TicketProperties::findAll()
+				->select('name, \'\' AS value')
+				->distinct()
+				->where([
+					'ticket_id' => $tickets
+				]);
+			$this->_assignSelectValues($this->ticketType);
 			
 			if ($this->form->wasSubmitted()) {
-				if ($this->form->getValue('multisave')) {
-					$values = $this->form->getValues();
-					
-					foreach($this->tickets as $ticket) {
-						$ticket->save($values);
-						if(!empty($values['comment'])) {
-							Comment::create([
-								'ticket_id' => $ticket['id'],
-								'handle_id' => User::getCurrent()['id'],
-								'comment' => $values['comment']
-							]);
-						}
+				$values = $this->form->getValues();
+				$count = 0;
+				
+				foreach($this->tickets as $ticket) {
+					if ($ticket->save($values)) {
+						$count++;
 					}
-					
-					$this->flash(count($ids).' Tickets updated');
-					return $this->redirect('tickets', 'index', $this->project);
 				}
-				else {
-					return $this->render('tickets/preview');
-				}
+				
+				$this->flash(
+					$count . ' Ticket' . (($count !== 1)? 's' : '') .
+						' updated'
+				);
+				return $this->redirect('tickets', 'index', $this->project);
 			}
 			
-			return $this->render('tickets/edit');
+			return $this->render('tickets/edit_multiple');
 		}
 		
-		private function _assignSelectValues() {
-			$ticket_type = 'meta';
-			if(isset($this->ticket)) {
-				$ticket_type = $this->ticket['ticket_type'];
-			}
-			else if(isset($this->tickets)) {
-				$ticket_type = $this->tickets->first()['ticket_type'];
-			}
-			
+		private function _assignSelectValues($ticketType) {
 			$this->states = $this->project
 				->States
 				->where([
-					'ticket_type' => $ticket_type
+					'ticket_type' => $ticketType
 				])
 				->indexBy('ticket_state', 'ticket_state')
 				->toArray();
 			
-			$this->users = ['' => '–'] + User::findAll()
+			$this->users = User::findAll()
 				->select('id, name')
 				->orderBy('name')
 				->indexBy('id', 'name')
 				->toArray();
-			
-			$this->priorities = ['0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'];
 			
 			if (isset($this->ticket) and
 				!empty($this->ticket['encoding_profile_version_id'])) {

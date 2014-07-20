@@ -13,7 +13,11 @@
 		'operators' => $operators,
 		'values' => $values
 	] : null),
-	'data-editurltpl' => $this->Request->getRootURL() . Router::reverse('tickets', 'edit_multiple', ['ids' => '{ids}', 'project_slug' => $project['slug']]),
+	'data-edit-url' => $this->Request->getRootURL() .
+		Router::reverse('tickets', 'edit_multiple', [
+			'tickets' => '{tickets}',
+			'project_slug' => $project['slug']
+		])
 ]); ?>
 	<fieldset>
 		<ul id="tickets-search-conditions">

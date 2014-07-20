@@ -13,7 +13,7 @@
 	':project_slug/ticket/:id' => ['tickets', 'view'],
 	':project_slug/ticket/:id/:action' => ['tickets'],
 	
-	':project_slug/tickets/:ids/edit' => ['tickets', 'edit_multiple'],
+	':project_slug/tickets/:tickets/edit' => ['tickets', 'edit_multiple'],
 	
 	':project_slug/tickets/import' => ['import', 'index'],
 	':project_slug/tickets/import/rooms' => ['import', 'rooms'],

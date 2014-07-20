@@ -3,8 +3,9 @@ if (!isset($project)) {
 	$project = $ticket->Project;
 } ?>
 
-<?php echo '<li data-id="' . h($ticket['id']) . '" data-fahrplan-id="' .
-	h($ticket['fahrplan_id']) . '" data-type="'.h($ticket['ticket_type']).'"';
+<?php echo '<li data-id="' . h($ticket['id']) . '" ' .
+	'data-fahrplan-id="' . h($ticket['fahrplan_id']) . '" ' .
+	'data-ticket-type="' . h($ticket['ticket_type']) . '"';
 
 if (empty($ticket['parent_id'])) {
 	echo ' data-title="' . h($ticket['title']) . '"';
@@ -16,11 +17,7 @@ if (empty($ticket['parent_id'])) {
 echo '>'; ?>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 		
-		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?> <?= isset($search) ? 'has_checkbox' : '' ?>" title="<?= h($ticket['fahrplan_id']); ?>">
-		
-		<?php if(isset($search)): ?>
-			<input type="checkbox" value="<?=h($ticket['id'])?>" />
-		<?php endif ?>
+		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
 		
 		<?php if (empty($ticket['parent_id']) or isset($simulateTickets)) {
 			echo h($ticket['fahrplan_id']);

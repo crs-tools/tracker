@@ -295,7 +295,6 @@ ul#menu li.menu-users.current a:before {
 #content {
 	min-height: 15em;
 	padding: 0 0.5em 3em;
-	overflow: hidden;
 }
 
 #content.wait {
@@ -356,6 +355,7 @@ form fieldset.foldable legend a {
 	display: block;
 	float: right;
 	text-align: right;
+  cursor: pointer;
 }
 
 form fieldset.foldable.folded ul {
@@ -463,7 +463,7 @@ form fieldset ul li.radio + li.radio label {
 }
 form fieldset ul li.checkbox input[disabled] + label,
 form fieldset ul li.radio input[disabled] + label {
-	color: #707070;
+	color: #ccc;
 }
 
 form fieldset ul li.checkbox + li.checkbox input.checkbox,
@@ -704,19 +704,12 @@ h2.ticket span.fahrplan {
 	padding-top: 0.3em;
 }
 
-/**/
 #tickets-header {
 	position: relative;
   height: 32px;
 	margin-bottom: 1em;
 	z-index: 10;
 }
-
-/*#tickets-header ul.ticket-header-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-}*/
 
 ul.ticket-header-bar {
   
@@ -875,54 +868,6 @@ ul.ticket-header-bar li.action.current.duplicate a:before { background-position:
 ul.ticket-header-bar li.action.queue a:before { background-position: -360px -202px; }
 ul.ticket-header-bar li.action.current.queue a:before { background-position: -360px -290px; }
 
-/*
-ul.ticket-header-bar li.edit { background-position: left -202px; }
-ul.ticket-header-bar li.edit:nth-child(2) { background-position: -2px -202px; }
-ul.ticket-header-bar li.edit.current { background-position: left -290px; }
-
-ul.ticket-header-bar li.action { background-position: -202px -202px; }
-ul.ticket-header-bar li.action:nth-child(2) { background-position: -204px -202px; }
-ul.ticket-header-bar li.action.current { background-position: -101px -290px; }
-
-ul.ticket-header-bar li.reset { background-position: -302px -202px; }
-ul.ticket-header-bar li.reset:nth-child(2) { background-position: -304px -202px; }
-
-ul.ticket-header-bar li.delete { background-position: -101px -202px; }
-ul.ticket-header-bar li.delete:nth-child(2) { background-position: -102px -202px; }
-
-ul.ticket-header-bar li.edit a, ul.ticket-header-bar li.delete a, ul.ticket-header-bar li.action a, ul.ticket-header-bar li.reset a {
-	padding-left: 26px;
-}
-*/
-/*
-ul#menu li.menu-tickets a:before, ul#menu li.menu-services a:before {
-  content: ' ';
-  float: left;
-  display: block;
-  height: 46px;
-  width: 30px;
-  background: transparent url(../images/main.png) no-repeat -288px -46px;
-}
-
-ul#menu li.menu-services a:before {
-  background-position: -352px -46px;
-}
-
-
-ul#menu li.menu-tickets.current a:before {
-  background-position: -320px -46px;
-}
-
-ul#menu li.menu-services.current a:before {
-  background-position: -384px -46px;
-}
-
-
-ul.ticket-header-bar li.edit.current a, ul.ticket-header-bar li.action.current a {
-	padding-left: 0px;
-	margin-left: 26px;
-}
-*/
 ul.ticket-header-bar li.ticket-header-bar-search {
 	height: 32px;
 	width: 118px;
@@ -967,6 +912,8 @@ form fieldset ul#tickets-search-conditions li {
 }
 
 form fieldset ul#tickets-search-conditions li.submit {
+  display: block;
+  margin: -5px 0 0 0;
   border: none;
 }
 
@@ -985,8 +932,7 @@ form fieldset ul#tickets-search-conditions li input.text {
 }
 
 form fieldset ul#tickets-search-conditions li.submit input.submit {
-  display: block;
-  margin: -5px 0 0 0;
+  margin: 0;
 }
 
 form fieldset ul#tickets-search-conditions li span.description {
@@ -1029,6 +975,25 @@ form fieldset ul#tickets-search-conditions li a.tickets-search-add:active {
 
 form fieldset ul#tickets-search-conditions li a.tickets-search-add.more { background-position: -152px -66px; }
 
+.ticket-search-edit-multiple {
+  float: right;
+}
+
+form fieldset ul#tickets-search-conditions li .ticket-search-edit-multiple select {
+  margin: 0 5px;
+}
+
+ul.tickets li input.ticket-search-edit-select {
+  position: relative;
+  top: 8px;
+  left: -25px;
+}
+
+ul.tickets li.child input.ticket-search-edit-select {
+  left: 18px;
+  z-index: 10;
+}
+
 form#ticket-action {
 	margin-bottom: 4em;
 }
@@ -1046,9 +1011,15 @@ form#ticket-action fieldset ul li label.ticket-action-forward {
 	border: none;
 }
 
-form#ticket-preview fieldset ul li span.text {
-	padding: 16px 0 4px 0;
-	display: block;
+form#ticket-edit-multiple fieldset ul li input.ticket-edit-multiple-enable {
+  position: absolute;
+  left: 60px;
+  top: 18px;
+  z-index: 10;
+}
+
+form#ticket-edit-multiple fieldset ul.edit-properties li input.ticket-edit-multiple-enable {
+  left: -20px;
 }
 
 ul.tickets {
@@ -1095,6 +1066,10 @@ ul.tickets li a.link:hover, ul.tickets li a.link:focus {
 	text-decoration: none;
 }
 
+ul.tickets li.child a.link {
+  left: 3.7em;
+}
+
 ul.tickets li span {
 	display: block;
 	float: left;
@@ -1114,10 +1089,6 @@ ul.tickets li span.vid, ul.tickets li span.title {
 	color: #3d464d;
 }
 
-ul.tickets li span.vid.child {
-	color: #acacac;
-}
-
 ul.tickets li span.vid {
 	width: 2.4em;
 	margin-left: 6px;
@@ -1128,20 +1099,10 @@ ul.tickets li span.vid {
   text-overflow: ellipsis;
 }
 
-ul.tickets li span.vid.has_checkbox {
-	width: 3.5em;
-	text-align: left;
-}
-
-ul.tickets li span.vid.has_checkbox input {
-	position: absolute;
-	left: 3em;
-	margin-top: 2px;
-}
-
-#tickets-search .selection-helper {
-	margin: 10px;
-	text-align: right;
+ul.tickets li.child span.vid {
+  margin-left: 0;
+  padding-right: 0;
+  width: 0px;
 }
 
 ul.tickets li span.vid.needs_attention {

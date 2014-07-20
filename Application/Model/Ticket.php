@@ -98,6 +98,14 @@
 			'without_locked'
 		];
 		
+		public static $priorities = [
+			'0.5' => 'low',
+			'0.75' => 'inferior',
+			'1' => 'normal',
+			'1.25' => 'superior',
+			'1.5' => 'high'
+		];
+		
 		public static function filter_recording(Model_Resource $resource, array $arguments) {
 			self::filter_state($resource, [
 				'type' => 'recording',
