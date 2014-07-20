@@ -51,7 +51,6 @@
 			</li>
 		</ul>
 	</fieldset>
-	<?php /*
 	<fieldset class="foldable">
 		<legend>Properties</legend>
 		<?= $this->render('shared/form/properties', [
@@ -65,7 +64,6 @@
 			]
 		]); ?>
 	</fieldset>
-	*/ ?>
 	<fieldset class="ticket-edit-multiple-exclude">
 		<ul>
 			<li>

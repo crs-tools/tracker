@@ -506,6 +506,14 @@ var Tracker = {};
     set[event.target.name][0].disabled = event.target.indeterminate;
   }
   
+  function enableParentInput(element) {
+    element
+      .closest('li')
+      .find('input.ticket-edit-multiple-enable')
+      .prop('checked', true)
+      .change();
+  }
+  
   // TODO: implement stale ticket tracking and display
   Tracker.Edit = {
     init: function() {
@@ -556,6 +564,28 @@ var Tracker = {};
     
     Multiple: {
       init: function() {
+        assignee.select = $('#ticket-edit-multiple-handle_id');
+        assignee.description = $('<span> or </span>')
+          .addClass('description')
+          .insertAfter(assignee.select);
+      
+        $('<a></a>')
+          .attr('href', '#')
+          .text('Remove assignee')
+          .click(function(event) {
+            removeAssignee(event);
+            enableParentInput($(event.target));
+          })
+          .prependTo(assignee.description);
+        $('<a></a>')
+          .attr('href', '#')
+          .text('assign to me (' + assignee.select.data('current-user-name') + ')')
+          .click(function(event) {
+            assignToUser(event);
+            enableParentInput($(event.target));
+          })
+          .appendTo(assignee.description);
+        
         var fields = $('#ticket-edit-multiple fieldset:not(.ticket-edit-multiple-exclude) ul li')
           .prepend(
             $('<input></input>')
@@ -568,7 +598,7 @@ var Tracker = {};
                   .parent()
                   .find('input:not(.ticket-edit-multiple-enable), select')
                   .prop('disabled', function(i, value) {
-                    return !value;
+                    return !event.target.checked;
                   });
               })
           );
