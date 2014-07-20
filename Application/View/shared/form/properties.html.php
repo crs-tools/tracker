@@ -7,10 +7,11 @@
 					$properties['field'] . '[' . $index . '][' . $properties['value'] . ']',
 					$property[$properties['key']],
 					$property[$properties['value']],
-					array(
+					[
 						'data-property-index' => $index,
 						'data-property-destroy' => $properties['field'] . '[' . $index . '][_destroy]'
-					)
+					] +
+					((isset($properties['placeholder']))? ['placeholder' => $properties['placeholder']] : [])
 				);
 				$f->register($properties['field'] . '[' . $index . '][_destroy]') ?>
 			</li>

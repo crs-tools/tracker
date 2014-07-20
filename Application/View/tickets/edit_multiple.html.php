@@ -60,7 +60,8 @@
 				'field' => 'properties',
 				'description' => 'property',
 				'key' => 'name',
-				'value' => 'value'
+				'value' => 'value',
+				'placeholder' => 'Multiple values'
 			]
 		]); ?>
 	</fieldset>
