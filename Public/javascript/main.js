@@ -607,56 +607,6 @@ var Tracker = {};
               event.preventDefault();
             }
           });
-        
-        /*
-        $('input[data-multi] + label').each(function() {
-          var
-            $label = $(this),
-            $input = $label.prevAll('input'),
-            name = 'change_'+$input.prop('name');
-          
-          var $a = $('<a href="#"/>').text('Change all Tickets').on('click', function(e) {
-            e.preventDefault();
-            
-            var
-              $a = $(this),
-              $parent = $a.parent('.description'),
-              $input = $parent.prevAll('input'),
-              disabled = !$input.prop('disabled'),
-              name = 'change_'+$input.prop('name');
-            
-            $input.prop('disabled', disabled);
-            if(disabled) {
-              $input.prop('checked', false).trigger('change');
-              $parent.next('input[type=hidden]').remove();
-            }
-            else {
-              $('<input type="hidden" value="true" />').attr('name', name).insertAfter($parent);
-            }
-            
-            if(window.history.replaceState) {
-              var state = window.history.state || {};
-              state[name] = !disabled;
-              window.history.replaceState(state);
-            }
-            
-            $a.text(disabled ? 'Change all Tickets' : "Don't change");
-          }).insertAfter($label).wrap( $('<span class="description"/>') );
-          
-          // re-enable checkboxes if they were
-          if(window.history.state && window.history.state[name]){
-            $a.trigger('click');
-          }
-          
-          // re-enable comment-field if it was
-          if($input.prop('checked')){
-            // insert at the end pf the event-loop to give the script time to bind its event-handlers
-            setTimeout(function() {
-              $input.trigger('change');
-            }, 0);
-          }
-        });
-      */
       }
     }
   };
