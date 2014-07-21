@@ -25,6 +25,7 @@
 		protected $requireAuthorization = true;
 		
 		private static $searchMapping = [
+			'id' => 'id',
 			'title' => 'title',
 			'assignee' => 'handle_id',
 			'type' => 'ticket_type',
@@ -201,7 +202,13 @@
 				}
 			}
 			
-			if ($this->searchForm->wasSubmitted() and
+			if (!empty($_GET['id'])) {
+				$this->fields = ['id'];
+				$this->operators = ['is_in'];
+				$this->values = [$_GET['id']];
+			}
+			
+			if (($this->searchForm->wasSubmitted() or !empty($_GET['id'])) and
 				$this->fields and $this->operators and $this->values and
 				count($this->fields) == count($this->operators) and
 				count($this->fields) == count($this->values)
@@ -313,11 +320,6 @@
 			);
 			
 			$this->tickets = $tickets;
-			
-			// Mass Edit
-			//if (Request::isPostRequest() and Request::post('edit')) {
-			//	return $this->View->redirect('tickets', 'edit', array('project_slug' => $this->Project->slug, 'id' => implode(Model::indexByField($tickets,'id', 'id'), ',')));
-			//}
 		}
 		
 		public function log(array $arguments) {
@@ -745,6 +747,7 @@
 			}
 			
 			$this->tickets = Ticket::findAll()
+				->select('id, ticket_type')
 				->where([
 					'id' => $tickets,
 					'project_id' => $this->project['id']
