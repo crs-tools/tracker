@@ -968,18 +968,18 @@ var Tracker = {};
             
             if (!next) {
               next = $('<a></a>').attr('href', '#').click(function(event) {
+                event.preventDefault();
+                
                 next.parent().hide();
                 
                 $.each(latestEntries, function(i, entry) {
                   $(entry).insertBefore(first);
                 });
                 
-                latestResult = [];
+                latestEntries = [];
                 next.parent().remove();
                 next = null;
                 updateTitle();
-                
-                event.preventDefault();
               }).hide().appendTo($('<li></li>').addClass('more').prependTo(feed)).fadeIn(700);
             }
             
