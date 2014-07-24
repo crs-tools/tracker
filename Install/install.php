@@ -94,16 +94,15 @@
 	
 	echo "done.\n";
 
-	
 	echo "\n";
 	echo "Database superuser\n";
 	echo "(tries su postgres if left blank)\n";
 	echo "---------------------------------\n";
 	
 	echo 'User: ';
-	$database['user'] = trim(fgets($stdIn));
+	$database['superuser'] = trim(fgets($stdIn));
 	
-	if (empty($database['user'])) {
+	if (empty($database['superuser'])) {
 		echo "Init database...";
 		
 		exec(
@@ -115,6 +114,29 @@
 			$output,
 			$returnCode
 		);
+
+		if (!isset($returnCode) or $returnCode !== 0) {
+			echo "failed.\n";
+			die();
+		}
+		echo "done.\n";
+
+		echo "Set permissions...";
+		exec(
+			'echo "GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO ' . $database['user'] . '; ' .
+			' GRANT ALL ON ALL TABLES IN SCHEMA public TO ' . $database['user'] . '; " | ' .
+			'sudo -u postgres psql' .
+			' --dbname=' .
+			escapeshellarg($database['name']) ,
+			$output,
+			$returnCode
+		);
+		if (!isset($returnCode) or $returnCode !== 0) {
+			echo "failed.\n";
+			die();
+		}
+		echo "done.\n";
+
 	} else {
 		echo 'Password: ';
 		
@@ -132,21 +154,36 @@
 			' -name "*.sql" ! -name "*test*" | sort -n | xargs -n 1 psql --host=' .
 			escapeshellarg($database['host']) .
 			' --username=' .
-			escapeshellarg($database['user']) .
+			escapeshellarg($database['superuser']) .
 			' --dbname=' .
 			escapeshellarg($database['name']) .
 			' -f',
 			$output,
 			$returnCode
 		);
+		if (!isset($returnCode) or $returnCode !== 0) {
+			echo "failed.\n";
+			die();
+		}
+		echo "done.\n";
+
+		echo "Set permissions...";
+		exec(
+			'echo "GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO ' . $database['user'] . '; ' .
+			' GRANT ALL ON ALL TABLES IN SCHEMA public TO ' . $database['user'] . '; " | ' .
+			' psql --host=' . escapeshellarg($database['host']) .
+			' --username=' . escapeshellarg($database['superuser']) .
+			' --dbname=' . escapeshellarg($database['name']) ,
+			$output,
+			$returnCode
+		);
+		if (!isset($returnCode) or $returnCode !== 0) {
+			echo "failed.\n";
+			die();
+		}
+		echo "done.\n";
+
 	}
-	
-	if (!isset($returnCode) or $returnCode !== 0) {
-		echo "failed.\n";
-		die();
-	}
-	
-	echo "done.\n";
 	
 	echo "\n";
 	echo "Add first user (admin)\n";
