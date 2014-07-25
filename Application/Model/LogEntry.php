@@ -67,6 +67,12 @@
 				'multiple' => '{user_name} cut {tickets}.',
 				'message' => false
 			],
+			'Action.cut.start' => [
+				'log' => 'Started cutting.',
+				'single' => '{user_name} started cutting recording ticket {id}.',
+				'multiple' => '{user_name} started cutting {tickets}.',
+				'message' => false
+			],
 			'Action.cut.failed' => [
 				'log' => 'Cutting failed.',
 				'single' => '{user_name} failed to cut {id}.',
@@ -78,6 +84,12 @@
 				'log' => 'Encoding checked.',
 				'single' => '{user_name} checked encoding ticket {id}.',
 				'multiple' => '{user_name} checked {tickets}.',
+				'message' => false
+			],
+			'Action.check.start' => [
+				'log' => 'Started checking.',
+				'single' => '{user_name} started checking recording ticket {id}.',
+				'multiple' => '{user_name} started checking {tickets}.',
 				'message' => false
 			],
 			'Action.check.failed' => [

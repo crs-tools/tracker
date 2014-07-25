@@ -420,6 +420,11 @@
 					'ticket_state' => $this->state,
 					'failed' => false
 				]);
+				
+				$this->ticket->addLogEntry([
+					'event' => 'Action.' . $action . '.start',
+					'to_state' => $this->state
+				]);
    			}
 			
 			$this->action = $action;

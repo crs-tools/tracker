@@ -1626,7 +1626,9 @@ span.date:hover span {
 #feed li.event.event-rpc-property-set:before		{background-position: -14px -234px;}
 #feed li.event.event-encoding-reset:before			{background-position: -42px -234px;}
 #feed li.event.event-comment-add:before				{background-position: -56px -234px;}
+#feed li.event.event-action-check-start:before,
 #feed li.event.event-action-check:before			{background-position: -70px -234px;}
+#feed li.event.event-action-cut-start:before,
 #feed li.event.event-action-cut:before				{background-position: -84px -234px;}
 #feed li.event.event-action-fix:before				{background-position: -98px -234px;}
 #feed li.event.event-rpc-processing-failed:before	{background-position: -112px -234px;}
