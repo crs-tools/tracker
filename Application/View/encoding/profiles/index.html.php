@@ -1,12 +1,12 @@
 <?php $this->title('Encoding profiles | ') ?>
 
-<ul class="ticket-header-bar right horizontal table">
-	<li class="ticket-header-bar-background-left"></li>
-	<?php if (User::isAllowed('encodingprofiles', 'create')): ?>
-		<li class="action create"><?php echo $this->linkTo('encodingprofiles', 'create', '<span>create</span>', 'Create new encoding profile…'); ?></li>
-	<?php endif; ?>
-	<li class="ticket-header-bar-background-right"></li>
-</ul>
+<?php if (User::isAllowed('encodingprofiles', 'create')): ?>
+	<ul class="ticket-header-bar right horizontal table">
+		<li class="ticket-header-bar-background-left"></li>
+			<li class="action create"><?php echo $this->linkTo('encodingprofiles', 'create', '<span>create</span>', 'Create new encoding profile…'); ?></li>
+		<li class="ticket-header-bar-background-right"></li>
+	</ul>
+<?php endif; ?>
 
 <div class="table">
 	<h2>Encoding profiles</h2>

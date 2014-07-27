@@ -37,14 +37,17 @@
 	// User
 	AccessControl::allow('user', ['tickets'], ['jobfile', 'edit']);
 	
+	AccessControl::allow('user', ['encodingprofiles'], ['index', 'view']);
+	AccessControl::allow('user', ['workers'], ['index']);
+	AccessControl::allow('user', ['projects'], ['settings']);
+	
 	// Superuser
 	AccessControl::allow('superuser', ['projects'], [
-		'settings', 'properties', 'profiles', 'states', 'worker', 'edit'
+		'properties', 'profiles', 'states', 'worker', 'edit'
 	]);
 	AccessControl::allow('superuser', ['tickets'], ['create', 'duplicate']);
 	AccessControl::allow('superuser', ['encodingprofiles']);
 	AccessControl::allow('superuser', ['import']);
-	AccessControl::allow('superuser', ['workers'], ['index']);
 	
 	// Admin
 	AccessControl::allow('admin');
