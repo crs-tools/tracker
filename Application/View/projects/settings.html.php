@@ -5,7 +5,7 @@
 <table class="properties">
 	<thead>
 		<tr>
-			<th colspan="2">Total Duration</th>
+			<th colspan="2">Total Duration (staged)</th>
 		</tr>
 	</thead>
 	<tbody>

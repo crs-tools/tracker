@@ -452,7 +452,11 @@
 		   				'name' => 'Fahrplan.Duration'
 		   			]
 		   		)
-		   		->where(['project_id' => $project])
+		   		->where([
+					'project_id' => $project,
+					'ticket_type' => 'meta',
+					'ticket_state' => 'staged',
+				])
 				->fetchRow()['duration'];
 		}
 		
