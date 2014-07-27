@@ -404,16 +404,16 @@
 				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
-			$state = TicketState::getStateByAction($action);
+			$this->state = TicketState::getStateByAction($action);
 			
-			if ($state === false) {
+			if ($this->state === false) {
 				$this->flash('Ticket is not in the required state to execute this action');
 			}
 			
-			if ($this->ticket['ticket_state'] != $state) {
+			if ($this->ticket['ticket_state'] != $this->state) {
 				$this->ticket->save([
 					'handle_id' => User::getCurrent()['id'],
-					'ticket_state' => $state,
+					'ticket_state' => $this->state,
 					'failed' => false
 				]);
    			}
@@ -501,7 +501,7 @@
 					$oldState = $this->ticket['ticket_state'];
 					
 					if ($this->ticket->save([
-						'ticket_state' => $this->ticket->queryNextState($state),
+						'ticket_state' => $this->ticket->queryNextState($this->state),
 						'handle_id' => null,
 						'failed' => false,
 						'properties' => $properties
@@ -511,10 +511,10 @@
 							'event' => 'Action.' . $action,
 							'handle_id' => User::getCurrent()['id'],
 							'from_state' => $oldState,
-							'to_state' => $state
+							'to_state' => $this->state
 						]);
 						
-						$this->flash('Successfully finished ' . $state);
+						$this->flash('Successfully finished ' . $this->state);
 					}
 					
 					return $this->redirect('tickets', 'view', $this->ticket, $this->project); 
