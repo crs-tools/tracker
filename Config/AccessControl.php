@@ -35,12 +35,15 @@
 	// AccessControl::allow('owner', ['tickets'], ['delete_comment']);
 	
 	// User
-	AccessControl::allow('user', ['tickets'], ['edit']);
+	AccessControl::allow('user', ['tickets'], ['jobfile', 'edit']);
 	
 	// Superuser
-	AccessControl::allow('superuser', ['projects'], ['view', 'edit']);
-	AccessControl::allow('superuser', ['tickets'], ['jobfile']);
+	AccessControl::allow('superuser', ['projects'], [
+		'settings', 'properties', 'profiles', 'states', 'worker', 'edit'
+	]);
+	AccessControl::allow('superuser', ['tickets'], ['create', 'duplicate']);
 	AccessControl::allow('superuser', ['encodingprofiles']);
+	AccessControl::allow('superuser', ['import']);
 	AccessControl::allow('superuser', ['workers'], ['index']);
 	
 	// Admin
