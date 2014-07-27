@@ -21,7 +21,7 @@
 	AccessControl::allow(
 		'read only',
 		['tickets'],
-		['feed', 'index', 'view', 'log']
+		['feed', 'index', 'view', 'log', 'search']
 	);
 	
 	// Restricted
