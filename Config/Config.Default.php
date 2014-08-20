@@ -12,7 +12,12 @@
 		'__DB_PASS__',
 		'__DB_NAME__'
 	);
-	
+
+	// TODO: make timezone a user setting or get it from browser 
+	Database::$Instance->query(
+		'SET timezone = ' . Database::$Instance->quote(date_default_timezone_get())
+	);
+
 	requires('Cache/Adapter/APC');
 	Cache::setAdapter(new Cache_Adapter_APC());
 	

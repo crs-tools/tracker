@@ -12,8 +12,8 @@ CREATE TABLE tbl_project
   title character varying(256) NOT NULL,
   slug character varying(64) NOT NULL,
   read_only boolean NOT NULL DEFAULT false,
-  created timestamp without time zone NOT NULL DEFAULT now(),
-  modified timestamp without time zone NOT NULL DEFAULT now(),
+  created timestamp with time zone NOT NULL DEFAULT now(),
+  modified timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT tbl_project_pk PRIMARY KEY (id),
   CONSTRAINT tbl_project_slug_uk UNIQUE (slug)
 )

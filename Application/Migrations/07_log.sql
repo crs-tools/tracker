@@ -6,7 +6,7 @@ CREATE TABLE tbl_log
 (
   id bigserial NOT NULL,
   ticket_id bigint NOT NULL,
-  created timestamp without time zone NOT NULL DEFAULT now(),
+  created timestamp with time zone NOT NULL DEFAULT now(),
   from_state enum_ticket_state,
   to_state enum_ticket_state,
   handle_id bigint NOT NULL,

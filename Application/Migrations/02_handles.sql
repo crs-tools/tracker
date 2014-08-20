@@ -9,7 +9,7 @@ SET ROLE TO postgres;
 CREATE TABLE tbl_handle
 (
   id bigserial NOT NULL,
-  last_seen timestamp without time zone NOT NULL DEFAULT now(),
+  last_seen timestamp with time zone NOT NULL DEFAULT now(),
   name character varying(128) NOT NULL,
   CONSTRAINT tbl_handle_pkey PRIMARY KEY (id)
 )
@@ -29,14 +29,14 @@ END $$ LANGUAGE plpgsql;
 CREATE TABLE tbl_user
 (
   id bigint NOT NULL DEFAULT nextval('tbl_handle_id_seq'::regclass),
-  last_seen timestamp without time zone,
+  last_seen timestamp with time zone,
   name character varying(128) NOT NULL,
   password character(60) DEFAULT NULL::bpchar,
   persistence_token character(32) DEFAULT NULL::bpchar,
   remember_token character(32) DEFAULT NULL::bpchar,
   role character varying(32) DEFAULT 'user'::character varying,
   failed_login_count integer DEFAULT 0,
-  last_login timestamp without time zone,
+  last_login timestamp with time zone,
   CONSTRAINT tbl_user_pk PRIMARY KEY (id),
   CONSTRAINT tbl_user_name_uq UNIQUE (name),
   CONSTRAINT tbl_user_persistence_token_key UNIQUE (persistence_token),
@@ -59,7 +59,7 @@ WITHOUT OIDS;
 CREATE TABLE tbl_worker
 (
   id bigint NOT NULL DEFAULT nextval('tbl_handle_id_seq'::regclass),
-  last_seen timestamp without time zone NOT NULL DEFAULT now(),
+  last_seen timestamp with time zone NOT NULL DEFAULT now(),
   name character varying(128) NOT NULL,
   worker_group_id bigint NOT NULL,
   description character varying(256),

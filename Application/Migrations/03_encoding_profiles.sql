@@ -26,7 +26,7 @@ CREATE TABLE tbl_encoding_profile_version
   id bigserial NOT NULL,
   encoding_profile_id bigint NOT NULL,
   revision bigint NOT NULL DEFAULT 1,
-  created timestamp without time zone NOT NULL DEFAULT now(),
+  created timestamp with time zone NOT NULL DEFAULT now(),
   description character varying(4096),
   xml_template text NOT NULL,
   CONSTRAINT tbl_encoding_profile_version_pkey PRIMARY KEY (id),
