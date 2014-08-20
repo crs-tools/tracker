@@ -17,7 +17,7 @@
 	<?php if (!empty($projects)): ?>
 		<?php foreach ($projects as $project): ?>
 			<li>
-				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', ['class' => 'link', 'title' => $project['title']]); ?>
+				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', $project['title'], ['class' => 'link']); ?>
 				
 				<ul class="actions horizontal">
 					<li><?= $this->linkTo('tickets', 'index', ['project_slug' => $project['slug']], 'tickets'); ?></li>
