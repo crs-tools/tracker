@@ -115,6 +115,7 @@
 					continue;
 				}
 				
+				$properties['Fahrplan.DateTime'] = (string) $event->date;
 				$properties['Fahrplan.Date'] = (new DateTime($event->date))->format('Y-m-d');
 				$properties['Fahrplan.Start'] = (string) $event->start;
 				
