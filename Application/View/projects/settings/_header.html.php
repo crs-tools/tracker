@@ -26,10 +26,10 @@
 </div>
 
 <ul class="project-settings-header horizontal clearfix">
-	<li<?= ($arguments['action'] === 'settings')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'settings', $project, 'Info/<br />Statistics', 'Info/Statistics', ['class' => 'info']); ?></li>
+	<li<?= ($arguments['action'] === 'settings')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'settings', $project, 'Info &amp;<br />Statistics', 'Info & Statistics', ['class' => 'info']); ?></li>
 	
 	<?php if (User::isAllowed('projects', 'properties')): ?>
-		<li<?= ($arguments['action'] === 'properties')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'properties', $project, 'Properties/<br />Languages', 'Properties/Languages', ['class' => 'properties']); ?></li>
+		<li<?= ($arguments['action'] === 'properties')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'properties', $project, 'Properties &amp;<br />Languages', 'Properties & Languages', ['class' => 'properties']); ?></li>
 	<?php endif; ?>
 	
 	<?php if (User::isAllowed('projects', 'profiles')): ?>

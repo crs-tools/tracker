@@ -1,4 +1,4 @@
-<?php $this->title('Properties/Languages | '); ?>
+<?php $this->title('Properties & Languages | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
 <?php echo $f = $form(); ?>
