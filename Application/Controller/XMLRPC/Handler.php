@@ -469,8 +469,8 @@
                     }
                 }
             }
-
-            if(!$ticket) {
+			
+			if (empty($ticket)) {
                 return false;
             }
 
