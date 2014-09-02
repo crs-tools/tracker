@@ -235,7 +235,6 @@
 		public static function with_child(Model_Resource $resource, array $arguments) {
 			$resource->leftJoin(
 				[self::TABLE, 'child'],
-				null,
 				[self::TABLE . '.id = parent_id']
 			);
 		}
@@ -253,13 +252,13 @@
 		public function with_encoding_profile_name(Model_Resource $resource, array $arguments) {
 			$resource->leftJoin(
 				[EncodingProfileVersion::TABLE, 'encoding_profile_version'],
-				null,
 				[self::TABLE . '.encoding_profile_version_id = id']
 			);
 			$resource->leftJoin(
 				[EncodingProfile::TABLE],
-				'name AS encoding_profile_name',
-				['encoding_profile_version.encoding_profile_id = id']
+				['encoding_profile_version.encoding_profile_id = id'],
+				[],
+				'name AS encoding_profile_name'
 			);
 		}
 		
@@ -273,7 +272,6 @@
 			foreach ($arguments as $property => $as) {
 				$resource->leftJoin(
 					[TicketProperties::TABLE, 'property_' . $as],
-					'value AS ' . $as,
 					'((ticket_id = ' .
 						self::TABLE .
 						'.id AND ' . 
@@ -283,7 +281,8 @@
 						'.parent_id AND ' .
 						self::TABLE .
 						'.parent_id IS NOT NULL)) AND name = ?',
-					[$property]
+					[$property],
+					'value AS ' . $as
 				);
 			}
 		}
@@ -291,7 +290,6 @@
 		public static function with_recording(Model_Resource $resource, array $arguments) {
 			$resource->leftJoin(
 				[self::TABLE, 'recording'],
-				null,
 				['(' . self::TABLE . '.ticket_type = ? AND id IS NULL) OR (' . self::TABLE . '.parent_id = parent_id AND ticket_type = ?) OR (' . self::TABLE . '.id = parent_id AND ticket_type = ?)'],
 				['recording', 'recording', 'recording']
 			);
