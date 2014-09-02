@@ -53,6 +53,56 @@
 			'States' => true,
 			'WorkerGroup' => true
 		];
+		
+		public function updateEncodingProfileVersion($versionId, $newId) {
+			$query = Database_Query::updateTable(
+				'tbl_project_encoding_profile',
+				['encoding_profile_version_id' => $newId],
+				[
+					'project_id' => $this['id'],
+					'encoding_profile_version_id' => $versionId
+				]
+			);
+			
+			if ($query->execute() <= 0) {
+				return false;
+			}
+			
+			Ticket::findAll()
+				->where([
+					'project_id' => $this['id'],
+					'encoding_profile_version_id' => $versionId
+				])
+				->update([
+					'encoding_profile_version_id' => $newId
+				]);
+			
+			return true;
+		}
+		
+		public function removeEncodingProfileVersion($versionId) {
+			$query = Database_Query::deleteFrom(
+				'tbl_project_encoding_profile',
+				[
+					'project_id' => $this['id'],
+					'encoding_profile_version_id' => $versionId
+				]
+			);
+			
+			if ($query->execute() <= 0) {
+				return false;
+			}
+			
+			Ticket::findAll()
+				->where([
+					'project_id' => $this['id'],
+					'encoding_profile_version_id' => $versionId
+				])
+				->delete();
+			
+			return true;
+		}
+		
 	}
 	
 ?>

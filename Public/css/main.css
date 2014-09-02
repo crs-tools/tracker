@@ -8,9 +8,22 @@ body {
 	position: relative;
 	min-height: 100%;
 	background: #fafafa url(../images/background.gif) repeat-x left top;
-	font-family: "Helvetica Neue", Helvetica, Helmet, Freesans, sans-serif;
-	font-size: 80.00%;
+  font-size: 80.00%;
 }
+
+body,
+ul.workers li span.display a.process,
+ul.workers li span.display span.progress,
+ul.workers li span.display span.lastseen,
+ul.workers li span.display span.since,
+form input,
+button.link,
+ul.ticket-header-bar li button,
+ul.ticket-header-bar li a,
+#timeline ul li.event code a  {
+	font-family: "Helvetica Neue", Helvetica, Helmet, Freesans, sans-serif;
+}
+
 
 img, fieldset {border: none}
 p {margin: 0.3em 0 0;line-height: 1.5em;}
@@ -322,10 +335,6 @@ ul#menu li.menu-users.current a:before {
 form { margin: 0;padding: 0; }
 form fieldset { display: block; width: 100% !important; position: relative; clear: left; padding: 0 0 0 0; margin: 0; }
 
-form input {
-	font-family: Helvetica, sans-serif;
-}
-
 form input.radio + input.radio {
   margin-left: 0.5em;
 }
@@ -504,6 +513,18 @@ form a.reset {
 
 form a.reset:hover, form a.reset:focus {
 	color: #FF3E43;
+}
+
+button.link {
+  border: none;
+  background: none;
+	color: #248fda;
+	text-decoration: none;
+  cursor: pointer;
+}
+
+button.link:hover, button.link:focus {
+  text-decoration: underline;
 }
 
 form fieldset ul li span.description {
@@ -759,7 +780,6 @@ ul.ticket-header-bar li button, ul.ticket-header-bar li a {
 	display: block;
 	border: none;
 	background-color: transparent;
-	font-family: Helvetica, sans-serif;
 	font-size: 13px;
 	color: #444;
 }
@@ -1558,7 +1578,6 @@ span.date:hover span {
 }
 
 #timeline ul li.event code a {
-	font-family: Helvetica, sans-serif;
 	color: #ccc;
 }
 
@@ -1621,7 +1640,7 @@ span.date:hover span {
 #feed li.more a									{display:block; width: 100%; font-size: 1.1em; color: #707070;}
 #feed li.more a:hover, #feed li.more a:focus	{background-color: #EAEAEA; text-decoration: none;}
 
-#feed-stats									{margin-top: 25px; float: right; width: 240px;/* border-top: 2px solid #cfcfcf;*/}
+#feed-stats									{/*margin-top: 25px;*/ float: right; width: 240px;/* border-top: 2px solid #cfcfcf;*/}
 #feed-stats #feed-stats-actions				{padding: 0; margin-top: 1em; border-top: 1px solid #cfcfcf;}
 #feed-stats #feed-stats-actions li			{height: 3em; margin: 0; list-style-type: none; border-top: 1px solid #fff; border-bottom: 1px solid #cfcfcf; line-height: 3em; vertical-align: top; color: #707070;}
 #feed-stats #feed-stats-actions li a,#feed-stats #feed-stats-actions li span		{line-height: 3em; vertical-align: top;}
@@ -1689,7 +1708,6 @@ ul.workers li span.display {
 ul.workers li span.display a.process, ul.workers li span.display span.progress {
 	display: block;
 	position: absolute;
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	font-weight: 100;
 	font-size: 1.8em;
 	color: #6a6c55;
@@ -1720,7 +1738,6 @@ ul.workers li span.display span.lastseen, ul.workers li span.display span.since 
 	position: absolute;
 	right: 5px;
 	padding: 2px 4px 3px 15px;
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	font-weight: 300;
 	font-size: 0.7em;
 	line-height: 1.1em;

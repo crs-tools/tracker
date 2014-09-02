@@ -36,7 +36,7 @@
 			
 			return $this->render('projects/settings');
 		}	
-			
+		
 		public function properties() {
 			$this->form();
 			
@@ -54,9 +54,38 @@
 			// Encoding Profiles
 			$this->profilesForm = $this->form();
 			
-			if ($this->profilesForm->wasSubmitted() and
-				$this->project->save($this->profilesForm->getValues())) {
-				$this->flashNow('Encoding profiles updated');
+			if ($this->profilesForm->wasSubmitted()) {
+				$values = $this->profilesForm->getValues();
+				
+				if (!empty($values['remove'])) {
+					$this->project->removeEncodingProfileVersion(
+						$values['remove']
+					);
+				} elseif (!empty($values['add'])) {
+					$this->project->save([
+						'EncodingProfileVersion' => [
+							['encoding_profile_version_id' => $values['add']]
+						]
+					]);
+					
+					// TODO: only for encoding profile
+					Ticket::createMissingEncodingTickets(
+						$this->project['id']
+					);
+				} elseif (!empty($values['versions']) and
+					is_array($values['versions'])) {
+					foreach ($values['versions'] as $version) {
+						if (empty($version[0]) or empty($version[1]) or
+							$version[0] === $version[1]) {
+							continue;
+						}
+						
+						$this->project->updateEncodingProfileVersion(
+							$version[0],
+							$version[1]
+						);
+					}
+				}
 			}
 			
 			$this->versions = $this->project
