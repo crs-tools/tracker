@@ -426,7 +426,7 @@
             }
 
             // temporary compatibility fix until all instances are upgraded
-            Database::$Instance->query("SET timezone = 'UTC'");
+            Database::$Instance->query("SET timezone = 'localtime'");
 
             // create query: find all tickets in state
             $tickets = Ticket::findAll(['State'])
