@@ -32,7 +32,6 @@
 					'project_id' => $this->group->Project->pluck('id'),
 					'next_state_service_executable' => true
 				])
-                ->orderBy('priority DESC')
 				->pluck('id');
 			
 			if (!empty($tickets)) {
