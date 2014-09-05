@@ -316,12 +316,12 @@
             $properties = array_merge($properties,$this->_getProperties($ticket,$pattern));
 
 			// virtual property: project slug
-			if($pattern != null && strpos('Project.Slug',$pattern) !== false || $pattern == null) {
+			if(!isset($properties['Project.Slug']) && ($pattern != null && strpos('Project.Slug',$pattern) !== false || $pattern == null)) {
 				$properties['Project.Slug'] = $ticket->Project['slug'];
 			}
 
             // virtual property: basename for encoding, project slug, fahrplan id, ticket slug
-			if($pattern != null && strpos('Encoding.Basename',$pattern) !== false || $pattern == null) {
+			if(!isset($properties['Encoding.Basename']) && ($pattern != null && strpos('Encoding.Basename',$pattern) !== false || $pattern == null)) {
                 $properties['Encoding.Basename'] = TicketProperties::buildSlug($ticket->Project, $properties);
 			}
 
@@ -333,7 +333,7 @@
                 }
 
                 // add virtual properties
-                if(isset($properties['Encoding.Basename'])) {
+                if(isset($properties['Encoding.Basename']) && !isset($properties['EncodingProfile.Basename'])) {
                     $properties['EncodingProfile.Basename'] = $properties['Encoding.Basename'];
                     if(!empty($profile['slug'])) {
                         $properties['EncodingProfile.Basename'] .= '_' . $profile['slug'];
