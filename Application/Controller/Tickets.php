@@ -462,33 +462,36 @@
 					$this->flashNow('This ticket is now assigned to you');
 				} elseif ($this->actionForm->getValue('language') === '') {
 					$this->flashNow('You have to choose a language');
-				} elseif ($this->actionForm->getValue('expand') and
-					$this->ticket->expandRecording([
+				} elseif ($this->actionForm->getValue('expand')) {
+					if ($this->ticket->expandRecording([
 						(int) $this->actionForm->getValue('expand_left'),
 						(int) $this->actionForm->getValue('expand_right')
 					])) {
-					$this->flash('Expanded timeline, ' . $action . ' another ticket while preparing');
-					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
-				} elseif ($this->actionForm->getValue('failed') and
-					$this->ticket->save([
+						$this->flash('Expanded timeline, ' . $action . ' another ticket while preparing');
+						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+					}
+				} elseif ($this->actionForm->getValue('failed')) {
+					if ($this->ticket->save([
 						'handle_id' => null,
 						'failed' => true
 					])) {
-					$this->ticket->addLogEntry([
-						'comment_id' => (isset($comment))? $comment['id'] : null,
-						'event' => 'Action.' . $action . '.failed'
-					]);
+						$this->ticket->addLogEntry([
+							'comment_id' => (isset($comment))? $comment['id'] : null,
+							'event' => 'Action.' . $action . '.failed'
+						]);
 					
-					$this->flash('Marked ticket as failed');
-					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
-				} elseif ($this->actionForm->getValue('reset') and
-					$this->ticket->Parent->resetSource()) {
-					$this->flash('Reset all encoding tasks, source failed.');
-					return $this->redirect(
-						'tickets', 'view',
-						$this->ticket->Parent,
-						$this->project
-					);
+						$this->flash('Marked ticket as failed');
+						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+					}
+				} elseif ($this->actionForm->getValue('reset')) {
+					if ($this->ticket->Parent->resetSource()) {
+						$this->flash('Reset all encoding tasks, source failed.');
+						return $this->redirect(
+							'tickets', 'view',
+							$this->ticket->Parent,
+							$this->project
+						);
+					}
 				} else {
 					$properties = [];
 					
