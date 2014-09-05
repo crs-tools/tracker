@@ -237,12 +237,6 @@
 				->indexBy('name')
 				->toArray();
 			
-			if (isset($properties['Meta.Acronym'])) {
-				$properties['Meta.Acronym']['value'] = 'duplicate-' .
-					(($i > 1)? ($i . '-') : '') . 'of-' .
-					$properties['Meta.Acronym']['value'];
-			}
-			
 			$project['properties'] = $properties;
 			
 			if (!$project->save()) {

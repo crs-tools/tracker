@@ -33,13 +33,9 @@
 		}
 		
         public static function buildSlug(Model $project, $properties = []) {
-            $parts = [];
-
-            if (isset($properties['Meta.Acronym'])) {
-                $parts[] = $properties['Meta.Acronym'];
-            } else {
-                $parts[] = $project['slug'];
-            }
+            $parts = [
+            	$properties['Project.Slug']
+            ];
 
             if (isset($properties['Fahrplan.ID'])) {
                 $parts[] = $properties['Fahrplan.ID'];
