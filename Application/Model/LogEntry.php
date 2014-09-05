@@ -85,6 +85,20 @@
 				'single' => '{user_name} failed to check encoding ticket {id}.',
 				'multiple' => '{user_name} failed to check {tickets}.',
 				'message' => false
+			],
+			
+			'Source.failed' => [
+				'log' => 'Marked as failed while checking encoding task.',
+				'single' => '{user_name} marked {id} as failed.',
+				'multiple' => '{user_name} marked {tickets} as failed.',
+				'message' => false
+			],
+			
+			'Encoding.Source.failed' => [
+				'log' => 'Source failed, encoding task was reset.',
+				'single' => '{user_name} reset {id}, source failed.',
+				'multiple' => '{user_name} reset {tickets}, source failed.',
+				'message' => false
 			]
 			
 			/*

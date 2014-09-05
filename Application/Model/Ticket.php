@@ -401,7 +401,7 @@
 			]);
 		}
 		
-		public function resetSource() {
+		public function resetSource(Comment $comment = null) {
 			if ($this['ticket_type'] === 'meta') {
 				$parent = $this;
 			} else {
@@ -409,12 +409,14 @@
 			}
 			
 			$source = $parent->Source;
+			$oldState = $source['state'];
+			$toState = null;
 			
 			if (
 				$source['ticket_type'] === 'recording' and
 				$this->Project->hasState('recording', 'cutting')
 			) {
-				$source['ticket_state'] = 'cutting';
+				$source['ticket_state'] = $toState = 'cutting';
 			}
 			
 			// TODO: cutting/encoding failed otherwise?
@@ -423,14 +425,31 @@
 				return false;
 			}
 			
-			return $parent
+			$source->addLogEntry([
+				'comment_id' => (isset($comment))? $comment['id'] : null,
+				'event' => 'Source.failed',
+				'from_state' => $oldState,
+				'to_state' => $toState
+			]);
+			
+			$encodingTickets = $parent
 				->Children
-				->where(['ticket_type' => 'encoding'])
-				->update([
-					'ticket_state' => $this->Project->queryFirstState('encoding'), 
-					'failed' => false,
-					'handle_id' => null
+				->where(['ticket_type' => 'encoding']);
+			
+			$encodingTickets->update([
+				'ticket_state' => $this->Project->queryFirstState('encoding'), 
+				'failed' => false,
+				'handle_id' => null
+			]);
+			
+			foreach ($encodingTickets as $ticket) {
+				// TODO: handle from/to state via database trigger?
+				$ticket->addLogEntry([
+					'event' => 'Encoding.Source.failed' 
 				]);
+			}
+			
+			return true;
 		}
 		
 		public function queryPreviousState($state = null) {

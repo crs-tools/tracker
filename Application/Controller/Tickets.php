@@ -484,7 +484,7 @@
 						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 					}
 				} elseif ($this->actionForm->getValue('reset')) {
-					if ($this->ticket->Parent->resetSource()) {
+					if ($this->ticket->Parent->resetSource($comment)) {
 						$this->flash('Reset all encoding tasks, source failed.');
 						return $this->redirect(
 							'tickets', 'view',
