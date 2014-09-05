@@ -275,7 +275,7 @@ var Tracker = {};
           .replace(
             '{tickets}',
             tickets
-              .find('input.ticket-search-edit-select:checked')
+              .find('input.ticket-search-edit-select:visible:checked')
               .parents()
               .map(function() {
                 return $(this).data('id');
