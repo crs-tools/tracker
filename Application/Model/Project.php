@@ -54,6 +54,29 @@
 			'WorkerGroup' => true
 		];
 		
+		public function hasState($type, $state) {
+			return ProjectTicketState::findAll()
+				->where([
+					'project_id' => $this['id'],
+					'ticket_type' => $type,
+					'ticket_state' => $state
+				])
+				->count() > 0;
+		}
+		
+		public function queryFirstState($type) {
+			return ProjectTicketState::findAll()
+				->where([
+					'project_id' => $this['id'],
+					'ticket_type' => $type
+				])
+				->join(['State'])
+				->orderBy(TicketState::TABLE . '.sort ASC')
+				->except(['fields'])
+				->select('ticket_state')
+				->limit(1);
+		}
+		
 		public function updateEncodingProfileVersion($versionId, $newId) {
 			$query = Database_Query::updateTable(
 				'tbl_project_encoding_profile',

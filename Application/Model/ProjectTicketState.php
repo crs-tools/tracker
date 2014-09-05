@@ -12,6 +12,14 @@
 			]
 		];
 		
+		public $belongsTo = [
+			'State' => [
+				'class_name' => 'TicketState',
+				'foreign_key' => ['ticket_type', 'ticket_state'],
+				'select' => 'sort'
+			]
+		];
+		
         public function nextState() {
             return self::getNextState(
 				$this['project_id'],
@@ -28,6 +36,7 @@
 			);
         }
 		
+		// TODO: use Ticket::queryNextState / queryPreviousState?
         public static function getNextState($project, $type, $state) {
 			return Cache::get(
 				Cache::ns('project.' . $project . '.states') .

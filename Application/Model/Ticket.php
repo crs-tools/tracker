@@ -401,6 +401,38 @@
 			]);
 		}
 		
+		public function resetSource() {
+			if ($this['ticket_type'] === 'meta') {
+				$parent = $this;
+			} else {
+				$parent = $this->Parent;
+			}
+			
+			$source = $parent->Source;
+			
+			if (
+				$source['ticket_type'] === 'recording' and
+				$this->Project->hasState('recording', 'cutting')
+			) {
+				$source['ticket_state'] = 'cutting';
+			}
+			
+			// TODO: cutting/encoding failed otherwise?
+			
+			if (!$source->save(['failed' => true])) {
+				return false;
+			}
+			
+			return $parent
+				->Children
+				->where(['ticket_type' => 'encoding'])
+				->update([
+					'ticket_state' => $this->Project->queryFirstState('encoding'), 
+					'failed' => false,
+					'handle_id' => null
+				]);
+		}
+		
 		public function queryPreviousState($state = null) {
 			return (new Database_Query(''))
 				->select('ticket_state')

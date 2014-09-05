@@ -443,9 +443,18 @@
 			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {
-					$comment = $this->ticket->addComment(
-						$this->actionForm->getValue('comment')
-					);
+					if ($this->actionForm->getValue('reset')) {
+						$comment = $this->ticket
+							->Parent
+							->Source
+							->addComment(
+								$this->actionForm->getValue('comment')
+							);
+					} else {
+						$comment = $this->ticket->addComment(
+							$this->actionForm->getValue('comment')
+						);
+					}
 				}
 				
 				if ($this->actionForm->getValue('appropriate') and
@@ -472,6 +481,14 @@
 					
 					$this->flash('Marked ticket as failed');
 					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+				} elseif ($this->actionForm->getValue('reset') and
+					$this->ticket->Parent->resetSource()) {
+					$this->flash('Reset all encoding tasks, source failed.');
+					return $this->redirect(
+						'tickets', 'view',
+						$this->ticket->Parent,
+						$this->project
+					);
 				} else {
 					$properties = [];
 					
