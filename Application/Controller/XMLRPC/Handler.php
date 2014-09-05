@@ -505,8 +505,16 @@
                 'to_state' => $ticket['next_state'],
                 'event' => 'RPC.'.__FUNCTION__
             );
-
-			if (!$save = $ticket->save(array('handle_id' => $this->worker['id'], 'ticket_state' => $ticket['next_state']))) {
+			
+			$saved = $ticket->save(
+				array(),
+				array(
+					'handle_id' => $this->worker['id'],
+					'ticket_state' => $ticket['next_state']
+				)
+			);
+			
+			if (!$saved) {
 				Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
 				return false;
 			}
