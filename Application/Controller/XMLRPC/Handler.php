@@ -507,10 +507,15 @@
             );
 			
 			$saved = $ticket->save(
-				array(),
+				// assign to worker with new state
 				array(
 					'handle_id' => $this->worker['id'],
 					'ticket_state' => $ticket['next_state']
+				),
+				// ensure ticket is not assigned yet and in the right state
+				array(
+					'handle_id' => null,
+					'ticket_state' => $ticket['ticket_state']
 				)
 			);
 			
