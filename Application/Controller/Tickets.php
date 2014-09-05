@@ -399,18 +399,17 @@
 				'project_id' => $this->project['id']
 			], [], ['Handle']);
 			
-			if (!$this->ticket->isEligibleAction($action)) {
+			$this->state = TicketState::getStateByAction($action);
+			
+			if (
+				$this->state === false or
+				!$this->ticket->isEligibleAction($action)
+			) {
 				$this->flash('Ticket is not in the required state to execute the action ' . $action);
 				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 			}
 			
-			$this->state = TicketState::getStateByAction($action);
-			
-			if ($this->state === false) {
-				$this->flash('Ticket is not in the required state to execute this action');
-			}
-			
-			if ($this->ticket['ticket_state'] != $this->state) {
+			if ($this->ticket['ticket_state'] !== $this->state) {
 				$this->ticket->save([
 					'handle_id' => User::getCurrent()['id'],
 					'ticket_state' => $this->state,
@@ -437,23 +436,23 @@
 			if ($this->ticket['ticket_type'] !== 'recording') {
 				$this->recordingProperties = $this->ticket
 					->Parent
-					->RecordingTicket
+					->Source
 					->Properties
 					->indexBy('name', 'value');
 			}
 			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {
-					$comment = Comment::create([
-						'ticket_id' => $this->ticket['id'],
-						'handle_id' => User::getCurrent()['id'],
-						'comment' => $this->actionForm->getValue('comment')
-					]);
+					$comment = $this->ticket->addComment(
+						$this->actionForm->getValue('comment')
+					);
 				}
 				
 				if ($this->actionForm->getValue('appropriate') and
 					$this->ticket->save(['handle_id' => User::getCurrent()['id']])) {
 					$this->flashNow('This ticket is now assigned to you');
+				} elseif ($this->actionForm->getValue('language') === '') {
+					$this->flashNow('You have to choose a language');
 				} elseif ($this->actionForm->getValue('expand') and
 					$this->ticket->expandRecording([
 						(int) $this->actionForm->getValue('expand_left'),
@@ -466,16 +465,13 @@
 						'handle_id' => null,
 						'failed' => true
 					])) {
-					LogEntry::createForTicket($this->ticket, [
+					$this->ticket->addLogEntry([
 						'comment_id' => (isset($comment))? $comment['id'] : null,
-						'event' => 'Action.' . $action . '.failed',
-						'handle_id' => User::getCurrent()['id']
+						'event' => 'Action.' . $action . '.failed'
 					]);
 					
 					$this->flash('Marked ticket as failed');
 					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
-				} elseif ($this->actionForm->getValue('language') === '') {
-					$this->flashNow('You have to choose a language');
 				} else {
 					$properties = [];
 					
@@ -506,10 +502,9 @@
 						'failed' => false,
 						'properties' => $properties
 					])) {
-						LogEntry::createForTicket($this->ticket, [
+						$this->ticket->addLogEntry([
 							'comment_id' => (isset($comment))? $comment['id'] : null,
 							'event' => 'Action.' . $action,
-							'handle_id' => User::getCurrent()['id'],
 							'from_state' => $oldState,
 							'to_state' => $this->state
 						]);
@@ -616,11 +611,7 @@
 					'needs_attention' => $this->form->getValue('needs_attention')
 				]);
 				
-				if (Comment::create([
-					'ticket_id' => $ticket['id'],
-					'handle_id' => User::getCurrent()['id'],
-					'comment' => $this->form->getValue('text')
-				])) {
+				if ($this->ticket->addComment($this->form->getValue('text'))) {
 					$this->flash('Comment created');
 				}
 			}
@@ -685,11 +676,7 @@
 					$this->flash('Ticket created');
 					
 					if ($this->form->getValue('comment')) {
-						Comment::create([
-							'ticket_id' => $ticket['id'],
-							'handle_id' => User::getCurrent()['id'],
-							'comment' => $this->form->getValue('comment')
-						]);
+						$ticket->addComment($this->form->getValue('comment'));
 					}
 					
 					// Create child tickets
@@ -723,11 +710,7 @@
 			
 			if ($this->form->wasSubmitted() and $this->ticket->save($this->form->getValues())) {
 				if ($this->form->getValue('comment')) {
-					Comment::create([
-						'ticket_id' => $this->ticket['id'],
-						'handle_id' => User::getCurrent()['id'],
-						'comment' => $this->form->getValue('comment')
-					]);
+					$this->ticket->addComment($this->form->getValue('comment'));
 				}
 				
 				$this->flash('Ticket updated');
@@ -870,14 +853,14 @@
 							$this->project['id']
 						);
 					} else {
-						$recordingTicket = $this->ticket
-							->RecordingTicket
+						$sourceTicket = $this->ticket
+							->Source
 							->duplicate();
 						
-						
-						$recordingTicket->save([
+						$sourceTicket->save([
 							'parent_id' => $ticket['id'],
 							'fahrplan_id' => $ticket['fahrplan_id'],
+							// TODO: remove title
 							'title' => $ticket['title'] . ' (Recording)'
 						]);
 					}

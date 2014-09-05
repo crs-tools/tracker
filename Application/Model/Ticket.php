@@ -15,10 +15,10 @@
 		const CLASS_RESOURCE = 'Ticket_Resource';
 		
 		public $hasOne = [
-			'RecordingTicket' => [
+			'Source' => [
 				'class_name' => 'Ticket',
 				'foreign_key' => ['parent_id'],
-				'where' => ['ticket_type' => 'recording']
+				'where' => ['ticket_type' => ['recording', 'ingest']]
 			]
 		];
 		
@@ -345,6 +345,22 @@
 				$this['ticket_type'],
 				$this['ticket_state']
 			)['ticket_state'] == $state);
+		}
+		
+		public function addComment($comment, $handle = null) {
+			return Comment::create([
+				'ticket_id' => $this['id'],
+				'handle_id' => ($handle === null)? User::getCurrent()['id'] : $handle,
+				'comment' => $comment
+			]);
+		}
+		
+		public function addLogEntry(array $entry, $handle = null) {
+			return LogEntry::create(array_merge([
+				'ticket_id' => $this['id'],
+				'from_state' => $this['ticket_state'],
+				'handle_id' => ($handle === null)? User::getCurrent()['id'] : $handle,
+			], $entry));
 		}
 		
 		public function expandRecording(array $expand) {

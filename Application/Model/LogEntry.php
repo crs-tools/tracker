@@ -170,13 +170,6 @@
 				self::$_messages[$this['event']]['multiple'] !== false;
 		}
 		
-		public static function createForTicket(Ticket $ticket, array $entry) {
-			return static::create(array_merge([
-				'ticket_id' => $ticket['id'],
-				'from_state' => $ticket['ticket_state'],
-			], $entry));
-		}
-		
 		/*
 		if (!empty($log)) {
 			foreach ($log as $entry) {
