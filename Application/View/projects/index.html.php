@@ -2,7 +2,7 @@
 
 
 <div id="ticket-header">
-	<h2 class="ticket"><span class="title">All projects</span></h2>
+	<h2 class="ticket"><span class="title">Projects</span></h2>
 	
 	<?php if (User::isAllowed('projects', 'create')): ?>
 		<ul class="ticket-header-bar right horizontal">
@@ -15,9 +15,18 @@
 
 <ul class="projects">
 	<?php if (!empty($projects)): ?>
+		<?php $hasReadonly = false; ?>
 		<?php foreach ($projects as $project): ?>
+			<?php if($project['read_only'] && !$hasReadonly): ?>
+				<?php $hasReadonly = true; ?>
+				</ul>
+				<form>
+					<fieldset class="foldable projects-list">
+						<legend>Read only projects</legend>
+						<ul class="projects">
+			<?php endif ?>
 			<li>
-				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (locked)' : '') . '<span>›</span>', $project['title'], ['class' => 'link']); ?>
+				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (read only)' : '') . '<span>›</span>', $project['title'], ['class' => 'link']); ?>
 				
 				<ul class="actions horizontal">
 					<li><?= $this->linkTo('tickets', 'index', ['project_slug' => $project['slug']], 'tickets'); ?></li>
@@ -28,5 +37,10 @@
 				</ul>
 			</li>
 		<?php endforeach; ?>
+		<?php if($hasReadonly): ?>
+					</ul>
+				</fieldset>
+			</form>
+		<?php endif ?>
 	<?php endif; ?>
 </ul>

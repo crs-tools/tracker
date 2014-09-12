@@ -1316,7 +1316,6 @@ $(function() {
     Tracker.Feed.init();
   }
   
-  
   $('fieldset.foldable').each(function() {
     new Tracker.Foldable(this);
   });

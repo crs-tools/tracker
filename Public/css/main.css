@@ -1930,6 +1930,19 @@ ul.projects > li {
 	border-bottom: 1px solid #e0e0e0;
 }
 
+form fieldset.projects-list {
+	margin-top: 40px;
+}
+
+form fieldset.projects-list legend {
+  border-top: none;
+}
+
+form fieldset.projects-list ul.projects li {
+	padding-left: 0;
+	clear: none;
+}
+
 ul.projects > li > a {
 	position: relative;
 	display: block;

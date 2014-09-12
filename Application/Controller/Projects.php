@@ -20,7 +20,8 @@
 		public $requireAuthorization = true;
 		
 		public function index() {			
-			$this->projects = Project::findAll();
+			$this->projects = Project::findAll()
+				->orderBy('read_only, created DESC');
 			return $this->render('projects/index');
 		}
 		
