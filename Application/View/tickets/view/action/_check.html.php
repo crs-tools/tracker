@@ -16,4 +16,4 @@
 	<li><p>Recording language was set to <strong><?= $languages[$recordingProperties['Record.Language']] ?></strong>.</p></li>
 <?php endif; ?>
 
-<li><?= $f->submit('Everything\'s fine'); ?></li>
+<li><?= $f->submit('Everything\'s fine'); // Closing <li> is in parent template ?>

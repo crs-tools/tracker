@@ -26,4 +26,4 @@
 <li class="checkbox"><?= $f->checkbox('failed', 'I\'m unable to cut this lecture, because something is broken.', $ticket['failed']); ?></li>
 <li><?= $f->textarea('comment', 'Comment', null, array('class' => 'wide hidden')); ?></li>
 
-<li><?= $f->submit('I finished cutting'); ?>
+<li><?= $f->submit('I finished cutting'); // Closing <li> is in parent template ?>
