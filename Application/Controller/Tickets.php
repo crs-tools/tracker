@@ -524,7 +524,7 @@
 						];
 					}
 					
-					$oldState = $this->ticket['ticket_state'];
+					$previousState = $this->ticket['ticket_state'];
 					
 					if ($this->ticket->save([
 						'ticket_state' => $this->ticket->queryNextState($this->state),
@@ -535,7 +535,7 @@
 						$this->ticket->addLogEntry([
 							'comment_id' => (isset($comment))? $comment['id'] : null,
 							'event' => 'Action.' . $action,
-							'from_state' => $oldState,
+							'from_state' => $previousState,
 							'to_state' => $this->state
 						]);
 						
@@ -593,26 +593,34 @@
 		}
 		
 		private function _undoAction($action, array $arguments) {
-			$this->ticket = Ticket::findByOrThrow([
+			$ticket = Ticket::findByOrThrow([
 				'id' => $arguments['id'],
 				'project_id' => $this->project['id']
 			]);
 			
-			if (!$this->ticket->isEligibleAction($action)) {
+			if (!$ticket->isEligibleAction($action)) {
 				$this->flash('Ticket is not in the required state to undo the action ' . $action);
-				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+				return $this->redirect('tickets', 'view', $ticket, $this->project);
 			}
 			
-			if ($this->ticket->save([
-				'ticket_state' => $this->ticket->queryPreviousState(
+			$previousState = $ticket['ticket_state'];
+			
+			if ($ticket->save([
+				'ticket_state' => $ticket->queryPreviousState(
 					TicketState::getStateByAction($action)
 				),
 				'handle_id' => null
 			])) {
+				$ticket->addLogEntry([
+					'event' => 'Action.' . $action . '.abort',
+					'from_state' => $previousState,
+					'to_state' => $ticket['ticket_state']
+				]);
+				
 				$this->flash('Ticket reset from action ' . $action);
 			}
 			
-			return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+			return $this->redirect('tickets', 'view', $ticket, $this->project);
 		}
 		
 		/*

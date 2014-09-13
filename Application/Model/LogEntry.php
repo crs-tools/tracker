@@ -79,7 +79,12 @@
 				'multiple' => '{user_name} failed to cut {tickets}.',
 				'message' => false
 			],
-			
+			'Action.cut.abort' => [
+				'log' => 'Cutting aborted.',
+				'single' => '{user_name} abortet cutting {id}.',
+				'multiple' => '{user_name} abortet cutting {tickets}.',
+				'message' => false
+			],
 			'Action.check' => [
 				'log' => 'Encoding checked.',
 				'single' => '{user_name} checked encoding ticket {id}.',
@@ -96,6 +101,12 @@
 				'log' => 'Encoding check failed.',
 				'single' => '{user_name} failed to check encoding ticket {id}.',
 				'multiple' => '{user_name} failed to check {tickets}.',
+				'message' => false
+			],
+			'Action.check.abort' => [
+				'log' => 'Checking aborted.',
+				'single' => '{user_name} abortet checking {id}.',
+				'multiple' => '{user_name} abortet checking {tickets}.',
 				'message' => false
 			],
 			
