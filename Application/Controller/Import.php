@@ -134,8 +134,10 @@
 				if (isset($event->recording)) {
 					$properties['Fahrplan.Recording.License'] = (string) $event->recording->license;
 					
-					if ((string) $event->recording->optout == 'true') {
-						$properties['Fahrplan.Recording.Optout'] = '1';
+					if (isset($event->recording->optout)) {
+						$properties['Fahrplan.Recording.Optout'] =
+							((string) $event->recording->optout == 'true')?
+								'1' : '0';
 					}
 				}
 				
@@ -145,7 +147,7 @@
 				$properties['Fahrplan.Person_list'] = implode(', ', $event->xpath('persons/person'));
 				
 				foreach ($properties as $property => $value) {
-					if (empty($value) and $value !== false) {
+					if ($value === '') {
 						unset($properties[$property]);
 					}
 				}
