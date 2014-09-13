@@ -25,6 +25,7 @@ var Tracker = {};
             <option value="time">Time</option>\
             <option value="room">Room</option>\
             <option value="day">Day</option>\
+            <option value="optout">Opt-Out</option>\
           </optgroup>\
           <optgroup label="Other">\
             <option value="modified">Modified</option>\
@@ -121,9 +122,6 @@ var Tracker = {};
             case 'state':
               value = dropdowns.states.clone();
               break;
-            case 'failed':
-              value = dropdowns.bool.clone();
-              break;
             case 'type':
               value = dropdowns.types.clone();
               break;
@@ -139,8 +137,12 @@ var Tracker = {};
             case 'day':
               value = dropdowns.days.clone();
               break;
+            case 'failed':
+            case 'optout':
+              value = dropdowns.bool.clone();
+              break;
             default:
-              value = $('<input></input>').addClass('text');
+              value = $('<input/>').addClass('text');
               break;
           }
 

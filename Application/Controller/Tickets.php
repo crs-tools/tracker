@@ -37,6 +37,7 @@
 			'day' => 'property_fahrplan_day.value',
 			'time' => 'property_fahrplan_start.value',
 			'room' => 'property_fahrplan_room.value',
+			'optout' => 'property_fahrplan_optout.value',
 			'modified' => 'modified'
 		];
 		
@@ -44,7 +45,8 @@
 			'date',
 			'day',
 			'time',
-			'room'
+			'room',
+			'optout'
 		];
 		
 		protected $projectReadOnlyAccess = [
@@ -226,6 +228,9 @@
 				->distinct()
 				->scoped([
 					'with_default_properties',
+					'with_properties' => [
+						'Fahrplan.Recording.Optout' => 'fahrplan_optout'
+					],
 					'with_encoding_profile_name',
 					'with_progress',
 					'with_child',
@@ -315,7 +320,7 @@
 			}
 			
 			$tickets->where(
-				'('.implode(' OR ', $subq).')',
+				'(' . implode(' OR ', $subq) . ')',
 				array_merge($mainParams, $subParams)
 			);
 			
