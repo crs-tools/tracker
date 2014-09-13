@@ -8,6 +8,8 @@
 		<meta charset="utf-8" />
 		<base href="<?= $this->Request->getRootURL(); ?>" />
 		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		
 		<link rel="shortcut icon" type="image/x-icon" href="<?= $this->Request->getRootURL(); ?>favicon.ico" />
 		<link rel="stylesheet" href="<?= $this->Request->getRootURL(); ?>css/main.css" type="text/css" />
 		<?= $this->content('stylesheets'); ?>
@@ -22,12 +24,12 @@
 				<?php endif; ?>
 				
 				<?php if (isset($project)): ?>
-					<li class="padding">›</li>
-					<li class="link current">
+					<li class="padding title">›</li>
+					<li class="link current title">
 						<?php echo $this->linkTo('tickets', 'feed', $project, h($project['title']));
 						
 						if (User::isAllowed('projects', 'edit')) {
-							echo ' ' . $this->linkTo('projects', 'settings', $project, '(settings)');
+							echo $this->linkTo('projects', 'settings', $project, '(settings)', ['class' => 'settings']);
 						} ?>
 					</li>
 				<?php endif; ?>
@@ -38,7 +40,7 @@
 					<li class="right link"><?= $this->linkTo('user', 'settings', 'Settings'); ?></li>
 					<li class="right padding">·</li>
 					<li class="right text">
-						Logged in as <strong><?= User::getCurrent()['name']; ?></strong>
+						<span class="as">Logged in as </span><strong><?= User::getCurrent()['name']; ?></strong>
 						<?php if (User::isSubstitute()) {
 							echo '(' . $this->linkTo('user', 'changeback', 'leave') . ')';
 						} ?>
@@ -53,6 +55,7 @@
 				<div class="noscript-warning">Please enable javascript, some editing forms on this site don't work without.</div>
 			</noscript>
 		<?php endif; ?>
+		
 		<div id="header">
 			<h1><?php if (!empty($project['project_slug'])) {
 				echo $this->linkTo('tickets', 'feed', $project, 'C3 Ticket Tracker');
@@ -62,7 +65,7 @@
 			
 			<?php if (empty($project['project_slug'])): ?>
 				<?php if (($arguments['controller'] == 'projects' and $arguments['action'] == 'index') or $arguments['controller'] == 'encodingprofiles' or $arguments['controller'] == 'workers' or ($arguments['controller'] == 'user' and $arguments['action'] != 'settings' and $arguments['action'] != 'login')): ?>
-					<ul id="menu" class="horizontal">
+					<ul id="menu" class="horizontal<?= (User::isAllowed('user', 'index'))? ' big' : ''; ?>">
 						<li id="menu-background-left"></li>
 					
 						<?php if (User::isAllowed('projects', 'index')): ?>
@@ -72,7 +75,7 @@
 						<?php endif; ?>
 						<?php if (User::isAllowed('encodingprofiles', 'index')): ?>
 							<li class="menu-encodingprofiles <?= (($arguments['controller'] == 'encodingprofiles')? ' current' : ''); ?>">
-								<?= $this->linkTo('encodingprofiles', 'index', '<span>Encoding profiles</span>', 'Encoding profiles'); ?>
+								<?= $this->linkTo('encodingprofiles', 'index', '<span class="wide">Encoding profiles</span><span class="narrow">Profiles</span>', 'Encoding profiles'); ?>
 							</li>
 						<?php endif; ?>
 						<?php if (User::isAllowed('workers', 'index')): ?>

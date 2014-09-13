@@ -8,15 +8,15 @@
 	</ul>
 <?php endif; ?>
 
-<div class="table">
+<div class="table worker-groups">
 	<h2>Worker groups</h2>
 	<?php foreach ($groups as $group): ?>
 		<table class="stripe">
 			<thead>
 				<tr>
-					<th colspan="3"><?= h($group['title']); ?></th>
-					<th></th>
-					<th width="15%" class="link right small">
+					<th class="title" colspan="3"><?= h($group['title']); ?></th>
+					<th class="collapse"></th>
+					<th class="extend" width="15%" class="link right small">
 						<?php if (User::isAllowed('workers', 'queue')) {
 							echo $this->linkTo('workers', 'queue', $group, 'show queue');
 						} ?>
@@ -36,7 +36,7 @@
 					<th width="15%">Name</th>
 					<th width="30%">Hostname</th>
 					<th width="30%">Last seen</th>
-					<th colspan="4"></th>
+					<th class="collapse" colspan="4"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -45,7 +45,7 @@
 						<td><?= h($worker['name']); ?></td>
 						<td></td>
 						<td><?= (new DateTime($worker['last_seen']))->format('d.m.Y H:i:s'); ?></td>
-						<td colspan="4"></td>
+						<td colspan="4" class="collapse"></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

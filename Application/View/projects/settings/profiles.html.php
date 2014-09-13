@@ -2,12 +2,12 @@
 <?= $this->render('projects/settings/_header'); ?>
 
 <?= $f = $profilesForm() ?>
-	<table class="default">
+	<table class="default profiles">
 		<thead>
 			<tr>
 				<th width="20%">Name</th>
 				<th>Version</th>
-				<th width="10%">Priority</th>
+				<th width="10%">Priority</th><?php // TODO: link to edit profile ?>
 				<th width="10%"></th>
 				<th width="5%"></th>
 			</tr>
@@ -15,9 +15,9 @@
 		<tbody>
 		<?php foreach ($versions as $index => $version): ?>
 			<tr>
-				<td><?= $version->EncodingProfile['name']; ?></td>
+				<td class="name"><?= $version->EncodingProfile['name']; ?></td>
 				<?php // TODO: $f->selectForResource? ?>
-				<td>
+				<td class="version">
 					<?= $f->select(
 						'versions[' . $index . '][1]',
 						null,
@@ -27,7 +27,7 @@
 					) . // TODO: show "x newer versions", maybe JS?
 					$f->hidden('versions[' . $index . '][0]', $version['id']); ?>
 				</td>
-				<td>
+				<td class="priority">
 					<?= $f->select(
 						'priority[' . $version['id'] . ']',
 						null,
@@ -36,9 +36,9 @@
 						['data-submit-on-change' => true]
 					); ?>
 				</td>
-				<td class="link right"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, 'edit profile'); // TODO: ?version=XX ?></td>
-				<td class="right"><?= $f->button(
-					'remove',
+				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, 'edit profile'); // TODO: ?version=XX ?></td>
+				<td class="right destroy"><?= $f->button(
+					'remove profile',
 					null,
 					'remove profile',
 					['value' => $version['id'], 'class' => 'link', 'data-dialog-confirm' => 'Are you sure you want to remove this encoding profile and delete all related encoding tickets?']

@@ -75,12 +75,14 @@ else: ?>
 		<legend>State</legend>
 		<ul>
 			<li>
-				<?php if (!empty($ticket)): ?>
-					<?= $ticket['ticket_state']; ?><span class="description-color">  ⟶ </span>
-				<?php endif ?>
+				<div class="ticket-edit-state">
+					<?php if (!empty($ticket)): ?>
+						<?= $ticket['ticket_state']; ?><span class="description-color">  ⟶ </span>
+					<?php endif ?>
 				
-				<label for="ticket-edit-state">State</label>
-				<?= $f->select('ticket_state', null, $states, (!empty($ticket))? $ticket['ticket_state'] : null, ['id' => 'ticket-edit-state']) ?>
+					<label for="ticket-edit-state">State</label>
+					<?= $f->select('ticket_state', null, $states, (!empty($ticket))? $ticket['ticket_state'] : null, ['id' => 'ticket-edit-state']) ?>
+				</div>
 			</li>
 			<li class="checkbox"><?= $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>

@@ -137,21 +137,39 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 	color: #fff;
 }
 
-#projects ul li.link a + a {
+#projects ul li.link a.settings {
 	margin-left: 0.4em;
 }
 
 #projects ul li.current a { font-weight: bold; }
 #projects ul li.current a:hover, #projects ul li.current a:focus { text-decoration: none; }
 
-#projects ul li.current a + a { font-weight: normal; }
-#projects ul li.current a + a:hover, #projects ul li.current a + a:focus { text-decoration: underline; }
+#projects ul li.current a.settings { font-weight: normal; }
+#projects ul li.current a.settings:hover,
+#projects ul li.current a.settings:focus { text-decoration: underline; }
 
 #projects ul li.right { float: right; }
 #projects ul li.right.link a, #projects ul li.right.text { margin: 0 1em 0 0; }
 
 #projects ul li.padding { margin: 0 -0.4em 0 0.6em; color: #B8C4D2; }
 #projects ul li.right.padding { margin: 0 0.6em 0 -0.4em; }
+
+@media screen and (max-width: 800px) {
+	#projects ul li.current a.settings { display: none; }
+}
+
+@media screen and (max-width: 700px) {
+	#projects ul li.title, #projects ul li.padding.title { display: none; }
+}
+
+@media screen and (max-width: 450px) {
+	#projects ul li span.as { display: none; }
+}
+
+@media screen and (max-width: 400px) {
+  #projects ul li.right.padding { margin-right: 0.2em; }
+  #projects ul li.right.link a, #projects ul li.right.text { margin-right: 0.6em; }
+}
 
 #header, #content {
 	position: relative;
@@ -181,6 +199,22 @@ ul#menu {
 	height: 46px;
 	top: 23px;
 	right: 0;
+}
+
+@media screen and (max-width: 830px) {
+  #header h1 a {
+    margin-left: 15px;
+  }
+}
+
+@media screen and (max-width: 660px) {
+  #header h1 a {
+    top: 8px;
+  }
+  
+	#header {
+		height: 125px;
+	}
 }
 
 ul#menu li#menu-background-left, ul#menu li#menu-background-right {
@@ -216,6 +250,10 @@ ul#menu li a span {
   line-height: 15px;
   font-size: 15px;
   color: #444;
+}
+
+ul#menu li a span.narrow {
+  display: none;
 }
 
 ul#menu li.menu-feed a span {
@@ -303,6 +341,44 @@ ul#menu li.menu-encodingprofiles.current a:before {
 
 ul#menu li.menu-users.current a:before {
   background-position: -160px -498px;
+}
+
+@media screen and (max-width: 660px) {
+	ul#menu {
+		top: 60px;
+    left: 0;
+    right: 0;
+    background: transparent url(../images/main.png) no-repeat left 0;
+	}
+  
+  #menu-background-left, #menu-background-right {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  ul#menu li a span.wide {
+    display: none;
+  }
+  
+  ul#menu li a span.narrow {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  ul#menu.big li.menu-tickets a:before,
+  ul#menu.big li.menu-services a:before,
+  ul#menu.big li.menu-project a:before,
+  ul#menu.big li.menu-projects a:before,
+  ul#menu.big li.menu-encodingprofiles a:before,
+  ul#menu.big li.menu-users a:before {
+    display: none;
+  }
+  
+  ul#menu.big li a span {
+    padding-left: 10px;
+  }
 }
 
 #content {
@@ -579,6 +655,56 @@ form fieldset ul.edit-properties li a.delete.restore {
 	background-position: -110px -46px;
 }
 
+@media screen and (max-width: 515px) {
+  form fieldset legend {
+    margin-bottom: 10px;
+  }
+  
+	form fieldset ul li {
+		padding-left: 0;
+	}
+	
+	form fieldset ul li label,
+  form fieldset ul li.checkbox label {
+		position: static;
+		width: auto;
+		margin-right: 0;
+		float: none;
+		border: none;
+		text-align: left;
+		display: block;
+		padding-left: .2em;
+	}
+	
+	form fieldset ul li select,
+	form fieldset ul li input.text {
+		margin-top: .1em;
+	}
+	
+	form fieldset ul li.checkbox {
+		padding-top: 1em;
+	}
+	form fieldset ul li.checkbox input.checkbox {
+		float: left;
+		margin-top: .3em;
+		margin-right: .5em;
+	}
+	
+	form fieldset ul li.checkbox label {
+		padding: 0 0 0 .2em;
+	}
+	
+	form fieldset ul li input.text.wide {
+		width: 100%;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+	}
+	
+	form fieldset ul li .ticket-edit-state label {
+		display: none;
+	}
+}
+
 /* Tooltips */
 
 [data-tooltip] {
@@ -649,6 +775,10 @@ h2.ticket span[data-tooltip]:before, h2.ticket span[data-tooltip]:after {
 .column-50 + .column-50 {
   padding-right: 0;
   padding-left: 15px;
+}
+
+@media screen and (max-width: 600px) {
+	.column-50 { width: 100%; float: none; }
 }
 
 /* Tickets */
@@ -725,15 +855,33 @@ h2.ticket span.fahrplan {
 	padding-top: 0.3em;
 }
 
+@media screen and (max-width: 520px) {
+	#ticket-header .fahrplan {
+		float: none;
+		margin-bottom: 5px;
+		border: none;
+	}
+  
+	#ticket-header div.flags { top: 0; }
+  #ticket-header div.flags span.state { border: none; }
+  
+	#ticket-header span.date {
+    margin-left: 5px;
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 430px) {
+	#ticket-header.search-header {
+    padding-top: 2.6em;
+  }
+}
+
 #tickets-header {
 	position: relative;
   height: 32px;
 	margin-bottom: 1em;
 	z-index: 10;
-}
-
-ul.ticket-header-bar {
-  
 }
 
 ul.ticket-header-bar.left, ul.ticket-header-bar.right {
@@ -923,6 +1071,33 @@ ul.ticket-header-bar li.ticket-header-bar-search-button.current button, ul.ticke
 	background: transparent url(../images/main.png) no-repeat -583px -170px;
 }
 
+@media screen and (max-width: 765px) {
+  ul.ticket-header-bar.left {
+    top: 45px;
+    left: -0.5em;
+    right: -0.5em;
+    background: transparent url(../images/main.png) no-repeat 350px -170px;
+  }
+  
+  ul.ticket-header-bar.left .ticket-header-bar-background-left,
+  ul.ticket-header-bar.left .ticket-header-bar-background-right {
+    display: none;
+  }
+  
+  ul.ticket-header-bar li.ticket-header-bar-background-left + li.current { background-position: -560px -290px; }
+  
+	#tickets-header { height: 80px; }
+}
+
+@media screen and (max-width: 405px) {
+  ul.ticket-header-bar.left { background-position: 100px -170px; }
+  
+  ul.ticket-header-bar.left li.releasing { display: none; }
+  
+  ul.ticket-header-bar li.ticket-header-bar-search { width: 80px; }
+  ul.ticket-header-bar li.ticket-header-bar-search input { width: 65px; }
+}
+
 form#tickets-search fieldset#tickets-search-selects { display: none; }
 
 form fieldset ul#tickets-search-conditions li {
@@ -1012,6 +1187,21 @@ ul.tickets li input.ticket-search-edit-select {
 ul.tickets li.child input.ticket-search-edit-select {
   left: 18px;
   z-index: 10;
+}
+
+@media screen and (max-width: 920px) {
+	ul.tickets li input.ticket-search-edit-select {
+		left: -3px;
+		z-index: 99;
+	}
+}
+
+@media screen and (max-width: 430px) {
+  form fieldset ul#tickets-search-conditions li select,
+	form fieldset ul#tickets-search-conditions li input {
+		display: block;
+		margin: 10px 5px;
+	}
 }
 
 form#ticket-action {
@@ -1117,7 +1307,7 @@ ul.tickets li span.other {
 	padding: 0;
 	width: 190px;
 	float: right;
-	background: transparent url(../images/main.png) no-repeat right -131px;
+	background: transparent url(../images/main.png) no-repeat right -92px;
 }
 
 ul.tickets li span.vid, ul.tickets li span.title {
@@ -1305,6 +1495,62 @@ ul.tickets li a.progress span span {
 	background: transparent url(../images/main.png) no-repeat right -346px;
 }
 
+@media screen and (max-width: 850px) {
+	ul.tickets li span.day { display: none; }
+	ul.tickets li span.room { max-width: 7em; }
+}
+
+@media screen and (max-width: 812px) {
+	ul.tickets li span.room { display: none; }
+	ul.tickets li span.title { width: 61%; }
+}
+
+@media screen and (max-width: 680px) {
+	ul.tickets li span.start { display: none; }
+	ul.tickets li span.title { width: 67%; }
+}
+
+@media screen and (max-width: 625px) {
+	ul.tickets li span.assignee { display: none; }
+	ul.tickets li a.link { right: 90px; }
+	ul.tickets li span.view { right: -84px; }
+}
+
+@media screen and (max-width: 615px) {
+	ul.tickets li span.room,
+	ul.tickets li span.start,
+	ul.tickets li span.day { display: none; }
+	
+	ul.tickets li span.state {
+		width: auto;
+		margin-left: 0;
+		position: absolute;
+		right: 60px;
+	}
+	ul.tickets li span.title {
+		width: 59%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	
+	ul.tickets li a.link { right: 15px; }
+	ul.tickets li a.link span.view { right: -10px; }
+}
+
+@media screen and (max-width: 525px) {
+	ul.tickets li span.state { display: none; }
+	ul.tickets li span.title { width: 80%; }
+}
+
+@media screen and (max-width: 450px) {
+	ul.tickets li span.title {
+    width: 74%;
+    overflow: hidden;
+    height: 20px;
+  }
+}
+
 table.properties {
 	width: 100%;
 	border-collapse: collapse;
@@ -1390,6 +1636,38 @@ table tr:hover .link.hide a, table tr .link.hide a:focus { color: #248fda; }
 table.default {
   width: 100%;
   border-collapse: collapse;
+}
+
+@media screen and (max-width: 880px) {
+	table.profiles {
+    table-layout: fixed;
+	}
+	
+	table.profiles select {
+		max-width: 100%;
+	}
+}
+
+@media screen and (max-width: 785px) {
+	table.profiles .edit,
+	table.profiles .destroy {
+		width: 0;
+		overflow: hidden;
+	}
+}
+
+@media screen and (max-width: 630px) {
+	table.profiles .priority {
+		width: 0;
+		overflow: hidden;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	table.profiles .name {
+		width: 0;
+		overflow: hidden;
+	}
 }
 
 table.default thead tr th {
@@ -1573,7 +1851,7 @@ span.date:hover span {
 }
 
 #timeline ul li.event code:hover {
-	border-left-color: #707070;
+	border-color: #707070;
 	color: #707070;
 }
 
@@ -1620,6 +1898,40 @@ span.date:hover span {
 	float: right;
 }
 
+@media screen and (max-width: 815px) {
+	#timeline .line,
+	#timeline ul li.event.left span.spine,
+  #timeline ul li.event.right span.spine { display: none; }
+  
+	#timeline ul li.event.left,
+	#timeline ul li.event.right { float: none; clear: none; }
+	
+  #timeline ul li.event.right {
+    text-align: right;
+  }
+  
+  #timeline ul li.event.left + li.event.right,
+  #timeline ul li.event.right + li.event.left {
+  	margin-top: 0;
+  }
+  
+  #timeline ul li.event code {
+  	border-left: none;
+  	border-right: 2px solid #e0e0e0;
+    padding-right: 0.5em;
+  }
+  
+	#timeline ul li.event,
+	#timeline ul li.event form,
+	#timeline ul li.event form fieldset ul li textarea.wide {
+		width: 100%;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+	}
+	
+	#timeline ul li.event form { margin-bottom: 5em; }
+}
+
 #feed												{margin: 25px 260px 0 0; padding: 0; border-top: 2px solid #cfcfcf;}
 #feed li											{position: relative; margin: 0; padding: 0.4em 0.5em 0.35em; border-bottom: 1px solid #cfcfcf; list-style-type: none;}
 #feed li.event:before								{content:''; display: block; float: left; width: 14px; height: 15px; margin: 0.2em 7px 0 0; background: transparent url(../images/main.png) no-repeat left -234px;}
@@ -1657,6 +1969,23 @@ span.date:hover span {
 #feed-stats-progress div.narrow span.label {width: 2px;}
 #feed-stats-progress div.narrow span.label span {position: relative; right: -0.5em;}
 #feed-stats-progress div.complete span.label {margin-right: -2px;}
+
+@media screen and (max-width: 650px) {
+	#feed-stats {
+		float: none;
+		margin: 30px auto 10px auto;
+	}
+	
+	#feed {
+		margin-right: 0;
+	}
+}
+
+@media screen and (max-width: 380px) {
+	#feed li.event span.date {
+		display: none;
+	}
+}
 
 /* Services */
 
@@ -1838,9 +2167,21 @@ ul.worker-groups + input.submit {
   margin: 0.7em 0.4em;
 }
 
-/*ul.worker-groups li:nth-child(odd) {
-  border-right: 1px solid #e0e0e0;
-}*/
+@media screen and (max-width: 515px) {
+	ul.worker-groups li {
+		width: 100%;
+		float: none;
+	}
+	
+	div.table.worker-groups thead th.title,
+	div.table.worker-groups .collapse {
+    display: none;
+	}
+  
+	div.table.worker-groups thead th.extend {
+    width: 100%;
+	}
+}
 
 /* Users */
 
@@ -1909,7 +2250,19 @@ div.table table tr td.link a {
 	padding: 0.7em 1em;
 }
 
+@media screen and (max-width: 505px) {
+	div.table.users table { table-layout: fixed; }
+	div.table.users table th.collapse { display: none; }
+	div.table.users table th,
+	div.table.users table td { width: auto; }
+}
+
 /* Encoding profiles */
+
+@media screen and (max-width: 505px) {
+	div.table.encoding-profiles table .slug,
+	div.table.encoding-profiles table .ext { display: none; }
+}
 
 div.table table tr.encoding-profile-version td {
   padding: 0;
@@ -1988,6 +2341,14 @@ ul.projects li ul.actions li a {
 
 ul.projects li ul.actions li a:hover, ul.projects li ul.actions li a:focus {
   color: #248fda;
+}
+
+@media screen and (max-width: 600px) {
+	ul.projects ul.horizontal.actions { display: none; }
+}
+
+@media screen and (max-width: 680px) {
+	ul.projects ul.actions li:nth-child(2) { display: none; }
 }
 
 ul.project-settings-header {
@@ -2069,6 +2430,24 @@ ul.project-settings-header li a.hooks:hover:before,
 ul.project-settings-header li a.hooks:focus:before,
 ul.project-settings-header li.current a.hooks:before {
   background-position: -330px -350px;
+}
+
+@media screen and (max-width: 415px) {
+  ul.project-settings-header li a {
+    width: 77px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  ul.project-settings-header {
+    margin-left: -0.5em;
+    margin-right: -0.5em;
+  }
+  
+  ul.project-settings-header li a {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 }
 
 .project-settings-save {

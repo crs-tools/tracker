@@ -1,6 +1,6 @@
 <?php $this->title('Ticket search | '); ?>
 
-<div id="ticket-header" class="clearfix">
+<div id="ticket-header" class="search-header clearfix">
 	<h2 class="ticket"><span class="title">Search</span></h2>
 	
 	<?= $this->render('tickets/index/_header'); ?>

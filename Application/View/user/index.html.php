@@ -8,7 +8,7 @@
 	</ul>
 <?php endif; ?>
 
-<div class="table">
+<div class="table users">
 	<h2>Users</h2>
 	
 	<table class="users stripe">
@@ -16,7 +16,7 @@
 			<tr>
 				<th width="15%">Name</th>
 				<th width="10%">Role</th>
-				<th></th>
+				<th class="collapse"></th>
 				<th width="3%">&nbsp;</th>
 				<th width="5%">&nbsp;</th>
 				<th width="5%">&nbsp;</th>
@@ -27,7 +27,7 @@
 				<tr>
 					<td><?= h($user['name']); ?></td>
 					<td><?= h($user['role']); ?></td>
-					<td></td>
+					<td class="collapse"></td>
 					<td class="link hide right"><?php if (User::isAllowed('user', 'delete') and !$user->isCurrent()) {
 						echo $this->linkTo('user', 'delete', $user, 'delete', ['data-dialog-confirm' => 'Are you sure you want to permanently delete this user?']);
 					} ?></td>
