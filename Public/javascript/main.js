@@ -1480,11 +1480,9 @@ $(function() {
         .insertAfter(input);
     });
   
-  $('#user-login-user').focus();
-  
-  $('a[data-dialog-confirm]').each(function(i, a) {
-    $(a).click(function(event) {
-      return confirm($(a).data('dialog-confirm'));
-    });
+  $('[data-dialog-confirm]').click(function(event) {
+    if (!confirm($(this).data('dialog-confirm'))) {
+      event.preventDefault();
+    }
   });
 });
