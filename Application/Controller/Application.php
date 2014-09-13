@@ -67,7 +67,7 @@
 		
 		public function notAllowed() {
 			if (!User::isLoggedIn()) {
-				$_SESSION['return_to'] = $this->Request->getURI();
+				$_SESSION['return_to'] = $this->Request->getPath();
 				
 				$this->flash('You have to log in to view this page');
 				return $this->redirect('user', 'login');
