@@ -1089,7 +1089,7 @@ var Tracker = {};
     fieldset
       .addClass('folded')
       .find('legend')
-      .append(' (' + fieldset.find('li').length + ')')
+      .append(' (' + fieldset.find('> ul > li').length + ')')
       .append(
         $('<a></a>')
           .attr({'href': '#', 'title': 'Expand section'})
