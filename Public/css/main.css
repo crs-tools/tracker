@@ -2408,3 +2408,66 @@ ul.project-settings-header li.current a.hooks:before {
 .progress-width[data-progress="98"] { width: 98%; }
 .progress-width[data-progress="99"] { width: 99%; }
 .progress-width[data-progress="100"] { width: 100%; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 1.5),
+screen and (-o-min-device-pixel-ratio: 3/2),
+screen and (min--moz-device-pixel-ratio: 1.5),
+screen and (min-device-pixel-ratio: 1.5) {
+  #projects ul,
+  #header h1 a,
+  ul#menu li#menu-background-left, ul#menu li#menu-background-right,
+  ul#menu li,
+  ul#menu li.menu-feed a span,
+  ul#menu li.menu-tickets a:before,
+  ul#menu li.menu-services a:before,
+  ul#menu li.menu-project a:before,
+  ul#menu li.menu-projects a:before,
+  ul#menu li.menu-encodingprofiles a:before,
+  ul#menu li.menu-users a:before,
+  ul#menu li.current a,
+  form fieldset ul.edit-properties li a.delete,
+  ul.ticket-header-bar li,
+  ul.ticket-header-bar li.ticket-header-bar-background-left, ul.ticket-header-bar li.ticket-header-bar-background-right,
+  ul.ticket-header-bar li.current,
+  ul.ticket-header-bar li.current button, ul.ticket-header-bar li.current a,
+  ul.ticket-header-bar li.action a:before,
+  ul.ticket-header-bar li.ticket-header-bar-search,
+  ul.ticket-header-bar li.ticket-header-bar-search-button button,
+  ul.ticket-header-bar li.ticket-header-bar-search-button.current button, ul.ticket-header-bar li.ticket-header-bar-search-button button:active,
+  form fieldset ul#tickets-search-conditions li a.tickets-search-remove, form fieldset ul#tickets-search-conditions li a.tickets-search-add,
+  ul.tickets li a.link,
+  ul.tickets li span.other,
+  ul.tickets li span.vid.needs_attention,
+  ul.tickets li a.link span.view, ul.tickets li a.edit, ul.tickets li a.action,
+  ul.tickets li a.edit span, ul.tickets li a.action span,
+  ul.tickets li a.progress span,
+  ul.tickets li a.progress span span,
+  #feed li.event:before,
+  #feed-stats-progress,
+  #feed-stats-progress div span.label,
+  ul.projects > li > a > span,
+  ul.project-settings-header li a:before {
+    background-image: url(../images/main_2x.png);
+    background-size: 747px 558px;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) and (max-width: 660px),
+screen and (-o-min-device-pixel-ratio: 3/2) and (max-width: 660px),
+screen and (min--moz-device-pixel-ratio: 1.5) and (max-width: 660px),
+screen and (min-device-pixel-ratio: 1.5) and (max-width: 660px) {
+	ul#menu {
+    background-image: url(../images/main_2x.png);
+    background-size: 747px 558px;
+	}
+}
+	
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) and (max-width: 765px),
+screen and (-o-min-device-pixel-ratio: 3/2) and (max-width: 765px),
+screen and (min--moz-device-pixel-ratio: 1.5) and (max-width: 765px),
+screen and (min-device-pixel-ratio: 1.5) and (max-width: 765px) {
+  ul.ticket-header-bar.left {
+    background-image: url(../images/main_2x.png);
+    background-size: 747px 558px;
+  }
+}
