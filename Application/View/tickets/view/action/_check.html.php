@@ -1,3 +1,13 @@
+<?php if ($sameUser): ?>
+	<li class="warning"></li>
+	<li>
+		<label></label>
+		<p>
+			<strong>You've already cut this ticket, you may want to <?= $this->linkTo('tickets', 'uncheck', $ticket, $project, 'leave this to another user', 'reset state and remove assignee'); ?>.</strong>
+		</p>
+	</li>
+<?php endif; ?>
+
 <li class="checkbox"><?= $f->checkbox('reset', 'Source material is flawed or cutting failed. Reset all encoding tasks.'); ?></li>
 <li class="checkbox"><?= $f->checkbox('failed', 'This encoding failed or something is wrong with the metadata.'); ?></li>
 <li><?= $f->textarea('comment', 'Comment', null, ['class' => 'wide hidden']); ?></li>

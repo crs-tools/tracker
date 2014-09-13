@@ -451,6 +451,25 @@
 					->indexBy('name', 'value');
 			}
 			
+			if ($action === 'check') {
+				// check if user already cut this ticket
+				$lastCut = $this->ticket
+					->Parent
+					->Source
+					->LogEntries
+					->select('handle_id')
+					->where([
+						'event' => 'Action.cut'
+					])
+					->orderBy('created DESC')
+					->first();
+				
+				$this->sameUser = (
+					$lastCut !== null and
+					$lastCut['handle_id'] === User::getCurrent()['id']
+				);
+			}
+			
 			if ($this->actionForm->wasSubmitted()) {
 				if ($this->actionForm->getValue('comment')) {
 					if ($this->actionForm->getValue('reset')) {
