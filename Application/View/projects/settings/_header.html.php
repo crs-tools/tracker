@@ -3,7 +3,7 @@
 	
 	<?php if ($project['read_only']): ?>
 		<div class="flags">
-			<span class="failed">read only</span>
+			<span class="archived">archived (read only)</span>
 		</div>
 	<?php endif; ?>
 	

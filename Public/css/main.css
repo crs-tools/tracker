@@ -830,7 +830,11 @@ h2.ticket span.fahrplan {
 	color: #3d464d;
 }
 
-#ticket-header div.flags span.assignee, #ticket-header div.flags span.needs_attention, #ticket-header div.flags span.failed, #ticket-header div.flags span.state {
+#ticket-header div.flags span.assignee,
+#ticket-header div.flags span.needs_attention,
+#ticket-header div.flags span.failed,
+#ticket-header div.flags span.state,
+#ticket-header div.flags span.archived {
 	padding: 0.55em 0.5em;
 	padding: 0.6em 0.5em 0.4em;
 	border-left: 1px solid #e0e0e0;
@@ -841,7 +845,8 @@ h2.ticket span.fahrplan {
 	float: right;
 }
 
-#ticket-header div.flags span.needs_attention {
+#ticket-header div.flags span.needs_attention,
+#ticket-header div.flags span.archived {
 	float: right;
 	color: #f7b320;
 }

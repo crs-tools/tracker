@@ -9,7 +9,7 @@ echo $f = $form(array('id' => 'project-edit')); ?>
 		<ul>
 			<li><?php echo $f->input('title', 'Title', (!empty($project))? $project['title'] : '', ['class' => 'wide']); ?></li>
 			<li><?php echo $f->input('slug', 'Slug', (!empty($project))? $project['slug'] : '', ['class' => 'narrow']); ?></li>
-			<li class="checkbox"><?php echo $f->checkbox('read_only', 'Disable write access to this project.', (!empty($project))? $project['read_only'] : false); ?></li>
+			<li class="checkbox"><?php echo $f->checkbox('read_only', 'Archive project, disable write access.', (!empty($project))? $project['read_only'] : false); ?></li>
 		</ul>
 	</fieldset>
 	<fieldset>

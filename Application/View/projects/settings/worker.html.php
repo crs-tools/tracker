@@ -1,7 +1,7 @@
 <?php $this->title('Worker groups | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
-<?= $f = $workerGroupForm(); ?>
+<?= $f = $workerGroupForm(['disabled' => $project['read_only']]); ?>
 	<div class="project-settings-save">
 		<fieldset>
 			<?= $f->submit('Save assignment'); ?>

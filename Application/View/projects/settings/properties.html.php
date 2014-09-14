@@ -1,7 +1,7 @@
 <?php $this->title('Properties & Languages | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
-<?php echo $f = $form(); ?>
+<?php echo $f = $form(['disabled' => $project['read_only']]); ?>
 	<div class="project-settings-save">
 		<fieldset>
 			<?= $f->submit('Save changes'); ?>

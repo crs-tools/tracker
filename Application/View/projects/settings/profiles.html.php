@@ -1,7 +1,7 @@
 <?php $this->title('Encoding profiles | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
-<?= $f = $profilesForm() ?>
+<?= $f = $profilesForm(['disabled' => $project['read_only']]) ?>
 	<table class="default profiles">
 		<thead>
 			<tr>
@@ -50,8 +50,10 @@
 			<tr>
 				<td></td>
 				<td colspan="3">
-					<?php $f->register('add'); ?>
-					<select name="add" data-submit-on-change="1">
+					<?php if (!$project['read_only']) {
+						$f->register('add');
+					} ?>
+					<select name="add" data-submit-on-change="1"<?= ($project['read_only'])? ' disabled="disabled"' : '' ?>>
 						<option value="">Add encoding profile</option>
 						<?php $name = null;
 						// TODO: $f->groupedSelect?

@@ -4,7 +4,7 @@
 <?php $type = null;
 $typeRows = 0; ?>
 
-<?= $f = $stateForm(); ?>
+<?= $f = $stateForm(['disabled' => $project['read_only']]); ?>
 	<div class="project-settings-save">
 		<fieldset>
 			<?= $f->submit('Save changes'); ?>

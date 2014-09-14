@@ -22,11 +22,11 @@
 				</ul>
 				<form>
 					<fieldset class="foldable projects-list">
-						<legend>Read only projects</legend>
+						<legend>Archived projects</legend>
 						<ul class="projects">
 			<?php endif ?>
 			<li>
-				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], $project['title'] . (($project['read_only'])? ' (read only)' : '') . '<span>›</span>', $project['title'], ['class' => 'link']); ?>
+				<?= $this->linkTo('tickets', 'feed', ['project_slug' => $project['slug']], h($project['title']) . '<span>›</span>', $project['title'], ['class' => 'link']); ?>
 				
 				<ul class="actions horizontal">
 					<li><?= $this->linkTo('tickets', 'index', ['project_slug' => $project['slug']], 'tickets'); ?></li>
