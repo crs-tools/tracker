@@ -66,7 +66,7 @@ $BODY$
 LANGUAGE plpgsql VOLATILE;
 
 
-alter table tbl_ticket drop column ticket_next_state enum_ticket_state;
+alter table tbl_ticket drop column ticket_next_state ;
 alter table tbl_ticket add column ticket_state_next enum_ticket_state;
 alter table tbl_ticket add column service_executable boolean NOT NULL default false;
 alter table tbl_ticket add column progress double precision not null default 0.0;
