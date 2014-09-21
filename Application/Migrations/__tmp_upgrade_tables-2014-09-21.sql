@@ -35,9 +35,9 @@ $BODY$
       ticket_state_next = (
         SELECT ticket_state_next.ticket_state FROM ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state)
       ),
-      service_executable = (
-        SELECT COALESCE(ticket_state_next.service_executable, false) FROM ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state)
-      )
+      service_executable = COALESCE((
+        SELECT ticket_state_next.service_executable FROM ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state)
+      ), false)
       WHERE id = NEW.id;
     UPDATE tbl_ticket SET progress = ticket_progress(NEW.parent_id)
       WHERE NEW.parent_id IS NOT NULL AND id = NEW.parent_id;
@@ -57,9 +57,9 @@ $BODY$
       ticket_state_next = (
         SELECT ticket_state_next.ticket_state FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
       ),
-      service_executable = (
+      service_executable = COALESCE((
         SELECT COALESCE(ticket_state_next.service_executable, false) FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
-      );
+      ),false);
   RETURN NULL;
   END;
 $BODY$
