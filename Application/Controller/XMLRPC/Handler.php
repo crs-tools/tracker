@@ -184,7 +184,7 @@
                 throw new Exception(__FUNCTION__.': current ticket state is not serviceable',104);
             }
 
-            $next_state = $state->getNextState();
+            $next_state = $state->nextState();
             if(!$next_state) {
                 throw new Exception(__FUNCTION__.': no next state available!',105);
             }
