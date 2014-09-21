@@ -12,11 +12,11 @@ C3TT::Client - Client for interacting with the C3 Ticket Tracker via XML-RPC
 
 =head1 VERSION
 
-Version 0.3
+Version 0.4
 
 =cut
 
-our $VERSION   = '0.3';
+our $VERSION   = '0.4';
 
 =head1 SYNOPSIS
 
@@ -56,6 +56,11 @@ use URI::Escape qw(uri_escape);
 
 use constant PREFIX => 'C3TT.';
 
+# Number of repetitions to perform when the communication with the tracker raises an exception
+# E.g.: the client will wait 10s after a fail before retrying (10 * 6 = 1 minute)
+use constant REMOTE_CALL_TRIES => 6;
+use constant REMOTE_CALL_SLEEP => 10;
+
 sub new {
     my $prog = shift;
     my $self;
@@ -63,6 +68,10 @@ sub new {
     $self->{url} = shift;
     $self->{token} = shift;
     $self->{secret} = shift;
+
+    if (!defined($self->{url})) {
+        ($self->{secret}, $self->{token}, $self->{url}) = ($ENV{'CRS_SECRET'}, $ENV{'CRS_TOKEN'}, $ENV{'CRS_TRACKER'});
+    }
 
     # create remote handle
     $self->{remote} = XML::RPC::Fast->new($self->{url}.'?group='.$self->{token}.'&hostname='.hostfqdn);
@@ -113,7 +122,27 @@ sub AUTOLOAD {
     ##############
     # remote call
     ##############
-    return $self->{remote}->call(PREFIX.$name, @args);
+    my $nLoop = REMOTE_CALL_TRIES;
+    while($nLoop-- > 0) {
+        my $r;
+        eval {
+            $r = $self->{remote}->call(PREFIX.$name, @args);
+        };
+
+        if($@) {
+            print "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+            print "$@";
+            print "!!!!!!!!!!!!!! sleeping ".REMOTE_CALL_SLEEP." s !!!!!!!!!!!!!!\n";
+            sleep(REMOTE_CALL_SLEEP);
+            print "\nretrying $nLoop more times";
+        }
+        else {
+            return $r;
+        }
+    }
+
+    print "\ngiving up with\n";
+    die $@
 }
 
 sub hash_serialize {
