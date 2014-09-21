@@ -84,7 +84,7 @@ CREATE TABLE tbl_ticket
   priority real NOT NULL DEFAULT 1,
   ticket_type enum_ticket_type NOT NULL,
   ticket_state enum_ticket_state NOT NULL,
-  ticket_next_state enum_ticket_state,
+  ticket_state_next enum_ticket_state,
   encoding_profile_version_id bigint,
   handle_id bigint,
   created timestamp with time zone NOT NULL DEFAULT now(),
