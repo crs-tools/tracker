@@ -85,6 +85,7 @@ CREATE TABLE tbl_ticket
   ticket_type enum_ticket_type NOT NULL,
   ticket_state enum_ticket_state NOT NULL,
   ticket_state_next enum_ticket_state,
+  service_executable boolean NOT NULL default false,
   encoding_profile_version_id bigint,
   handle_id bigint,
   created timestamp with time zone NOT NULL DEFAULT now(),

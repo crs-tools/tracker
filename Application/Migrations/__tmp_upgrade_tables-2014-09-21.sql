@@ -68,6 +68,7 @@ LANGUAGE plpgsql VOLATILE;
 
 alter table tbl_ticket drop column ticket_next_state enum_ticket_state;
 alter table tbl_ticket add column ticket_state_next enum_ticket_state;
+alter table tbl_ticket add column service_executable boolean NOT NULL default false;
 alter table tbl_ticket add column progress double precision not null default 0.0;
 
 CREATE TRIGGER progress_trigger1 AFTER INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress_and_next_state();
