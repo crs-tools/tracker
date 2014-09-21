@@ -18,6 +18,7 @@ sub print_check {
 			print "OK (returned something)\n";
 		} else {
 			print "FAIL: nothing returned\n";
+			sleep 5;
 		}
 		return;
 	}
@@ -27,6 +28,7 @@ sub print_check {
 		print "FAIL\n";
 		print "value:\n".Dumper($value) ."\n";
 		print "expected:\n".Dumper($expected) ."\n";
+		sleep 5;
 	}
 }
 
