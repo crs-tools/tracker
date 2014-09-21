@@ -77,6 +77,17 @@
 				->limit(1);
 		}
 		
+		public function updateEncodingProfilePriority($versionId, $priority) {
+			return Database_Query::updateTable(
+				'tbl_project_encoding_profile',
+				['priority' => $priority],
+				[
+					'project_id' => $this['id'],
+					'encoding_profile_version_id' => $versionId
+				]
+			)->execute() > 0;
+		}
+		
 		public function updateEncodingProfileVersion($versionId, $newId) {
 			$query = Database_Query::updateTable(
 				'tbl_project_encoding_profile',

@@ -87,6 +87,13 @@
 						);
 					}
 				}
+				
+				foreach ($values['priority'] as $id => $priority) {
+					$this->project->updateEncodingProfilePriority(
+						$id,
+						$priority
+					);
+				}
 			}
 			
 			$this->versions = $this->project
