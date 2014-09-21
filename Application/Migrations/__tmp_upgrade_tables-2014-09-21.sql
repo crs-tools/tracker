@@ -58,7 +58,7 @@ $BODY$
         SELECT ticket_state_next.ticket_state FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
       ),
       service_executable = COALESCE((
-        SELECT COALESCE(ticket_state_next.service_executable, false) FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
+        SELECT ticket_state_next.service_executable FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
       ),false);
   RETURN NULL;
   END;
@@ -86,4 +86,7 @@ CREATE TRIGGER progress_trigger2 AFTER INSERT OR UPDATE OR DELETE ON tbl_project
 \i 21_view_all_tickets.sql
 \i 22_view_serviceable_tickets.sql
 
+ -- GRANT ALL ON ALL TABLES IN SCHEMA public TO [trackeruser];
+
+SELECT 'please execute GRANT ALL ON ALL TABLES IN SCHEMA public TO [trackeruser];'::text;
 
