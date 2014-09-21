@@ -32,6 +32,47 @@ END
 $BODY$
 LANGUAGE plpgsql VOLATILE;
 
+-- trigger function to update ticket progress
+
+CREATE OR REPLACE FUNCTION update_ticket_progress_and_next_state()
+  RETURNS trigger AS
+$BODY$
+  BEGIN
+    UPDATE tbl_ticket SET 
+      progress = ticket_progress(NEW.id),
+      ticket_state_next = (
+        SELECT ticket_state_next.ticket_state FROM ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state)
+      ),
+      service_executable = (
+        SELECT ticket_state_next.service_executable FROM ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state)
+      )
+      WHERE id = NEW.id;
+    UPDATE tbl_ticket SET progress = ticket_progress(NEW.parent_id)
+      WHERE NEW.parent_id IS NOT NULL AND id = NEW.parent_id;
+  RETURN NULL;
+  END;
+$BODY$
+LANGUAGE plpgsql VOLATILE;
+
+-- trigger function to update progress of all tickets
+
+CREATE OR REPLACE FUNCTION update_all_tickets_progress_and_next_state()
+  RETURNS trigger AS
+$BODY$
+  BEGIN
+    UPDATE tbl_ticket t SET 
+      progress = ticket_progress(id),
+      ticket_state_next = (
+        SELECT ticket_state_next.ticket_state FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
+      ), 
+      service_executable = (
+        SELECT ticket_state_next.service_executable FROM ticket_state_next(t.project_id, t.ticket_type, t.ticket_state)
+      );
+  RETURN NULL;
+  END;
+$BODY$
+LANGUAGE plpgsql VOLATILE;
+
 -- tickets
 CREATE TABLE tbl_ticket
 (
@@ -43,6 +84,7 @@ CREATE TABLE tbl_ticket
   priority real NOT NULL DEFAULT 1,
   ticket_type enum_ticket_type NOT NULL,
   ticket_state enum_ticket_state NOT NULL,
+  ticket_next_state enum_ticket_state,
   encoding_profile_version_id bigint,
   handle_id bigint,
   created timestamp with time zone NOT NULL DEFAULT now(),
@@ -50,6 +92,7 @@ CREATE TABLE tbl_ticket
   failed boolean NOT NULL DEFAULT false,
   needs_attention boolean NOT NULL DEFAULT false,
   repairing character varying(128),
+  progress double precision not null default 0.0,
   CONSTRAINT tbl_ticket_pk PRIMARY KEY (id),
   CONSTRAINT tbl_ticket_encoding_profile_version_fk FOREIGN KEY (encoding_profile_version_id)
       REFERENCES tbl_encoding_profile_version (id) MATCH SIMPLE
@@ -79,6 +122,8 @@ CREATE INDEX tbl_ticket_handle_id_idx ON tbl_ticket USING btree(handle_id);
 
 -- trigger
 CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();
+CREATE TRIGGER progress_trigger1 AFTER INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress_and_next_state();
+CREATE TRIGGER progress_trigger2 AFTER INSERT OR UPDATE OR DELETE ON tbl_project_ticket_state FOR EACH STATEMENT EXECUTE PROCEDURE update_all_tickets_progress_and_next_state();
 
 CREATE OR REPLACE FUNCTION inherit_fahrplan_id() RETURNS trigger AS
 $BODY$
@@ -130,7 +175,7 @@ CREATE TRIGGER update_encoding_ticket_state AFTER UPDATE ON tbl_ticket FOR EACH 
 CREATE TABLE tbl_ticket_property
 (
   ticket_id bigint NOT NULL,
-  name ltree NOT NULL,
+  name ltree NOT NULL CHECK (char_length(name::text) > 0),
   value character varying(8196) NOT NULL,
   CONSTRAINT tbl_ticket_property_pk PRIMARY KEY (ticket_id, name),
   CONSTRAINT tbl_ticket_property_ticket_fk FOREIGN KEY (ticket_id)

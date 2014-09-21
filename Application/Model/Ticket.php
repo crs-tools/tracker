@@ -264,7 +264,7 @@
 		
 		public static function with_progress(Model_Resource $resource, array $arguments) {
 			$resource->andSelect(
-				self::TABLE . '.*, ticket_progress(' . self::TABLE . '.id) AS progress'
+				self::TABLE . '.*, progress'
 			);
 		}
 		
@@ -495,7 +495,7 @@
 		
 		public static function getTotalProgress($project) {
 			return (float) self::findAll()
-				->select('SUM(ticket_progress(id)) / COUNT(id) AS progress')
+				->select('SUM(progress) / COUNT(id) AS progress')
 				->where([
 					'project_id' => $project,
 					'ticket_type' => 'meta',
