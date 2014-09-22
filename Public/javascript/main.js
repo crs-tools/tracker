@@ -1172,9 +1172,10 @@ var Tracker = {};
         
         var container = $('<li></li>').insertBefore(this.insertBefore),
             lastInput = this.list.find('input[data-property-index]:last'),
-            lastIndex = (lastInput[0])? lastInput.data('property-index') : -1;
+            lastIndex = (lastInput[0])? lastInput.data('property-index') : -1,
+            key;
             
-        $('<input></input>')
+        key = $('<input></input>')
           .attr({
             'type': 'text',
             'name': this.create.key.replace('[]', '[' + (lastIndex + 1) + ']'),
@@ -1182,6 +1183,8 @@ var Tracker = {};
           })
           .appendTo($('<label></label>').appendTo(container))
           .focus();
+        
+        this.keys.push(key[0]);
         
         $('<input></input>')
           .attr({
@@ -1218,9 +1221,26 @@ var Tracker = {};
       value: this.list.data('properties-create-value') || 'value'
     };
     
+    this.keys = [];
+    
     this.list.find('li').each(function(i, li) {
       appendDeleteButton.call(this, $(li).children('input.text'));;
     }.bind(this));
+    
+    this.list
+      .closest('form')
+      .submit(function(event) {
+        $.each(this.keys, function() {
+          if (this.value !== '') {
+            return;
+          }
+          
+          event.preventDefault();
+          
+          alert('Please specify a key for the property.');
+          this.focus();
+        });
+      }.bind(this));
     
     // TODO: read data-label
     
