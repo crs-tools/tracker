@@ -336,15 +336,11 @@
 				return false;
 			}
 			
-			if ($this['ticket_state'] == $state) {
+			if ($this['ticket_state'] === $state) {
 				return true;
 			}
 			
-			return (ProjectTicketState::getNextState(
-				$this['project_id'],
-				$this['ticket_type'],
-				$this['ticket_state']
-			)['ticket_state'] == $state);
+			return $this['ticket_state_next'] === $state;
 		}
 		
 		public function addComment($comment, $handle = null) {

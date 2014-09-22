@@ -135,12 +135,10 @@
 				->select('ticket_type, ticket_state, service_executable')
 				->orderBy('ticket_type, sort');
 
-			if ($this->stateForm->wasSubmitted() and
-				$this->project->save($this->stateForm->getValues())) {
-				// TODO: move to Model?
-				Cache::invalidateNamespace(
-					'project.' . $this->project['id'] . '.states'
-				);
+			if (
+				$this->stateForm->wasSubmitted() and
+				$this->project->save($this->stateForm->getValues())
+			) {
 				$this->flashNow('States updated');
 			}
 			

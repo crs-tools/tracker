@@ -56,9 +56,13 @@
 					'name' => $name,
 					'worker_group_id' => $group['id']
 				));
-			} elseif($this->worker['worker_group_id'] != $group['id']) {
-				// update group id, if mismatching with group related to given credentials
-				$this->worker->save(['worker_group_id' => $group['id']]);
+			} else {
+				if ($this->worker['worker_group_id'] !== $group['id']) {
+					// update group id, if mismatching with group related to given credentials
+					$this->worker->save(['worker_group_id' => $group['id']]);
+				}
+				
+				$this->worker->touch(['last_seen']);
 			}
 
             // store projects ids of projects assigned to parent worker group
@@ -151,9 +155,9 @@
          * @return array ticket state
          */
         public function getTicketNextState($ticket_id) {
-            $ticket = Ticket::findBy(['id' => $ticket_id]);
-
-            return ProjectTicketState::getNextState($ticket['project_id'], $ticket['ticket_type'], $ticket['ticket_state']);
+            return Ticket::findBy(['id' => $ticket_id])
+				->queryNextState()
+				->fetchRow();
         }
 
         /**
@@ -183,17 +187,17 @@
             if(false && !$state['service_executable']) {
                 throw new Exception(__FUNCTION__.': current ticket state is not serviceable',104);
             }
-
-            $next_state = $state->nextState();
-            if(!$next_state) {
+			
+            if($ticket['ticket_state_next'] === null) {
                 throw new Exception(__FUNCTION__.': no next state available!',105);
             }
+			
 
-            if($ticket->save(['ticket_state' => $next_state['ticket_state']])) {
+            if($ticket->save(['ticket_state' => $ticket['ticket_state_next']])) {
                 LogEntry::create(array(
                     'ticket_id' => $ticket['id'],
-                    'from_state' => $state['ticket_state'],
-                    'to_state' => $next_state['ticket_state'],
+                    'from_state' => $previousState,
+                    'to_state' => $ticket['ticket_state_next'],
                     'handle_id' => $this->worker['id'],
                     'event' => 'RPC.'.__FUNCTION__,
                     'comment' => $log_message));
@@ -262,7 +266,7 @@
 				}
 			}
 
-			$this->worker->touch(['last_seen']);
+			// TODO: add last_ping?
 
 			return $cmd;
 		}
@@ -620,8 +624,8 @@
 			if(empty($state) || !$state['service_executable']) {
 				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 505);
 			}
-            $next_state = $state->nextState()['ticket_state'];
-            if(!$next_state) {
+			
+            if($ticket['ticket_state_next'] === null) {
                 throw new Exception(__FUNCTION__.': no next state available!',506);
             }
 
@@ -629,12 +633,12 @@
                 'ticket_id' => $ticket['id'],
                 'handle_id' => $this->worker['id'],
                 'from_state' => $ticket['ticket_state'],
-                'to_state' => $next_state,
+                'to_state' => $ticket['ticket_state_next'],
                 'event' => 'RPC.'.__FUNCTION__,
                 'comment' => $log_message
             );
 
-            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $next_state))) {
+            if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $ticket['ticket_state_next']))) {
                 Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
                 return false;
             }

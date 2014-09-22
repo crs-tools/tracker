@@ -20,53 +20,25 @@
 			]
 		];
 		
-        public function nextState() {
-            return self::getNextState(
-				$this['project_id'],
-				$this['ticket_type'],
-				$this['ticket_state']
-			);
-        }
-		
-        public function previousState() {
-            return self::getPreviousState(
-				$this['project_id'],
-				$this['ticket_type'],
-				$this['ticket_state']
-			);
-        }
-		
 		// TODO: use Ticket::queryNextState / queryPreviousState?
         public static function getNextState($project, $type, $state) {
-			return Cache::get(
-				Cache::ns('project.' . $project . '.states') .
-					'.' . $type . '.' . $state . '.next',
-				function() use ($project, $type, $state) {
-		            $handle = Database::$Instance->query(
-						'SELECT * FROM ticket_state_next(?, ?, ?)',
-						[$project, $type, $state]
-					);
-		            $row = $handle->fetch();
-					
-					return ($row === false)? null : $row;
-				}
+            $handle = Database::$Instance->query(
+				'SELECT * FROM ticket_state_next(?, ?, ?)',
+				[$project, $type, $state]
 			);
+            $row = $handle->fetch();
+			
+			return ($row === false)? null : $row;
         }
 		
         public static function getPreviousState($project, $type, $state) {
-			return Cache::get(
-				Cache::ns('project.' . $project . '.states') .
-					'.' . $type . '.' . $state . '.previous',
-				function() use ($project, $type, $state) {
-		            $handle = Database::$Instance->query(
-						'SELECT * FROM ticket_state_previous(?, ?, ?)',
-						[$project, $ticket, $state]
-					);
-					
-		            $row = $handle->fetch();
-					return ($row === false)? null : $row;
-				}
+            $handle = Database::$Instance->query(
+				'SELECT * FROM ticket_state_previous(?, ?, ?)',
+				[$project, $ticket, $state]
 			);
+			
+            $row = $handle->fetch();
+			return ($row === false)? null : $row;
         }
 		
 		public static function createAll($project) {
