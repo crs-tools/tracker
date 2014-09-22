@@ -425,9 +425,6 @@
                 throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
             }
 
-            // temporary compatibility fix until all instances are upgraded
-            Database::$Instance->query("SET timezone = 'localtime'");
-
             // create query: find all tickets in state
             $tickets = Ticket::findAll(['State'])
                 ->from('view_serviceable_tickets', 'tbl_ticket')
