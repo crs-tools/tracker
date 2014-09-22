@@ -30,11 +30,23 @@
 				'multiple' => '{user_name} started {to_state} {tickets}.',
 				'message' => false
 			],
+			'RPC.addLog' => [
+				'log' => '',
+				'single' => '',
+				'multiple' => false,
+				'message' => true
+			],
 			'RPC.ping' => [
 				'log' => 'Issued command.',
 				'single' => 'Issued command to {user_name} regarding ticket {id}:',
 				'multiple' => false,
 				'message' => true
+			],
+			'RPC.setTicketNextState' => [
+				'log' => 'Set state to {to_state}.',
+				'single' => '{user_name} set state to {to_state} for {id}.',
+				'multiple' => '{user_name} set state to {to_state} for {tickets}.',
+				'message' => false
 			],
 			'RPC.setTicketFailed' => [
 				'log' => '{from_State} failed.',
