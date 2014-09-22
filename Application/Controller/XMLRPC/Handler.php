@@ -11,6 +11,7 @@
 	);
 	
 	class Controller_XMLRPC_Handler extends Controller_XMLRPC {
+		
 		protected $beforeAction = [
 			'authenticate' => true
 		];
@@ -23,6 +24,8 @@
             'EncodingProfile.Basename',
             'EncodingProfile.Extension'
 		];
+		
+		private $_projects = [];
 		
         public function __construct() {
 			// TODO: move to Controller_XMLRPC
@@ -66,7 +69,10 @@
 			}
 
             // store projects ids of projects assigned to parent worker group
-            $this->worker->project_ids = $group->Project->pluck('id');
+            $this->_assignedProjects = $group
+				->Project
+				->where(['read_only' => false])
+				->pluck('id');
 		}
 		
 		private static function _validateSignature($secret, $signature, $arguments) {
@@ -179,7 +185,7 @@
                 throw new Exception(__FUNCTION__.': ticket is not assigned to you',102);
             }
 
-            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+            if(!in_array($ticket['project_id'],$this->_assignedProjects)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',103);
             }
 
@@ -238,7 +244,7 @@
 					$reason = 'ticket is unassigned';
 				} elseif($ticket['handle_id'] != $this->worker['id']) {
 					$reason = 'ticket is assigned to other handle: '.$ticket['handle_name'];
-                } elseif(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+                } elseif(!in_array($ticket['project_id'],$this->_assignedProjects)) {
                     $reason = 'ticket in project not assigned to worker group';
 				}
                 $state = $ticket->State;
@@ -378,7 +384,7 @@
 			if(!is_array($properties) || count($properties) < 1) {
 				throw new EntryNotFoundException(__FUNCTION__.': no properties given',302);
 			}
-            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+            if(!in_array($ticket['project_id'],$this->_assignedProjects)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',303);
             }
 
@@ -433,7 +439,7 @@
             // create query: find all tickets in state
             $tickets = Ticket::findAll(['State'])
                 ->from('view_serviceable_tickets', 'tbl_ticket')
-                ->where(array('project_id' => $this->worker->project_ids, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1))
+                ->where(array('project_id' => $this->_assignedProjects, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1))
                 ->orderBy('ticket_priority(id) DESC');
 
             // filter out virtual conditions used for further where conditions
@@ -618,7 +624,7 @@
 			if($ticket['handle_id'] != $this->worker['id']) {
 				throw new Exception(__FUNCTION__.': ticket is assigned to other handle: '.$ticket['handle_name'], 503);
             }
-            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+            if(!in_array($ticket['project_id'],$this->_assignedProjects)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',504);
             }
             $state = $ticket->State;
@@ -670,7 +676,7 @@
             if($ticket['handle_id'] != $this->worker['id']) {
                 throw new Exception(__FUNCTION__.': ticket is assigned to other handle: '.$ticket['handle_name'], 603);
             }
-            if(!in_array($ticket['project_id'],$this->worker->project_ids)) {
+            if(!in_array($ticket['project_id'],$this->_assignedProjects)) {
                 throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group', 604);
             }
             $state = $ticket->State;
