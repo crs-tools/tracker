@@ -192,6 +192,7 @@
                 throw new Exception(__FUNCTION__.': no next state available!',105);
             }
 			
+			$previousState = $state['ticket_state'];
 
             if($ticket->save(['ticket_state' => $ticket['ticket_state_next']])) {
                 LogEntry::create(array(
