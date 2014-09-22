@@ -763,7 +763,7 @@
                 'handle_id' => $this->worker['id'],
 				'comment' => $log_message,
 				'event' => 'RPC.'.__FUNCTION__
-			));
+			)) !== false;
 		}
 		
 		/**
