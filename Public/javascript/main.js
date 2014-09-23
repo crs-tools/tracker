@@ -1239,6 +1239,8 @@ var Tracker = {};
           
           alert('Please specify a key for the property.');
           this.focus();
+          
+          return false;
         });
       }.bind(this));
     
