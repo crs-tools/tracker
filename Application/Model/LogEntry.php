@@ -6,22 +6,22 @@
 	
 	class LogEntry extends Model {
 		
-        const TABLE = 'tbl_log';
+		const TABLE = 'tbl_log';
 
-        public $belongsTo = [
-            'Handle' => [
-                'foreign_key' => ['handle_id'],
-                'select' => 'name AS handle_name'
+		public $belongsTo = [
+			'Handle' => [
+				'foreign_key' => ['handle_id'],
+				'select' => 'name AS handle_name'
 			],
-            'Ticket' => [
-                'foreign_key' => ['ticket_id'],
+			'Ticket' => [
+				'foreign_key' => ['ticket_id'],
 				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id'
 			],
-            'User' => [
-                'foreign_key' => ['handle_id'],
-                'select' => 'name AS user_name'
+			'User' => [
+				'foreign_key' => ['handle_id'],
+				'select' => 'name AS user_name'
 			]
-        ];
+		];
 		
 		protected static $_messages = [
 			'RPC.assignNextUnassignedForState' => [
@@ -249,6 +249,6 @@
 		}
 		*/
 
-    }
+	}
 
 ?>

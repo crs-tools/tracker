@@ -1,8 +1,8 @@
 <?php
 
-    requires (
-        'String'
-    );
+	requires (
+		'String'
+	);
 
 	class TicketProperties extends Model {
 		
@@ -32,22 +32,22 @@
 				->orderBy('value');
 		}
 		
-        public static function buildSlug(Model $project, $properties = []) {
-            $parts = [
-            	$properties['Project.Slug']
-            ];
+		public static function buildSlug(Model $project, $properties = []) {
+			$parts = [
+				$properties['Project.Slug']
+			];
 
-            if (isset($properties['Fahrplan.ID'])) {
-                $parts[] = $properties['Fahrplan.ID'];
-            }
+			if (isset($properties['Fahrplan.ID'])) {
+				$parts[] = $properties['Fahrplan.ID'];
+			}
 
-            // add language if project has multiple languages
-            if (count($project->Languages) > 0 && isset($properties['Record.Language'])) {
-                $parts[] = $properties['Record.Language'];
-            }
+			// add language if project has multiple languages
+			if (count($project->Languages) > 0 && isset($properties['Record.Language'])) {
+				$parts[] = $properties['Record.Language'];
+			}
 
-            // generate slug from ticket title (and ignore the one from the frab)
-             $parts[] = preg_replace([
+			// generate slug from ticket title (and ignore the one from the frab)
+			 $parts[] = preg_replace([
 				'/[.:"\']/',
 				'/[^a-zA-Z_\-0-9]/',
 				'/_+/'
@@ -61,8 +61,8 @@
 				$properties['Fahrplan.Title']
 			));
 
-            return implode('-', $parts);
-        }
+			return implode('-', $parts);
+		}
 		
 		public function defaultScope(Model_Resource $resource) {
 			$resource->orderBy('name');

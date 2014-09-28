@@ -26,16 +26,16 @@
 		public function queue(array $arguments) {
 			$this->group = WorkerGroup::findOrThrow($arguments['id']);
 			
-            $tickets = Ticket::findAll()
-                ->from('view_serviceable_tickets', 'tbl_ticket')
-                ->where([
+			$tickets = Ticket::findAll()
+				->from('view_serviceable_tickets', 'tbl_ticket')
+				->where([
 					'project_id' => $this->group->Project->pluck('id'),
 					'next_state_service_executable' => true
 				])
 				->pluck('id');
 			
 			if (!empty($tickets)) {
-	            $this->queue = Ticket::findAll()
+				$this->queue = Ticket::findAll()
 					// Join Handle for parent tickets, children should not be assigned
 					->andSelect('ticket_priority(id) AS priority_product')
 					->join([
@@ -49,7 +49,7 @@
 						'with_progress',
 						'order_priority'
 					])
-	                ->orWhere([
+					->orWhere([
 						'id' => $tickets,
 						'child.id' => $tickets
 					]);

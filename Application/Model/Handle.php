@@ -1,9 +1,9 @@
 <?php
 
-    class Handle extends Model {
+	class Handle extends Model {
 
-        const TABLE = 'tbl_handle';
+		const TABLE = 'tbl_handle';
 
-    }
+	}
 
 ?>
