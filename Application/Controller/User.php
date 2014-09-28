@@ -24,9 +24,9 @@
 					$this->flash('Logged in successfully');
 					
 					
-					if (isset($_SESSION['return_to'])) {
-						$this->redirect($_SESSION['return_to']);
-						unset($_SESSION['return_to']);
+					if (isset($_SESSION[Model_Authentication_Session::SESSION_UNSAFE_KEY]['return_to'])) {
+						$this->redirect($_SESSION[Model_Authentication_Session::SESSION_UNSAFE_KEY]['return_to']);
+						unset($_SESSION[Model_Authentication_Session::SESSION_UNSAFE_KEY]['return_to']);
 						
 						return $this->Response;
 					}

@@ -67,7 +67,9 @@
 		
 		public function notAllowed() {
 			if (!User::isLoggedIn()) {
-				$_SESSION['return_to'] = $this->Request->getPath();
+				$_SESSION[Model_Authentication_Session::SESSION_UNSAFE_KEY] = [
+					'return_to' => $this->Request->getPath()
+				];
 				
 				$this->flash('You have to log in to view this page');
 				return $this->redirect('user', 'login');
