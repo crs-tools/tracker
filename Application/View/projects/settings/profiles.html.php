@@ -38,7 +38,7 @@
 				</td>
 				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, 'edit profile'); // TODO: ?version=XX ?></td>
 				<td class="right destroy"><?= $f->button(
-					'remove profile',
+					'remove',
 					null,
 					'remove profile',
 					['value' => $version['id'], 'class' => 'link', 'data-dialog-confirm' => 'Are you sure you want to remove this encoding profile and delete all related encoding tickets?']

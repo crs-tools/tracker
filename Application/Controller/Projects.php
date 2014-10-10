@@ -88,11 +88,13 @@
 					}
 				}
 				
-				foreach ($values['priority'] as $id => $priority) {
-					$this->project->updateEncodingProfilePriority(
-						$id,
-						$priority
-					);
+				if (!empty($values['priority'])) {
+					foreach ($values['priority'] as $id => $priority) {
+						$this->project->updateEncodingProfilePriority(
+							$id,
+							$priority
+						);
+					}
 				}
 			}
 			
