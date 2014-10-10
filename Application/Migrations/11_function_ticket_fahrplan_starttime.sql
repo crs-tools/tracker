@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 SET ROLE TO postgres;
 
