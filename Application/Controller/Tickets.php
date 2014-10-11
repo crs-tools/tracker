@@ -97,7 +97,7 @@
 			
 			if (isset($_GET['u'])) {
 				$this->tickets->scoped([
-					'filter_handle' => ['handle' => $_GET['u']]
+					'filter_handle' => [$_GET['u']]
 				]);
 			}
 			
@@ -228,9 +228,9 @@
 				->distinct()
 				->scoped([
 					'with_default_properties',
-					'with_properties' => [
+					'with_properties' => [[
 						'Fahrplan.Recording.Optout' => 'fahrplan_optout'
-					],
+					]],
 					'with_encoding_profile_name',
 					'with_progress',
 					'with_child',

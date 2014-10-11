@@ -46,18 +46,18 @@
 			'EncodingProfileVersion' => [
 				'foreign_key' => ['encoding_profile_version_id']
 			],
-            'Handle' => [
-                'foreign_key' => ['handle_id'],
-                'select' => 'name AS handle_name'
-            ],
+			'Handle' => [
+				'foreign_key' => ['handle_id'],
+				'select' => 'name AS handle_name'
+			],
 			'Parent' => [
 				'class_name' => 'Ticket',
 				'foreign_key' => ['parent_id'],
 				'join' => false
 			],
-            'Project' => [
-                'foreign_key' => ['project_id']
-            ],
+			'Project' => [
+				'foreign_key' => ['project_id']
+			],
 			'State' => [
 				'class_name' => 'ProjectTicketState',
 				'primary_key' => ['project_id', 'ticket_type', 'ticket_state'],
@@ -69,33 +69,12 @@
 			],
 			'Worker' => [
 				'foreign_key' => ['handle_id'],
-                'select' => 'name as worker_name'
+				'select' => 'name as worker_name'
 			]
 		];
 		
 		public $acceptNestedEntriesFor = [
 			'Properties' => true
-		];
-		
-		public $scopes = [
-			'filter_recording',
-			'filter_cutting',
-			'filter_encoding',
-			'filter_releasing',
-			'filter_released',
-			'filter_state',
-			'filter_handle',
-			
-			'order_list',
-			'order_priority',
-			
-			'with_child',
-			'with_default_properties',
-			'with_encoding_profile_name',
-			'with_progress',
-			'with_properties',
-			'with_recording',
-			'without_locked'
 		];
 		
 		public static $priorities = [
@@ -106,31 +85,49 @@
 			'1.5' => 'high'
 		];
 		
-		public static function filter_recording(Model_Resource $resource, array $arguments) {
-			self::filter_state($resource, [
-				'type' => 'recording',
-				'states' => ['locked', 'scheduled', 'recording', 'recorded', 'preparing']
-			]);
+		private static $_fahrplanPropertyMap = [
+			'duration' => 'Fahrplan.Duration',
+			'subtitle' => 'Fahrplan.Subtitle',
+			'slug' => 'Fahrplan.Slug',
+			'room' => 'Fahrplan.Room',
+			'type' => 'Fahrplan.Type',
+			'track' => 'Fahrplan.Track',
+			'language' => 'Fahrplan.Language',
+			'abstract' => 'Fahrplan.Abstract'
+		];
+		
+		/*
+			Scopes
+		*/
+		public static function filter_recording(Model_Resource $resource) {
+			self::filter_state(
+				$resource,
+				'recording',
+				['locked', 'scheduled', 'recording', 'recorded', 'preparing']
+			);
 		}
 		
-		public static function filter_cutting(Model_Resource $resource, array $arguments) {
-			self::filter_state($resource, [
-				'type' => 'recording',
-				'states' => ['prepared', 'cutting', 'cut']
-			]);
+		public static function filter_cutting(Model_Resource $resource) {
+			self::filter_state(
+				$resource,
+				'recording',
+				['prepared', 'cutting', 'cut']
+			);
 		}
 		
-		public static function filter_encoding(Model_Resource $resource, array $arguments) {
-			self::filter_state($resource, [
-				'type' => 'encoding',
-				'states' => ['ready to encode', 'encoding', 'encoded', 'postencoding']
-			]);
+		public static function filter_encoding(Model_Resource $resource) {
+			self::filter_state(
+				$resource,
+				'encoding',
+				['ready to encode', 'encoding', 'encoded', 'postencoding']
+			);
 		}
 		
-		public static function filter_releasing(Model_Resource $resource, array $arguments) {
-			self::filter_state($resource, [
-				'type' => 'encoding',
-				'states' => [
+		public static function filter_releasing(Model_Resource $resource) {
+			self::filter_state(
+				$resource,
+				'encoding',
+				[
 					'postencoded',
 					'checking',
 					'checked',
@@ -139,43 +136,36 @@
 					'ready to release',
 					'releasing'
 				]
-			]);
+			);
 		}
 		
-		public static function filter_released(Model_Resource $resource, array $arguments) {
-			self::filter_state($resource, [
-				'type' => 'encoding',
-				'states' => ['released']
-			]);
+		public static function filter_released(Model_Resource $resource) {
+			self::filter_state($resource, 'encoding', ['released']);
 		}
 		
-		public static function filter_state(Model_Resource $resource, array $arguments) {
-			$marks = substr(str_repeat('?,', count($arguments['states'])), 0, -1);
+		public static function filter_state(Model_Resource $resource, $type, array $states) {
+			$marks = substr(str_repeat('?,', count($states)), 0, -1);
 			$resource->where(
 				'(' . self::TABLE . '.ticket_type = ? AND ' .
 				self::TABLE . '.ticket_state IN (' . $marks . ')) OR ' .
 				'(child.ticket_type = ? AND child.ticket_state IN (' . $marks . '))',
 				array_merge(
-					[$arguments['type']],
-					$arguments['states'],
-					[$arguments['type']],
-					$arguments['states']
+					[$type],
+					$states,
+					[$type],
+					$states
 				)
 			);
 		}
 		
-		public static function filter_handle(Model_Resource $resource, array $arguments) {
-			if (!isset($arguments['handle'])) {
-				return;
-			}
-			
+		public static function filter_handle(Model_Resource $resource, $handle) {			
 			$resource->where(
 				self::TABLE . '.handle_id = ? OR child.handle_id = ?',
-				[$arguments['handle'], $arguments['handle']]
+				[$handle, $handle]
 			);
 		}
 		
-		public static function order_list(Model_Resource $resource, array $arguments) {
+		public static function order_list(Model_Resource $resource) {
 			$resource
 				->andSelect(
 					'COALESCE(' . self::TABLE . '.parent_id, ' .
@@ -189,7 +179,7 @@
 				// SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
 		}
 		
-		public static function order_priority(Model_Resource $resource, array $arguments) {
+		public static function order_priority(Model_Resource $resource) {
 			$resource->orderBy(
 				'CASE WHEN child.id IS NULL
 					THEN ticket_priority(id)
@@ -232,14 +222,14 @@
 		 *  1268 |      1225 | encoding    | Ticket (WebM from DV)         |          |                 |                   | 
 		 * 
 		 */
-		public static function with_child(Model_Resource $resource, array $arguments) {
+		public static function with_child(Model_Resource $resource) {
 			$resource->leftJoin(
 				[self::TABLE, 'child'],
 				[self::TABLE . '.id = parent_id']
 			);
 		}
 		
-		public static function with_default_properties(Model_Resource $resource, array $arguments) {
+		public static function with_default_properties(Model_Resource $resource) {
 			self::with_properties($resource, [
 				'Fahrplan.Start' => 'fahrplan_start',
 				'Fahrplan.Date' => 'fahrplan_date',
@@ -249,7 +239,7 @@
 		}
 		
 		
-		public function with_encoding_profile_name(Model_Resource $resource, array $arguments) {
+		public function with_encoding_profile_name(Model_Resource $resource) {
 			$resource->leftJoin(
 				[EncodingProfileVersion::TABLE, 'encoding_profile_version'],
 				[self::TABLE . '.encoding_profile_version_id = id']
@@ -262,14 +252,14 @@
 			);
 		}
 		
-		public static function with_progress(Model_Resource $resource, array $arguments) {
+		public static function with_progress(Model_Resource $resource) {
 			$resource->andSelect(
 				self::TABLE . '.*, progress'
 			);
 		}
 		
-		public static function with_properties(Model_Resource $resource, array $arguments) {
-			foreach ($arguments as $property => $as) {
+		public static function with_properties(Model_Resource $resource, array $properties) {
+			foreach ($properties as $property => $as) {
 				$resource->leftJoin(
 					[TicketProperties::TABLE, 'property_' . $as],
 					'((ticket_id = ' .
@@ -287,16 +277,19 @@
 			}
 		}
 		
-		public static function with_recording(Model_Resource $resource, array $arguments) {
+		public static function with_recording(Model_Resource $resource) {
 			$resource->leftJoin(
 				[self::TABLE, 'recording'],
-				['(' . self::TABLE . '.ticket_type = ? AND id IS NULL) OR (' . self::TABLE . '.parent_id = parent_id AND ticket_type = ?) OR (' . self::TABLE . '.id = parent_id AND ticket_type = ?)'],
+				['(.ticket_type = ? AND id IS NULL) OR (.parent_id = parent_id AND ticket_type = ?) OR (.id = parent_id AND ticket_type = ?)'],
 				['recording', 'recording', 'recording']
 			);
 		}
 		
-		public static function without_locked(Model_Resource $resource, array $arguments) {
-			$resource->where('ticket_state != ? AND (recording.id IS NULL or recording.ticket_state != ?)', ['locked', 'locked']);
+		public static function without_locked(Model_Resource $resource) {
+			$resource->where(
+				'ticket_state != ? AND (recording.id IS NULL or recording.ticket_state != ?)',
+				['locked', 'locked']
+			);
 		}
 		
 		public static function createMissingRecordingTickets($project) {
