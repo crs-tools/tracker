@@ -1088,10 +1088,16 @@ var Tracker = {};
   Tracker.Foldable = function(fieldset) {
     fieldset = $(fieldset);
     
+    var itemCount = fieldset.find('> ul > li').length;
+    
+    if (itemCount === 0) {
+      return;
+    }
+    
     fieldset
       .addClass('folded')
       .find('legend')
-      .append(' (' + fieldset.find('> ul > li').length + ')')
+      .append(' (' + itemCount + ')')
       .append(
         $('<a></a>')
           .attr({'href': '#', 'title': 'Expand section'})
