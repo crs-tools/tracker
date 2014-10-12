@@ -8,16 +8,18 @@
 
 $p = 0;
 
-foreach ($ticket['Properties'] as $property) {
-	echo $f->hidden('tickets[' . $index . '][Properties][' . $p . '][name]', $property['name']);
+if (isset($ticket['Properties'])) {
+	foreach ($ticket['Properties'] as $property) {
+		echo $f->hidden('tickets[' . $index . '][Properties][' . $p . '][name]', $property['name']);
 	
-	if (isset($property['value'])) {
-		echo $f->hiddenEncoded('tickets[' . $index . '][Properties][' . $p . '][value]', $property['value']);
+		if (isset($property['value'])) {
+			echo $f->hiddenEncoded('tickets[' . $index . '][Properties][' . $p . '][value]', $property['value']);
+		}
+	
+		if (isset($property['_destroy'])) {
+			echo $f->hidden('tickets[' . $index . '][Properties][' . $p . '][_destroy]', $property['_destroy']);
+		}
+	
+		$p++;
 	}
-	
-	if (isset($property['_destroy'])) {
-		echo $f->hidden('tickets[' . $index . '][Properties][' . $p . '][_destroy]', $property['_destroy']);
-	}
-	
-	$p++;
 } ?>

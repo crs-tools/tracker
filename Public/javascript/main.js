@@ -1270,6 +1270,10 @@ var Tracker = {};
           var changesVisible = false,
               ul = $(ul);
           
+          if (ul.find('li.table').length <= 0) {
+            return;
+          }
+          
           $('<a></a>')
             .attr({
               'href': '#',
@@ -1305,17 +1309,6 @@ var Tracker = {};
                 .parent('li')
                 .find('input[type=hidden]')
                 .attr('disabled', !event.target.checked);
-              /*
-              ticketEditSelect.val('');
-            
-              if (!event.target.checked) {
-                updateEditButton();
-                return;
-              }
-            
-              uncheckNotOfType($(event.target).parent().data('ticket-type'));
-              updateEditButton();
-              */
             })
         );
       

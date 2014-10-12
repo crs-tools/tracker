@@ -85,7 +85,6 @@
 		<ul class="tickets">
 			<?php foreach ($diff['deleted'] as $id => $ticket): ?>
 				<li>
-					<?= $f->checkbox('tickets[][' . $currentState[$ticket['id']]['fahrplan_id'] . ']', null, true, ['class' => 'ticket-search-edit-select'], false); ?>
 					<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 						<span class="vid"><?= h($currentState[$ticket['id']]['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate((isset($ticket['title']))? $ticket['title'] : $currentState[$ticket['id']]['title'], 45, '…')); ?></span>
@@ -95,7 +94,7 @@
 					</span>
 					<?= $this->render('import/_inputs', ['f' => $f, 'ticket' => $ticket, 'index' => $index]); ?>
 				</li>
-			<?php endforeach; ?>
+			<?php $index++; endforeach; ?>
 		</ul>
 	<?php endif; ?>
 	

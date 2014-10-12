@@ -234,7 +234,6 @@
 				->select('id, fahrplan_id, title') /* ,date */
 				->where([
 					'project_id' => $this->project['id'],
-					'fahrplan_id' => array_keys($tickets),
 					'ticket_type' => 'meta'
 				])
 				->indexBy('id');
@@ -256,7 +255,7 @@
 				$changes = $ticket->diffWithProperties(
 					$tickets[$ticket['fahrplan_id']]
 				);
-				// var_dump($ticket->toArray());
+				
 				if ($changes !== null) {
 					$diff['changed'][] = $changes;
 				}
@@ -296,8 +295,6 @@
 			
 			if (!empty($values['tickets'])) {
 				foreach ($values['tickets'] as $ticket) {
-					// TODO: _destroy
-				
 					$ticket = new Ticket(array_merge(
 						[
 							'project_id' => $this->project['id'],
@@ -306,7 +303,12 @@
 						],
 						$ticket
 					));
-				
+					
+					if (!empty($ticket['_destroy'])) {
+						$ticket->destroy();
+						continue;
+					}
+					
 					// TODO: catch
 					$ticket->saveOrThrow();
 				}
