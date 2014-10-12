@@ -28,11 +28,7 @@
 			'Versions' => true // TODO: disable destroy
 		];
 		
-		public $scopes = [
-			'with_version_count'
-		];
-		
-		public static function with_version_count(Model_Resource $resource, array $arguments) {
+		public static function with_version_count(Model_Resource $resource) {
 			$resource->select(
 				'*',
 				EncodingProfileVersion::findAll()
