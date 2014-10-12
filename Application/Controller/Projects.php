@@ -189,6 +189,7 @@
 			if ($this->form->wasSubmitted() and
 				$this->project->save($this->form->getValues())) {
 				$this->flash('Project updated');
+				$this->project['project_slug'] = $this->project['slug'];
 				return $this->redirect('projects', 'settings', $this->project);
 			}
 			

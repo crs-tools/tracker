@@ -20,6 +20,7 @@
 			
 			$this->previousImports = Import::findAll(['User'])
 				->scoped(['without_xml'])
+				->where(['project_id' => $this->project['id']])
 				->whereNot(['finished' => null])
 				->orderBy('created DESC');
 			
@@ -36,7 +37,8 @@
 				->scoped(['without_xml'])
 				->where([
 					'finished' => null,
-					'user_id' => User::getCurrent()['id']
+					'user_id' => User::getCurrent()['id'],
+					'project_id' => $this->project['id']
 				])
 				->orderBy('created DESC')
 				->limit(1)
@@ -68,10 +70,11 @@
 			}
 			
 			$import = Import::createOrThrow([
+				'project_id' => $this->project['id'],
+				'user_id' => User::getCurrent()['id'],
 				'url' => $this->form->getValue('url'),
 				'xml' => $xml[0],
-				'version' => $xml[2],
-				'user_id' => User::getCurrent()['id']
+				'version' => $xml[2]
 			]);
 			
 			return $this->rooms([], $import, $xml[1]);
@@ -93,10 +96,11 @@
 				}
 				
 				$import = Import::createOrThrow([
+					'project_id' => $this->project['id'],
+					'user_id' => User::getCurrent()['id'],
 					'url' => $this->import['url'],
 					'xml' => (isset($xml))? $xml[0] : $this->import['xml'],
 					'version' => (isset($xml))? $xml[2] : $this->import['version'],
-					'user_id' => User::getCurrent()['id'],
 					'rooms' => ($this->form->getValue('apply_rooms'))?
 						$this->import['rooms'] : null
 				]);
@@ -193,7 +197,7 @@
 			} elseif (count($xml->xpath('day/room/event/date')) <= 0) {
 				// TODO: delete Import? mark failed?
 				$this->flash('Import failed, fahrplan contains insufficient date information');
-				return $this->redirect('import', 'index');
+				return $this->redirect('import', 'index', $this->project);
 			}
 			
 			foreach ($xml->xpath('day/room/event') as $event) {
