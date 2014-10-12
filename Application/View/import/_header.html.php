@@ -10,7 +10,7 @@
 			<li class="action create"><?= $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 		<?php endif; ?>
 			
-		<li class="action current import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
+		<li class="action current import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>', 'Import tickets…'); ?></li>
 		
 		<li class="ticket-header-bar-background-right"></li>
 	</ul>

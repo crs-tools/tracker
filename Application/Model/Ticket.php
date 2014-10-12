@@ -292,6 +292,156 @@
 			);
 		}
 		
+		/*
+			Import
+		*/
+		public static function fromFahrplanEvent(SimpleXMLElement $event, DateTime $date = null) {
+			$attributes = $event->attributes(); // SimpleXMLElement
+			$ticket = [
+				'Properties' => []
+			];
+			
+			if (empty($attributes['id'])) {
+				throw new TicketFahrplanException('fahrplan id for event is missing or empty');
+			}
+			
+			$ticket['fahrplan_id'] = (int) $attributes['id'];
+			
+			if (isset($attributes['guid'])) {
+				$ticket['Properties']['Fahrplan.GUID'] = [
+					'name' => 'Fahrplan.GUID',
+					'value' => (string) $attributes['guid']
+				];
+			}
+			
+			if (!isset($event->title)) {
+				throw new TicketFahrplanException('event title is missing');
+			}
+			
+			$ticket['title'] = (string) $event->title;
+			
+			if (empty($event->date)) {
+				throw new TicketFahrplanException('event date is missing or empty');
+			}
+			
+			// TODO: move to $ticket['start_date']
+			$ticket['Properties']['Fahrplan.DateTime'] = [
+				'name' => 'Fahrplan.DateTime',
+				'value' => (new DateTime((string) $event->date))->format(DateTime::ISO8601)
+			];
+			
+			$day = $event->xpath('ancestor::day/@index');
+			
+			if (!empty($day)) {
+				$ticket['Properties']['Fahrplan.Day'] = [
+					'name' => 'Fahrplan.Day',
+					'value' => (string) current($day)
+				];
+			}
+			
+			foreach (self::$_fahrplanPropertyMap as $key => $property) {
+				if (isset($event->{$key})) {
+					$ticket['Properties'][$property] = [
+						'name' => $property,
+						'value' => (string) $event->{$key}
+					];
+				}
+			}
+			
+			if (isset($event->recording)) {
+				if (isset($event->recording->license)) {
+					$ticket['Properties']['Fahrplan.Recording.License'] = [
+						'name' => 'Fahrplan.Recording.License',
+						'value' => (string) $event->recording->license
+					];
+				}
+				
+				if (isset($event->recording->optout)) {
+					$ticket['Properties']['Fahrplan.Recording.Optout'] = [
+						'name' => 'Fahrplan.Recording.Optout',
+						'value' => ((string) $event->recording->optout == 'true')?
+							'1' : '0'
+					];
+				}
+			}
+			
+			// Remove empty properties
+			$ticket['Properties'] = array_filter(
+				$ticket['Properties'],
+				function($property) {
+					return $property['value'] !== '';
+				}
+			);
+			
+			$persons = $event->xpath('persons/person');
+			
+			if (!empty($persons)) {
+				$ticket['Properties']['Fahrplan.Persons'] = [
+					'name' => 'Fahrplan.Persons',
+					'value' => implode(',', $persons)
+				];
+			}
+			
+			return new static($ticket);
+		}
+		
+		public function diffWithProperties(Ticket $ticket) {
+			$changes = array_diff_assoc($ticket->_entry, $this->_entry);
+			
+			if (isset($ticket->_entry['Properties'])) {
+				$changes['Properties'] = [];
+				$properties = $ticket->_entry['Properties'];
+			
+				foreach ($this->Properties->indexBy('name') as $name => $property) {
+					if (!isset($properties[$name])) {
+						$changes['Properties'][] = [
+							'name' => $name,
+							'_previous' => $property['value'],
+							'_destroy' => true
+						];
+						continue;
+					}
+					
+					if ($properties[$name]['value'] === '') {
+						continue;
+					}
+					
+					// $property['value'] = str_replace("\r", '', $property['value']);
+					
+					if ($property['value'] !== $properties[$name]['value']) {
+						$properties[$name]['_previous'] = $property['value'];
+						$changes['Properties'][] = $properties[$name];
+					}
+					
+					unset($properties[$name]);
+				}
+				
+				$changes['Properties'] = array_merge(
+					$changes['Properties'],
+					array_values($properties)
+				);
+				
+				uasort($changes['Properties'], function($a, $b) {
+					return strcmp($a['name'], $b['name']);
+				});
+				
+				if (empty($changes['Properties'])) {
+					unset($changes['Properties']);
+				}
+			}
+			
+			if (empty($changes)) {
+				return null;
+			}
+			
+			return new static(
+				array_merge($changes, $this->getPrimaryKeyFields())
+			);
+		}
+		
+		/*
+			Database functions
+		*/
 		public static function createMissingRecordingTickets($project) {
 			$handle = Database::$Instance->query(
 				'SELECT create_missing_recording_tickets(?)',
@@ -310,10 +460,61 @@
 			return $handle->fetch()['create_missing_encoding_tickets'];
 		}
 		
+		/*
+			Statistics
+		*/
+		public static function countByNextState($project, $ticketType, $ticketState) {
+			return Ticket::findAll()
+				->where([
+					'ticket_type' => $ticketType,
+					'project_id' => $project
+				])
+				->where(
+					'(SELECT next.ticket_state FROM ticket_state_next(?, ticket_type, ticket_state) AS next) = ?',
+					[$project, $ticketState]
+				)
+				->count();
+		}
+		
+		public static function getTotalProgress($project) {
+			return (float) self::findAll()
+				->select('SUM(progress) / COUNT(id) AS progress')
+				->where([
+					'project_id' => $project,
+					'ticket_type' => 'meta',
+					'ticket_state' => 'staged'
+				])
+				->fetchRow()['progress'];
+		}
+		
+		public static function getRecordingDurationByProject($project) {
+			return (int) Ticket::findAll()
+		   		->select(
+					'EXTRACT(epoch FROM SUM(' . TicketProperties::TABLE .
+						'.value::INTERVAL)) AS duration'
+				)
+				->join(
+		   			TicketProperties::TABLE,
+		   			[
+		   				Ticket::TABLE . '.id = ticket_id',
+		   				'name' => 'Fahrplan.Duration'
+		   			]
+		   		)
+		   		->where([
+					'project_id' => $project,
+					'ticket_type' => 'meta',
+					'ticket_state' => 'staged',
+				])
+				->fetchRow()['duration'];
+		}
+		
 		public function allProperties() {
 			// TODO: implement
 		}
 		
+		/*
+			Actions
+		*/
 		public function isEligibleAction($action) {
 			switch ($action) {
 				case 'edit':
@@ -468,130 +669,8 @@
 					]
 				);
 		}
-		
-		public static function countByNextState($project, $ticketType, $ticketState) {
-			return Ticket::findAll()
-				->where([
-					'ticket_type' => $ticketType,
-					'project_id' => $project
-				])
-				->where(
-					'(SELECT next.ticket_state FROM ticket_state_next(?, ticket_type, ticket_state) AS next) = ?',
-					[$project, $ticketState]
-				)
-				->count();
-		}
-		
-		public static function getTotalProgress($project) {
-			return (float) self::findAll()
-				->select('SUM(progress) / COUNT(id) AS progress')
-				->where([
-					'project_id' => $project,
-					'ticket_type' => 'meta',
-					'ticket_state' => 'staged'
-				])
-				->fetchRow()['progress'];
-		}
-		
-		public static function getRecordingDurationByProject($project) {
-			return (int) Ticket::findAll()
-		   		->select(
-					'EXTRACT(epoch FROM SUM(' . TicketProperties::TABLE .
-						'.value::INTERVAL)) AS duration'
-				)
-				->join(
-		   			TicketProperties::TABLE,
-		   			[
-		   				Ticket::TABLE . '.id = ticket_id',
-		   				'name' => 'Fahrplan.Duration'
-		   			]
-		   		)
-		   		->where([
-					'project_id' => $project,
-					'ticket_type' => 'meta',
-					'ticket_state' => 'staged',
-				])
-				->fetchRow()['duration'];
-		}
-		
-		/*
-		public function findAbandonedByState($state, $timeout = null, $limit = null) {
-			$query = 'SELECT
-						t.*,
-						age(u.last_seen) as not_seen_for
-					FROM
-						tbl_ticket t
-					JOIN
-						tbl_user u ON u.id = t.user_id
-					LEFT JOIN
-						tbl_ticket p ON p.id = t.parent_id
-					WHERE
-						t.state_id = :state_id AND
-						t.project_id = :project_id AND
-						t.failed IS NOT TRUE AND
-						p.failed IS NOT TRUE AND
-						u.role = :role AND
-						AGE(u.last_seen) > :timeout
-					ORDER BY
-						not_seen_for DESC';
-			if(!empty($limit)) {
-				$query .= ' LIMIT '.$limit;
-			}
-			return $this->findBySQL($query, ['state_id' => $state, 'project_id' => $this->Project->current(]->id, 'role' => 'worker', 'timeout' => $timeout), []);
-		}
-		
-		public function resetRecordingTask($id) {
-			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('cutting'], 'failed' => true, 'user_id' => null), ['id' => $id, 'type_id' => 1]))) {
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $id,
-				'to_state_id' => $this->State->getIdByName('cutting'),
-				'event' => 'Recording.Reset'
-			));
-			
-			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('material needed'], 'failed' => false, 'user_id' => null), ['parent_id' => $id, 'type_id' => 2]))) {
-				return false;
-			}
-			
-			$this->Database->query(Database_Query::selectFrom($this->table, 'id', ['parent_id' => $id, 'state_id' => $this->State->getIdByName('material needed'], 'failed' => false)));
-			
-			foreach ($this->Database->fetch() as $encodingTask) {
-				$this->LogEntry->create(array(
-					'ticket_id' => $id,
-					'to_state_id' => $this->State->getIdByName('material needed'),
-					'event' => 'Encoding.Parent.Reset'	
-				));
-			}
-			
-			return true;
-		}
-		
-		public function resetEncodingTask($id) {
-			if (!$this->Database->query(Database_Query::updateTable($this->table, ['state_id' => $this->State->getIdByName('ready to encode'], 'failed' => false, 'user_id' => null), ['id' => $id, 'type_id' => 2]))) {
-				return false;
-			}
-			
-			$this->LogEntry->create(array(
-				'ticket_id' => $id,
-				'to_state_id' => $this->State->getIdByName('material needed'),
-				'event' => 'Encoding.Reset'
-			));
-			
-			return true;
-		}
-		
-		public function afterCreate() {
-			$this->LogEntry->create(array(
-				'ticket_id' => $this->id,
-				'to_state_id' => $this->state_id,
-				'event' => 'Created'
-			));
-			
-			return true;
-		}
-		*/
 	}
+	
+	class TicketFahrplanException extends UnexpectedValueException {}
 	
 ?>

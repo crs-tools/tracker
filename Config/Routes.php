@@ -15,10 +15,13 @@
 	
 	':project_slug/tickets/:tickets/edit' => ['tickets', 'edit_multiple'],
 	
-	':project_slug/tickets/import' => ['import', 'index'],
-	':project_slug/tickets/import/rooms' => ['import', 'rooms'],
-	':project_slug/tickets/import/review' => ['import', 'review'],
-	':project_slug/tickets/import/apply' => ['import', 'apply'],
+	':project_slug/tickets/import/create' => ['import', 'create'],
+	':project_slug/tickets/import/:filter?' => ['import', 'index'],
+	':project_slug/tickets/import/:id/continue' => ['import', 'continue_import'],
+	':project_slug/tickets/import/:id/rooms' => ['import', 'rooms'],
+	':project_slug/tickets/import/:id/review' => ['import', 'review'],
+	':project_slug/tickets/import/:id/apply' => ['import', 'apply'],
+	':project_slug/tickets/import/:id/repeat' => ['import', 'repeat'],
 	
 	':project_slug/workers' => ['workers', 'project'],
 	':project_slug/services/hold' => ['services', 'hold'],

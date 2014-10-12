@@ -1,28 +1,65 @@
 <?php $this->title('Import | '); ?>
 
-<?= $this->render('import/_header', ['title' => 'Import']); ?>
+<?= $this->render('import/_header', ['title' => 'Import tickets']); ?>
 
-<?= $f = $form(array('id' => 'ticket-import')); ?>
+<?php if ($unfinishedImport !== null): ?>
+	<?= $f = $continueForm(); ?>
+		<fieldset>
+			<legend>Continue import</legend>
+			<ul>
+				<li class="warning"></li>
+				<li>
+					<label></label>
+					<p>
+						<strong>You have an unfinished import created <?= timeAgo($unfinishedImport['created']); ?>.</strong>
+					</p>
+				</li>
+				<li><?= $f->input('url','XML URL', $unfinishedImport['url'], ['readonly' => true, 'class' => 'wide']); ?></li>
+				<li><?= $f->submit('Cancel', ['name' => 'cancel']) . $f->submit('Continue'); ?></li>
+			</ul>
+		</fieldset>
+	</form>
+<?php endif; ?>
+
+<?= $f = $form(['id' => 'ticket-import']); ?>
 	<fieldset>
-		<legend>Check for Fahrplan updates</legend>
+		<legend>New import</legend>		
 		<ul>
 			<li>
-				<?= $f->input('url','XML URL', (isset($source))? $source['value'] : '', array('class' => 'wide')); ?>
-				<span class="description">
-					The latest Fahrplan XML will be parsed and it'll be checked 
-					wether there is a ticket with the correct metadata for every 
-					event listed in the Fahrplan.
-				</span>
+				<?= $f->input('url','XML URL', '', ['class' => 'wide']); ?>
 			</li>
-			<?php if (!empty($files)): ?>
-				<li class="option"><label><strong>or</strong></label><br /></li>
-				<li>
-					<?= $f->select('file', 'import existing file', $files); ?>
-				</li>
-			<?php endif; ?>
-			<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create missing recording tickets', true); ?></li>
-			<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create missing tickets for encoding profiles', true); ?></li>
-			<li><?= $f->submit('Check for updates'); ?></li>
+			<li><?= $f->submit('Create new import'); ?></li>
 		</ul>
-	</fieldset>		
+	</fieldset>
 </form>
+
+<?php if ($previousImports->getRows() > 0): ?>
+	<h3>Previous imports</h3>
+	<table class="default">
+		<thead>
+			<tr>
+				<th>URL</th>
+				<th>Version</th>
+				<th>User</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach($previousImports as $import): ?>
+				<tr>
+					<td><code><?= h($import['url']); ?></code></td>
+					<td><?= h($import['version']); ?></td>
+					<td><?= h($import['user_name']); ?></td>
+					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
+				</tr>
+			<?php endforeach; ?>
+			<?php if ($arguments['filter'] === null): ?>
+				<tr>
+					<td colspan="4" class="link center more">
+						<?= $this->linkTo('import', 'index', $project, ['filter' => 'all'], 'Show all'); ?>
+					</td>
+				</tr>
+			<?php endif; ?>
+		</tbody>
+	</table>
+<?php endif; ?>

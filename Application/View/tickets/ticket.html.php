@@ -47,7 +47,7 @@ echo '>'; ?>
 			echo '</span><span class="day">';
 		
 			if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
-				echo (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-'; 
+				echo (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-';
 			}
 		} ?>
 		

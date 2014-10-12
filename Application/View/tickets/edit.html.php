@@ -19,7 +19,7 @@ else: ?>
 			<li class="action create current"><?= $this->linkTo('tickets', 'create', $project, '<span>create</span>', 'Create new ticket…'); ?></li>
 			
 			<?php if (User::isAllowed('import', 'index')): ?>
-				<li class="action import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
+				<li class="action import"><?= $this->linkTo('import', 'index', $project, '<span>import</span>', 'Import tickets…'); ?></li>
 			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
 		</ul>

@@ -614,6 +614,15 @@ form fieldset ul li span.description a {
 	position: relative;
 }
 
+form fieldset ul li span.description code {
+  font-size: 1.1em;
+}
+
+form fieldset ul li.checkbox span.description,
+form fieldset ul li.radio span.description {
+  margin-left: 1.7em;
+}
+
 form fieldset ul li span.description-color {
 	color: #707070;
 }
@@ -1312,7 +1321,7 @@ ul.tickets li span.other {
 	padding: 0;
 	width: 190px;
 	float: right;
-	background: transparent url(../images/main.png) no-repeat right -92px;
+  background: transparent url(../images/main.png) no-repeat right -131px;
 }
 
 ul.tickets li span.vid, ul.tickets li span.title {
@@ -1588,6 +1597,12 @@ table.properties tr td.key {
 
 table.properties tr th { border-top: 1px solid #e0e0e0; }
 
+ul.tickets li.table {
+  height: auto;
+  margin: 0;
+  line-height: normal;
+}
+
 table.diff {
   width: 100%;
   margin: -0.8em 0 1em;
@@ -1599,6 +1614,7 @@ table.diff tr:first-child th, table.diff tr:first-child td {
 }
 
 table.diff tr th {
+  width: 10%;
   padding: 0 1em 0 1em;
   font-weight: normal;
   vertical-align: top;
@@ -1607,13 +1623,14 @@ table.diff tr th {
 }
 
 table.diff tr td {
-  padding-left: 1em;
+  padding-bottom: 5px;
   overflow: scroll;
   max-width: 550px;
 }
 
 table.diff tr td code {
   display: block;
+  margin-left: 1em;
   font-size: 1.2em;
   white-space: nowrap;
 }
@@ -1697,6 +1714,10 @@ table.default tbody tr td {
   border-bottom: 1px solid #e0e0e0;
 }
 
+table.default tbody tr td code {
+  font-size: 12px;
+}
+
 table.default tbody tr td.empty {
   border-bottom: none;
 }
@@ -1715,6 +1736,22 @@ table.default tbody tr td.link a {
 
 table.default tbody tr td input + label {
   margin-left: 0.5em;
+}
+
+table.default tbody tr td.more {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table.default tbody tr td.more a {
+  padding: 0.8em 0.4em;
+  font-size: 1.1em;
+  color: #707070;
+}
+
+table.default tbody tr td.more a:hover,
+table.default tbody tr td.more a:focus {
+  background-color: #EAEAEA;
+  text-decoration: none;
 }
 
 form fieldset ul.comments li {
@@ -1936,6 +1973,16 @@ span.date:hover span {
 	
 	#timeline ul li.event form { margin-bottom: 5em; }
 }
+
+/* Import */
+
+a.ticket-import-fold {
+  float: right;
+  padding: 3px 5px 0 0;
+  font-size: 0.9em;
+}
+
+/* Feed */
 
 #feed												{margin: 25px 260px 0 0; padding: 0; border-top: 2px solid #cfcfcf;}
 #feed li											{position: relative; margin: 0; padding: 0.4em 0.5em 0.35em; border-bottom: 1px solid #cfcfcf; list-style-type: none;}

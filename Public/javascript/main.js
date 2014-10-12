@@ -1258,6 +1258,86 @@ var Tracker = {};
 
 /*
   
+  Import
+
+*/
+(function() {
+  Tracker.Import = {
+    init: function() {
+      $('#ticket-import-list ul.tickets li.table').hide();
+      $('#ticket-import-list ul.tickets')
+        .each(function(i, ul) {
+          var changesVisible = false,
+              ul = $(ul);
+          
+          $('<a></a>')
+            .attr({
+              'href': '#',
+              'class': 'ticket-import-fold'
+            })
+            .text('expand changes')
+            .click(function(event) {
+              event.preventDefault();
+              
+              if (changesVisible) {
+                ul.find('li.table').hide();
+                $(event.target).text('expand changes');
+              } else {
+                ul.find('li.table').show();
+                $(event.target).text('fold changes');
+              }
+              
+              changesVisible = !changesVisible;
+            })
+            .appendTo(ul.prev('h3'));
+        });
+      
+      $('#ticket-import-list ul.tickets li:not(.table)')
+        .prepend(
+          $('<input></input>')
+            .attr({
+              'type': 'checkbox',
+              'class': 'ticket-search-edit-select',
+              'checked': true
+            })
+            .change(function(event) {
+              $(event.target)
+                .parent('li')
+                .find('input[type=hidden]')
+                .attr('disabled', !event.target.checked);
+              /*
+              ticketEditSelect.val('');
+            
+              if (!event.target.checked) {
+                updateEditButton();
+                return;
+              }
+            
+              uncheckNotOfType($(event.target).parent().data('ticket-type'));
+              updateEditButton();
+              */
+            })
+        );
+      
+      // Invert selection button
+      $('<a></a>')
+        .attr('href', '#')
+        .text('Invert selection')
+        .click(function(event) {
+          event.preventDefault();
+          
+          $('#ticket-import-list input[type=checkbox]').each(function(i, checkbox) {
+            checkbox.checked = !checkbox.checked;
+            $(checkbox).change();
+          });
+        })
+        .appendTo($('#ticket-import-list fieldset:last ul li'));
+    }
+  };
+})();
+
+/*
+  
   Editor
   
 */
@@ -1371,12 +1451,7 @@ $(function() {
   });
   
   if ($('#ticket-import-list')[0]) {
-    $('<a></a>').attr('href', '#').text('Invert selection').click(function(event) {
-      event.preventDefault();
-      $('#ticket-import-list input.checkbox').each(function(i, checkbox) {
-        checkbox.checked = !checkbox.checked;
-      });
-    }).appendTo($('#ticket-import-list fieldset:last ul li'));
+    Tracker.Import.init();
   }
   
   $('ul[data-invert-checkboxes]').each(function(i, ul) {
