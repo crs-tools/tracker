@@ -1177,6 +1177,7 @@ var Tracker = {};
         event.preventDefault();
         
         var container = $('<li></li>').insertBefore(this.insertBefore),
+            index,
             lastInput = this.list.find('input[data-property-index]:last'),
             lastIndex = (lastInput[0])? lastInput.data('property-index') : -1,
             key;
@@ -1190,7 +1191,7 @@ var Tracker = {};
           .appendTo($('<label></label>').appendTo(container))
           .focus();
         
-        this.keys.push(key[0]);
+        index = this.keys.push(key[0]) - 1;
         
         $('<input></input>')
           .attr({
@@ -1211,7 +1212,8 @@ var Tracker = {};
           .click(function(event) {
             event.preventDefault();
             container.remove();
-          })
+            this.keys.splice(index, 1);
+          }.bind(this))
           .appendTo(container);
       }.bind(this))
       .appendTo($('<p></p>').appendTo($('<li><label></label></li>').appendTo(this.list)));
@@ -1230,7 +1232,7 @@ var Tracker = {};
     this.keys = [];
     
     this.list.find('li').each(function(i, li) {
-      appendDeleteButton.call(this, $(li).children('input.text'));;
+      appendDeleteButton.call(this, $(li).children('input.text'));
     }.bind(this));
     
     this.list
