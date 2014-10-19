@@ -154,10 +154,10 @@
 					];
 				}
 				
-				if (!isset($index['Fahrplan.Title']) and !empty($this->_parentTicket['title'])) {
+				if (!isset($index['Fahrplan.Title'])) {
 					$this->_entries[] = [
 						'name' => 'Fahrplan.Title',
-						'value' => (!$this->_mergeProperties)?
+						'value' => ($this->_parentTicket['ticket_type'] === 'meta' or !$this->_mergeProperties)?
 							$this->_parentTicket['title'] :
 							$this->_parentTicket->Parent['title'],
 						'virtual' => true
