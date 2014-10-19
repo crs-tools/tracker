@@ -16,7 +16,6 @@ if (empty($ticket['parent_id'])) {
 
 echo '>'; ?>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
-		
 		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
 		
 		<?php if (empty($ticket['parent_id']) or isset($simulateTickets)) {
@@ -25,7 +24,7 @@ echo '>'; ?>
 			echo  '&nbsp;';
 		} ?>
 		
-		</span><span class="title"<?= (empty($ticket['parent_id']) and mb_strlen($ticket['title']) > 40)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
+		</span><span class="title"<?= (empty($ticket['parent_id']) and mb_strlen($ticket['title']) > 39)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
 		
 		<?php if (!empty($ticket['encoding_profile_name'])) {
 			echo $ticket['encoding_profile_name'];
@@ -34,7 +33,7 @@ echo '>'; ?>
 		} elseif ($ticket['ticket_type'] == 'ingest') {
 			echo 'Ingest';
 		} else {
-			echo h(str_shorten($ticket['title'], 40));
+			echo h(str_shorten($ticket['title'], 39));
 		} ?>
 		
 		</span><span class="state<?= (($ticket['failed'])? ' failed' : ''); ?>"><?= $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : ''); ?>
