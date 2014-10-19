@@ -1,23 +1,14 @@
-<?php
-	
-	if ($properties instanceOf Model_Resource) {
-		$properties = clone $properties;
-		$properties->except(['indexBy']);
-		
-		if ($properties->getRows() < 1) {
-			return;
-		}
-	} elseif (empty($properties)) {
+<?php if (empty($properties)) {
 		return;
-	}
-	
-?>
+} ?>
 <table class="properties">
 	<?php $root = null;
 	
 	foreach ($properties as $property):
-		if ($root != $property['root']):
-			$root = $property['root']; ?>
+		$parts = explode('.', $property['name']);
+		
+		if ($root !== $parts[0]):
+			$root = $parts[0]; ?>
 			<thead>
 				<tr>
 					<th colspan="2"><?= h($root); ?></th>
@@ -26,7 +17,10 @@
 		<?php endif; ?>
 		<tbody>
 			<tr>
-				<td class="key"><?= h((strpos($property['name'], '.') !== false)? (mb_substr($property['name'], mb_strlen($root) + 1)) : $property['name']); ?></td>
+				<td class="key"><?php
+					$key = h((count($parts) > 1)? implode('.', array_slice($parts, 1)) : $property['name']);
+					echo (!empty($property['virtual']))? ('<em title="Virtual property">' . $key . '</em>') : $key;
+				?></td>
 				<td class="value">
 					<?php if (mb_strlen($property['value']) > 80 and ($pos = mb_strpos($property['value'], ' ', 80)) !== false) {
 						echo h(mb_substr($property['value'], 0, $pos + 1)) . '<span class="more">' . h(mb_substr($property['value'], $pos + 1)) . '</span>';
@@ -37,4 +31,13 @@
 			</tr>
 		</tbody>
 	<?php endforeach; ?>
+	<?php if (!empty($merged) and !isset($_GET['merged'])): ?>
+		<tfoot>
+			<tr>
+				<td colspan="2" class="link center more">
+					<?= $this->linkTo('tickets', 'view', $ticket, $project, ['?merged'], 'Show merged properties'); ?>
+				</td>
+			</tr>
+		</tfoot>
+	<?php endif; ?>
 </table>

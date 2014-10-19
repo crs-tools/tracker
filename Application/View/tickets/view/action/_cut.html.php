@@ -3,9 +3,9 @@
 		<?= $f->select('language', 'Language', array('' => '') + $languages->toArray()); ?>
 		<span class="description">
 			<?php if (isset($parentProperties['Fahrplan.Language'])): ?>
-				Fahrplan language is set as <strong><?= (isset($languages[$parentProperties['Fahrplan.Language']]))?
-					$languages[$parentProperties['Fahrplan.Language']] :
-					$parentProperties['Fahrplan.Language']; ?></strong>.
+				Fahrplan language is set as <strong><?= (isset($languages[$parentProperties['Fahrplan.Language']['value']]))?
+					$languages[$parentProperties['Fahrplan.Language']['value']] :
+					$parentProperties['Fahrplan.Language']['value']; ?></strong>.
 			<?php else: ?>
 				Fahrplan language not set.
 			<?php endif; ?>

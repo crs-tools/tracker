@@ -1648,7 +1648,7 @@ table tr .right {
 	text-align: right;
 }
 
-table tbody tr td.link a {
+table tr td.link a {
 	display: block;
 }
 
@@ -1726,11 +1726,15 @@ table.default tbody tr:last-child td {
   border-bottom: none;
 }
 
-table.default tbody tr td.link {
+table.default tbody tr td.link,
+table.default tfoot tr td.link,
+table.properties tfoot tr td.link {
   padding: 0;
 }
 
-table.default tbody tr td.link a {
+table.default tbody tr td.link a,
+table.default tfoot tr td.link a,
+table.properties tfoot tr td.link a {
 	padding: 0.4em;
 }
 
@@ -1738,18 +1742,23 @@ table.default tbody tr td input + label {
   margin-left: 0.5em;
 }
 
-table.default tbody tr td.more {
+table.default tfoot tr td.more,
+table.properties tfoot tr td.more {
+  border-top: 1px solid #e0e0e0;
   border-bottom: 1px solid #e0e0e0;
 }
 
-table.default tbody tr td.more a {
+table.default tfoot tr td.more a,
+table.properties tfoot tr td.more a {
   padding: 0.8em 0.4em;
   font-size: 1.1em;
   color: #707070;
 }
 
-table.default tbody tr td.more a:hover,
-table.default tbody tr td.more a:focus {
+table.default tfoot tr td.more a:hover,
+table.default tfoot tr td.more a:focus,
+table.properties tfoot tr td.more a:hover,
+table.properties tfoot tr td.more a:focus {
   background-color: #EAEAEA;
   text-decoration: none;
 }

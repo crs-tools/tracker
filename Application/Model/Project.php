@@ -14,8 +14,7 @@
 			'Ticket' => ['foreign_key' => ['project_id']],
 			'Properties' => [
 				'class_name' => 'ProjectProperties',
-				'foreign_key' => ['project_id'],
-				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
+				'foreign_key' => ['project_id']
 			],
 			'Languages' => [
 				'class_name' => 'ProjectLanguages',

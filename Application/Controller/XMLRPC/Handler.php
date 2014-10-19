@@ -282,93 +282,18 @@
 		* Get properties of ticket with given id
 		*
 		* @param int ticket_id id of ticket
-		* @param string sub_path prefix of property names
 		* @return array property data
 		* @throws Exception if ticket not found
 		*/
-		public function getTicketProperties($ticket_id, $pattern = null) {
-			if(!$ticket = Ticket::find(['id' => $ticket_id], ['Handle','Worker','Parent','Project'])) {
-				throw new EntryNotFoundException(__FUNCTION__.': ticket not found',201);
-			}
+		public function getTicketProperties($ticket_id) {
+			$ticket = Ticket::findOrThrow(['id' => $ticket_id], ['Project']);
 
-			// get project properties
-			$properties = $this->_getProperties($ticket->Project);
-
-			// get ticket properties of parent
-			if($ticket['parent_id'] !== null) {
-				$properties = array_merge($properties,$this->_getProperties($ticket->Parent,$pattern));
-			}
-
-			// get ticket properties of related recording ticket
-			if($ticket['ticket_type'] != 'recording') {
-				$children = ($ticket->Parent) ? $ticket->Parent->Children : $ticket->Children;
-				$children->where(array('ticket_type' => 'recording'));
-				$recording_ticket = $children->first();
-
-				// get ticket properties of parent
-				if($recording_ticket) {
-					$properties = array_merge($properties,$this->_getProperties($recording_ticket,$pattern));
-				}
-			}
-
-			// get ticket properties of related ingest ticket
-			if($ticket['ticket_type'] != 'ingest') {
-				$children = ($ticket->Parent) ? $ticket->Parent->Children : $ticket->Children;
-				$children->where(array('ticket_type' => 'ingest'));
-				$ingest_ticket = $children->first();
-
-				// get ticket properties of parent
-				if($ingest_ticket) {
-					$properties = array_merge($properties,$this->_getProperties($ingest_ticket,$pattern));
-				}
-			}
-
-			// get ticket properties
-			$properties = array_merge($properties,$this->_getProperties($ticket,$pattern));
-
-			// virtual property: project slug
-			if(!isset($properties['Project.Slug']) && ($pattern != null && strpos('Project.Slug',$pattern) !== false || $pattern == null)) {
-				$properties['Project.Slug'] = $ticket->Project['slug'];
-			}
-
-			// virtual property: basename for encoding, project slug, fahrplan id, ticket slug
-			if(!isset($properties['Encoding.Basename']) && ($pattern != null && strpos('Encoding.Basename',$pattern) !== false || $pattern == null)) {
-				$properties['Encoding.Basename'] = TicketProperties::buildSlug($ticket->Project, $properties);
-			}
-
-			// add encoding profile properties
-			if($ticket['ticket_type'] == 'encoding') {
-				$profile = $ticket->EncodingProfileVersion->EncodingProfile;
-				if(!$profile) {
-					throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',202);
-				}
-
-				// add virtual properties
-				if(isset($properties['Encoding.Basename']) && !isset($properties['EncodingProfile.Basename'])) {
-					$properties['EncodingProfile.Basename'] = $properties['Encoding.Basename'];
-					if(!empty($profile['slug'])) {
-						$properties['EncodingProfile.Basename'] .= '_' . $profile['slug'];
-					}
-				}
-
-				$properties['EncodingProfile.Slug'] = $profile['slug'];
-				$properties['EncodingProfile.Extension'] = $profile['extension'];
-				$properties['EncodingProfile.MirrorFolder'] = $profile['mirror_folder'];
-			}
-
-			return $properties;
+			return $ticket
+				->MergedProperties
+				->indexBy('name', 'value')
+				->toArray();
 		}
-
-		private function _getProperties(Model $model, $pattern = null) {
-			$properties =  $model->Properties->indexBy('name','value');
-
-			if($pattern != null) {
-				$properties->where('name ~ ?',array($pattern));
-			}
-
-			return $properties->toArray();
-		}
-
+		
 		/**
 		* Set ticket properties for ticket with given id
 		*

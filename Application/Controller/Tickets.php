@@ -129,7 +129,13 @@
 					->join(['Handle']);
 			}
 			
-			$this->properties = $this->ticket->Properties;
+			if (isset($_GET['merged'])) {
+				$this->properties = $this->ticket
+					->MergedProperties;
+			} else {
+				$this->properties = $this->ticket
+					->Properties;
+			}
 			
 			if (!empty($this->ticket['encoding_profile_version_id'])) {
 				$this->profile = EncodingProfileVersion::findAll([
@@ -435,20 +441,17 @@
 				->indexBy('language', 'description');
 			
 			$this->properties = $this->ticket
-				->Properties
-				->indexBy('name', 'value');
+				->Properties;
 			
 			$this->parentProperties = $this->ticket
 				->Parent
-				->Properties
-				->indexBy('name', 'value');
+				->Properties;
 			
 			if ($this->ticket['ticket_type'] !== 'recording') {
 				$this->recordingProperties = $this->ticket
 					->Parent
 					->Source
-					->Properties
-					->indexBy('name', 'value');
+					->Properties;
 			}
 			
 			if ($action === 'check') {
@@ -892,17 +895,9 @@
 				
 				// Copy properties
 				
-				$properties = $this->ticket
+				$ticket['properties'] = $this->ticket
 					->Properties
-					->indexBy('name')
 					->toArray();
-				
-				if (isset($properties['Fahrplan.ID'])) {
-					$properties['Fahrplan.ID']['value'] =
-						$this->form->getValue('fahrplan_id');
-				}
-				
-				$ticket['properties'] = $properties;
 				
 				if ($ticket->save($this->form->getValues())) {
 					if (empty($this->form->getValue('duplicate_recording_ticket'))) {

@@ -37,8 +37,7 @@
 			],
 			'Properties' => [
 				'class_name' => 'TicketProperties',
-				'foreign_key' => ['ticket_id'],
-				'select' => 'name, value, SUBPATH(name, 0, 1) AS root'
+				'foreign_key' => ['ticket_id']
 			]
 		];
 		
@@ -95,6 +94,49 @@
 			'language' => 'Fahrplan.Language',
 			'abstract' => 'Fahrplan.Abstract'
 		];
+		
+		public function __get($key) {
+			if (isset($this->_associatedEntries[$key])) {
+				return parent::__get($key);
+			}
+			
+			if ($key !== 'Properties' and $key !== 'MergedProperties') {
+				return parent::__get($key);
+			}
+			
+			$this->_associatedEntries[$key] = new TicketPropertyResource(
+				new TicketProperties(),
+				$this,
+				$key === 'MergedProperties'
+			);
+			
+			$ticketId = $this->_entry['id'];
+			
+			if ($key === 'MergedProperties') {
+				$ticketId = [$ticketId];
+				
+				if (!empty($this->_entry['parent_id'])) {
+					$ticketId[] = $this->_entry['parent_id'];
+				}
+				
+				if ($this->_entry['ticket_type'] === 'encoding') {
+					$source = $this
+						->Parent
+						->Source;
+					
+					if ($source !== null) {
+						$ticketId[] = $source['id'];
+					}
+				}
+			}
+			
+			$this->_associatedEntries[$key]
+				->where([
+					'ticket_id' => $ticketId
+				]);
+			
+			return clone $this->_associatedEntries[$key];
+		}
 		
 		/*
 			Scopes
@@ -158,7 +200,7 @@
 			);
 		}
 		
-		public static function filter_handle(Model_Resource $resource, $handle) {			
+		public static function filter_handle(Model_Resource $resource, $handle) {
 			$resource->where(
 				self::TABLE . '.handle_id = ? OR child.handle_id = ?',
 				[$handle, $handle]

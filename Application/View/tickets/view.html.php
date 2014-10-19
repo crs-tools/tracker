@@ -68,7 +68,11 @@
 
 <h3 class="table">Properties</h3>
 
-<?= $this->render('shared/properties'); ?>
+<?= $this->render(
+	'shared/properties', [
+		'merged' => $ticket['ticket_type'] === 'encoding'
+	]
+); ?>
 
 <?php if (isset($parentProperties)) {
 	echo $this->render('shared/properties', ['properties' => $parentProperties]);
