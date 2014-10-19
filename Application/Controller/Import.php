@@ -24,11 +24,7 @@
 				->whereNot(['finished' => null])
 				->orderBy('created DESC');
 			
-			if ($arguments['filter'] !== null) {
-				if ($arguments['filter'] !== 'all') {
-					return $this->redirect('import', 'index', $this->project);
-				}
-			} else {
+			if (!isset($_GET['all'])) {
 				$this->previousImports
 					->limit(5);
 			}

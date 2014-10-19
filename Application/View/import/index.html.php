@@ -53,13 +53,15 @@
 					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
 				</tr>
 			<?php endforeach; ?>
-			<?php if ($arguments['filter'] === null): ?>
-				<tr>
-					<td colspan="4" class="link center more">
-						<?= $this->linkTo('import', 'index', $project, ['filter' => 'all'], 'Show all'); ?>
-					</td>
-				</tr>
-			<?php endif; ?>
 		</tbody>
+		<?php if (!isset($_GET['all'])): ?>
+			<tfoot>
+			<tr>
+				<td colspan="4" class="link center more">
+					<?= $this->linkTo('import', 'index', $project, ['?all'], 'Show all'); ?>
+				</td>
+			</tr>
+			</tfoot>
+		<?php endif; ?>
 	</table>
 <?php endif; ?>

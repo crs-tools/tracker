@@ -15,8 +15,8 @@
 	
 	':project_slug/tickets/:tickets/edit' => ['tickets', 'edit_multiple'],
 	
+	':project_slug/tickets/import' => ['import', 'index'],
 	':project_slug/tickets/import/create' => ['import', 'create'],
-	':project_slug/tickets/import/:filter?' => ['import', 'index'],
 	':project_slug/tickets/import/:id/continue' => ['import', 'continue_import'],
 	':project_slug/tickets/import/:id/rooms' => ['import', 'rooms'],
 	':project_slug/tickets/import/:id/review' => ['import', 'review'],
