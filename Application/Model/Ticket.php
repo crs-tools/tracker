@@ -433,8 +433,9 @@
 			if (isset($ticket->_entry['Properties'])) {
 				$changes['Properties'] = [];
 				$properties = $ticket->_entry['Properties'];
-			
-				foreach ($this->Properties->indexBy('name') as $name => $property) {
+				
+				// Hack to get Properties without virtual
+				foreach (parent::__get('Properties')->indexBy('name') as $name => $property) {
 					if (!isset($properties[$name])) {
 						$changes['Properties'][] = [
 							'name' => $name,
@@ -447,8 +448,6 @@
 					if ($properties[$name]['value'] === '') {
 						continue;
 					}
-					
-					// $property['value'] = str_replace("\r", '', $property['value']);
 					
 					if ($property['value'] !== $properties[$name]['value']) {
 						$properties[$name]['_previous'] = $property['value'];
