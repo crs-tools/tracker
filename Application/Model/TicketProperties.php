@@ -45,7 +45,7 @@
 			}
 
 			// generate slug from ticket title (and ignore the one from the frab)
-			 $parts[] = preg_replace([
+			 $parts[] = trim(preg_replace([
 				'/[.:"\']/',
 				'/[^a-zA-Z_\-0-9]/',
 				'/_+/'
@@ -57,7 +57,7 @@
 				'utf-8',
 				'ascii//TRANSLIT//IGNORE',
 				$properties['Fahrplan.Title']
-			));
+			)), '_');
 
 			return implode('-', $parts);
 		}
