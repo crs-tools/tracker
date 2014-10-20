@@ -1,11 +1,26 @@
+<?php $title = (!empty($ticket['title']))?
+	$ticket['title'] : ((!empty($parent['title']))? $parent['title'] : '');
+
+switch ($ticket['ticket_type']) {
+	case 'recording':
+		$title .= ' (Recording)';
+		break;
+	case 'recording':
+		$title .= ' (Ingest)';
+		break;
+	case 'encoding':
+		$title .= ' (' . $profile['name'] . ')';
+		break;
+} ?>
+	 
 <div id="ticket-header">
 	<h2 class="ticket">
 		<span class="fahrplan"><?= h($ticket['fahrplan_id']); ?></span>
-		<span class="title"<?= (empty($titlePrefix) and mb_strlen($ticket['title']) > 50)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
+		<span class="title"<?= (empty($titlePrefix) and mb_strlen($title) > 50)? ' aria-label="' . h($title) . '" data-tooltip="true"' : ''; ?>>
 			<?php if (!empty($titlePrefix)) {
-				echo $titlePrefix . $this->linkTo('tickets', 'view', $ticket, $project, h(str_shorten($ticket['title'], 37)), null, array('aria-label' => $ticket['title'], 'data-tooltip' => true));
+				echo $titlePrefix . $this->linkTo('tickets', 'view', $ticket, $project, h(str_shorten($title, 37)), null, array('aria-label' => $title, 'data-tooltip' => true));
 			} else {
-				echo h(str_shorten($ticket['title'], 50));
+				echo h(str_shorten($title, 50));
 			} ?>
 		</span>
 	</h2>

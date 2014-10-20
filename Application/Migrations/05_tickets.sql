@@ -77,7 +77,7 @@ CREATE TABLE tbl_ticket
   id bigserial NOT NULL,
   parent_id bigint,
   project_id bigint NOT NULL,
-  title character varying(128) NOT NULL,
+  title character varying(128),
   fahrplan_id integer NOT NULL,
   priority real NOT NULL DEFAULT 1,
   ticket_type enum_ticket_type NOT NULL,
@@ -139,22 +139,6 @@ $BODY$
 LANGUAGE plpgsql VOLATILE;
 
 CREATE TRIGGER inherit_fahrplan_id BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE inherit_fahrplan_id();
-
--- update child tickets title, when title of meta ticket is changed
-CREATE OR REPLACE FUNCTION update_child_ticket_title() RETURNS trigger AS $$
-  DECLARE
-	profile record;
-  BEGIN
-	IF NEW.ticket_type = 'meta' AND NEW.title <> OLD.title THEN
-		-- update encoding tickets: set title to "<title> (<encoding_profile.name>)"
-		UPDATE tbl_ticket t SET title = (SELECT CONCAT(NEW.title,' (',ep.name,')') FROM tbl_encoding_profile ep JOIN tbl_encoding_profile_version epv ON epv.encoding_profile_id = ep.id WHERE t.encoding_profile_version_id = epv.id) WHERE ticket_type = 'encoding' AND parent_id = NEW.id;
-	END IF;
-	RETURN NEW;
-  END;
-$$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER update_child_ticket_title AFTER UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_child_ticket_title();
 
 -- update encoding tickets state to "ready to encode", if recording ticket changes state to "finalized"
 CREATE OR REPLACE FUNCTION update_encoding_ticket_state() RETURNS trigger AS $$

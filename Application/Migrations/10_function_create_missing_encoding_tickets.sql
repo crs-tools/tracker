@@ -12,7 +12,6 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
-			CONCAT(substring(t1.title from 0 for 92),' (',ep.name,')') AS title,
 			t1.fahrplan_id, 
 			pep.priority, 
 			'encoding' as ticket_type, 
@@ -39,7 +38,6 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
-			CONCAT(substring(t1.title from 0 for 92),' (',ep.name,')') AS title,
 			t1.fahrplan_id, 
 			pep.priority, 
 			'encoding' as ticket_type, 
