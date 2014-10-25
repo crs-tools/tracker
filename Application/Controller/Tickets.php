@@ -671,7 +671,7 @@
 					'needs_attention' => $this->form->getValue('needs_attention')
 				]);
 				
-				if ($this->ticket->addComment($this->form->getValue('text'))) {
+				if ($ticket->addComment($this->form->getValue('text'))) {
 					$this->flash('Comment created');
 				}
 			}
