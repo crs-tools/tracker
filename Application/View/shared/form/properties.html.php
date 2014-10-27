@@ -11,6 +11,7 @@
 					$property[$properties['key']],
 					$property[$properties['value']],
 					[
+						'class' => 'wide',
 						'data-property-index' => $index,
 						'data-property-destroy' => $properties['field'] . '[' . $index . '][_destroy]'
 					] +
