@@ -43,7 +43,7 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
   BEGIN
 	row_count := 0;
 	IF param_encoding_profile_id IS NULL THEN 
-		INSERT INTO tbl_ticket (parent_id, project_id, title, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
+		INSERT INTO tbl_ticket (parent_id, project_id, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
@@ -69,7 +69,7 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
 		ORDER BY t1.id ASC, ep.id ASC);
 		GET DIAGNOSTICS row_count = ROW_COUNT;
 	ELSE
-		INSERT INTO tbl_ticket (parent_id, project_id, title, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
+		INSERT INTO tbl_ticket (parent_id, project_id, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
