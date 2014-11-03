@@ -72,7 +72,8 @@ BEGIN
       tbl_project_ticket_state pts ON pts.ticket_type = ts.ticket_type AND pts.ticket_state = ts.ticket_state
     WHERE
       pts.project_id = param_project_id AND
-      ts.ticket_type = param_ticket_type
+      ts.ticket_type = param_ticket_type AND
+      ts.sort > 0
     ORDER BY ts.sort ASC
     LIMIT 1);
 

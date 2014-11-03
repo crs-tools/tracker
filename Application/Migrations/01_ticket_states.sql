@@ -132,4 +132,8 @@ INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, servi
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('ingest', 'removing', 20, true);
 INSERT INTO tbl_ticket_state (ticket_type, ticket_state, percent_progress, service_executable) VALUES ('ingest', 'gone', 5, false);
 
+-- mark non-initial states by giving sort <= 0
+UPDATE tbl_ticket_state SET sort = 0 where ticket_state = 'locked';
+UPDATE tbl_ticket_state SET sort = 0 where ticket_state = 'incomplete';
+
 COMMIT;

@@ -58,3 +58,7 @@ ALTER TABLE tbl_project ADD CONSTRAINT slug_length CHECK (char_length(slug::text
 ALTER TABLE tbl_project_language ADD CONSTRAINT language_length CHECK (char_length(language::text) > 0);
 ALTER TABLE tbl_project_property ADD CONSTRAINT name_length CHECK (char_length(name::text) > 0);
 
+-- mark non-initial states by giving sort <= 0
+UPDATE tbl_ticket_state SET sort = 0 where ticket_state = 'locked';
+UPDATE tbl_ticket_state SET sort = 0 where ticket_state = 'incomplete';
+
