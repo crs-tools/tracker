@@ -9,7 +9,7 @@ CREATE OR REPLACE VIEW view_parent_tickets AS
 		t.*, 
 		pstart.value::timestamp with time zone AS time_start,
 		pstart.value::timestamp with time zone + pdur.value::time without time zone::interval AS time_end,
-		ticket_progress(t.id) AS ticket_progress 
+		t.progress AS ticket_progress 
 	FROM 
 		tbl_ticket t 
 	LEFT JOIN 

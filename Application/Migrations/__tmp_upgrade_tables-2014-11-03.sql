@@ -2,6 +2,8 @@
 -- please re-execute:
 
 \i 15_function_ticket_state.sql
+\i 20_view_parent_tickets.sql
+\i 21_view_all_tickets.sql
 
 
 DROP TRIGGER IF EXISTS progress_trigger1 ON tbl_ticket;
