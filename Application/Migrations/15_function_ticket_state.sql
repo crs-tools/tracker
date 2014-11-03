@@ -23,6 +23,9 @@ BEGIN
   ORDER BY
     ts1.sort ASC
 	LIMIT 1;
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT NULL::enum_ticket_state, false;
+  END IF;
 END
 $$
 LANGUAGE plpgsql;
@@ -48,6 +51,9 @@ BEGIN
   ORDER BY
     ts1.sort DESC
 	LIMIT 1;
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT NULL::enum_ticket_state, false;
+  END IF;
 END
 $$
 LANGUAGE plpgsql;
