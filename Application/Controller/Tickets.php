@@ -739,19 +739,13 @@
 						$ticket->addComment($this->form->getValue('comment'));
 					}
 					
-					// Create child tickets
-					// FIXME: this creates children for all tickets, add additional argument for function
-					if ($this->form->getValue('create_recording_tickets')) {
-						Ticket::createMissingRecordingTickets(
-							$this->project['id']
-						);
-					}
+					Ticket::createMissingRecordingTickets(
+						$this->project['id']
+					);
 					
-					if ($this->form->getValue('create_encoding_tickets')) {
-						Ticket::createMissingEncodingTickets(
-							$this->project['id']
-						);
-					}
+					Ticket::createMissingEncodingTickets(
+						$this->project['id']
+					);
 					
 					return $this->redirect('tickets', 'view', $ticket);
 				}
@@ -911,9 +905,7 @@
 						
 						$sourceTicket->save([
 							'parent_id' => $ticket['id'],
-							'fahrplan_id' => $ticket['fahrplan_id'],
-							// TODO: remove title
-							'title' => $ticket['title'] . ' (Recording)'
+							'fahrplan_id' => $ticket['fahrplan_id']
 						]);
 					}
 					

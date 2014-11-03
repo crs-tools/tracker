@@ -87,15 +87,6 @@ else: ?>
 			<li class="checkbox"><?= $f->checkbox('failed', 'Current state failed', (!empty($ticket))? $ticket['failed'] : false); ?></li>
 		</ul>
 	</fieldset>
-	<?php if (empty($ticket)): ?>
-		<fieldset>
-			<legend>Children</legend>
-			<ul>
-				<li class="checkbox"><?= $f->checkbox('create_recording_tickets', 'Create recording ticket', true); ?></li>
-				<li class="checkbox"><?= $f->checkbox('create_encoding_tickets', 'Create tickets for encoding profiles', true); ?></li>
-			</ul>
-		</fieldset>
-	<?php endif; ?>
 	<fieldset class="foldable">
 		<legend>Properties</legend>
 		<?= $this->render('shared/form/properties', [
