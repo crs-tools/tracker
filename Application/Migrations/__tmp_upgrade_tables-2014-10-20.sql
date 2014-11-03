@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE OR REPLACE FUNCTION update_ticket_progress_and_next_state()
   RETURNS trigger AS
 $BODY$
@@ -101,7 +103,7 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
 $$ LANGUAGE plpgsql;
 
 ALTER TABLE tbl_ticket ALTER COLUMN title DROP NOT NULL;
-DROP TRIGGER update_child_ticket_title ON tbl_ticket;
+DROP TRIGGER IF EXISTS update_child_ticket_title ON tbl_ticket;
 DROP FUNCTION IF EXISTS update_child_ticket_title();
 
 COMMIT;
