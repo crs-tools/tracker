@@ -100,8 +100,8 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
   END;
 $$ LANGUAGE plpgsql;
 
-ALTER TABLE tbl_ticket ALTER COLUMN 'title' DROP NOT NULL;
-DROP FUNCTION IF EXISTS update_child_ticket_title();
+ALTER TABLE tbl_ticket ALTER COLUMN title DROP NOT NULL;
 DROP TRIGGER update_child_ticket_title ON tbl_ticket;
+DROP FUNCTION IF EXISTS update_child_ticket_title();
 
 COMMIT;

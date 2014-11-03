@@ -12,7 +12,7 @@ CREATE TABLE tbl_import
   PRIMARY KEY (id),
   CONSTRAINT tbl_import_user_fk FOREIGN KEY (user_id)
     REFERENCES tbl_user (id)
-    ON UPDATE SET NULL ON DELETE SET NULL
+    ON UPDATE SET NULL ON DELETE SET NULL,
   CONSTRAINT tbl_import_project_fk FOREIGN KEY (project_id)
     REFERENCES tbl_project (id) MATCH SIMPLE
     ON UPDATE CASCADE ON DELETE CASCADE
