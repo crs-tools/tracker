@@ -8,11 +8,10 @@ CREATE OR REPLACE FUNCTION create_missing_recording_tickets(param_project_id big
   BEGIN
 	row_count := 0;
 
-	 INSERT INTO tbl_ticket (parent_id, project_id, title, fahrplan_id, ticket_type, ticket_state)
+	 INSERT INTO tbl_ticket (parent_id, project_id, fahrplan_id, ticket_type, ticket_state)
 		(SELECT
        t1.id as parent_id,
        t1.project_id,
-       CONCAT(t1.title,' (Recording)') AS title,
        t1.fahrplan_id,
        'recording' as ticket_type,
        'scheduled' AS ticket_state
