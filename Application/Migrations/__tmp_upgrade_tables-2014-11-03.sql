@@ -50,3 +50,11 @@ CREATE TRIGGER state_trigger BEFORE INSERT OR UPDATE OF ticket_state ON tbl_tick
 
 CREATE TRIGGER progress_trigger1 AFTER INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress();
 
+
+-- bugfix #75
+
+ALTER TABLE tbl_project ADD CONSTRAINT title_length CHECK (char_length(title::text) > 0);
+ALTER TABLE tbl_project ADD CONSTRAINT slug_length CHECK (char_length(slug::text) > 0);
+ALTER TABLE tbl_project_language ADD CONSTRAINT language_length CHECK (char_length(language::text) > 0);
+ALTER TABLE tbl_project_property ADD CONSTRAINT name_length CHECK (char_length(name::text) > 0);
+

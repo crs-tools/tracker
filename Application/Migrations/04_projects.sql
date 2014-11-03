@@ -9,8 +9,8 @@ SET ROLE TO postgres;
 CREATE TABLE tbl_project
 (
   id bigserial NOT NULL,
-  title character varying(256) NOT NULL,
-  slug character varying(64) NOT NULL,
+  title character varying(256) NOT NULL CHECK (char_length(title::text) > 0),
+  slug character varying(64) NOT NULL CHECK (char_length(slug::text) > 0),
   read_only boolean NOT NULL DEFAULT false,
   created timestamp with time zone NOT NULL DEFAULT now(),
   modified timestamp with time zone NOT NULL DEFAULT now(),
@@ -22,7 +22,7 @@ WITHOUT OIDS;
 CREATE TABLE tbl_project_language
 (
   project_id bigint NOT NULL,
-  language character varying(50) NOT NULL,
+  language character varying(50) NOT NULL CHECK (char_length(language::text) > 0),
   description character varying(256) NOT NULL,
   CONSTRAINT tbl_project_language_pk PRIMARY KEY (project_id, language),
   CONSTRAINT tbl_project_language_project_fk FOREIGN KEY (project_id)
@@ -34,7 +34,7 @@ WITHOUT OIDS;
 CREATE TABLE tbl_project_property
 (
   project_id bigint NOT NULL,
-  name ltree NOT NULL,
+  name ltree NOT NULL CHECK (char_length(name::text) > 0),
   value character varying(8196) NOT NULL,
   CONSTRAINT tbl_project_property_pk PRIMARY KEY (project_id, name),
   CONSTRAINT tbl_project_property_project_fk FOREIGN KEY (project_id)
