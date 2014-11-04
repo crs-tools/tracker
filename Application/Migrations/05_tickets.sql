@@ -89,7 +89,7 @@ CREATE TABLE tbl_ticket
   id bigserial NOT NULL,
   parent_id bigint,
   project_id bigint NOT NULL,
-  title character varying(128),
+  title text,
   fahrplan_id integer NOT NULL,
   priority real NOT NULL DEFAULT 1,
   ticket_type enum_ticket_type NOT NULL,
