@@ -53,9 +53,7 @@
 				'',
 				'_',
 				'_'
-			], iconv(
-				'utf-8',
-				'ascii//TRANSLIT//IGNORE',
+			], str_utf8_normalize_translit(
 				$properties['Fahrplan.Title']
 			)), '_');
 
