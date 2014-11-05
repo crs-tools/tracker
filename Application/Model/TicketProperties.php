@@ -53,7 +53,7 @@
 				'',
 				'_',
 				'_'
-			], str_utf8_normalize_translit(
+			], str_utf8_ascii_transliterate(
 				$properties['Fahrplan.Title']
 			)), '_');
 
