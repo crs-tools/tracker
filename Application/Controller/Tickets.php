@@ -33,9 +33,7 @@
 			'failed' => 'failed',
 			'encoding_profile' => 'encoding_profile_version_id',
 			'fahrplan_id' => 'fahrplan_id',
-			'date' => 'property_fahrplan_date.value',
 			'day' => 'property_fahrplan_day.value',
-			'time' => 'property_fahrplan_start.value',
 			'room' => 'property_fahrplan_room.value',
 			'optout' => 'property_fahrplan_optout.value',
 			'modified' => 'modified'
@@ -64,7 +62,6 @@
 				->scoped([
 					'with_default_properties',
 					'with_encoding_profile_name',
-					'with_progress',
 					'order_list'
 				]);
 			
@@ -115,7 +112,7 @@
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
 			if (!empty($this->ticket['parent_id'])) {
-				// TODO: add scopes for properties and progress
+				// TODO: add scope for properties
 				// TODO: parent joins handle
 				$this->parent = $this->ticket->Parent;
 			} else {
@@ -138,12 +135,7 @@
 			}
 			
 			if (!empty($this->ticket['encoding_profile_version_id'])) {
-				$this->profile = EncodingProfileVersion::findAll([
-					'EncodingProfile' => ['select' => 'id, name']
-				])
-					->where(['id' => $this->ticket['encoding_profile_version_id']])
-					->select('revision, description')
-					->first();
+				$this->profile = $this->ticket->EncodingProfile;
 			}
 			
 			$this->comments = $this->ticket

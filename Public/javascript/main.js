@@ -21,8 +21,6 @@ var Tracker = {};
           </optgroup>\
           <optgroup label="Properties">\
             <option value="fahrplan_id">Fahrplan ID</option>\
-            <option value="date">Date</option>\
-            <option value="time">Time</option>\
             <option value="room">Room</option>\
             <option value="day">Day</option>\
             <option value="optout">Opt-Out</option>\

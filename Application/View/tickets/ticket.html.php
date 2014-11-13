@@ -52,8 +52,10 @@ echo '>'; ?>
 		
 		</span><span class="start">
 		
-		<?php if (empty($ticket['parent_id']) and isset($ticket['fahrplan_start'])) {
-			echo h($ticket['fahrplan_start']);
+		<?php if (empty($ticket['parent_id']) and !empty($ticket['fahrplan_datetime'])) {
+			echo h((new DateTime($ticket['fahrplan_datetime']))->format('H:i'));
+		} else {
+			echo '&nbsp';
 		} ?>
 		
 		</span><span class="room"<?php if (empty($ticket['parent_id']) and isset($ticket['fahrplan_room'])) {
@@ -81,15 +83,15 @@ echo '>'; ?>
 		<?php endif; ?>
 		
 		<?php if ($ticket->isEligibleAction('cut') and User::isAllowed('tickets', 'cut')) {
-			echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut recording "' . $ticket['title'] . '"', ['class' => 'action']);
+			echo $this->linkTo('tickets', 'cut', $ticket, $project, '<span>cut</span>', 'Cut recording ticket…', ['class' => 'action']);
 		} ?>
 		
 		<?php if ($ticket->isEligibleAction('check') and User::isAllowed('tickets', 'check')) {
-			echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check "' . $ticket['title'] . '"', ['class' => 'action']);
+			echo $this->linkTo('tickets', 'check', $ticket, $project, '<span>check</span>', 'Check ticket…', ['class' => 'action']);
 		} ?>
 		
 		<?php if (User::isAllowed('tickets', 'edit')) {
-			echo $this->linkTo('tickets', 'edit', $ticket, $project, '<span>edit</span>', 'Edit ticket "' . $ticket['title'] . '"', ['class' => 'edit']);
+			echo $this->linkTo('tickets', 'edit', $ticket, $project, '<span>edit</span>', 'Edit ticket…', ['class' => 'edit']);
 		} ?>
 	</span>
 	

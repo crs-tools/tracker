@@ -43,7 +43,15 @@
 		
 		public $belongsTo = [
 			'EncodingProfileVersion' => [
-				'foreign_key' => ['encoding_profile_version_id']
+				'foreign_key' => ['encoding_profile_version_id'],
+			],
+			'EncodingProfile' => [
+				'class_name' => 'EncodingProfileVersion',
+				'foreign_key' => ['encoding_profile_version_id'],
+				'select' => 'revision, description',
+				'join_assoications' => [
+					'EncodingProfile' => ['select' => 'id, name']
+				]
 			],
 			'Handle' => [
 				'foreign_key' => ['handle_id'],
@@ -138,6 +146,34 @@
 			return clone $this->_associatedEntries[$key];
 		}
 		
+		public function offsetGet($offset) {
+			$value = parent::offsetGet($offset);
+			
+			if ($offset !== 'title' or $value !== null) {
+				return $value;
+			}
+			
+			if (!isset($this->_entry['parent_id'])) {
+				return null;
+			}
+			
+			$title = $this->Parent['title'];
+			
+			switch ($this->_entry['ticket_type']) {
+				case 'recording':
+					$title .= ' (Recording)';
+					break;
+				case 'recording':
+					$title .= ' (Ingest)';
+					break;
+				case 'encoding':
+					$title .= ' (' . $this->EncodingProfile['name'] . ')';
+					break;
+			}
+			
+			return $title;
+		}
+		
 		/*
 			Scopes
 		*/
@@ -214,11 +250,9 @@
 						self::TABLE . '.id) AS sort_id'
 				)
 				->orderBy(
-					'fahrplan_date, fahrplan_start, fahrplan_room,
+					'fahrplan_datetime, fahrplan_room,
 					 sort_id, parent_id DESC, ticket_type, title'
 				);
-				// to_timestamp((ticket_fahrplan_starttime(t.id))::double precision) AS time_start,
-				// SELECT EXTRACT(EPOCH FROM (p.value::date + p2.value::time)::timestamp) INTO unixtime
 		}
 		
 		public static function order_priority(Model_Resource $resource) {
@@ -273,8 +307,7 @@
 		
 		public static function with_default_properties(Model_Resource $resource) {
 			self::with_properties($resource, [
-				'Fahrplan.Start' => 'fahrplan_start',
-				'Fahrplan.Date' => 'fahrplan_date',
+				'Fahrplan.DateTime' => 'fahrplan_datetime',
 				'Fahrplan.Day' => 'fahrplan_day',
 				'Fahrplan.Room' => 'fahrplan_room'
 			]);
