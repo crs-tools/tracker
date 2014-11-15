@@ -829,7 +829,7 @@ var Tracker = {};
         } else if (li.hasClass('comment')) {
           if (candidates.length >= 3) {
             
-            candidates
+            candidates = candidates
               .slice(0, -1)
               .hide();
             
