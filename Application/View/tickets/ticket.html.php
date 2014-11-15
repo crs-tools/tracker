@@ -26,15 +26,8 @@ echo '>'; ?>
 		
 		</span><span class="title"<?= (empty($ticket['parent_id']) and mb_strlen($ticket['title']) > 39)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
 		
-		<?php if (!empty($ticket['encoding_profile_name'])) {
-			echo $ticket['encoding_profile_name'];
-		} elseif ($ticket['ticket_type'] == 'recording') {
-			echo 'Recording';
-		} elseif ($ticket['ticket_type'] == 'ingest') {
-			echo 'Ingest';
-		} else {
-			echo h(str_shorten($ticket['title'], 39));
-		} ?>
+		<?php $suffix = $ticket->titleSuffix();
+		echo h(str_shorten(($suffix !== '')? $suffix : $ticket['title'], 39)); ?>
 		
 		</span><span class="state<?= (($ticket['failed'])? ' failed' : ''); ?>"><?= $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : ''); ?>
 		

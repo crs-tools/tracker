@@ -813,6 +813,48 @@ var Tracker = {};
           $(event.target).remove();
         });
       });
+      
+      var candidates = $(),
+          logCount = 0;
+      
+      $('#timeline li').each(function(i, li) {
+        li = $(li);
+        
+        if (li.hasClass('log')) {
+          logCount++;
+          
+          if (logCount >= 2) {
+            candidates = candidates.add(li);
+          }
+        } else if (li.hasClass('comment')) {
+          if (candidates.length >= 3) {
+            
+            candidates
+              .slice(0, -1)
+              .hide();
+            
+            (function(candidates) {
+              var unfold = $('<a></a>')
+                .attr('href', '#')
+                .text('Show ' + candidates.length + ' hidden entries')
+                .appendTo(
+                  $('<li></li>')
+                    .addClass('event right unfold')
+                    .insertBefore(candidates.first()
+                  )
+                )
+                .click(function(event) {
+                  event.preventDefault();
+                  unfold.hide();
+                  candidates.show();
+                });
+            })(candidates);
+            
+            candidates = $();
+            logCount = 0;
+          }
+        }
+      });
     }
   };
 }());

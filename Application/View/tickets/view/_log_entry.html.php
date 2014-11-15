@@ -15,7 +15,7 @@
 		</code>
 	<?php endif; ?>
 
-	<span class="description">by <?= $entry['handle_name']; ?></span>
+	<span class="description">by <strong><?= $entry['handle_name']; ?></strong></span>
 	<span class="date">
 		<?= timeAgo($entry['created']); ?>
 	</span>

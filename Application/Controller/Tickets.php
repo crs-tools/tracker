@@ -111,11 +111,7 @@
 			
 			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
 			
-			if (!empty($this->ticket['parent_id'])) {
-				// TODO: add scope for properties
-				// TODO: parent joins handle
-				$this->parent = $this->ticket->Parent;
-			} else {
+			if ($this->ticket['parent_id'] === null) {
 				$this->children = $this->ticket
 					->Children
 					->scoped([
@@ -124,7 +120,19 @@
 					])
 					->orderBy('ticket_type, title')
 					->join(['Handle']);
+				
+				$this->comments = $this->ticket
+					->Comments;
+			} else {
+				// TODO: add scope for properties
+				// TODO: parent joins handle
+				$this->parent = $this->ticket->Parent;
+				$this->comments = $this->parent->Comments;
 			}
+			
+			$this->comments
+				->join(['User'])
+				->orderBy('created DESC');
 			
 			if (isset($_GET['merged'])) {
 				$this->properties = $this->ticket
@@ -138,10 +146,6 @@
 				$this->profile = $this->ticket->EncodingProfile;
 			}
 			
-			$this->comments = $this->ticket
-				->Comments
-				->join(['User'])
-				->orderBy('created DESC');
 			$this->log = $this->ticket
 				->LogEntries
 				->join(['Handle'])

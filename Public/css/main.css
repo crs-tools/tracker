@@ -1859,6 +1859,10 @@ span.date:hover span {
 	margin-top: -2em;
 }
 
+#timeline ul li.event.comment p {
+  margin: 0 15px 3px 0;
+}
+
 #timeline ul li.event.right span.spine {
 	display: block;
 	position: relative;
@@ -1868,13 +1872,16 @@ span.date:hover span {
 	width: 1.3em;
 }
 
-#timeline ul li.event.left span.spine {
-	display: block;
-	position: relative;
-	right: -50%;
-	bottom: 0.75em;
-	border-bottom: 1px solid #e0e0e0;
-	width: 50%;
+#timeline ul li.event.left div.meta {
+  display: -webkit-flex;
+  display: flex;
+}
+
+#timeline ul li.event.left div.meta span.spine {
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0 0 7px 10px;
+  -webkit-flex: 1;
+  flex: 1;
 }
 
 #timeline ul li.event span.description {
@@ -1913,6 +1920,16 @@ span.date:hover span {
 #timeline ul li.event code:hover a {
 	color: #248fda;
 }
+
+#timeline ul li.event.unfold a {
+  display: block;
+  height: 32px;
+  padding-left: 35px;
+  background: url(../images/main.png) no-repeat -720px -350px;
+/*  color: #707070;*/
+  line-height: 32px;
+}
+
 
 #timeline ul li.event form {
 	margin: 1.2em 0 2em 0;

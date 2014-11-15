@@ -12,8 +12,6 @@
 		
 		const TABLE = "tbl_ticket";
 		
-		const CLASS_RESOURCE = 'Ticket_Resource';
-		
 		public $hasOne = [
 			'Source' => [
 				'class_name' => 'Ticket',
@@ -158,20 +156,25 @@
 			}
 			
 			$title = $this->Parent['title'];
+			$title .= ' (' . $this->titleSuffix() . ')';
 			
+			return $title;
+		}
+		
+		public function titleSuffix() {
 			switch ($this->_entry['ticket_type']) {
 				case 'recording':
-					$title .= ' (Recording)';
+					return 'Recording';
 					break;
 				case 'recording':
-					$title .= ' (Ingest)';
+					return 'Ingest';
 					break;
 				case 'encoding':
-					$title .= ' (' . $this->EncodingProfile['name'] . ')';
+					return $this->EncodingProfile['name'];
 					break;
 			}
 			
-			return $title;
+			return '';
 		}
 		
 		/*
@@ -312,7 +315,6 @@
 				'Fahrplan.Room' => 'fahrplan_room'
 			]);
 		}
-		
 		
 		public function with_encoding_profile_name(Model_Resource $resource) {
 			$resource->leftJoin(
@@ -612,11 +614,19 @@
 		}
 		
 		public function addComment($comment, $handle = null) {
-			return Comment::create([
-				'ticket_id' => $this['id'],
+			$comment = [
 				'handle_id' => ($handle === null)? User::getCurrent()['id'] : $handle,
 				'comment' => $comment
-			]);
+			];
+			
+			if ($this['parent_id'] === null) {
+				$comment['ticket_id'] = $this['id'];
+			} else {
+				$comment['ticket_id'] = $this->Parent['id'];
+				$comment['referenced_ticket_id'] = $this['id'];
+			}
+			
+			return Comment::create($comment);
 		}
 		
 		public function addLogEntry(array $entry, $handle = null) {
