@@ -120,19 +120,11 @@
 					])
 					->orderBy('ticket_type, title')
 					->join(['Handle']);
-				
-				$this->comments = $this->ticket
-					->Comments;
 			} else {
 				// TODO: add scope for properties
 				// TODO: parent joins handle
 				$this->parent = $this->ticket->Parent;
-				$this->comments = $this->parent->Comments;
 			}
-			
-			$this->comments
-				->join(['User'])
-				->orderBy('created DESC');
 			
 			if (isset($_GET['merged'])) {
 				$this->properties = $this->ticket
@@ -146,10 +138,7 @@
 				$this->profile = $this->ticket->EncodingProfile;
 			}
 			
-			$this->log = $this->ticket
-				->LogEntries
-				->join(['Handle'])
-				->orderBy('created DESC');
+			$this->_assignTimeline($this->ticket);
 			
 			return $this->render('tickets/view');
 		}
@@ -564,14 +553,7 @@
 				}
 			}
 			
-			$this->comments = $this->ticket
-				->Comments
-				->join(['User'])
-				->orderBy('created DESC');
-			$this->log = $this->ticket
-				->LogEntries
-				->join(['Handle'])
-				->orderBy('created DESC');
+			$this->_assignTimeline($this->ticket);
 			
 			/*
 			if (Request::isPostRequest()) {
@@ -604,9 +586,7 @@
 				}
 			}
 			*/
-			
-			// $this->comments = $this->ticket->Comments->join(['User']);
-			
+						
 			return $this->render('tickets/view');
 		}
 		
@@ -867,6 +847,23 @@
 					->select('revision, description')
 					->first();
 			}
+		}
+		
+		private function _assignTimeline($ticket) {
+			if ($ticket['parent_id'] === null) {
+				$this->comments = $ticket->Comments;
+			} else {
+				$this->comments = $ticket->Parent->Comments;
+			}
+			
+			$this->comments
+				->join(['User'])
+				->orderBy('created DESC');
+			
+			$this->log = $this->ticket
+				->LogEntries
+				->join(['Handle'])
+				->orderBy('created DESC');
 		}
 		
 		public function duplicate(array $arguments) {
