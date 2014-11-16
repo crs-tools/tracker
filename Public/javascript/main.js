@@ -849,10 +849,10 @@ var Tracker = {};
                   candidates.show();
                 });
             })(candidates);
-            
-            candidates = $();
-            logCount = 0;
           }
+          
+          candidates = $();
+          logCount = 0;
         }
       });
     }
