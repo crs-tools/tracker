@@ -70,6 +70,22 @@ CREATE TABLE tbl_project_worker_group
 )
 WITHOUT OIDS;
 
+CREATE TABLE tbl_project_worker_group_filter
+(
+  project_id bigint NOT NULL,
+  worker_group_id bigint NOT NULL,
+  property_key ltree NOT NULL CHECK (char_length(property_key::text) > 0),
+  property_value ltree NOT NULL CHECK (char_length(property_value::text) > 0),
+  CONSTRAINT tbl_project_worker_group_filter_pk PRIMARY KEY (project_id, worker_group_id, property_key, property_value),
+  CONSTRAINT tbl_project_worker_group_filter_group_fk FOREIGN KEY (worker_group_id)
+      REFERENCES tbl_worker_group (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT tbl_project_worker_group_filter_project_fk FOREIGN KEY (project_id)
+      REFERENCES tbl_project (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITHOUT OIDS;
+
 CREATE TABLE tbl_project_encoding_profile
 (
   project_id bigint NOT NULL,
