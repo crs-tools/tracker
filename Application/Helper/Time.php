@@ -37,7 +37,7 @@
 			return $minutes . ' minutes ago';
 		} elseif ($minutes < 90) {
 			return 'an hour ago';
-		} elseif ($hours < 24) {
+		} elseif ($hours < 7) {
 			return $hours . ' hours ago';
 		}
 		
@@ -54,7 +54,7 @@
 		$year = $dateTime->format('Y');
 		
 		return 'on ' . $dateTime->format('M j') .
-			(($now->format('Y') != $year)? (', ' . $year) : '');
+			(($now->format('Y') !== $year)? (', ' . $year) : '');
 	}
 	
 ?>

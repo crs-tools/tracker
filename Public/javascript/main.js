@@ -1015,7 +1015,12 @@ var Tracker = {};
                 next.parent().hide();
                 
                 $.each(latestEntries, function(i, entry) {
-                  $(entry).insertBefore(first);
+                  $(entry)
+                    .insertBefore(first)
+                    .find('time[datetime]')
+                    .each(function(i, time) {
+                      new Tracker.Time(time);
+                    });
                 });
                 
                 latestEntries = [];
@@ -1431,6 +1436,137 @@ var Tracker = {};
   };
 })();
 
+/*
+  
+  Time
+  
+*/
+(function() {
+  var intervals = {
+        'second': null,
+        'minute': null
+      },
+      elements = {
+        'second': [],
+        'minute': []
+      },
+      weekdays = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ],
+      shortMonths = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+  
+  function getFormattedTime(datetime) {
+    return ('0' + datetime.getHours()).slice(-2) + ':' +
+      ('0' + datetime.getMinutes()).slice(-2);
+  }
+  
+  function timeRelativeDifference(datetime) {
+    var now = new Date(),
+        
+        seconds = Math.round((now.getTime() - datetime.getTime()) / 1000),
+        minutes = Math.round(seconds / 60),
+        hours = Math.round(minutes / 60);
+    
+    if (seconds < 10) {
+      return 'a second ago';
+    } else if (seconds < 45) {
+      return seconds + ' seconds ago';
+    } else if (seconds < 90) {
+      return 'a minute ago';
+    } else if (minutes < 45) {
+      return minutes + ' minutes ago';
+    } else if (minutes < 90) {
+      return 'an hour ago';
+    } else if (hours < 7) {
+      return hours + ' hours ago';
+    }
+    
+    var days = (hours / 24);
+    
+    if (days < 1) {
+      return 'today at ' + getFormattedTime(datetime);
+    } else if (days < 2) {
+      return 'yesterday at ' + getFormattedTime(datetime);
+    } else if (days < 7) {
+      return weekdays[datetime.getDay()] + ' at ' + getFormattedTime(datetime);
+    }
+    
+    var year = datetime.getFullYear();
+    
+    return 'on ' + shortMonths[datetime.getMonth()] + ' ' +
+      ('0' + datetime.getDate()).slice(-2) +
+      ((year !== now.getFullYear())? (', ' + year) : '');
+  }
+  
+  function initHandlers() {
+    if (elements.second.length > 0 && intervals.second === null) {
+      intervals.second = setInterval(function() {
+        if (elements.second <= 0) {
+          clearInterval(intervals.second);
+          return;
+        }
+        
+        $.each(elements.second, function(i, time) {
+          time.update();
+          
+          if (time.getDifference() >= 90) {
+            elements.second.splice(i, 1);
+            elements.minute.push(time);
+          }
+        });
+      }, 1000);
+    }
+    
+    if (elements.minute.length > 0 && intervals.minute === null) {
+      intervals.minute = setInterval(function() {
+        $.each(elements.minute, function(i, time) {
+          time.update();
+        });
+      }, 60000);
+    }
+  }
+  
+  Tracker.Time = function(element) {
+    this.element = $(element);
+    this.datetime = new Date(this.element.attr('datetime'));
+    
+    if (this.getDifference() < 90) {
+      elements.second.push(this);
+    } else {
+      elements.minute.push(this);
+    }
+    
+    initHandlers();
+  };
+  
+  Tracker.Time.prototype.getDifference = function() {
+    return (((new Date()).getTime() - this.datetime.getTime()) / 1000);
+  };
+  
+  Tracker.Time.prototype.update = function() {
+    this.element.text(timeRelativeDifference(this.datetime));
+  };
+})();
+
 $(function() {
   $('#ticket-action-comment.hidden').parent().hide();
   // $('#ticket-action-expand_by').parent().hide();
@@ -1488,6 +1624,10 @@ $(function() {
   if ($('#ticket-import-list')[0]) {
     Tracker.Import.init();
   }
+  
+  $('time[datetime]').each(function(i, time) {
+    new Tracker.Time(time);
+  });
   
   $('ul[data-invert-checkboxes]').each(function(i, ul) {
     ul = $(ul);
