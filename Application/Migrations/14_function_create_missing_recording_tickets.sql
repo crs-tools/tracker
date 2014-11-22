@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION create_missing_recording_tickets(param_project_id big
        t1.project_id,
        t1.fahrplan_id,
        'recording' as ticket_type,
-       'scheduled' AS ticket_state
+       ticket_state_initial(param_project_id, 'recording') AS ticket_state
      FROM
          tbl_ticket t1
          LEFT JOIN

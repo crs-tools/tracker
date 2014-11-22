@@ -8,14 +8,14 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
   BEGIN
 	row_count := 0;
 	IF param_encoding_profile_id IS NULL THEN 
-		INSERT INTO tbl_ticket (parent_id, project_id, title, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
+		INSERT INTO tbl_ticket (parent_id, project_id, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
 			t1.fahrplan_id, 
 			pep.priority, 
 			'encoding' as ticket_type, 
-			'material needed' AS ticket_state, 
+			ticket_state_initial(param_project_id, 'encoding') AS ticket_state, 
 			pep.encoding_profile_version_id 
 		FROM 
 			tbl_project_encoding_profile pep
@@ -34,14 +34,14 @@ CREATE OR REPLACE FUNCTION create_missing_encoding_tickets(param_project_id bigi
 		ORDER BY t1.id ASC, ep.id ASC);
 		GET DIAGNOSTICS row_count = ROW_COUNT;
 	ELSE
-		INSERT INTO tbl_ticket (parent_id, project_id, title, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
+		INSERT INTO tbl_ticket (parent_id, project_id, fahrplan_id, priority, ticket_type, ticket_state, encoding_profile_version_id)
 		(SELECT 
 			t1.id as parent_id, 
 			t1.project_id, 
 			t1.fahrplan_id, 
 			pep.priority, 
 			'encoding' as ticket_type, 
-			'material needed' AS ticket_state, 
+			ticket_state_initial(param_project_id, 'encoding') AS ticket_state, 
 			pep.encoding_profile_version_id 
 		FROM 
 			tbl_project_encoding_profile pep

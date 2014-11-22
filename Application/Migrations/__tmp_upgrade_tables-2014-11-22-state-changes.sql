@@ -35,4 +35,8 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS set_encoding_ticket_state ON tbl_ticket;
 CREATE TRIGGER set_encoding_ticket_state BEFORE INSERT ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_encoding_ticket_state();
 
+\i 15_function_ticket_state.sql
+\i 10_function_create_missing_encoding_tickets.sql
+\i 14_function_create_missing_recording_tickets.sql
+
 
