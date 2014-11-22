@@ -21,3 +21,18 @@ $BODY$
 $BODY$
 LANGUAGE plpgsql VOLATILE;
 
+-- set inserted encoding tickets state to "ready to encode", if corresponding recording ticket is in "finalized"
+CREATE OR REPLACE FUNCTION set_encoding_ticket_state() RETURNS trigger AS $$
+BEGIN
+  IF NEW.ticket_type = 'encoding' AND 'finalized' = COALESCE(                                                                                                                        (SELECT ticket_state FROM tbl_ticket tt WHERE tt.ticket_type='recording' AND tt.parent_id=NEW.parent_id),
+    'scheduled') THEN
+    NEW.ticket_state := 'ready to encode';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS set_encoding_ticket_state ON tbl_ticket;
+CREATE TRIGGER set_encoding_ticket_state BEFORE INSERT ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_encoding_ticket_state();
+
+

@@ -157,8 +157,6 @@ CREATE TRIGGER inherit_fahrplan_id BEFORE INSERT OR UPDATE ON tbl_ticket FOR EAC
 
 -- update encoding tickets state to "ready to encode", if recording ticket changes state to "finalized"
 CREATE OR REPLACE FUNCTION update_encoding_ticket_state() RETURNS trigger AS $$
-DECLARE
-  profile record;
 BEGIN
   IF NEW.ticket_type = 'recording' AND NEW.ticket_state <> OLD.ticket_state AND NEW.ticket_state = 'finalized' THEN
     UPDATE tbl_ticket SET ticket_state = 'ready to encode' WHERE ticket_type = 'encoding' AND parent_id = NEW.parent_id AND ticket_state = 'material needed';
@@ -168,6 +166,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_encoding_ticket_state AFTER UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_encoding_ticket_state();
+
+-- set inserted encoding tickets state to "ready to encode", if corresponding recording ticket is in "finalized"
+CREATE OR REPLACE FUNCTION set_encoding_ticket_state() RETURNS trigger AS $$
+BEGIN
+  IF NEW.ticket_type = 'encoding' AND 'finalized' = COALESCE(
+    (SELECT ticket_state FROM tbl_ticket tt WHERE tt.ticket_type='recording' AND tt.parent_id=NEW.parent_id),
+    'scheduled') THEN
+    NEW.ticket_state := 'ready to encode';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_encoding_ticket_state BEFORE INSERT ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_encoding_ticket_state();
 
 -- ticket properties
 CREATE TABLE tbl_ticket_property
