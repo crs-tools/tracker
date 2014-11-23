@@ -26,7 +26,7 @@ echo '>'; ?>
 		
 		</span><span class="title"<?= (empty($ticket['parent_id']) and mb_strlen($ticket['title']) > 39)? ' aria-label="' . h($ticket['title']) . '" data-tooltip="true"' : ''; ?>>
 		
-		<?php $suffix = $ticket->titleSuffix();
+		<?php $suffix = $ticket->getTitleSuffix();
 		echo h(str_shorten(($suffix !== '')? $suffix : $ticket['title'], 39)); ?>
 		
 		</span><span class="state<?= (($ticket['failed'])? ' failed' : ''); ?>"><?= $ticket['ticket_state'] . (($ticket['failed'])? ' failed' : ''); ?>

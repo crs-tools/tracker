@@ -82,6 +82,10 @@
 			'Properties' => true
 		];
 		
+		public $fieldReader = [
+			'title' => true
+		];
+		
 		public static $priorities = [
 			'0.5' => 'low',
 			'0.75' => 'inferior',
@@ -144,11 +148,11 @@
 			return clone $this->_associatedEntries[$key];
 		}
 		
-		public function offsetGet($offset) {
-			$value = parent::offsetGet($offset);
+		public function getTitle() {
+			$value = $this->_entry['title'];
 			
-			if ($offset !== 'title' or $value !== null) {
-				return $value;
+			if ($value !== null) {
+				return $value; 
 			}
 			
 			if (!isset($this->_entry['parent_id'])) {
@@ -156,12 +160,12 @@
 			}
 			
 			$title = $this->Parent['title'];
-			$title .= ' (' . $this->titleSuffix() . ')';
+			$title .= ' (' . $this->getTitleSuffix() . ')';
 			
 			return $title;
 		}
 		
-		public function titleSuffix() {
+		public function getTitleSuffix() {
 			switch ($this->_entry['ticket_type']) {
 				case 'recording':
 					return 'Recording';

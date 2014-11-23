@@ -10,7 +10,7 @@
 					<?php if ($comment['referenced_ticket_id'] === $ticket['id']) {
 						echo 'this ticket';
 					} else {
-						echo $this->linkTo('tickets', 'view', $comment->ReferencedTicket, $project, h($comment->ReferencedTicket->titleSuffix()));
+						echo $this->linkTo('tickets', 'view', $comment->ReferencedTicket, $project, h($comment->ReferencedTicket->getTitleSuffix()));
 					} ?>
 				</span>
 			<?php endif; ?>
