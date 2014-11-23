@@ -136,12 +136,17 @@
 				]])
 				->select('ticket_type, ticket_state, service_executable')
 				->orderBy('ticket_type, sort');
-
-			if (
-				$this->stateForm->wasSubmitted() and
-				$this->project->save($this->stateForm->getValues())
-			) {
-				$this->flashNow('States updated');
+			
+			if ($this->stateForm->wasSubmitted()) {
+				if ($this->project->save($this->stateForm->getValues())) {
+					$this->project->updateTicketStates();
+					$this->flashNow('States updated');
+				} else {
+					$this->flashNow(
+						'Failed to update states, ensure no tickets remain' .
+						'in affected states'
+					);
+				}
 			}
 			
 			return $this->render('projects/settings/states');
@@ -251,6 +256,8 @@
 			if (!$project->save()) {
 				return $this->redirect('projects', 'settings', $this->project);
 			}
+			
+			$project->updateTicketStates();
 			
 			$this->flash('Project duplicated');
 			return $this->redirect('projects', 'edit', $project);

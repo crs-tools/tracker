@@ -76,6 +76,13 @@
 				->limit(1);
 		}
 		
+		public function updateTicketStates() {
+			Database::$Instance->query(
+				'SELECT update_all_tickets_progress_and_next_state(?)',
+				[$this['id']]
+			);
+		}
+		
 		public function updateEncodingProfilePriority($versionId, $priority) {
 			return Database_Query::updateTable(
 				'tbl_project_encoding_profile',
