@@ -12,6 +12,9 @@
 		
 		const CREATE_IF_NOT_EXISTS = true;
 		
+		const TYPE_WITH_VIRTUAL = 'VirtualProperties';
+		const TYPE_WITH_VIRTUAL_MERGED = 'MergedProperties';
+		
 		public $belongsTo = [
 			'Ticket' => [
 				'foreign_key' => ['ticket_id']
@@ -67,16 +70,66 @@
 		}
 	}
 	
+	class TicketPropertyAssocation {
+		
+		protected $_parent;
+		protected $_type;
+		
+		public function __construct(Model $parent, $type = TicketProperties::TYPE_WITH_VIRTUAL) {
+			$this->_parent = $parent;
+			$this->_type = $type;
+		}
+		
+		public function init(array $parent, Model_Resource $parentResource = null) {
+			$resource = new TicketPropertyResource(
+				new TicketProperties(),
+				$this,
+				$this->_parent
+			);
+			
+			if ($this->isMerged()) {
+				$include = [$parent['id']];
+				
+				if (!empty($parent['parent_id'])) {
+					$include[] = $parent['parent_id'];
+				}
+				
+				if ($parent['ticket_type'] === 'encoding') {
+					$source = $this->_parent
+						->Parent
+						->Source;
+					
+					if ($source !== null) {
+						$include[] = $source['id'];
+					}
+				}
+			} else {
+				$resource->where(['ticket_id' => $parent['id']]);
+			}
+			
+			return $resource;
+		}
+		
+		public function isMerged() {
+			return $this->_type == TicketProperties::TYPE_WITH_VIRTUAL_MERGED;
+		}
+		
+	}
+	
 	class TicketPropertyResource extends Model_Resource {
 		
+		protected $_association;
 		protected $_parentTicket;
-		private $_mergeProperties = false;
 		
-		public function __construct(Model $parentModel, Ticket $parentTicket, $merge = false) {
+		public function __construct(
+			Model $parentModel,
+			TicketPropertyAssocation $association,
+			Ticket $parentTicket
+		) {
 			parent::__construct($parentModel);
 			
+			$this->_association = $association;
 			$this->_parentTicket = $parentTicket;
-			$this->_mergeProperties = (bool) $merge;
 		}
 		
 		/*
@@ -109,7 +162,7 @@
 			
 			parent::load();
 			
-			if ($this->_mergeProperties) {
+			if ($this->_association->isMerged()) {
 				$this->_mergeProperties();
 			}
 			
@@ -143,7 +196,7 @@
 				];
 			}
 			
-			if ($this->_parentTicket['ticket_type'] === 'meta' or $this->_mergeProperties) {
+			if ($this->_parentTicket['ticket_type'] === 'meta' or $this->_association->isMerged()) {
 				if (!isset($index['Fahrplan.ID'])) {
 					$this->_entries[] = [
 						'name' => 'Fahrplan.ID',
@@ -155,7 +208,7 @@
 				if (!isset($index['Fahrplan.Title'])) {
 					$this->_entries[] = [
 						'name' => 'Fahrplan.Title',
-						'value' => ($this->_parentTicket['ticket_type'] === 'meta' or !$this->_mergeProperties)?
+						'value' => ($this->_parentTicket['ticket_type'] === 'meta' or !$this->_association->isMerged())?
 							$this->_parentTicket['title'] :
 							$this->_parentTicket->Parent['title'],
 						'virtual' => true
@@ -163,7 +216,7 @@
 				}
 			}
 			
-			if ($this->_mergeProperties) {
+			if ($this->_association->isMerged()) {
 				if (!isset($index['Project.Slug'])) {
 					$this->_entries[] = [
 						'name' => 'Project.Slug',

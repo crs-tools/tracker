@@ -131,7 +131,7 @@
 					->MergedProperties;
 			} else {
 				$this->properties = $this->ticket
-					->Properties;
+					->VirtualProperties;
 			}
 			
 			if (!empty($this->ticket['encoding_profile_version_id'])) {
@@ -426,17 +426,17 @@
 				->indexBy('language', 'description');
 			
 			$this->properties = $this->ticket
-				->Properties;
+				->VirtualProperties;
 			
 			$this->parentProperties = $this->ticket
 				->Parent
-				->Properties;
+				->VirtualProperties;
 			
 			if ($this->ticket['ticket_type'] !== 'recording') {
 				$this->recordingProperties = $this->ticket
 					->Parent
 					->Source
-					->Properties;
+					->VirtualProperties;
 			}
 			
 			if ($action === 'check') {
@@ -881,7 +881,6 @@
 				$ticket['title'] = 'Duplicate of ' . $ticket['title'];
 				
 				// Copy properties
-				
 				$ticket['properties'] = $this->ticket
 					->Properties
 					->toArray();

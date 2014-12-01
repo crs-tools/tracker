@@ -105,47 +105,19 @@
 			'abstract' => 'Fahrplan.Abstract'
 		];
 		
-		public function __get($key) {
-			if (isset($this->_associatedEntries[$key])) {
-				return parent::__get($key);
+		public function getAssociations(array $including = null, array $types = ['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany']) {
+			if (
+				!isset($including[TicketProperties::TYPE_WITH_VIRTUAL]) and
+				!isset($including[TicketProperties::TYPE_WITH_VIRTUAL_MERGED])
+			) {
+				return parent::getAssociations($including, $types);
 			}
 			
-			if ($key !== 'Properties' and $key !== 'MergedProperties') {
-				return parent::__get($key);
-			}
+			$key = key($including);
 			
-			$this->_associatedEntries[$key] = new TicketPropertyResource(
-				new TicketProperties(),
-				$this,
-				$key === 'MergedProperties'
-			);
-			
-			$ticketId = $this->_entry['id'];
-			
-			if ($key === 'MergedProperties') {
-				$ticketId = [$ticketId];
-				
-				if (!empty($this->_entry['parent_id'])) {
-					$ticketId[] = $this->_entry['parent_id'];
-				}
-				
-				if ($this->_entry['ticket_type'] === 'encoding') {
-					$source = $this
-						->Parent
-						->Source;
-					
-					if ($source !== null) {
-						$ticketId[] = $source['id'];
-					}
-				}
-			}
-			
-			$this->_associatedEntries[$key]
-				->where([
-					'ticket_id' => $ticketId
-				]);
-			
-			return clone $this->_associatedEntries[$key];
+			return [
+				$key => new TicketPropertyAssocation($this, $key)
+			];
 		}
 		
 		public function getTitle() {
