@@ -103,6 +103,8 @@
 						$include[] = $source['id'];
 					}
 				}
+				
+				$resource->where(['ticket_id' => $include]);
 			} else {
 				$resource->where(['ticket_id' => $parent['id']]);
 			}
