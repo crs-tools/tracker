@@ -2077,6 +2077,8 @@ ul.worker-groups li {
   float: left;
   list-style-type: none;
   border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  display: -webkit-flex;
 }
 
 ul.worker-groups li input.checkbox {
@@ -2084,12 +2086,20 @@ ul.worker-groups li input.checkbox {
 }
 
 ul.worker-groups li label {
+  flex: 1;
+  -webkit-flex: 1;
+  height: 27px;
+  margin-right: 15px;
 	font-size: 1.2em;
+  line-height: 27px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 ul.worker-groups li a {
-  float: right;
-  margin: 4px 20px 0 0;
+/*  float: right;*/
+  margin: 5px 10px 0 0;
 }
 
 ul.worker-groups + input.submit {

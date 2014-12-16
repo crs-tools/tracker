@@ -1,7 +1,8 @@
 <?php
 	
 	requires(
-		'/Model/Worker'
+		'/Model/Worker',
+		'/Model/ProjectWorkerGroupFilter'
 	);
 	
 	class WorkerGroup extends Model {
@@ -22,6 +23,20 @@
 				'via' => 'tbl_project_worker_group'
 			]
 		];
+		
+		public static function worker_group_filter_count(Model_Resource $resource, Project $project) {
+			$resource->andSelect(
+				Database_Query::selectFrom(
+					ProjectWorkerGroupFilter::TABLE,
+					'COUNT(*)'
+				)
+					->where([
+						'worker_group_id = ' . self::TABLE . '.id',
+						'project_id' => $project['id']
+					])
+					->selectAs('filter_count')
+			);
+		}
 		
 	}
 	

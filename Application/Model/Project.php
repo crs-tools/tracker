@@ -20,6 +20,11 @@
 				'class_name' => 'ProjectLanguages',
 				'foreign_key' => ['project_id'],
 				'select' => 'language, description'
+			],
+			// Small hack, belongs to two Models, but we use project only
+			'WorkerGroupFilter' => [
+				'class_name' => 'ProjectWorkerGroupFilter',
+				'foreign_key' => ['project_id']
 			]
 		];
 		
@@ -50,7 +55,8 @@
 			'Languages' => true,
 			'Properties' => true,
 			'States' => true,
-			'WorkerGroup' => true
+			'WorkerGroup' => true,
+			'WorkerGroupFilter' => true
 		];
 		
 		public function hasState($type, $state) {

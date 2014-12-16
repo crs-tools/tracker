@@ -1242,10 +1242,19 @@ var Tracker = {};
           .attr({
             'type': 'text',
             'name': this.create.value.replace('[]', '[' + (lastIndex + 1) + ']'),
-            'class': 'text',
+            'class': 'text wide',
             'data-property-index': lastIndex + 1
           })
           .appendTo(container);
+        
+        this.create.hidden.each(function(i, hidden) {
+          $(hidden)
+            .clone()
+            .attr('name', function(i, name) {
+              return name.replace('[]', '[' + (lastIndex + 1) + ']');
+            })
+            .appendTo(container);
+        });
         
         $('<a></a>')
           .attr({
@@ -1271,7 +1280,8 @@ var Tracker = {};
     this.description = this.list.data('properties-description') || 'property';
     this.create = {
       key: this.list.data('properties-create-key') || 'key',
-      value: this.list.data('properties-create-value') || 'value'
+      value: this.list.data('properties-create-value') || 'value',
+      hidden: this.list.find('[data-properties-hidden="true"]').detach()
     };
     
     this.keys = [];

@@ -17,11 +17,23 @@
 					] +
 					((isset($properties['placeholder']))? ['placeholder' => $properties['placeholder']] : [])
 				);
-				$f->register($properties['field'] . '[' . $index . '][_destroy]') ?>
+				$f->register($properties['field'] . '[' . $index . '][_destroy]');
+				
+				if (isset($properties['hidden'])) {
+					foreach ($properties['hidden'] as $key => $value) {
+						echo $f->hidden($properties['field'] . '[' . $index . '][' . $key . ']', $value);
+					}
+				} ?>
 			</li>
 		<?php endforeach;
 	endif;
 	
 	$f->register($properties['field'] . '[][' . $properties['key'] . ']');
-	$f->register($properties['field'] . '[][' . $properties['value'] . ']'); ?>
+	$f->register($properties['field'] . '[][' . $properties['value'] . ']');
+	
+	if (isset($properties['hidden'])) {
+		foreach ($properties['hidden'] as $key => $value) {
+			echo $f->hidden($properties['field'] . '[][' . $key . ']', $value, ['data-properties-hidden' => true]);
+		}
+	} ?>
 </ul>

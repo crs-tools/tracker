@@ -22,8 +22,16 @@
 					false
 				); ?>
 				
+				<?= $this->linkTo(
+					'projects', 'edit_filter', $group, $project,
+					($group['filter_count'] > 0)?
+						(($group['filter_count'] === 1)?
+							'Edit 1 filter' : 'Edit ' . $group['filter_count'] . ' filters') 
+						: 'Add filter'
+				); ?>
+				
 				<?php if (User::isAllowed('workers', 'queue')) {
-					echo $this->linkTo('workers', 'queue', $group, 'Show queue');
+					echo $this->linkTo('workers', 'queue', $group, 'Queue');
 				} ?>
 			</li>
 		<?php $f->register('WorkerGroup[' . $index . '][_destroy]');

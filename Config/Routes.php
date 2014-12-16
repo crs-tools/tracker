@@ -32,6 +32,7 @@
 	':project_slug/settings/encoding/profiles' => ['projects', 'profiles'],
 	':project_slug/settings/states' => ['projects', 'states'],
 	':project_slug/settings/worker' => ['projects', 'worker'],
+	':project_slug/settings/worker/filter/:id/edit' => ['projects', 'edit_filter'],
 	
 	'encoding/profiles' => ['encodingprofiles', 'index'],
 	'encoding/profile/create' => ['encodingprofiles', 'create'],

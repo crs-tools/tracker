@@ -41,7 +41,7 @@
 	<?php endif; ?>
 	
 	<?php if (User::isAllowed('projects', 'worker')): ?>
-		<li<?= ($arguments['action'] === 'worker')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'worker', $project, 'Worker groups', ['class' => 'worker']); ?></li>
+		<li<?= ($arguments['action'] === 'worker' or $arguments['action'] === 'edit_filter')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'worker', $project, 'Worker groups', ['class' => 'worker']); ?></li>
 	<?php endif; ?>
 	
 	<?php /*<li<?= ($arguments['action'] === 'webhooks')? ' class="current"' : ''; ?>><?= $this->linkTo('projects', 'webhooks', $project, 'Webhooks', ['class' => 'hooks']); ?></li>*/ ?>

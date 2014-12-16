@@ -12,7 +12,8 @@
 		'/Model/TicketState',
 		'/Model/ProjectTicketState',
 		
-		'/Model/WorkerGroup'
+		'/Model/WorkerGroup',
+		'/Model/ProjectWorkerGroupFilter'
 	);
 	
 	class Controller_Projects extends Controller_Application {
@@ -162,7 +163,10 @@
 			}
 			
 			$this->workerGroups = WorkerGroup::findAll()
-				->select('id, title');
+				->select('id, title')
+				->scoped([
+					'worker_group_filter_count' => [$this->project]
+				]);
 			$this->workerGroupAssignment = $this->project
 				->WorkerGroup
 				->select(WorkerGroup::TABLE . '.id')
@@ -170,6 +174,26 @@
 				->toArray();
 			
 			return $this->render('projects/settings/worker');
+		}
+		
+		public function edit_filter(array $arguments) {
+			$this->workerGroup = WorkerGroup::findOrThrow($arguments['id']);
+			$this->workerGroupFilter = ProjectWorkerGroupFilter::findAll()
+				->where([
+					'project_id' => $this->project['id'],
+					'worker_group_id' => $this->workerGroup['id']
+				]);
+			
+			$this->project['worker_group_id'] = $this->workerGroup['id'];
+			
+			$this->form();
+			
+			if ($this->form->wasSubmitted()) {
+				// TODO: capture DuplicateKeyException, flash
+				$this->project->save($this->form->getValues());
+			}
+			
+			return $this->render('projects/settings/filter/edit');
 		}
 		
 		public function create() {
@@ -234,6 +258,7 @@
 			// Ensure unique slug
 			$i = 0;
 			
+			// TODO: Move to Model?
 			do {
 				$i++;
 				$slug = 'duplicate-' . (($i > 1)? ($i . '-') : '') .
