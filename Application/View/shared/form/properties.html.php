@@ -21,7 +21,11 @@
 				
 				if (isset($properties['hidden'])) {
 					foreach ($properties['hidden'] as $key => $value) {
-						echo $f->hidden($properties['field'] . '[' . $index . '][' . $key . ']', $value);
+						if (is_int($key)) {
+							echo $f->hidden($properties['field'] . '[' . $index . '][' . $value . ']', $property[$value]);
+						} else {
+							echo $f->hidden($properties['field'] . '[' . $index . '][' . $key . ']', $value);
+						}
 					}
 				} ?>
 			</li>
@@ -33,6 +37,10 @@
 	
 	if (isset($properties['hidden'])) {
 		foreach ($properties['hidden'] as $key => $value) {
+			if (is_int($key)) {
+				continue;
+			}
+			
 			echo $f->hidden($properties['field'] . '[][' . $key . ']', $value, ['data-properties-hidden' => true]);
 		}
 	} ?>

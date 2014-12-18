@@ -29,6 +29,7 @@ $this->title(($hasFilter)? 'Edit Filter | ' : 'Add Filter | '); ?>
 				'value' => 'property_value',
 				
 				'hidden' => [
+					'id',
 					'worker_group_id' => $workerGroup['id']
 				]
 			]

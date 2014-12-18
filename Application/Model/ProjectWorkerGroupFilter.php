@@ -5,6 +5,7 @@
 		const TABLE = 'tbl_project_worker_group_filter';
 		
 		public $primaryKey = [
+			'id',
 			'project_id',
 			'worker_group_id',
 			'property_key'
