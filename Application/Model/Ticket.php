@@ -127,6 +127,10 @@
 		}
 		
 		public function getTitle() {
+			if (!array_key_exists('title', $this->_entry)) {
+				return null;
+			}
+			
 			$value = $this->_entry['title'];
 			
 			if ($value !== null) {
@@ -464,8 +468,7 @@
 				$changes['Properties'] = [];
 				$properties = $ticket->_entry['Properties'];
 				
-				// Hack to get Properties without virtual
-				foreach (parent::__get('Properties')->indexBy('name') as $name => $property) {
+				foreach ($this->Properties->indexBy('name') as $name => $property) {
 					if (!isset($properties[$name])) {
 						$changes['Properties'][] = [
 							'name' => $name,
