@@ -105,6 +105,12 @@
 			'abstract' => 'Fahrplan.Abstract'
 		];
 		
+		private static $_virtualPropertyConditions = [
+			'Record.StartedBefore' => 'time_start < ?',
+			'Record.EndedAfter' => 'time_end > ?',
+			'Record.EndedBefore' => 'time_end < ?'
+		];
+		
 		public function getAssociations(array $including = null, array $types = ['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany']) {
 			if (
 				!isset($including[TicketProperties::TYPE_WITH_VIRTUAL]) and
@@ -343,6 +349,19 @@
 				'ticket_state != ? AND (recording.id IS NULL or recording.ticket_state != ?)',
 				['locked', 'locked']
 			);
+		}
+		
+		public static function virtual_property_filter(Model_Resource $resource, array $filters) {
+			foreach ($filters as $property => $condition) {
+				if (!isset(self::$_virtualPropertyConditions[$property])) {
+					continue;
+				}
+				
+				$resource->where(
+					self::$_virtualPropertyConditions[$property],
+					[$condition]
+				);
+			}
 		}
 		
 		/*

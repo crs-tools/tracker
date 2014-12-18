@@ -25,7 +25,8 @@
 			'EncodingProfile.Extension'
 		];
 		
-		private $_projects = [];
+		private $_workerGroup;
+		private $_assignedProjects = [];
 		
 		public function __construct() {
 			// TODO: move to Controller_XMLRPC
@@ -38,15 +39,15 @@
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');
 			}
 			
-			if (!$group = WorkerGroup::findBy(array('token' => $_GET['group']))) {
+			if (!$this->_workerGroup = WorkerGroup::findBy(array('token' => $_GET['group']))) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
 			}
 
 			$signature = array_pop($this->arguments);
-			if (!self::_validateSignature($group['secret'], $signature, array_merge(array(
+			if (!self::_validateSignature($this->_workerGroup['secret'], $signature, array_merge(array(
 				$this->Request->getURL(),
 				self::XMLRPC_PREFIX . $method,
-				$group['token'],
+				$this->_workerGroup['token'],
 				$_GET['hostname']),
 				$this->arguments))) {
 				return $this->_XMLRPCFault(-32500, 'invalid or missing signature');
@@ -57,19 +58,19 @@
 			if (!$this->worker = Worker::findBy(array('name' => $name))) {
 				$this->worker = Worker::create(array(
 					'name' => $name,
-					'worker_group_id' => $group['id']
+					'worker_group_id' => $this->_workerGroup['id']
 				));
 			} else {
-				if ($this->worker['worker_group_id'] !== $group['id']) {
+				if ($this->worker['worker_group_id'] !== $this->_workerGroup['id']) {
 					// update group id, if mismatching with group related to given credentials
-					$this->worker->save(['worker_group_id' => $group['id']]);
+					$this->worker->save(['worker_group_id' => $this->_workerGroup['id']]);
 				}
 				
 				$this->worker->touch(['last_seen']);
 			}
 
 			// store projects ids of projects assigned to parent worker group
-			$this->_assignedProjects = $group
+			$this->_assignedProjects = $this->_workerGroup
 				->Project
 				->where(['read_only' => false])
 				->pluck('id');
@@ -345,56 +346,52 @@
 		 *
 		 * First ticket found gets assigned to calling user and state transition to $state is performed.
 		 *
-		 * @param string ticket_type type of ticket
-		 * @param string ticket_state ticket state the returned ticket will be in after this call
-		 * @param array filter_parameters return only tickets matching given properties
+		 * @param string ticketType type of ticket
+		 * @param string ticketState ticket state the returned ticket will be in after this call
+		 * @param array propertyFilters return only tickets matching given properties
 		 * @return array ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
-		public function assignNextUnassignedForState($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
-			/* TODO reintroduce worker hold
-			if(!$this->checkReadOnly()) {
-				return false;
-			}*/
-
-			if(empty($ticket_type) || empty($ticket_state)) {
-				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
+		public function assignNextUnassignedForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
+			if (empty($ticketType) || empty($ticketState)) {
+				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
 			}
-
+			
 			// create query: find all tickets in state
 			$tickets = Ticket::findAll(['State'])
 				->from('view_serviceable_tickets', 'tbl_ticket')
-				->where(array('project_id' => $this->_assignedProjects, 'ticket_type' => $ticket_type, 'next_state' => $ticket_state, 'next_state_service_executable' => 1))
+				->where([
+					'project_id' => $this->_assignedProjects,
+					'ticket_type' => $ticketType,
+					'next_state' => $ticketState,
+					'next_state_service_executable' => 1
+				])
+				->scoped([
+					'virtual_property_filter' => $propertyFilters
+				])
 				->orderBy('ticket_priority(id) DESC');
-
-			// filter out virtual conditions used for further where conditions
-			$virtualConditions = array(
-				'Record.StartedBefore' => 'time_start < ?',
-				'Record.EndedAfter' => 'time_end > ?',
-				'Record.EndedBefore' => 'time_end < ?'
+			
+			$this->_workerGroup->filterTickets(
+				$this->_assignedProjects,
+				$tickets
 			);
-
-			// extract virtual filter properties
-			if(!empty($filter_properties)) {
-				Log::debug('got property filter: '.var_export($filter_properties,true));
-				foreach($virtualConditions as $property => $condition) {
-					if(array_key_exists($property, $filter_properties)) {
-						Log::debug('found property '.$property);
-						$tickets->where($condition,array($filter_properties[$property]));
-						unset($filter_properties[$condition]);
-					}
-				}
+			
+			$ticket = $tickets->first();
+			
+			if ($ticket === null) {
+				return false;
 			}
-
+			
 			// check again if we still need to filter tickets properties
-			if(empty($filter_properties)) {
+			/*
+			if(empty($propertyFilter)) {
 				$ticket = $tickets->first();
 			} else {
 				foreach($tickets as $_ticket) {
 					$ticket = $_ticket;
 					$properties = $this->getTicketProperties($_ticket['id']);
 					foreach($properties as $name => $value) {
-						if(array_key_exists($name,$filter_properties) && $filter_properties[$name] != $value) {
+						if(array_key_exists($name,$propertyFilter) && $propertyFilter[$name] != $value) {
 							// if property mismatch, invalidate current ticket guess
 							$ticket = null;
 							break;
@@ -405,11 +402,8 @@
 					}
 				}
 			}
+			*/
 			
-			if (empty($ticket)) {
-				return false;
-			}
-
 			/* TODO handling abandoned tickets after timeout
 			 if(!$ticket = $this->Ticket->findUnassignedByState($service['from'], 1)) {
 				// no matching ticket found
@@ -430,26 +424,26 @@
 				$from_state_id = $service['from'];
 				$from_user_id = null;
 			}*/
-
-			$log_entry = array(
+			
+			$logEntry = [
 				'ticket_id' => $ticket['id'],
 				'handle_id' => $this->worker['id'],
 				'from_state' => $ticket['ticket_state'],
 				'to_state' => $ticket['next_state'],
 				'event' => 'RPC.'.__FUNCTION__
-			);
+			];
 			
 			$saved = $ticket->save(
 				// assign to worker with new state
-				array(
+				[
 					'handle_id' => $this->worker['id'],
 					'ticket_state' => $ticket['next_state']
-				),
+				],
 				// ensure ticket is not assigned yet and in the right state
-				array(
+				[
 					'handle_id' => null,
 					'ticket_state' => $ticket['ticket_state']
-				)
+				]
 			);
 			
 			if (!$saved) {
@@ -457,7 +451,7 @@
 				return false;
 			}
 
-			LogEntry::create($log_entry);
+			LogEntry::create($logEntry);
 			
 			return $ticket->toArray();
 		}
@@ -471,38 +465,31 @@
 		 * @return array ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
-		public function getAssignedForState($ticket_type = '', $ticket_state = '', $filter_properties = array()) {
-			/* TODO reintroduce worker hold
-			if(!$this->checkReadOnly()) {
-				return false;
-			}*/
-
-			if(empty($ticket_type) || empty($ticket_state)) {
-				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing',401);
+		public function getAssignedForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
+			if (empty($ticketType) || empty($ticketState)) {
+				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
 			}
-
+			
 			// create query: find all tickets in state
-			$tickets = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(array('handle_id' => $this->worker['id'], 'ticket_type' => $ticket_type, 'ticket_state' => $ticket_state));
-
-			// filter out virtual conditions used for further where conditions
-			$virtualConditions = array(
-				'Record.StartedBefore' => 'time_start < ?',
-				'Record.EndedAfter' => 'time_end > ?',
-				'Record.EndedBefore' => 'time_end < ?'
+			$tickets = Ticket::findAll(['State'])
+				->from('view_serviceable_tickets', 'tbl_ticket')
+				->where([
+					'handle_id' => $this->worker['id'],
+					'ticket_type' => $ticketType,
+					'ticket_state' => $ticketState
+				])
+				->scoped([
+					'virtual_property_filter' => $propertyFilters
+				]);
+			
+			$this->_workerGroup->filterTickets(
+				$this->_assignedProjects,
+				$tickets
 			);
-
-			// extract virtual filter properties
-			if(!empty($filter_properties)) {
-				Log::debug('got property filter: '.var_export($filter_properties,true));
-				foreach($virtualConditions as $property => $condition) {
-					if(array_key_exists($property, $filter_properties)) {
-						Log::debug('found property '.$property);
-						$tickets->where($condition,array($filter_properties[$property]));
-						unset($filter_properties[$condition]);
-					}
-				}
-			}
-
+			
+			return $tickets->toArray();
+			
+			/*
 			// check again if we still need to filter tickets properties
 			$tickets_matching = array();
 			if(empty($filter_properties)) {
@@ -526,6 +513,7 @@
 			}
 
 			return $tickets_matching;
+			*/
 		}
 
 		/**
