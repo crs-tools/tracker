@@ -1353,22 +1353,6 @@ var Tracker = {};
             .appendTo(ul.prev('h3'));
         });
       
-      $('#ticket-import-list ul.tickets li:not(.table)')
-        .prepend(
-          $('<input></input>')
-            .attr({
-              'type': 'checkbox',
-              'class': 'ticket-search-edit-select',
-              'checked': true
-            })
-            .change(function(event) {
-              $(event.target)
-                .parent('li')
-                .find('input[type=hidden]')
-                .attr('disabled', !event.target.checked);
-            })
-        );
-      
       // Invert selection button
       $('<a></a>')
         .attr('href', '#')

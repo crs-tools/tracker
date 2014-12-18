@@ -265,6 +265,29 @@
 				'import', 'apply', $this->import, $this->project
 			);
 			
+			$changes = [];
+			
+			foreach (['new', 'changed', 'deleted'] as $type) {
+				foreach ($diff[$type] as $ticket) {
+					$ticket = $ticket->toArray();
+					
+					if ($type === 'new') {
+						$ticket['ticket_type'] = 'meta';
+						// TODO: initial state
+						$ticket['ticket_state'] = 'staging';
+						
+						$changes['+' . $ticket['fahrplan_id']] = $ticket;
+						continue;
+					}
+					
+					$changes['~' . $ticket['id']] = $ticket;
+				}
+			}
+			
+			$import->save([
+				'changes' => json_encode($changes)
+			]);
+			
 			$this->diff = $diff;
 			return $this->render('import/review');
 		}
@@ -285,19 +308,25 @@
 				);
 			}
 			
-			$values = $this->form->getValues();
+			$changes = json_decode($import['changes'], true);
+			
+			if ($this->form->getValue('selected')) {
+				$changes = array_intersect_key(
+					$changes,
+					array_filter($this->form->getValue('selected'))
+				);
+			} else {
+				$changes = [];
+			}
 			
 			Database::$Instance->beginTransaction();
 			
-			if (!empty($values['tickets'])) {
-				foreach ($values['tickets'] as $ticket) {
+			if (!empty($changes)) {
+				foreach ($changes as $ticket) {
 					$ticket = new Ticket(array_merge(
 						[
 							'project_id' => $this->project['id'],
-							'import_id' => $import['id'],
-							// FIXME: only for new tickets?!
-							'ticket_type' => 'meta',
-							'ticket_state' => 'staging' // TODO: initial state
+							'import_id' => $import['id']
 						],
 						$ticket
 					));
@@ -338,6 +367,16 @@
 			if ($import['rooms'] === null) {
 				$this->flash('Please select rooms first');
 				$this->redirect('import', 'rooms', $import, $this->project);
+				return false;
+			}
+			
+			if ($step === 'review') {
+				return true;
+			}
+			
+			if ($import['changes'] === null) {
+				$this->flash('Please review changes');
+				$this->redirect('import', 'review', $import, $this->project);
 				return false;
 			}
 			

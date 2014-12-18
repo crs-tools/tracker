@@ -7,6 +7,7 @@ CREATE TABLE tbl_import
   xml xml NOT NULL,
   version character varying(128) NOT NULL,
   rooms json,
+  changes json,
   created timestamp with time zone NOT NULL,
   finished timestamp with time zone,
   PRIMARY KEY (id),

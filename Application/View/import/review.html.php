@@ -6,13 +6,13 @@
 		<ul class="tickets">
 			<?php foreach ($diff['new'] as $ticket): ?>
 				<li>
+					<?= $f->checkbox('selected[+' . $ticket['fahrplan_id'] . ']', null, true, ['class' => 'ticket-search-edit-select']); ?>
 					<a class="link">
 						<span class="vid"><?= h($ticket['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate($ticket['title'], 45, '…')); ?></span>
 					</a>
 					<span class="other">
 					</span>
-					<?= $this->render('import/_inputs', ['f' => $f, 'ticket' => $ticket, 'index' => $index]); ?>
 				</li>
 				
 				<?php if (!empty($ticket['Properties'])): ?>
@@ -36,6 +36,7 @@
 		<ul class="tickets">
 			<?php foreach ($diff['changed'] as $id => $ticket): ?>
 				<li>
+					<?= $f->checkbox('selected[~' . $ticket['id'] . ']', null, true, ['class' => 'ticket-search-edit-select']); ?>
 					<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 						<span class="vid"><?= h($currentState[$ticket['id']]['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate((!empty($ticket['title']))? $ticket['title'] : $currentState[$ticket['id']]['title'], 45, '…')); ?></span>
@@ -43,7 +44,6 @@
 					</a>
 					<span class="other">
 					</span>
-					<?= $this->render('import/_inputs', ['f' => $f, 'ticket' => $ticket, 'index' => $index]); ?>
 				</li>
 				
 				<li class="table">
@@ -97,6 +97,7 @@
 		<ul class="tickets">
 			<?php foreach ($diff['deleted'] as $id => $ticket): ?>
 				<li>
+					<?= $f->checkbox('selected[~' . $ticket['id'] . ']', null, false, ['class' => 'ticket-search-edit-select']); ?>
 					<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 						<span class="vid"><?= h($currentState[$ticket['id']]['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate((!empty($ticket['title']))? $ticket['title'] : $currentState[$ticket['id']]['title'], 45, '…')); ?></span>
@@ -104,7 +105,6 @@
 					</a>
 					<span class="other">
 					</span>
-					<?= $this->render('import/_inputs', ['f' => $f, 'ticket' => $ticket, 'index' => $index]); ?>
 				</li>
 			<?php $index++; endforeach; ?>
 		</ul>
