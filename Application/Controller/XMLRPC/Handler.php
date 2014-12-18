@@ -367,7 +367,7 @@
 					'next_state_service_executable' => 1
 				])
 				->scoped([
-					'virtual_property_filter' => $propertyFilters
+					'virtual_property_filter' => [$propertyFilters]
 				])
 				->orderBy('ticket_priority(id) DESC');
 			
@@ -479,7 +479,7 @@
 					'ticket_state' => $ticketState
 				])
 				->scoped([
-					'virtual_property_filter' => $propertyFilters
+					'virtual_property_filter' => [$propertyFilters]
 				]);
 			
 			$this->_workerGroup->filterTickets(
