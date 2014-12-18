@@ -294,6 +294,8 @@
 					$ticket = new Ticket(array_merge(
 						[
 							'project_id' => $this->project['id'],
+							'import_id' => $import['id'],
+							// FIXME: only for new tickets?!
 							'ticket_type' => 'meta',
 							'ticket_state' => 'staging' // TODO: initial state
 						],

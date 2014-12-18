@@ -92,6 +92,7 @@ CREATE TABLE tbl_ticket
   id bigserial NOT NULL,
   parent_id bigint,
   project_id bigint NOT NULL,
+  import_id bigint,
   title text,
   fahrplan_id integer NOT NULL,
   priority real NOT NULL DEFAULT 1,
@@ -117,6 +118,9 @@ CREATE TABLE tbl_ticket
   CONSTRAINT tbl_ticket_project_fk FOREIGN KEY (project_id)
       REFERENCES tbl_project (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT tbl_ticket_import_fk FOREIGN KEY (import_id)
+        REFERENCES tbl_import (id) MATCH SIMPLE
+        ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT tbl_ticket_state_fk FOREIGN KEY (ticket_type, ticket_state, project_id)
       REFERENCES tbl_project_ticket_state (ticket_type, ticket_state, project_id) MATCH SIMPLE
       ON UPDATE RESTRICT ON DELETE RESTRICT,
