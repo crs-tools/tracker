@@ -1276,6 +1276,10 @@ ul.tickets li.child, ul.tickets li.child a.link, ul.tickets li.child span.other 
 	height: 29px;
 }
 
+ul.tickets li.filtered {
+  opacity: 0.25;
+}
+
 ul.tickets li a.link {
 	display: block;
 	height: 39px;

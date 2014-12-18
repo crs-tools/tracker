@@ -9,7 +9,8 @@
 		'/Model/Ticket',
 		
 		'/Model/Worker',
-		'/Model/WorkerGroup'
+		'/Model/WorkerGroup',
+		'/Model/ProjectWorkerGroupFilter'
 	);
 	
 	class Controller_Workers extends Controller_Application {
@@ -26,13 +27,18 @@
 		public function queue(array $arguments) {
 			$this->group = WorkerGroup::findOrThrow($arguments['id']);
 			
+			$projects = $this->group->Project->pluck('id');
 			$tickets = Ticket::findAll()
 				->from('view_serviceable_tickets', 'tbl_ticket')
 				->where([
-					'project_id' => $this->group->Project->pluck('id'),
+					'project_id' => $projects,
 					'next_state_service_executable' => true
-				])
-				->pluck('id');
+				]);
+						
+			$this->filtered = $this->group
+				->getFilteredTickets($projects, $tickets);
+			
+			$tickets = $tickets->pluck('id');
 			
 			if (!empty($tickets)) {
 				$this->queue = Ticket::findAll()

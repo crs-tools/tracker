@@ -1,20 +1,38 @@
 <?php // this is currently need for the queue as it's not embedded in a project
 if (!isset($project)) {
 	$project = $ticket->Project;
-} ?>
-
-<?php echo '<li data-id="' . h($ticket['id']) . '" ' .
-	'data-fahrplan-id="' . h($ticket['fahrplan_id']) . '" ' .
-	'data-ticket-type="' . h($ticket['ticket_type']) . '"';
-
-if (empty($ticket['parent_id'])) {
-	echo ' data-title="' . h($ticket['title']) . '"';
-} else {
-	echo ' class="' .
-		((!empty($simulateTickets))? 'no-properties' : 'child') . '"';
 }
 
-echo '>'; ?>
+$attributes = [
+	'data-id' => $ticket['id'],
+	'data-fahrplan-id' => $ticket['fahrplan_id'],
+	'data-ticket-type' => $ticket['ticket_type']
+];
+
+if (empty($ticket['parent_id'])) {
+	$attributes['data-title'] = $ticket['title'];
+} else {
+	$attributes['class'] = ((!empty($simulateTickets))? 'no-properties' : 'child');
+}
+
+if (!empty($filtered) and (!empty($filtered[$ticket['id']]) or !empty($filtered[$ticket['parent_id']]))) {
+	if (isset($attributes['class'])) {
+		$attributes['class'] .= ' filtered';
+	} else {
+		$attributes['class'] = 'filtered';
+	}
+	
+	$filters = (!empty($filtered[$ticket['id']]))?
+		$filtered[$ticket['id']] : $filtered[$ticket['parent_id']];
+	
+	$attributes['title'] = "Ticket does not match the following properties from the worker group filter:\n";
+	
+	foreach ($filters as $filter) {
+		$attributes['title'] .= "\n" . $filter['property_key'] . ' = ' . $filter['property_value'];
+	}
+} ?>
+
+<?= View::tag('li', $attributes, false); ?>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
 		
