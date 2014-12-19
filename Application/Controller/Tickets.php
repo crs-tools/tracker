@@ -7,6 +7,8 @@
 		
 		'/Model/Handle',
 		
+		'/Model/Import',
+		
 		'/Model/Ticket',
 		'/Model/TicketState',
 		'/Model/Comment',
@@ -120,6 +122,8 @@
 					])
 					->orderBy('ticket_type, title')
 					->join(['Handle']);
+				
+				$this->import = $this->ticket->Import;
 			} else {
 				// TODO: add scope for properties
 				// TODO: parent joins handle

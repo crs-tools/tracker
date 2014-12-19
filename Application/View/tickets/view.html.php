@@ -74,6 +74,12 @@
 	]
 ); ?>
 
+<?php if (isset($import)): ?>
+<div class="ticket-imported">
+	Last imported <?= timeAgo($import['finished']); ?> (<em title="<?= h($import['url']); ?>"><?= h($import['version']); ?></em>) by <?= $import->User['user_name']; ?>.
+</div>
+<?php endif; ?>
+
 <?php if (isset($parentProperties)) {
 	echo $this->render('shared/properties', ['properties' => $parentProperties]);
 }

@@ -1806,6 +1806,16 @@ span.date:hover span {
 	visibility: visible;
 }
 
+div.ticket-imported {
+  padding: 0.8em;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 0.85em;
+  line-height: 0.5em;
+  color: #707070;
+}
+
 #timeline {
 	position: relative;
 	margin-top: 2em;

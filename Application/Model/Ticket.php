@@ -55,6 +55,10 @@
 				'foreign_key' => ['handle_id'],
 				'select' => 'name AS handle_name'
 			],
+			'Import' => [
+				'foreign_key' => ['import_id'],
+				'select' => 'url, version, finished, user_id'
+			],
 			'Parent' => [
 				'class_name' => 'Ticket',
 				'foreign_key' => ['parent_id'],
