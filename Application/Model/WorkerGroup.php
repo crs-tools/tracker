@@ -45,6 +45,10 @@
 			foreach ($tickets as $ticket) {
 				$properties = $ticket->MergedProperties->toArray();
 				
+				if (empty($filtersByProject[$ticket['project_id']])) {
+					continue;
+				}
+				
 				$filters = self::_evaluateFilters(
 					$filtersByProject[$ticket['project_id']],
 					$properties
@@ -62,6 +66,10 @@
 			$filtersByProject = $this->_findWorkerGroupFiltersByProject($projects);
 			
 			$tickets->filter(function(array $entry) use ($tickets, $filtersByProject) {
+				if (empty($filtersByProject[$ticket['project_id']])) {
+					return true;
+				}
+				
 				// TODO: not so beautiful hack, can we get a Model object as argument?
 				$ticket = new Ticket();
 				$ticket->init($entry);
