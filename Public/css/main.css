@@ -927,7 +927,7 @@ ul.ticket-header-bar li {
 	background: transparent url(../images/main.png) no-repeat -17px -170px;
 }
 
-/*ul.ticket-header-bar li.ticket-header-bar-background-left + li  { background-position: -19px -170px; }*/
+ul.ticket-header-bar li.ticket-header-bar-background-left + li.action:not(.current) { background-position: -19px -170px; }
 
 ul.ticket-header-bar li.ticket-header-bar-background-left, ul.ticket-header-bar li.ticket-header-bar-background-right {
 	height: 32px;
