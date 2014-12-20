@@ -35,6 +35,9 @@
 	<?php if (User::isLoggedIn()): ?>
 		<ul class="ticket-header-bar right horizontal">
 			<li class="ticket-header-bar-background-left"></li>
+			
+			<?= $this->render('tickets/view/_status'); ?>
+			
 			<?php foreach (['cut', 'check', 'duplicate', 'edit', 'delete'] as $action):
 				if (!User::isAllowed('tickets', $action) or !$ticket->isEligibleAction($action)) {
 					continue;

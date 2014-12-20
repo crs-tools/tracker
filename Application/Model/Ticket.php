@@ -538,6 +538,15 @@
 			return $handle->fetch()['create_missing_encoding_tickets'];
 		}
 		
+		public function getDependingEncodingTicketState() {
+			$handle = Database::$Instance->query(
+				'SELECT ticket_depending_encoding_ticket_state(?)',
+				[$this['id']]
+			);
+			
+			return $handle->fetch()['ticket_depending_encoding_ticket_state'];
+		}
+		
 		/*
 			Statistics
 		*/

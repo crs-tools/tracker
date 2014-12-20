@@ -927,7 +927,7 @@ ul.ticket-header-bar li {
 	background: transparent url(../images/main.png) no-repeat -17px -170px;
 }
 
-ul.ticket-header-bar li.ticket-header-bar-background-left + li  { background-position: -19px -170px; }
+/*ul.ticket-header-bar li.ticket-header-bar-background-left + li  { background-position: -19px -170px; }*/
 
 ul.ticket-header-bar li.ticket-header-bar-background-left, ul.ticket-header-bar li.ticket-header-bar-background-right {
 	height: 32px;
@@ -1049,6 +1049,31 @@ ul.ticket-header-bar li.action.current.duplicate a:before { background-position:
 
 ul.ticket-header-bar li.action.queue a:before { background-position: -360px -202px; }
 ul.ticket-header-bar li.action.current.queue a:before { background-position: -360px -290px; }
+
+ul.ticket-header-bar li.service-status {
+  background: transparent url(../images/main.png) no-repeat -746px -382px;
+}
+
+ul.ticket-header-bar li.service-status span,
+ul.ticket-header-bar li.service-status a {
+  display: block;
+  width: 30px;
+  height: 32px;
+  cursor: help;
+}
+
+ul.ticket-header-bar li.service-status:before {
+  content: ' ';
+  float: left;
+  display: block;
+  height: 32px;
+  width: 30px;
+  margin-top: -1px;
+  background: transparent url(../images/main.png) no-repeat -30px -382px;
+}
+
+ul.ticket-header-bar li.service-status.dependency:before { background-position: 0px -382px; }
+ul.ticket-header-bar li.service-status.disabled:before { background-position: -60px -382px; }
 
 ul.ticket-header-bar li.ticket-header-bar-search {
 	height: 32px;

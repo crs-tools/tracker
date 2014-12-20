@@ -31,7 +31,7 @@
 					<?= $f->select(
 						'priority[' . $version['id'] . ']',
 						null,
-						['0' => 'disabled', '0.5' => 'low', '0.75' => 'inferior', '1' => 'normal', '1.25' => 'superior', '1.5' => 'high'],
+						['0' => 'disabled'] + Ticket::$priorities,
 						$version['priority'],
 						['data-submit-on-change' => true]
 					); ?>
