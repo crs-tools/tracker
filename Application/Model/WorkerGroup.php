@@ -66,7 +66,7 @@
 			$filtersByProject = $this->_findWorkerGroupFiltersByProject($projects);
 			
 			$tickets->filter(function(array $entry) use ($tickets, $filtersByProject) {
-				if (empty($filtersByProject[$ticket['project_id']])) {
+				if (empty($filtersByProject[$entry['project_id']])) {
 					return true;
 				}
 				

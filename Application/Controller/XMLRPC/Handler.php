@@ -357,10 +357,6 @@
 				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
 			}
 			
-			if ($propertyFilters === null) {
-				$propertyFilters = [];
-			}
-			
 			// create query: find all tickets in state
 			$tickets = Ticket::findAll(['State'])
 				->from('view_serviceable_tickets', 'tbl_ticket')
@@ -472,10 +468,6 @@
 		public function getAssignedForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
 			if (empty($ticketType) || empty($ticketState)) {
 				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
-			}
-			
-			if ($propertyFilters === null) {
-				$propertyFilters = [];
 			}
 			
 			// create query: find all tickets in state
