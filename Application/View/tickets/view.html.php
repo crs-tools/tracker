@@ -76,7 +76,12 @@
 
 <?php if (isset($import)): ?>
 <div class="ticket-imported">
-	Last imported <?= timeAgo($import['finished']); ?> (<em title="<?= h($import['url']); ?>"><?= h($import['version']); ?></em>) by <?= $import->User['user_name']; ?>.
+	Last imported
+	<?= timeAgo($import['finished']); ?>
+	<?= (!empty($import['version']))?
+		('(<span aria-label="' . h($import['url']) .'" data-tooltip="true">' . h($import['version']) . '</span>)') :
+		('<code>' . h($import['url']) . '</code>'); ?>
+	by <?= $import->User['user_name']; ?>.
 </div>
 <?php endif; ?>
 
