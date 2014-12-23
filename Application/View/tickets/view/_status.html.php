@@ -50,7 +50,8 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 			) . '.'
 	];
 }
-// TODO: check worker group filter? ?>
+// TODO: check worker group filter?
+// TODO: all matching worker groups paused? ?>
 
 <li class="service-status <?= h($status[0]); ?>">
 	<span aria-label="<?= h($status[1]); ?>" data-tooltip="true"></span>

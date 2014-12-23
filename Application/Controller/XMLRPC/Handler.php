@@ -357,6 +357,10 @@
 				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
 			}
 			
+			if ($this->_workerGroup['paused']) {
+				return false;
+			}
+			
 			// create query: find all tickets in state
 			$tickets = Ticket::findAll(['State'])
 				->from('view_serviceable_tickets', 'tbl_ticket')

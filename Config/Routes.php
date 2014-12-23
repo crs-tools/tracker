@@ -46,6 +46,8 @@
 	'workers/group/:id/edit' => ['workers', 'edit_group'],
 	'workers/group/:id/delete' => ['workers', 'delete_group'],
 	'workers/group/:id/queue' => ['workers', 'queue'],
+	'workers/group/:id/pause' => ['workers', 'pause'],
+	'workers/group/:id/unpause' => ['workers', 'unpause'],
 	
 	'users' => ['user', 'index'],
 	'user/create' => ['user', 'create'],

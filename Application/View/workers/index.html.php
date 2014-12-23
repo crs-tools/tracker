@@ -15,8 +15,18 @@
 			<thead>
 				<tr>
 					<th class="title" colspan="3"><?= h($group['title']); ?></th>
-					<th class="collapse"></th>
-					<th class="extend" width="15%" class="link right small">
+					<th width="15%" class="link right small">
+						<?php if ($group['paused']) {
+							if (User::isAllowed('workers', 'unpause')) {
+								echo $this->linkTo('workers', 'unpause', $group, 'continue');
+							}
+						} else {
+							if (User::isAllowed('workers', 'pause')) {
+								echo $this->linkTo('workers', 'pause', $group, 'pause');
+							}
+						} ?>
+					</th>
+					<th width="15%" class="link right small">
 						<?php if (User::isAllowed('workers', 'queue')) {
 							echo $this->linkTo('workers', 'queue', $group, 'show queue');
 						} ?>
@@ -27,7 +37,7 @@
 						} ?>
 					</th>
 					<th width="5%" class="link right">
-						<?php if (User::isAllowed('workers', 'delete_group')) {
+						<?php if (User::isAllowed('workers', 'edit_group')) {
 							echo $this->linkTo('workers', 'edit_group', $group, 'edit');
 						} ?>
 					</th>

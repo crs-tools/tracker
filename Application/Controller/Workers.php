@@ -19,13 +19,18 @@
 		
 		public function index() {
 			$this->groups = WorkerGroup::findAll()
-				->includes(['Worker']);
+				->includes(['Worker'])
+				->orderBy('title');
 			
 			return $this->render('workers/index');
 		}
 		
 		public function queue(array $arguments) {
 			$this->group = WorkerGroup::findOrThrow($arguments['id']);
+			
+			if ($this->group['paused']) {
+				$this->flashNow('Worker group is paused');
+			}
 			
 			$projects = $this->group->Project->pluck('id');
 			$tickets = Ticket::findAll()
@@ -62,6 +67,26 @@
 			}
 			
 			return $this->render('workers/group/queue');
+		}
+		
+		public function pause(array $arguments) {
+			$group = WorkerGroup::findOrThrow($arguments['id']);
+			
+			if ($group->save(['paused' => true])) {
+				$this->flash('Worker group paused');
+			}
+			
+			return $this->redirect('workers', 'index');
+		}
+		
+		public function unpause(array $arguments) {
+			$group = WorkerGroup::findOrThrow($arguments['id']);
+			
+			if ($group->save(['paused' => false])) {
+				$this->flash('Worker group continued');
+			}
+			
+			return $this->redirect('workers', 'index');
 		}
 		
 		public function create_group() {

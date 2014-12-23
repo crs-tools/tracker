@@ -51,6 +51,7 @@ CREATE TABLE tbl_worker_group
   title character varying(256) NOT NULL,
   token character(32) NOT NULL,
   secret character(32) NOT NULL,
+  paused boolean DEFAULT FALSE NOT NULL,
   CONSTRAINT tbl_worker_group_pk PRIMARY KEY (id),
   CONSTRAINT tbl_worker_group_token_uq UNIQUE (token)
 )
