@@ -2,7 +2,10 @@
 	
 	requires(
 		'/Model/Project',
-		'/Model/Ticket'
+		
+		'/Model/Ticket',
+		'/Model/EncodingProfile',
+		'/Model/EncodingProfileVersion'
 	);
 	
 	class Controller_API extends Controller {
@@ -27,6 +30,28 @@
 				->scoped([
 					'with_default_properties',
 					'order_list'
+				]);
+			
+			return $this->_respond($tickets);
+		}
+		
+		public function tickets_released() {
+			$tickets = Ticket::findAll()
+				->select(
+					'fahrplan_id'
+				)
+				->where([
+					'project_id' => $this->project['id'],
+					'ticket_type' => 'encoding',
+					'ticket_state' => 'released'
+				])
+				->scoped([
+					'with_recording',
+					'with_merged_properties' => [[
+						'Fahrplan.GUID' => 'fahrplan_guid',
+						'Record.Cutdiffseconds' => 'duration',
+						'YouTube.Url0' => 'youtube_url'
+					]]
 				]);
 			
 			return $this->_respond($tickets);

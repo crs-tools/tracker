@@ -64,6 +64,7 @@
 	'projects' => ['projects', 'index'],
 	
 	'api/v1/:project_slug/tickets/fahrplan' => ['API', 'tickets_fahrplan'],
+	'api/v1/:project_slug/tickets/released' => ['API', 'tickets_released'],
 	
 	'login' => ['user', 'login'],
 	'logout' => ['user', 'logout'],

@@ -344,6 +344,21 @@
 			}
 		}
 		
+		public static function with_merged_properties(Model_Resource $resource, array $properties) {
+			foreach ($properties as $property => $as) {
+				$resource->leftJoin(
+					[TicketProperties::TABLE, 'property_' . $as],
+					'((ticket_id = ' .
+						self::TABLE .
+						'.id) OR (ticket_id = ' .
+						self::TABLE .
+						'.parent_id) OR (ticket_id = recording.id)) AND name = ?',
+					[$property],
+					'value AS ' . $as
+				);
+			}
+		}
+		
 		public static function with_recording(Model_Resource $resource) {
 			$resource->leftJoin(
 				[self::TABLE, 'recording'],
