@@ -68,11 +68,13 @@
 
 <h3 class="table">Properties</h3>
 
-<?= $this->render(
-	'shared/properties', [
-		'merged' => $ticket['ticket_type'] === 'encoding'
-	]
-); ?>
+<?php if ($properties->getRows() > 0) {
+	echo $this->render(
+		'shared/properties', [
+			'merged' => $ticket['ticket_type'] === 'encoding' and empty($action)
+		]
+	);
+} ?>
 
 <?php if (isset($import)): ?>
 <div class="ticket-imported">
