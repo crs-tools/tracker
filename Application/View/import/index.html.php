@@ -48,7 +48,7 @@
 			<?php foreach($previousImports as $import): ?>
 				<tr>
 					<td><code><?= h($import['url']); ?></code></td>
-					<td><?= h($import['version']); ?></td>
+					<td><?= $this->linkTo('import', 'download', $import, $project, ['.xml'], $import['version']); ?></td>
 					<td><?= h($import['user_name']); ?></td>
 					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
 				</tr>

@@ -52,6 +52,25 @@
 			return $this->render('import/index');
 		}
 		
+		public function download(array $arguments) {
+			if (!$this->respondTo('xml')) {
+				return Response::error(400);
+			}
+			
+			$import = Import::findOrThrow($arguments['id']);
+			
+			$this->Response->addHeader(
+				'Content-Disposition',
+				'attachment; filename="schedule_' .
+					$project['slug'] . '_' .
+					(new DateTime($import['created']))->format('Y-m-d_H-i-s') .
+					'.xml"'
+			);
+			
+			$this->Response->setContent($import['xml']);
+			return $this->Response;
+		}
+		
 		public function create() {
 			$this->form();
 			

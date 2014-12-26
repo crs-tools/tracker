@@ -22,6 +22,7 @@
 	':project_slug/tickets/import/:id/review' => ['import', 'review'],
 	':project_slug/tickets/import/:id/apply' => ['import', 'apply'],
 	':project_slug/tickets/import/:id/repeat' => ['import', 'repeat'],
+	':project_slug/tickets/import/:id/schedule' => ['import', 'download'],
 	
 	':project_slug/workers' => ['workers', 'project'],
 	':project_slug/services/hold' => ['services', 'hold'],
