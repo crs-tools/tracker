@@ -72,7 +72,11 @@
 			
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
 			
-			if ($this->filter !== null or isset($_GET['u'])) {
+			if (
+				$this->filter !== null or
+				isset($_GET['u']) or
+				isset($_GET['failed'])
+			) {
 				$this->tickets
 					->distinct()
 					->scoped([
@@ -97,6 +101,12 @@
 			if (isset($_GET['u'])) {
 				$this->tickets->scoped([
 					'filter_handle' => [$_GET['u']]
+				]);
+			}
+			
+			if (isset($_GET['failed'])) {
+				$this->tickets->scoped([
+					'filter_failed'
 				]);
 			}
 			

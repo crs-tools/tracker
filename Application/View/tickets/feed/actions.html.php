@@ -10,6 +10,6 @@
 	</li>
 	<li>
 		<strong><?= $stats['fixing']; ?></strong>
-		<span><?= (($stats['fixing'] != 1)? 'tickets' : 'ticket'); ?> failed</span>
+		<?= $this->linkTo('tickets', 'index', $project, array('?failed'), (($stats['fixing'] != 1)? 'tickets' : 'ticket') . ' failed'); ?>
 	</li>
 </ul>

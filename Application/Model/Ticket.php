@@ -236,6 +236,12 @@
 			);
 		}
 		
+		public static function filter_failed(Model_Resource $resource) {
+			$resource->where(
+				self::TABLE . '.failed OR child.failed'
+			);
+		}
+		
 		public static function order_list(Model_Resource $resource) {
 			$resource
 				->andSelect(
