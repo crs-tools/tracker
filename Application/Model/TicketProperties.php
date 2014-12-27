@@ -286,10 +286,16 @@
 				->Properties
 				->toArray();
 			
-			$encodingProfileProperties = $this->_parentTicket
-				->EncodingProfile
-				->Properties
-				->toArray();
+			$encodingProfile = $this->_parentTicket
+				->EncodingProfile;
+			
+			if ($encodingProfile !== null) {
+				$encodingProfileProperties = $encodingProfile
+					->Properties
+					->toArray();
+			} else {
+				$encodingProfileProperties = [];
+			}
 			
 			$properties = array_merge(
 				$projectProperties,
