@@ -473,7 +473,7 @@
 			if (!empty($persons)) {
 				$ticket['Properties']['Fahrplan.Persons'] = [
 					'name' => 'Fahrplan.Persons',
-					'value' => implode(',', $persons)
+					'value' => implode(', ', $persons)
 				];
 			}
 			
