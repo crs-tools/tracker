@@ -68,7 +68,7 @@
 
 <h3 class="table">Properties</h3>
 
-<?php if ($properties->getRows() > 0) {
+<?php if ($properties->getRows() > 0 or ($ticket['ticket_type'] === 'encoding' and empty($action))) {
 	echo $this->render(
 		'shared/properties', [
 			'merged' => $ticket['ticket_type'] === 'encoding' and empty($action)

@@ -268,22 +268,6 @@
 							'virtual' => true
 						];
 					}
-					
-					if (!isset($index['EncodingProfile.Extension'])) {
-						$this->_entries[] = [
-							'name' => 'EncodingProfile.Extension',
-							'value' => $profile['extension'],
-							'virtual' => true
-						];
-					}
-					
-					if (!isset($index['EncodingProfile.MirrorFolder'])) {
-						$this->_entries[] = [
-							'name' => 'EncodingProfile.MirrorFolder',
-							'value' => $profile['mirror_folder'],
-							'virtual' => true
-						];
-					}
 				}
 			}
 			
@@ -297,26 +281,36 @@
 		}
 		
 		private function _mergeProperties() {
-			$properties = $this->_parentTicket
+			$projectProperties = $this->_parentTicket
 				->Project
 				->Properties
 				->toArray();
 			
-			$properties = array_merge($properties, $this->_entries);
+			$encodingProfileProperties = $this->_parentTicket
+				->EncodingProfile
+				->Properties
+				->toArray();
+			
+			$properties = array_merge(
+				$projectProperties,
+				$encodingProfileProperties,
+				$this->_entries
+			);
 			
 			$index = [];
 			
 			foreach ($properties as $i => $property) {
 				$propertyIndex = [
 					$i,
-					// Set priority: current ticket, before parent ticket, other tickets (e.g. source) and project properties at last
+					// Set priority: current ticket, encoding profile, parent ticket, other tickets (e.g. source) and project properties at last
+					// TODO: change source/recording before parent?
 					(isset($property['ticket_id']))?
 						(($property['ticket_id'] === $this->_parentTicket['id'])?
-							4 :
+							5 :
 							(($property['ticket_id'] === $this->_parentTicket['parent_id'])?
 								3 : 2)
 						)
-						: 1
+						: ((isset($property['encoding_profile_id']))? 4 : 1)
 				];
 				
 				// Property was already set

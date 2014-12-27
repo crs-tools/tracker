@@ -11,7 +11,12 @@
 			],
 		];
 		
+		// Shortcuts from encoding profile
 		public $hasMany = [
+			'Properties' => [
+				'class_name' => 'EncodingProfileProperties',
+				'foreign_key' => ['encoding_profile_id']
+			],
 			'Ticket' => [
 				'foreign_key' => ['encoding_profile_id']
 			]

@@ -34,13 +34,6 @@
 	</fieldset>
 	
 	<fieldset>
-		<legend>Files</legend>
-		<ul>
-			<li><?= $f->input('extension', 'File extension', $profile['extension'], array('class' => 'narrow')); ?></li>
-			<li><?= $f->input('mirror_folder', 'Folder name on mirror', $profile['mirror_folder']); ?></li>
-		</ul>
-	</fieldset>
-	<fieldset>
 		<legend>Encoding</legend>
 		<ul>
 			<?php if (isset($profile)):
@@ -63,6 +56,21 @@
 			<?php endif; ?>
 		</ul>
 	</fieldset>
+	
+	<fieldset class="foldable">
+		<legend>Properties</legend>
+		<?= $this->render('shared/form/properties', [
+			'f' => $f,
+			'properties' => [
+				'for' => (!empty($profile))? $profile->Properties : null,
+				'field' => 'properties',
+				'description' => 'property',
+				'key' => 'name',
+				'value' => 'value'
+			]
+		]); ?>
+	</fieldset>
+	
 	<fieldset>
 		<ul>
 			<li><?php 

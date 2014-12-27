@@ -1,6 +1,7 @@
 <?php
 	
 	requires(
+		'/Model/EncodingProfileProperties',
 		'/Model/EncodingProfileVersion'
 	);
 	
@@ -18,6 +19,10 @@
 		];
 		
 		public $hasMany = [
+			'Properties' => [
+				'class_name' => 'EncodingProfileProperties',
+				'foreign_key' => ['encoding_profile_id']
+			],
 			'Versions' => [
 				'class_name' => 'EncodingProfileVersion',
 				'foreign_key' => ['encoding_profile_id']
@@ -25,6 +30,7 @@
 		];
 		
 		public $acceptNestedEntriesFor = [
+			'Properties' => true,
 			'Versions' => true // TODO: disable destroy
 		];
 		
