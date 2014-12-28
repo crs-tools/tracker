@@ -499,8 +499,6 @@
 						$this->flash('Expanded timeline, ' . $action . ' another ticket while preparing');
 						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 					}
-				} elseif ($this->actionForm->getValue('language') === '') {
-					$this->flashNow('You have to choose a language');
 				} elseif ($this->actionForm->getValue('failed')) {
 					if ($this->ticket->save([
 						'handle_id' => null,
@@ -523,6 +521,8 @@
 							$this->project
 						);
 					}
+				} elseif ($this->actionForm->getValue('language') === '') {
+					$this->flashNow('You have to choose a language');
 				} else {
 					$properties = [];
 					
