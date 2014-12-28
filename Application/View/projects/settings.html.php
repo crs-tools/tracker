@@ -26,3 +26,20 @@
 
 <h3 class="table">Properties</h3>
 <?= $this->render('shared/properties'); ?>
+
+<h3 class="table">Other</h3>
+<table class="properties">
+	<thead>
+		<tr>
+			<th colspan="2">Project</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td class="key">Id</td>
+			<td class="value">
+				<?= h($project['id']); ?>
+			</td>
+		</tr>
+	</tbody>
+</table>
