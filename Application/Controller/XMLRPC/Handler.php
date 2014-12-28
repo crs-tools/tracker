@@ -368,7 +368,8 @@
 					'project_id' => $this->_assignedProjects,
 					'ticket_type' => $ticketType,
 					'next_state' => $ticketState,
-					'next_state_service_executable' => 1
+					'next_state_service_executable' => 1,
+					'handle_id' => null
 				])
 				->scoped([
 					'virtual_property_filter' => [$propertyFilters]
