@@ -1117,9 +1117,6 @@ var Tracker = {};
       progressBar = $('#feed-stats-progress-bar');
 	  
       timeout = setTimeout(poll, 15000);
-      
-      $(document).bind('webkitvisibilitychange', updatePolling);
-      $(document).bind('visibilitychange', updatePolling);
     }
   };
 }());
