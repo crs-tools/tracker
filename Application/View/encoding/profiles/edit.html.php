@@ -81,4 +81,4 @@
 	</fieldset>
 </form>
 
-<?php $this->render('shared/editor'); ?>
+<?php $this->render('shared/js/_editor'); ?>

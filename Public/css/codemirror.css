@@ -81,6 +81,11 @@ div.table table tr.encoding-profile-version td .CodeMirror .CodeMirror-scroll {
   background-color: #f7f7f7;
   white-space: nowrap;
 }
+
+.CodeMirror-gutter-wrapper {
+  position: absolute;
+}
+
 .CodeMirror-linenumbers {}
 .CodeMirror-linenumber {
   padding: 0 3px 0 5px;
