@@ -15,8 +15,7 @@
 		<thead>
 			<tr>
 				<th class="name" width="30%">Name</th>
-				<th class="slug" width="10%">Slug</th>
-				<th class="ext" width="10%">Extension</th>
+				<th class="slug" width="20%">Slug</th>
 				<th class="version"></th>
 				<th class="delete" width="3%">&nbsp;</th>
 				<th class="edit" width="5%">&nbsp;</th>
@@ -27,7 +26,6 @@
 				<tr>
 					<td class="name"><?= h($profile['name']); ?></td>
 					<td class="slug"><?= h($profile['slug']); ?></td>
-					<td class="ext"><?= h($profile['extension']); ?></td>
 					<td class="version link"><?php if (User::isAllowed('encodingprofiles', 'view')) {
 						echo $this->linkTo('encodingprofiles', 'view', $profile, 'Show ' . $profile['versions_count'] . ' version' . (($profile['versions_count'] == 1)? '' : 's'));
 					} ?></td>
