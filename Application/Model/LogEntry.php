@@ -105,7 +105,7 @@
 			],
 			'Action.check.start' => [
 				'log' => 'Started checking.',
-				'single' => '{user_name} started checking recording ticket {id}.',
+				'single' => '{user_name} started checking encoding ticket {id}.',
 				'multiple' => '{user_name} started checking {tickets}.',
 				'message' => false
 			],
