@@ -27,7 +27,11 @@
 			<?php endif; ?>
 		
 			<?php if (!empty($ticket['handle_id'])): ?>
-				<span class="assignee">assigned to <?= $this->linkTo('tickets', 'index', $project, array('?u=' . $ticket['handle_id']), ($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name']); ?></span>
+				<span class="assignee">assigned to <?= $this->linkTo(
+					'tickets', 'index', $project, ['?u=' . $ticket['handle_id']],
+					($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name'],
+					['aria-label' => 'Last seen ' . timeRelativeDifference(new DateTime($ticket['handle_last_seen'])), 'data-tooltip' => true]
+				); ?></span>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>

@@ -53,7 +53,7 @@
 			],
 			'Handle' => [
 				'foreign_key' => ['handle_id'],
-				'select' => 'name AS handle_name'
+				'select' => 'name AS handle_name, last_seen as handle_last_seen'
 			],
 			'Import' => [
 				'foreign_key' => ['import_id'],
