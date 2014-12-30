@@ -20,8 +20,10 @@
 		
 	}
 	
-	function timeRelativeDifference(DateTime $dateTime) {
-		$now = new DateTime();
+	function timeRelativeDifference(DateTime $dateTime, $now = null) {
+		if ($now === null) {
+			$now = new DateTime();
+		}
 		
 		$seconds = ($now->getTimestamp() - $dateTime->getTimestamp());
 		$minutes = round($seconds / 60);
@@ -41,7 +43,7 @@
 			return $hours . ' hours ago';
 		}
 		
-		$days = ($hours / 24);
+		$days = (($hours + ((int) $dateTime->format('H'))) / 24);
 		
 		if ($days < 1) {
 			return 'today at ' . $dateTime->format('H:i');

@@ -1491,7 +1491,7 @@ var Tracker = {};
       return hours + ' hours ago';
     }
     
-    var days = (hours / 24);
+    var days = ((hours + datetime.getHours()) / 24);
     
     if (days < 1) {
       return 'today at ' + getFormattedTime(datetime);
