@@ -15,7 +15,7 @@
 
 <li class="checkbox"><?= $f->checkbox('delay', 'There is a noticable audio delay.', !empty($properties['Record.AVDelay'])); ?></li>
 <li>
-	<?= $f->input('delay_by', 'Delay audio by', (!empty($properties['Record.AVDelay']))? delayToMilliseconds($properties['Record.AVDelay']) : ''); ?>
+	<?= $f->input('delay_by', 'Delay audio by', (!empty($properties['Record.AVDelay']))? delayToMilliseconds($properties['Record.AVDelay']['value']) : ''); ?>
 	<span class="description">Delay is specified in milliseconds and can be negative.</span>
 </li>
 
