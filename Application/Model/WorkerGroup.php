@@ -100,7 +100,7 @@
 			foreach ($filters as $filter) {				
 				if (
 					isset($properties[$filter['property_key']]) and
-					$properties[$filter['property_key']]['value'] === $filter['property_value']
+					(string) $properties[$filter['property_key']]['value'] === $filter['property_value']
 				) {
 					// TODO: for "NOT"/"NONE": set $filter here, break
 					$valid = true;
