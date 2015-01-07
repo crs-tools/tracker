@@ -32,6 +32,7 @@ li {margin-left: 1.5em; line-height: 1.5em}
 ins {text-decoration: none}
 small {font-size: 0.8em;}
 strong, .strong {font-weight: bold;}
+button::-moz-focus-inner { padding: 0; border: 0; }
 
 a:link, a:visited {
 	color: #248fda;
@@ -189,7 +190,7 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 	top: 20px;
 	left: 0;
 	background: transparent url(../images/main.png) no-repeat left top;
-	text-indent: -3000px;
+	text-indent: -9999px;
 }
 
 #header h1 span {display: none;}
@@ -261,7 +262,7 @@ ul#menu li.menu-feed a span {
   padding-left: 6px;
   padding-right: 6px;
   background: transparent url(../images/main.png) no-repeat -224px -46px;
-  text-indent: -9000px;
+  text-indent: -9999px;
 }
 
 ul#menu li.menu-tickets a:before,
@@ -656,7 +657,7 @@ form fieldset ul.edit-properties li a.delete {
 	height: 22px;
 	margin-left: 0.7em;
 	background: transparent url(../images/main.png) -88px -46px;
-	text-indent: -3000px;
+	text-indent: -9999px;
 	line-height: 25px;
 }
 
@@ -1101,7 +1102,7 @@ ul.ticket-header-bar li.ticket-header-bar-search-button button {
 	width: 32px;
 	height: 32px;
 	background: transparent url(../images/main.png) no-repeat -615px -170px;
-	text-indent: -3000px;
+  text-indent: -9999px;
 }
 
 ul.ticket-header-bar li.ticket-header-bar-search-button button:hover, li.ticket-header-bar-search-button button:focus { background-color: transparent; }
@@ -1193,7 +1194,7 @@ form fieldset ul#tickets-search-conditions li a.tickets-search-remove, form fiel
 	width: 20px;
 	height: 20px;
 	background: transparent url(../images/main.png) no-repeat -152px -46px;
-	text-indent: -3000px;
+	text-indent: -9999px;
 }
 
 form fieldset ul#tickets-search-conditions li a.tickets-search-remove.only { right: 0; }
@@ -1453,7 +1454,7 @@ ul.tickets li a.link span.view, ul.tickets li a.edit, ul.tickets li a.action {
 
 ul.tickets li a.link span.view {
 	width: 22px;
-	text-indent: -3000px;
+	text-indent: -9999px;
 }
 
 ul.tickets li a.link:hover span.view, ul.tickets li a.link:hover span.view {
@@ -2297,7 +2298,7 @@ ul.projects > li > a > span {
 	width: 21px;
 	background: transparent url(../images/main.png) no-repeat -416px -170px;
 	color: #acacac;
-	text-indent: -3000px;
+	text-indent: -9999px;
 }
 
 ul.projects > li > a:hover > span, ul.projects > li > a:focus > span {
