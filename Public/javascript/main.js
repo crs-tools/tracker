@@ -56,11 +56,12 @@ var Tracker = {};
         profiles: $('#tickets-search-profiles')
       },
       quicksearch = {
-        forbiddenCharacters: /[^\w\u0080-\u00FF\u0100-\u017F\u0180-\u024F\-\_\:]/g,
-        numbers: /^[0-9]+$/,
+        forbiddenCharacters: /[^\w\u0080-\u00FF\u0100-\u017F\u0180-\u024F\-\_\: ]/g,
+        lastQ: null,
+        numbers: /^[0-9]{4,}$/,
         q: null,
-        repeat: false,
-        tickets: null
+        tickets: null,
+        timer: null
       },
       ticketEditButton = null,
       ticketEditSelect = null,
@@ -194,17 +195,22 @@ var Tracker = {};
   
   function clearSearch() {
     quicksearch.tickets.find('li').show();
+    quicksearch.lastQ = '';
   }
   
   function doSearch(q) {
-    var isFahrplanId = quicksearch.numbers.test(q),
-        regexp = new RegExp(((isFahrplanId)? '^' : '') +
-          q.replace(quicksearch.forbiddenCharacters, ''), 'i');
+    if (quicksearch.lastQ !== null && quicksearch.lastQ === q) {
+      return;
+    }
     
     if (q === '') {
       clearSearch();
       return;
     }
+    
+    var isFahrplanId = quicksearch.numbers.test(q),
+        regexp = new RegExp(((isFahrplanId)? '^' : '') +
+          q.replace(quicksearch.forbiddenCharacters, ''), 'i');
     
     quicksearch.tickets.find('li:not(.child)').each(function(i, ticket) {
       ticket = $(ticket);
@@ -225,6 +231,8 @@ var Tracker = {};
         tickets.hide();
       }
     });
+    
+    quicksearch.lastQ = q;
   }
   
   function uncheckNotOfType(type) {
@@ -350,30 +358,21 @@ var Tracker = {};
       }
       
       quicksearch.q = $('#tickets-quicksearch-q')
-        .keydown(function(event) {
-          // Esc
-          if (event.which == 27) {
-            quicksearch.q.val('');
-            quicksearch.q.blur();
-            clearSearch();
-          }
-          
-          if (event.altKey || event.ctrlKey || event.metaKey) {
-            return;
-          }
-          
-          // Not A-Z or 0-9
-          if ((event.which < 65 && (event.which < 49 || event.which > 57)) || event.which > 90) {
-            quicksearch.repeat = true;
-            return;
-          }
-          
-          doSearch(quicksearch.q.val() + String.fromCharCode(event.which));
-        })
         .keyup(function(event) {
-          if (quicksearch.repeat) {
-            quicksearch.repeat = false;
-            doSearch(quicksearch.q.val());
+          var q = quicksearch.q.val();
+          
+          if (quicksearch.timer) {
+            clearTimeout(quicksearch.timer);
+            quicksearch.timer = null;
+          }
+          
+          if (q === '') {
+            doSearch('');
+          } else {
+            quicksearch.timer = setTimeout(function() {
+              quicksearch.timer = null;
+              doSearch(q);
+            }, 300);
           }
         });
       
@@ -381,7 +380,7 @@ var Tracker = {};
       
       $(document).on('keydown', function(event) {
         // Ctrl/Cmd + F
-        if (event.metaKey && event.which == 70) {
+        if ((event.metaKey || event.ctrlKey) && event.which == 70) {
           quicksearch.q.focus();
           event.preventDefault();
         }
