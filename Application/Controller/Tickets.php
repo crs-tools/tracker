@@ -130,7 +130,7 @@
 						'with_encoding_profile_name',
 						'with_progress'
 					])
-					->orderBy('ticket_type, title')
+					->orderBy('ticket_type, encoding_profile_name')
 					->join(['Handle']);
 				
 				$this->import = $this->ticket->Import;

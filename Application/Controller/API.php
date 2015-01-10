@@ -29,6 +29,7 @@
 				])
 				->scoped([
 					'with_default_properties',
+					'with_encoding_profile_name',
 					'order_list'
 				]);
 			

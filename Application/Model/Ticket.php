@@ -250,7 +250,7 @@
 				)
 				->orderBy(
 					'fahrplan_datetime, fahrplan_room,
-					 sort_id, parent_id DESC, ticket_type, title'
+					 sort_id, parent_id DESC, ticket_type, encoding_profile_name'
 				);
 		}
 		
