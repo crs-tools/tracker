@@ -81,8 +81,7 @@
 					->distinct()
 					->scoped([
 						'with_child',
-						'with_recording',
-						'without_locked'
+						'with_recording'
 					]);
 			}
 			
@@ -91,6 +90,7 @@
 					case 'recording':
 					case 'cutting':
 					case 'encoding':
+						$this->tickets->scoped(['without_locked']);
 					case 'releasing':
 					case 'released':
 						$this->tickets->scoped(['filter_' . $this->filter]);

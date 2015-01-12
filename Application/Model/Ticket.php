@@ -578,8 +578,8 @@
 					'project_id' => $project
 				])
 				->where(
-					'(SELECT next.ticket_state FROM ticket_state_next(?, ticket_type, ticket_state) AS next) = ?',
-					[$project, $ticketState]
+					'ticket_state_next = ?',
+					[$ticketState]
 				)
 				->count();
 		}
