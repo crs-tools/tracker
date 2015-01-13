@@ -59,8 +59,11 @@
 			], str_utf8_ascii_transliterate(
 				$properties['Fahrplan.Title']
 			)), '_');
-
-			return implode('-', $parts);
+			
+			return str_truncate(
+				implode('-', $parts),
+				240, '', '_'
+			);
 		}
 		
 		public function defaultScope(Model_Resource $resource) {
