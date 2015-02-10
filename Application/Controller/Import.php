@@ -407,13 +407,13 @@
 			
 			if ($response->isFailed()) {
 				$this->flash('Import failed (unknown reason)');
-				$this->redirect('index', 'import', $this->project);
+				$this->redirect('import', 'index', $this->project);
 				return false;
 			}
 			
 			if ($response->isNotFound()) {
 				$this->flash('Import failed (file not found)');
-				$this->redirect('index', 'import', $this->project);
+				$this->redirect('import', 'index', $this->project);
 				return false;
 			}
 			
@@ -421,7 +421,7 @@
 			
 			if (!$xml instanceOf SimpleXMLElement) {
 				$this->flash('Failed to parse XML (' . $xml . ')');
-				$this->redirect('index', 'import', $this->project);
+				$this->redirect('import', 'index', $this->project);
 				return false;
 			}
 			
