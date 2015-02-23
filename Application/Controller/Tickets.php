@@ -52,6 +52,7 @@
 		protected $projectReadOnlyAccess = [
 			'index' => true,
 			'view' => true,
+			'search' => true,
 			'log' => true,
 			'jobfile' => true,
 			'feed' => true
