@@ -8,12 +8,12 @@
 	define('CONFIG_FILE', CONFIG . 'Config.php');
 	
 	define('MIGRATIONS', ROOT . 'Application/Migrations/');
+	define('MIGRATION_FILTER', ' -name "[0-9]*.sql" ! -name "*test*" ! -name "*upgrade*" | sort -n | ');
 	
 	define('TEMPLATE_DB_HOST', '__DB_HOST__');
 	define('TEMPLATE_DB_USER', '__DB_USER__');
 	define('TEMPLATE_DB_PASS', '__DB_PASS__');
 	define('TEMPLATE_DB_NAME', '__DB_NAME__');
-	
 	
 	if (file_exists(CONFIG_FILE)) {
 		die("Package is already installed.\n");
@@ -103,11 +103,11 @@
 	$database['superuser'] = trim(fgets($stdIn));
 	
 	if (empty($database['superuser'])) {
-		echo "Init database...";
+		echo "Init database:\n";
 		
 		exec(
 			'find ' . escapeshellarg(MIGRATIONS) .
-			' -name "*.sql" ! -name "*test*" | sort -n | xargs -n 1 sudo -u postgres psql' .
+			MIGRATION_FILTER . 'xargs -n 1 sudo -u postgres psql' .
 			' --dbname=' .
 			escapeshellarg($database['name']) .
 			' -f',
@@ -116,10 +116,10 @@
 		);
 
 		if (!isset($returnCode) or $returnCode !== 0) {
-			echo "failed.\n";
+			echo "Failed.\n";
 			die();
 		}
-		echo "done.\n";
+		echo "Done.\n";
 
 		echo "Set permissions...";
 		exec(
@@ -151,7 +151,7 @@
 		exec(
 			'PGPASSWORD=' . escapeshellarg($database['pass']) . ' ' .
 			'find ' . escapeshellarg(MIGRATIONS) .
-			' -name "*.sql" ! -name "*test*" | sort -n | xargs -n 1 psql --host=' .
+			MIGRATION_FILTER . 'xargs -n 1 psql --host=' .
 			escapeshellarg($database['host']) .
 			' --username=' .
 			escapeshellarg($database['superuser']) .
