@@ -4,14 +4,15 @@ Tracker
 Requirements
 ------------
 
-- >= PHP 5.5.0
+- >= PHP 5.6.0
 - ext/curl
+- ext/intl
 - ext/mbstring
 - ext/xsl
 - pecl/apcu
 - pecl/xdiff
 
-- PostgreSQL >= 8.4 database
+- PostgreSQL >= 9.2 database
 
 
 Install

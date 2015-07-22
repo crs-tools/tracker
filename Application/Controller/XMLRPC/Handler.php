@@ -88,15 +88,14 @@
 					) :
 					rawurlencode($argument);
 			}
-
+			
 			$hash = hash_hmac(
 				'sha256',
 				implode('%26', $args),
 				$secret
 			);
 			
-			// TODO: replace with hash_equals from PHP 5.6 on
-			return str_hash_compare($hash, $signature);
+			return hash_equals($hash, $signature);
 		}
 
 		private static function _getNameFromHostName($hostName) {
