@@ -749,7 +749,7 @@
 			$this->ticket = Ticket::findByOrThrow([
 				'id' => $arguments['id'],
 				'project_id' => $this->project['id']
-			]);
+			], [], ['Handle']);
 			
 			$this->form();
 			
@@ -851,17 +851,33 @@
 				->indexBy('id', 'name')
 				->toArray();
 			
-			if (isset($this->ticket) and
-				!empty($this->ticket['encoding_profile_version_id'])) {
-				$this->profile = EncodingProfileVersion::findAll(
-					['EncodingProfile' => ['select' => 'id, name']]
-				)
-					->where([
-						'id' => $this->ticket['encoding_profile_version_id']
-					])
-					->select('revision, description')
-					->first();
+			if (!isset($this->ticket)) {
+				return;
 			}
+			
+			if (
+				$this->ticket['handle_id'] !== null and
+				!isset($this->users[$this->ticket['handle_id']]) and
+				isset($this->ticket['handle_name'])
+			) {
+				$this->users = [
+					$this->ticket['handle_id'] =>
+						'(' . $this->ticket['handle_name'] . ')'
+				] + $this->users;
+			}
+			
+			if (empty($this->ticket['encoding_profile_version_id'])) {
+				return;
+			}
+			
+			$this->profile = EncodingProfileVersion::findAll(
+				['EncodingProfile' => ['select' => 'id, name']]
+			)
+				->where([
+					'id' => $this->ticket['encoding_profile_version_id']
+				])
+				->select('revision, description')
+				->first();
 		}
 		
 		private function _assignTimeline($ticket) {
