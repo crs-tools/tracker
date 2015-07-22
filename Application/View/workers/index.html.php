@@ -11,10 +11,10 @@
 <div class="table worker-groups">
 	<h2>Worker groups</h2>
 	<?php foreach ($groups as $group): ?>
-		<table class="stripe">
+		<table class="stripe<?php echo (($group['paused'])? ' paused' : '') ?>">
 			<thead>
 				<tr>
-					<th class="title" colspan="3"><?= h($group['title']); ?></th>
+					<th class="title" colspan="3"><?= h($group['title']) . (($group['paused'])? ' <em>(paused)</em>' : ''); ?></th>
 					<th width="15%" class="link right small">
 						<?php if ($group['paused']) {
 							if (User::isAllowed('workers', 'unpause')) {

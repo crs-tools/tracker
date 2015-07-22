@@ -2146,6 +2146,10 @@ ul.worker-groups + input.submit {
   margin: 0.7em 0.4em;
 }
 
+div.table.worker-groups table.paused tbody tr td {
+  color: #acacac;
+}
+
 @media screen and (max-width: 515px) {
 	ul.worker-groups li {
 		width: 100%;
