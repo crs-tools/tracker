@@ -163,10 +163,11 @@
 			}
 			
 			$this->workerGroups = WorkerGroup::findAll()
-				->select('id, title')
+				->select('id, title, paused')
 				->scoped([
 					'worker_group_filter_count' => [$this->project]
-				]);
+				])
+				->orderBy('paused, title');
 			$this->workerGroupAssignment = $this->project
 				->WorkerGroup
 				->select(WorkerGroup::TABLE . '.id')

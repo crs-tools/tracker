@@ -13,7 +13,8 @@
 			<li>
 				<?= $f->checkbox(
 					'WorkerGroup[' . $index . '][worker_group_id]',
-					$group['title'],
+					h($group['title']) . 
+						(($group['paused'])? ' <em>(paused)</em>' : ''),
 					isset($workerGroupAssignment[$group['id']]),
 					['value' => $group['id']] +
 						((isset($workerGroupAssignment[$group['id']]))?
