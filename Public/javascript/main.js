@@ -1262,7 +1262,7 @@ var Tracker = {};
           .click(function(event) {
             event.preventDefault();
             container.remove();
-            this.keys.splice(index, 1);
+            this.keys.splice(this.keys.indexOf(key[0]), 1);
           }.bind(this))
           .appendTo(container);
       }.bind(this))
