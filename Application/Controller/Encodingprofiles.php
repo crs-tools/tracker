@@ -99,7 +99,10 @@
 				$this->version = $this->profile->LatestVersion;
 			}
 			
-			$this->versions = $this->profile->Versions; /*->select('revision, description, created') */
+			$this->versions = $this->profile
+				->Versions
+				->orderBy('revision DESC')
+				->select('id, revision, description, created');
 			$this->profiles = EncodingProfile::findAll()
 				->select('id, name')
 				->orderBy('slug')
