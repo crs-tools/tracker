@@ -227,7 +227,7 @@
 						isset($event->start) and
 						$dayChange !== null
 					) {
-						$event->Date = new SimpleXMLElement(
+						$event->date = new SimpleXMLElement(
 							'<date>' . self::_calculateDate($event, $dayChange) . '</date>'
 						);
 					}
@@ -281,7 +281,7 @@
 			$diff['new'] = $tickets;
 			
 			$this->applyForm = $this->form(
-				'import', 'apply', $this->import, $this->project
+				'import', 'apply', $import, $this->project
 			);
 			
 			$changes = [];
