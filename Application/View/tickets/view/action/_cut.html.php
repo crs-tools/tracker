@@ -16,7 +16,7 @@
 <li class="checkbox"><?= $f->checkbox('delay', 'There is a noticable audio delay.', !empty($properties['Record.AVDelay'])); ?></li>
 <li>
 	<?= $f->input('delay_by', 'Delay audio by', (!empty($properties['Record.AVDelay']))? delayToMilliseconds($properties['Record.AVDelay']['value']) : ''); ?>
-	<span class="description">Delay is specified in milliseconds and can be negative.</span>
+	<span class="description">Delay is specified in milliseconds and can be negative. <br />Note: values from mplayer can be used as is, values from VLC have to be negated first.</span>
 </li>
 
 <li class="checkbox"><?= $f->checkbox('expand', 'The content extends the given timeline.'); ?></li>
