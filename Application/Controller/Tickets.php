@@ -122,7 +122,7 @@
 				'project_id' => $this->project['id']
 			], [], ['Handle']);
 			
-			$this->commentForm = $this->form('tickets', 'comment', $this->project, $this->ticket);
+			$this->commentForm = $this->form('tickets', 'comment', $this->ticket, $this->project);
 			
 			if ($this->ticket['parent_id'] === null) {
 				$this->children = $this->ticket
