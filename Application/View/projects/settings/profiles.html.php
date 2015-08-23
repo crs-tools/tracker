@@ -23,7 +23,8 @@
 						null,
 						$version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->toArray(),
 						$version['id'],
-						['data-encoding-profile-version-id' => $version['id'], 'data-encoding-profile-index' => $index]
+						['data-encoding-profile-version-id' => $version['id'], 'data-encoding-profile-index' => $index],
+						false
 					) . // TODO: show "x newer versions", maybe JS?
 					$f->hidden('versions[' . $index . '][0]', $version['id']); ?>
 				</td>
@@ -33,7 +34,8 @@
 						null,
 						['0' => 'disabled'] + Ticket::$priorities,
 						$version['priority'],
-						['data-submit-on-change' => true]
+						['data-submit-on-change' => true],
+						false
 					); ?>
 				</td>
 				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, 'edit profile'); // TODO: ?version=XX ?></td>
