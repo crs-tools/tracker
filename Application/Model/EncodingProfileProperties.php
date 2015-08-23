@@ -14,6 +14,10 @@
 			]
 		];
 		
+		public function defaultScope(Model_Resource $resource) {
+			$resource->orderBy('name');
+		}
+
 	}
 	
 ?>
