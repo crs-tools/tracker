@@ -39,7 +39,7 @@
 	'encoding/profile/create' => ['encodingprofiles', 'create'],
 	'encoding/profile/:id/versions/compare' => ['encodingprofiles', 'compare'],
 	'encoding/profile/:id/versions' => ['encodingprofiles', 'view'],
-	'encoding/profile/:id/edit' => ['encodingprofiles', 'edit'],
+	'encoding/profile/:id/edit/:version?' => ['encodingprofiles', 'edit'],
 	'encoding/profile/:id/delete' => ['encodingprofiles', 'delete'],
 	
 	'workers' => ['workers', 'index'],

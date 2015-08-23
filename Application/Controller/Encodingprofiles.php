@@ -95,6 +95,11 @@
 					'id' => $this->form->getValue('version'),
 					'encoding_profile_id' => $arguments['id']
 				], [], []);
+			} elseif (isset($arguments['version'])) {
+				$this->version = EncodingProfileVersion::findBy([
+					'id' => $arguments['version'],
+					'encoding_profile_id' => $arguments['id']
+				], [], []);
 			} else {
 				$this->version = $this->profile->LatestVersion;
 			}

@@ -38,7 +38,7 @@
 						false
 					); ?>
 				</td>
-				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, 'edit profile'); // TODO: ?version=XX ?></td>
+				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, ['version' => $version['id']], 'edit profile'); ?></td>
 				<td class="right destroy"><?= $f->button(
 					'remove',
 					null,
