@@ -1645,9 +1645,9 @@ $(function() {
           $('<a>')
             .attr({
               'href': '#',
-              'title': 'Show xml template'
+              'title': 'Show XML template'
             })
-            .text('Show xml template')
+            .text('show template')
             .click(function(event) {
               event.preventDefault();
               
@@ -1656,14 +1656,14 @@ $(function() {
               if (tr.is(':hidden')) {
                 tr.show();
                 target
-                  .text('Hide xml template')
-                  .attr('title', 'Hide xml template');
+                  .text('hide template')
+                  .attr('title', 'Hide XML template');
                 tr.find('textarea').data('editor').refresh();
               } else {
                 tr.hide();
                 target
-                  .text('Show xml template')
-                  .attr('title', 'Show xml template');
+                  .text('show template')
+                  .attr('title', 'Show XML template');
               }
             })
         );

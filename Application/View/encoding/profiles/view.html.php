@@ -24,7 +24,10 @@
 					<th width="18%">Created</th>
 					<th>Description</th>
 					<th></th>
-					<th width="20%"></th>
+					<th width="15%"></th>
+					<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
+						<th width="5%"></th>
+					<?php endif; ?>
 			</thead>
 			<tbody>
 				<?php foreach ($versions as $version): ?>
@@ -35,6 +38,11 @@
 						<td><?= h($version['description']); ?></td>
 						<td></td>
 						<td class="link hide right encoding-profile-version-show"></td>
+						<?php if (User::isAllowed('encodingprofiles', 'edit')): ?>
+							<td class="link hide right">
+								<?= $this->linkTo('encodingprofiles', 'edit', $profile, ['version' => $version['id']], 'edit')?>
+							</td>
+						<?php endif; ?>
 					</tr>
 					<tr class="table-ignore encoding-profile-version">
 						<td colspan="6">
