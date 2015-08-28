@@ -45,7 +45,7 @@
 						<?php endif; ?>
 					</tr>
 					<tr class="table-ignore encoding-profile-version">
-						<td colspan="6">
+						<td colspan="7">
 							<textarea readonly data-has-editor="true"><?php echo h($version['xml_template']); ?></textarea>
 						</td>
 					</tr>
