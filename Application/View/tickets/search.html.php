@@ -39,15 +39,28 @@
 	$f->register('operators[]');
 	$f->register('values[]'); ?>
 
-	<?php if(!empty($tickets)): ?>
+	<?php if(!empty($tickets)):
+		$stats = ['meta' => 0, 'recording' => 0, 'encoding' => 0, 'ingest' => 0]; ?>
 		<ul class="tickets">
-			<?php
-			foreach ($tickets as $ticket) {
+			<?php foreach ($tickets as $ticket) {
 				echo $this->render('tickets/ticket', [
 					'ticket' => $ticket
 				]);
-			}
-			?>
+				
+				$stats[$ticket['ticket_type']]++;
+			} ?>
 		</ul>
+		
+		<div class="tickets-search-stats">
+			The search matched 
+			<?php foreach ($stats as $type => $count) {
+				if ($count > 0 and $type !== 'meta') {
+					echo (($count === 1)? 'one' : $count) . ' ' . $type .
+						' ticket' . (($count !== 1)? 's' : '') . ', ';
+				}
+			} ?>
+			<?= ($stats['meta'] === 1)? 'one' : $stats['meta']; ?> 
+			meta ticket<?= ($stats['meta'] !== 1)? 's' : ''; ?>.
+		</div>
 	<?php endif ?>
 </form>
