@@ -12,13 +12,21 @@
 		<tr>
 			<td class="key">Staging tickets</td>
 			<td class="value">
-				<?= h(formatDuration($duration['staging'])); ?>
+				<?php if (isset($duration['staging'])) {
+					echo h(formatDuration($duration['staging']));
+				} else {
+					echo '–';
+				} ?>
 			</td>
 		</tr>
 		<tr>
 			<td class="key">Staged tickets</td>
 			<td class="value">
-				<?= h(formatDuration($duration['staged'])); ?>
+				<?php if (isset($duration['staged'])) {
+					echo h(formatDuration($duration['staged']));
+				} else {
+					echo '–';
+				} ?>
 			</td>
 		</tr>
 	</tbody>
