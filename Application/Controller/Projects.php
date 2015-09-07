@@ -231,7 +231,7 @@
 			selected states and worker groups
 		*/
 		public function duplicate() {
-			$project = $this->project->duplicate();
+			$project = $this->project->duplicate(true);
 			
 			// Copy associated entries
 			
