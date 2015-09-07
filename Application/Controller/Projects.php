@@ -13,7 +13,9 @@
 		'/Model/ProjectTicketState',
 		
 		'/Model/WorkerGroup',
-		'/Model/ProjectWorkerGroupFilter'
+		'/Model/ProjectWorkerGroupFilter',
+		
+		'/Helper/Time'
 	);
 	
 	class Controller_Projects extends Controller_Application {

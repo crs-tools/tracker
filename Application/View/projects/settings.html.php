@@ -12,13 +12,13 @@
 		<tr>
 			<td class="key">Recording tickets</td>
 			<td class="value">
-				<?= h(round($duration / 3600, 1)); ?> h
+				<?= h(formatDuration($duration)); ?>
 			</td>
 		</tr>
 		<tr>
 			<td class="key">Encoding tickets</td>
 			<td class="value">
-				<?= h(round($duration / 3600 * $encodingProfileCount, 1)); ?> h
+				<?= h(formatDuration($duration * $encodingProfileCount)); ?>
 			</td>
 		</tr>
 	</tbody>

@@ -16,10 +16,6 @@
 		);
 	}
 	
-	function timeFormat() {
-		
-	}
-	
 	function timeRelativeDifference(DateTime $dateTime, $now = null) {
 		if ($now === null) {
 			$now = new DateTime();
@@ -57,6 +53,16 @@
 		
 		return 'on ' . $dateTime->format('M j') .
 			(($now->format('Y') !== $year)? (', ' . $year) : '');
+	}
+	
+	function formatDuration($duration) {
+		$seconds = $duration % 60;
+		$minutes = ($duration / 60) % 60;
+		$hours = floor($duration / 60 / 60);
+		
+		return (($hours > 0)? $hours . ' hour' . (($hours !== 1)? 's' : '') . ' ' : '') .
+			(($minutes > 0)? $minutes . ' minute' . (($minutes !== 1)? 's' : '') . ' ' : '') .
+			(($seconds > 0)? $seconds . ' second' . (($seconds !== 1)? 's' : '') . '' : '');
 	}
 	
 ?>
