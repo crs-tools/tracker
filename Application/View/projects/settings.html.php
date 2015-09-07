@@ -5,20 +5,20 @@
 <table class="properties">
 	<thead>
 		<tr>
-			<th colspan="2">Total Duration (staged)</th>
+			<th colspan="2">Recording Duration</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td class="key">Recording tickets</td>
+			<td class="key">Staging tickets</td>
 			<td class="value">
-				<?= h(formatDuration($duration)); ?>
+				<?= h(formatDuration($duration['staging'])); ?>
 			</td>
 		</tr>
 		<tr>
-			<td class="key">Encoding tickets</td>
+			<td class="key">Staged tickets</td>
 			<td class="value">
-				<?= h(formatDuration($duration * $encodingProfileCount)); ?>
+				<?= h(formatDuration($duration['staged'])); ?>
 			</td>
 		</tr>
 	</tbody>

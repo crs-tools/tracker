@@ -596,9 +596,10 @@
 		}
 		
 		public static function getRecordingDurationByProject($project) {
-			return (int) Ticket::findAll()
+			return Ticket::findAll()
 		   		->select(
-					'EXTRACT(epoch FROM SUM(' . TicketProperties::TABLE .
+					'ticket_state, EXTRACT(epoch FROM SUM(' .
+						TicketProperties::TABLE .
 						'.value::INTERVAL)) AS duration'
 				)
 				->join(
@@ -610,10 +611,10 @@
 		   		)
 		   		->where([
 					'project_id' => $project,
-					'ticket_type' => 'meta',
-					'ticket_state' => 'staged',
+					'ticket_type' => 'meta'
 				])
-				->fetchRow()['duration'];
+				->groupBy('ticket_state')
+				->indexBy('ticket_state', 'duration');
 		}
 		
 		public function allProperties() {
