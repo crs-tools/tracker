@@ -68,7 +68,7 @@
 					'order_list'
 				]);
 			
-			$this->form(null, null, Request::METHOD_GET);			
+			$this->form(null, null, Request::METHOD_GET);
 			$this->searchForm = $this->form('tickets', 'search');
 			
 			$this->filter = ((isset($_GET['t']))? $_GET['t'] : null);
@@ -431,7 +431,7 @@
 					'event' => 'Action.' . $action . '.start',
 					'to_state' => $this->state
 				]);
-   			}
+			}
 			
 			$this->action = $action;
 			$this->actionForm = $this->form('tickets', $action);

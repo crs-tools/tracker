@@ -48,7 +48,7 @@
 			}
 
 			// generate slug from ticket title (and ignore the one from the frab)
-			 $parts[] = trim(preg_replace([
+			$parts[] = trim(preg_replace([
 				'/[.:"\']/',
 				'/[^a-zA-Z_\-0-9]/',
 				'/_+/'

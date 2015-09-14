@@ -22,7 +22,7 @@
 		
 		public $requireAuthorization = true;
 		
-		public function index() {			
+		public function index() {
 			$this->projects = Project::findAll()
 				->orderBy('read_only, created DESC');
 			return $this->render('projects/index');
@@ -39,7 +39,7 @@
 				->count();
 			
 			return $this->render('projects/settings');
-		}	
+		}
 		
 		public function properties() {
 			$this->form();

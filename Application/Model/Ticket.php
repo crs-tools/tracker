@@ -597,19 +597,19 @@
 		
 		public static function getRecordingDurationByProject($project) {
 			return Ticket::findAll()
-		   		->select(
+				->select(
 					'ticket_state, EXTRACT(epoch FROM SUM(' .
 						TicketProperties::TABLE .
 						'.value::INTERVAL)) AS duration'
 				)
 				->join(
-		   			TicketProperties::TABLE,
-		   			[
-		   				Ticket::TABLE . '.id = ticket_id',
-		   				'name' => 'Fahrplan.Duration'
-		   			]
-		   		)
-		   		->where([
+					TicketProperties::TABLE,
+					[
+						Ticket::TABLE . '.id = ticket_id',
+						'name' => 'Fahrplan.Duration'
+					]
+				)
+				->where([
 					'project_id' => $project,
 					'ticket_type' => 'meta'
 				])
@@ -744,7 +744,7 @@
 				->where(['ticket_type' => 'encoding']);
 			
 			$encodingTickets->update([
-				'ticket_state' => $this->Project->queryFirstState('encoding'), 
+				'ticket_state' => $this->Project->queryFirstState('encoding'),
 				'failed' => false,
 				'handle_id' => null
 			]);
@@ -752,7 +752,7 @@
 			foreach ($encodingTickets as $ticket) {
 				// TODO: handle from/to state via database trigger?
 				$ticket->addLogEntry([
-					'event' => 'Encoding.Source.failed' 
+					'event' => 'Encoding.Source.failed'
 				]);
 			}
 			

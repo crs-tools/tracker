@@ -97,7 +97,7 @@
 			$valid = false;
 			$unmatchedFilters = [];
 			
-			foreach ($filters as $filter) {				
+			foreach ($filters as $filter) {
 				if (
 					isset($properties[$filter['property_key']]) and
 					(string) $properties[$filter['property_key']]['value'] === $filter['property_value']
