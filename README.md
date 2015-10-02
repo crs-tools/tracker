@@ -14,6 +14,9 @@ Requirements
 
 - PostgreSQL >= 9.2 database
 
+Note: libxdiff0 and pecl/xdiff are available as debian packages from 
+  https://github.com/a-tze/libxdiff 
+  https://github.com/a-tze/php5-xdiff
 
 Install
 -------
