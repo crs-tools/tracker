@@ -52,7 +52,7 @@
 		</ul>
 		
 		<div class="tickets-search-stats">
-			The search matched 
+			The search matched
 			<?php foreach ($stats as $type => $count) {
 				if ($count > 0 and $type !== 'meta') {
 					echo (($count === 1)? 'one' : $count) . ' ' . $type .
