@@ -12,7 +12,7 @@
 			<?php endif; ?>
 			
 			<?php if (User::isAllowed('import', 'index')): ?>
-				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>'); ?></li>
+				<li class="action import"><?php echo $this->linkTo('import', 'index', $project, '<span>import</span>', 'Import tickets…'); ?></li>
 			<?php endif; ?>
 			<li class="ticket-header-bar-background-right"></li>
 		<?php endif; ?>
