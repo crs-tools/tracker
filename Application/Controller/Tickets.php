@@ -753,13 +753,25 @@
 			
 			$this->form();
 			
-			if ($this->form->wasSubmitted() and $this->ticket->save($this->form->getValues())) {
-				if ($this->form->getValue('comment')) {
-					$this->ticket->addComment($this->form->getValue('comment'));
-				}
+			if ($this->form->wasSubmitted()) {
+				try {
+					if (!$this->ticket->saveOrThrow(
+							$this->form->getValues(),
+							[Ticket::FIELD_MODIFIED =>
+								$this->form->getValue('last_modified')]
+					)) {
+						$this->flashViewNow('tickets/edit/_flash', self::FLASH_WARNING);
+					} else {
+						if ($this->form->getValue('comment')) {
+							$this->ticket->addComment($this->form->getValue('comment'));
+						}
 				
-				$this->flash('Ticket updated');
-				return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+						$this->flash('Ticket updated');
+						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+					}
+				} catch (ModelException $e) {
+					$this->flashNow('An error occurred while saving ticket', self::FLASH_WARNING);
+				}
 			}
 			
 			$this->_assignSelectValues($this->ticket['ticket_type']);

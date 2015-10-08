@@ -109,6 +109,7 @@ else: ?>
 				} else {
 					echo $f->submit('Save ticket') . ' or ';
 					echo $this->linkTo('tickets', 'view', $ticket, $project, 'discard changes', ['class' => 'reset']);
+					echo $f->hidden('last_modified', $ticket['modified']);
 				} ?>
 			</li>
 		</ul>
