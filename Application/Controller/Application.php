@@ -80,6 +80,14 @@
 		
 		// TODO: redirectWithReference($default, array('ref1' => […], 'ref2' => …))
 		
+		protected function flashView($view, $type = self::FLASH_NOTICE) {
+			$this->flash('', $type, ['render' => $view]);
+		}
+		
+		protected function flashViewNow($view, $type = self::FLASH_NOTICE) {
+			$this->flashNow('', $type, ['render' => $view]);
+		}
+		
 	}
 	
 ?>

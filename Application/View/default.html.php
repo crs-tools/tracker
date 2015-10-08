@@ -127,8 +127,10 @@
 			
 			if (!empty($flash)):
 				$flash = array_slice($flash, -1); ?>
-				<div id="flash">
-					<?= h($flash[0]['message']); ?>
+				<div id="flash" class="<?= h($flash[0]['type']); ?>">
+					<?= (isset($flash[0]['payload']['render']))?
+						$this->render($flash[0]['payload']['render']) :
+						h($flash[0]['message']); ?>
 				</div>
 			<?php endif; ?>
 			<?= $this->content(); ?>
