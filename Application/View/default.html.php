@@ -134,7 +134,7 @@
 			<?= $this->content(); ?>
 		</div>
 		
-		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-2.1.3.min.js" type="text/javascript"></script>
+		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery-2.1.4.min.js" type="text/javascript"></script>
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/jquery.cookie.min.js" type="text/javascript"></script>
 		<?= $this->content('scripts'); ?>
 		<script src="<?= $this->Request->getRootURL(); ?>javascript/main.js" type="text/javascript"></script>
