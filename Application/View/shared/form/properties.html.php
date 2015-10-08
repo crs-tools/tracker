@@ -6,17 +6,35 @@
 			} ?>
 			<li>
 				<?php echo $f->hidden($properties['field'] . '[' . $index . '][' . $properties['key'] . ']', $property[$properties['key']]);
-				echo $f->input(
-					$properties['field'] . '[' . $index . '][' . $properties['value'] . ']',
-					$property[$properties['key']],
-					$property[$properties['value']],
-					[
-						'class' => 'wide',
-						'data-property-index' => $index,
-						'data-property-destroy' => $properties['field'] . '[' . $index . '][_destroy]'
-					] +
-					((isset($properties['placeholder']))? ['placeholder' => $properties['placeholder']] : [])
-				);
+				
+				$showTextarea = (strpos($property[$properties['value']], "\n") !== false);
+				
+				if ($showTextarea) {
+					echo $f->textarea(
+						$properties['field'] . '[' . $index . '][' . $properties['value'] . ']',
+						$property[$properties['key']],
+						$property[$properties['value']],
+						[
+							'class' => 'wide',
+							'data-property-index' => $index,
+							'data-property-destroy' => $properties['field'] . '[' . $index . '][_destroy]'
+						] +
+						((isset($properties['placeholder']))? ['placeholder' => $properties['placeholder']] : [])
+					);
+				} else {
+					echo $f->input(
+						$properties['field'] . '[' . $index . '][' . $properties['value'] . ']',
+						$property[$properties['key']],
+						$property[$properties['value']],
+						[
+							'class' => 'wide',
+							'data-property-index' => $index,
+							'data-property-destroy' => $properties['field'] . '[' . $index . '][_destroy]'
+						] +
+						((isset($properties['placeholder']))? ['placeholder' => $properties['placeholder']] : [])
+					);
+				}
+				
 				$f->register($properties['field'] . '[' . $index . '][_destroy]');
 				
 				if (isset($properties['hidden'])) {

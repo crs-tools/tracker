@@ -1175,6 +1175,35 @@ var Tracker = {};
   
 */
 (function() {
+  function attachMultilineHandler(input) {
+    input.on('keydown', function(event) {
+      if (!event.altKey || event.keyCode !== 13) {
+        return;
+      }
+      
+      event.preventDefault();
+      
+      var textarea = $('<textarea></textarea>')
+        .attr({
+          'type': 'text',
+          'name': input.attr('name'),
+          'class': 'text wide',
+          'data-property-index': input.attr('data-property-index')
+        })
+        .insertBefore(input)
+        .val(input.val() + "\n")
+        .focus();
+      
+      var length = textarea.val().length
+      textarea[0].setSelectionRange(length, length);
+      
+      input.next('a.delete').remove();
+      input.remove();
+      
+      appendDeleteButton.call(this, textarea);
+    });
+  }
+  
   function appendDeleteButton(input) {
     var deleteField,
         deleteName = input.data('property-destroy');
@@ -1184,11 +1213,12 @@ var Tracker = {};
       .addClass('delete')
       .text('Delete ' + this.description)
       .attr('title', 'Delete ' + this.description)
-      .click(function(event) {  
+      .click(function(event) {
         event.preventDefault();
         
-        if (input[0].disabled) {
+        if (input.hasClass('delete')) {
           input[0].disabled = false;
+          input.removeClass('delete');
           
           $(event.target)
             .removeClass('restore')
@@ -1198,6 +1228,8 @@ var Tracker = {};
             deleteField.detach();
         } else {
           input[0].disabled = true;
+          input.addClass('delete');
+          
           $(event.target)
             .addClass('restore')
             .text('Restore ' + this.description)
@@ -1227,7 +1259,8 @@ var Tracker = {};
         
         var container = $('<li></li>').insertBefore(this.insertBefore),
             index,
-            lastInput = this.list.find('input[data-property-index]:last'),
+            input,
+            lastInput = this.list.find('[data-property-index]:last'),
             lastIndex = (lastInput[0])? lastInput.data('property-index') : -1,
             key;
             
@@ -1242,7 +1275,7 @@ var Tracker = {};
         
         index = this.keys.push(key[0]) - 1;
         
-        $('<input></input>')
+        input = $('<input></input>')
           .attr({
             'type': 'text',
             'name': this.create.value.replace('[]', '[' + (lastIndex + 1) + ']'),
@@ -1250,6 +1283,8 @@ var Tracker = {};
             'data-property-index': lastIndex + 1
           })
           .appendTo(container);
+        
+        attachMultilineHandler.call(this, input);
         
         this.create.hidden.each(function(i, hidden) {
           $(hidden)
@@ -1274,7 +1309,18 @@ var Tracker = {};
           }.bind(this))
           .appendTo(container);
       }.bind(this))
-      .appendTo($('<p></p>').appendTo($('<li><label></label></li>').appendTo(this.list)));
+      .prependTo(
+        $('<p></p>')
+          .appendTo(
+            $('<li><label></label></li>')
+              .appendTo(this.list)
+          )
+          .append(
+            $('<span></span>')
+              .addClass('description')
+              .text('Use Alt+Enter to input multiline values')
+          )
+      );
     
     this.insertBefore = this.createButton.closest('li');
   }
@@ -1291,7 +1337,9 @@ var Tracker = {};
     this.keys = [];
     
     this.list.find('li').each(function(i, li) {
-      appendDeleteButton.call(this, $(li).children('input.text'));
+      var input = $(li).children('[data-property-index]');
+      appendDeleteButton.call(this, input);
+      attachMultilineHandler.call(this, input);
     }.bind(this));
     
     this.list

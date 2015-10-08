@@ -509,7 +509,8 @@ form fieldset ul li input.text, form fieldset ul li textarea {
 	font-size: 1.3em;
 }
 
-form fieldset ul li input.text[disabled] {
+form fieldset ul li input.text[disabled],
+form fieldset ul li textarea[disabled] {
 	background-color: #ECECEC;
 	color: #707070;
 }
@@ -523,13 +524,13 @@ form fieldset ul li textarea {
 }
 
 form fieldset ul li textarea.wide {
-	width: 24em;
+	width: 23.75em;
 	height: 5em;
 	font-size: 1.1em;
 }
 
 form fieldset ul li textarea.extra-wide {
-	width: 40em;
+	width: 40em;<
 	height: 13em;
 	font-size: 1em;
 }
@@ -655,7 +656,17 @@ form fieldset ul.edit-properties li a {
 	font-size: 0.9em;
 }
 
-form fieldset ul.edit-properties li input.text[disabled] {
+form fieldset ul.edit-properties li a {
+	margin-left: 1em;
+	font-size: 0.9em;
+}
+
+form fieldset ul.edit-properties li span.description {
+  margin-left: 1em;
+  margin-top: -0.1em;
+}
+
+form fieldset ul.edit-properties li .delete {
 	text-decoration: line-through;
 }
 
@@ -672,6 +683,8 @@ form fieldset ul.edit-properties li a.delete {
 form fieldset ul.edit-properties li a.delete.restore {
 	background-position: -110px -46px;
 }
+
+/*form fieldset ul.edit-properties li span.*/
 
 @media screen and (max-width: 515px) {
   form fieldset legend {
@@ -1637,6 +1650,7 @@ table.properties tr:last-child td { border-bottom: none; }
 table.properties tr td.key {
 	width: 16%;
 	border-right: 1px solid #e0e0e0;
+  vertical-align: top;
 	color: #707070;
 }
 
