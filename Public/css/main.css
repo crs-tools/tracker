@@ -2258,10 +2258,6 @@ div.table table tr.encoding-profile-version td {
   padding: 0;
 }
 
-div.table table tr.encoding-profile-version td textarea {
-  display: none;
-}
-
 /* Projects */
 
 ul.projects {
