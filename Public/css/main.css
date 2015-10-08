@@ -407,6 +407,14 @@ ul#menu li.menu-users.current a:before {
 	color: #3d464d;
 }
 
+#flash.warning {
+  background-color: #ffd51b;
+}
+
+#flash.warning a {
+  color: #705000;
+}
+
 /* Forms */
 
 form { margin: 0;padding: 0; }
