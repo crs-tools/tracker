@@ -274,7 +274,7 @@ var Tracker = {};
     ticketEditButton = $('<input></input>')
       .attr({
         'type': 'button',
-        'value': 'Edit selected' 
+        'value': 'Edit selected'
       })
       .prop('disabled', true)
       .click(function(event) {
@@ -1126,6 +1126,13 @@ var Tracker = {};
   
 */
 (function() {
+  
+  function scrollToSection(section) {
+    $('html, body').animate({
+      scrollTop: section.offset().top
+    }, 500);
+  }
+  
   Tracker.Foldable = function(fieldset) {
     fieldset = $(fieldset);
     
@@ -1152,6 +1159,7 @@ var Tracker = {};
             if (section.hasClass('folded')) {
               event.target.attr('title', 'Fold section').text('fold');
               section.removeClass('folded').addClass('expanded');
+              scrollToSection(section);
             } else {
               event.target.attr('title', 'Expand section').text('expand');
               section.removeClass('expanded').addClass('folded');
