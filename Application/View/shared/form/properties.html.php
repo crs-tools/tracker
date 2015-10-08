@@ -5,7 +5,7 @@
 				continue;
 			} ?>
 			<li>
-				<?php echo $f->hidden($properties['field'] . '[' . $index . '][' . $properties['key'] . ']', $property[$properties['key']]); 
+				<?php echo $f->hidden($properties['field'] . '[' . $index . '][' . $properties['key'] . ']', $property[$properties['key']]);
 				echo $f->input(
 					$properties['field'] . '[' . $index . '][' . $properties['value'] . ']',
 					$property[$properties['key']],

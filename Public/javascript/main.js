@@ -1114,7 +1114,7 @@ var Tracker = {};
       
       actions = $('#feed-stats-actions');
       progressBar = $('#feed-stats-progress-bar');
-	  
+      
       timeout = setTimeout(poll, 15000);
     }
   };

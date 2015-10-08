@@ -23,7 +23,7 @@
 
 <?= $f = $form(['id' => 'ticket-import']); ?>
 	<fieldset>
-		<legend>New import</legend>		
+		<legend>New import</legend>
 		<ul>
 			<li>
 				<?= $f->input('url','XML URL', '', ['class' => 'wide']); ?>
