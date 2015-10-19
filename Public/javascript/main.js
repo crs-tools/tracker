@@ -19,10 +19,12 @@ var Tracker = {};
             <option value="failed">State failed</option>\
             <option value="encoding_profile">Encoding profile</option>\
           </optgroup>\
-          <optgroup label="Properties">\
-            <option value="fahrplan_id">Fahrplan ID</option>\
-            <option value="room">Room</option>\
+          <optgroup label="Fahrplan">\
+            <option value="fahrplan_id">ID</option>\
             <option value="day">Day</option>\
+            <option value="room">Room</option>\
+            <option value="language">Language</option>\
+            <option value="persons">Persons</option>\
             <option value="optout">Opt-Out</option>\
           </optgroup>\
           <optgroup label="Other">\
@@ -50,8 +52,9 @@ var Tracker = {};
         states: $('#tickets-search-states'),
         bool: $('<select><option value="1">true</option><option value="0">false</option></select>'),
         types: $('#tickets-search-types'),
-        rooms: $('#tickets-search-rooms'),
         days: $('#tickets-search-days'),
+        rooms: $('#tickets-search-rooms'),
+        languages: $('#tickets-search-languages'),
         assignees: $('#tickets-search-assignees'),
         profiles: $('#tickets-search-profiles')
       },
@@ -105,6 +108,7 @@ var Tracker = {};
       
       switch (field) {
         case 'title':
+        case 'persons':
           operator = dropdowns.operators.text.clone();
           break;
         case 'fahrplan_id':
@@ -130,11 +134,14 @@ var Tracker = {};
             case 'encoding_profile':
               value = dropdowns.profiles.clone();
               break;
+            case 'day':
+              value = dropdowns.days.clone();
+              break;
             case 'room':
               value = dropdowns.rooms.clone();
               break;
-            case 'day':
-              value = dropdowns.days.clone();
+            case 'language':
+              value = dropdowns.languages.clone();
               break;
             case 'failed':
             case 'optout':

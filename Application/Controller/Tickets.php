@@ -37,6 +37,8 @@
 			'fahrplan_id' => 'fahrplan_id',
 			'day' => 'property_fahrplan_day.value',
 			'room' => 'property_fahrplan_room.value',
+			'language' => 'property_fahrplan_language.value',
+			'persons' => 'property_fahrplan_persons.value',
 			'optout' => 'property_fahrplan_optout.value',
 			'modified' => 'modified'
 		];
@@ -46,6 +48,8 @@
 			'day',
 			'time',
 			'room',
+			'language',
+			'persons',
 			'optout'
 		];
 		
@@ -188,6 +192,10 @@
 				->select('value::int, \'Day \' || value AS day')
 				->indexBy('value', 'day')
 				->orderBy('value::int');
+			
+			$this->languages = $this->project
+				->Languages
+				->indexBy('language', 'description');
 		
 			$this->profiles = $this->project
 				->EncodingProfileVersion
@@ -235,6 +243,8 @@
 				->scoped([
 					'with_default_properties',
 					'with_properties' => [[
+						'Fahrplan.Language' => 'fahrplan_language',
+						'Fahrplan.Persons' => 'fahrplan_persons',
 						'Fahrplan.Recording.Optout' => 'fahrplan_optout'
 					]],
 					'with_encoding_profile_name',

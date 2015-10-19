@@ -31,8 +31,9 @@
 		<?= $f->select('states', '', $states, null, ['id' => 'tickets-search-states']); ?>
 		<?= $f->select('users', '', $users, null, ['id' => 'tickets-search-assignees']); ?>
 		<?= $f->select('profiles', '', $profiles->toArray(), null, ['id' => 'tickets-search-profiles']); ?>
-		<?= $f->select('rooms', '', $rooms->toArray(), null, ['id' => 'tickets-search-rooms']); ?>
 		<?= $f->select('days', '', $days->toArray(), null, ['id' => 'tickets-search-days']); ?>
+		<?= $f->select('rooms', '', $rooms->toArray(), null, ['id' => 'tickets-search-rooms']); ?>
+		<?= $f->select('languages', '', $languages->toArray(), null, ['id' => 'tickets-search-languages']); ?>
 	</fieldset>
 	
 	<?php $f->register('fields[]');
