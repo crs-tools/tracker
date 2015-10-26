@@ -57,7 +57,7 @@ if (!empty($filtered) and (!empty($filtered[$ticket['id']]) or !empty($filtered[
 			echo '</span><span class="day">';
 		
 			if (empty($ticket['parent_id']) and isset($ticket['fahrplan_day'])) {
-				echo (!empty($ticket['fahrplan_day']))? ('Day ' . h($ticket['fahrplan_day'])) : '-';
+				echo (!empty($ticket['fahrplan_day']) or $ticket['fahrplan_day'] === '0')? ('Day ' . h($ticket['fahrplan_day'])) : '-';
 			}
 		} ?>
 		
