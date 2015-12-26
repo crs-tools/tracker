@@ -103,7 +103,7 @@
 					<?php endif; ?>
 					<?php if (User::isAllowed('tickets', 'index')): ?>
 						<li class="menu-tickets <?= ((($arguments['controller'] == 'tickets' and $arguments['action'] != 'feed') or $arguments['controller'] == 'import')? ' current' : ''); ?>">
-							<?= $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Feed'); ?>
+							<?= $this->linkTo('tickets', 'index', $project/* + (($referer = Request::get('ref') and $this->isValidReferer($referer))? array('?t=' . $referer) : array())*/, '<span>Tickets</span>', 'Tickets'); ?>
 						</li>
 					<?php endif; ?>
 					<?php if (User::isAllowed('projects', 'settings')): ?>
