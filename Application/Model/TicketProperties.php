@@ -33,7 +33,7 @@
 				->orderBy('value');
 		}
 		
-		public static function buildSlug(Model $project, array $properties) {
+		public static function buildSlugTemplate(Model $project, array $properties) {
 			$parts = [
 				$properties['Project.Slug']
 			];
@@ -42,9 +42,9 @@
 				$parts[] = $properties['Fahrplan.ID'];
 			}
 
-			// add language if project has multiple languages
+			// add language wild card if project has multiple languages
 			if (count($project->Languages) > 0 && isset($properties['Record.Language'])) {
-				$parts[] = $properties['Record.Language'];
+				$parts[] = '%s';
 			}
 
 			// generate slug from ticket title (and ignore the one from the frab)
@@ -152,6 +152,7 @@
 				
 				Project.Slug (via project.slug)
 				
+				Encoding.Slug
 				Encoding.Basename (via TicketProperties::buildSlug)
 				
 				EncodingProfile.Basename
@@ -231,12 +232,28 @@
 				}
 				
 				if ($this->_parentTicket['ticket_type'] === 'encoding') {
-					if (!isset($index['Encoding.Basename'])) {
-						$basename = TicketProperties::buildSlug(
+					if (!isset($index['Encoding.LanguageTemplate'])) {
+						$languageTemplate = TicketProperties::buildSlugTemplate(
 							$this->_parentTicket->Project,
 							// TODO: better idea than rebuilding index?
 							array_column($this->_entries, 'value', 'name')
 						);
+						
+						$this->_entries[] = [
+							'name' => 'Encoding.LanguageTemplate',
+							'value' => $languageTemplate,
+							'virtual' => true
+						];
+					} else {
+						$languageTemplate = $index['Encoding.LanguageTemplate'];
+					}
+					
+					if (!isset($index['Encoding.Basename'])) {
+						$basename = $languageTemplate;
+						
+						if (count($this->_parentTicket->Project->Languages) > 0 && isset($index['Record.Language'])) {
+							$basename = sprintf($languageTemplate, $index['Record.Language']);
+						}
 					
 						$this->_entries[] = [
 							'name' => 'Encoding.Basename',
