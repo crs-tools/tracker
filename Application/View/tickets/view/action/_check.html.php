@@ -18,7 +18,7 @@
 <?php if (isset($project->Properties['Publishing.Base.Url']) and isset($ticket->EncodingProfile->Properties['EncodingProfile.Extension'])): ?>
 	<li><p>The file maybe available <?= $this->a(
 		$project->Properties['Publishing.Base.Url']['value'] .
-			$ticket['id'] .
+			$ticket['fahrplan_id'] .
 			'-' . $ticket->EncodingProfile['slug'] .
 			'.' . $ticket->EncodingProfile->Properties['EncodingProfile.Extension']['value'],
 		'as download'
