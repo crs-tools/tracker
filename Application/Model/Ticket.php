@@ -48,7 +48,7 @@
 				'foreign_key' => ['encoding_profile_version_id'],
 				'select' => 'revision, description',
 				'join_assoications' => [
-					'EncodingProfile' => ['select' => 'id, name']
+					'EncodingProfile' => ['select' => 'id, name, slug']
 				]
 			],
 			'Handle' => [
