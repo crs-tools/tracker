@@ -15,7 +15,9 @@
 		];
 		
 		public function defaultScope(Model_Resource $resource) {
-			$resource->orderBy('name');
+			$resource
+				->orderBy('name')
+				->indexBy('name');
 		}
 		
 	}
