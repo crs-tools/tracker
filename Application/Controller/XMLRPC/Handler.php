@@ -42,8 +42,13 @@
 			if (!$this->_workerGroup = WorkerGroup::findBy(array('token' => $_GET['group']))) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
 			}
+			
+			if (count($this->arguments) === 0) {
+				return $this->_XMLRPCFault(-32500, 'signature missing');
+			}
 
 			$signature = array_pop($this->arguments);
+			
 			if (!self::_validateSignature($this->_workerGroup['secret'], $signature, array_merge(array(
 				$this->Request->getURL(),
 				self::XMLRPC_PREFIX . $method,
