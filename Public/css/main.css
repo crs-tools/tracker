@@ -1654,6 +1654,10 @@ table.properties tr td.key {
 	color: #707070;
 }
 
+table.properties tr td.key span.root {
+  font-size: 0px;
+}
+
 table.properties tr th { border-top: 1px solid #e0e0e0; }
 
 ul.tickets li.table {

@@ -17,7 +17,7 @@
 		<?php endif; ?>
 		<tbody>
 			<tr>
-				<td class="key"><?php
+				<td class="key"><span class="root"><?= h($root . '.'); ?></span><?php
 					$key = h((count($parts) > 1)? implode('.', array_slice($parts, 1)) : $property['name']);
 					echo (!empty($property['virtual']))? ('<em title="Virtual property">' . $key . '</em>') : $key;
 				?></td>
