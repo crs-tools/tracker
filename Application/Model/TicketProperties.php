@@ -231,6 +231,18 @@
 					];
 				}
 				
+				if (isset($index['Record.Language'])) {
+					$languages = explode('-', $index['Record.Language']);
+					
+					foreach ($languages as $i => $language) {
+						$this->_entries[] = [
+							'name' => 'Record.Language.' . $i,
+							'value' => $language,
+							'virtual' => true
+						];
+					}
+				}
+				
 				if ($this->_parentTicket['ticket_type'] === 'encoding') {
 					if (!isset($index['Encoding.LanguageTemplate'])) {
 						$languageTemplate = TicketProperties::buildSlugTemplate(
