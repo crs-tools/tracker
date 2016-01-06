@@ -634,48 +634,12 @@
 		public function getJobfile($ticket_id) {
 			$properties = $this->getTicketProperties($ticket_id);
 
-			// check for basename
-			if(!isset($properties['Encoding.Basename'])) {
-				throw new Exception(__FUNCTION__.': could not examine file basename. Is property Record.Language set?',701);
-			}
-
 			// get encoding profile
 			if(!$profileVersion = Ticket::findBy(array('id' => $ticket_id))->EncodingProfileVersion) {
 				throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',702);
 			}
 
-			$template = new DOMDocument();
-			
-			// prepare template
-			if (!$template->loadXML($profileVersion['xml_template'])) {
-				throw new Exception(__FUNCTION__.': Couldn\'t parse XML template');
-			}
-			
-			// Process templates as XSL
-			
-			$content = new DOMDocument('1.0', 'UTF-8');
-			$parent = $content->createElement('properties');
-			
-			foreach ($properties as $name => $value) {
-				$element = $content->createElement('property');
-				$element->setAttribute('name', $name);
-				$element->appendChild(new DOMText($value));
-				
-				$parent->appendChild($element);
-			}
-			
-			$content->appendChild($parent);
-			
-			$processor = new XSLTProcessor();
-			$processor->importStylesheet($template);
-
-			// pretty print
-			$output = $processor->transformToDoc($content);
-			
-			$output->formatOutput = true;
-			$output->encoding = 'UTF-8';
-			
-			return $output->saveXml();
+			return $profileVersion->getJobfile($properties);
 		}
 		
 		/**

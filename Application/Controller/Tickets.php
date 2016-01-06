@@ -366,11 +366,16 @@
 				return Response::error(400);
 			}
 			
-			// TODO: cleanup
-			requires('/Controller/XMLRPC/Handler');
+			$ticket = Ticket::findOrThrow(['id' => $arguments['id']], ['Project']);
 			
-			$handler = new Controller_XMLRPC_Handler();
-			$this->Response->setContent($handler->getJobfile($arguments['id']));
+			$properties = $ticket
+				->MergedProperties
+				->indexBy('name', 'value')
+				->toArray();
+			
+			$this->Response->setContent(
+				$ticket->EncodingProfileVersion->getJobfile($properties)
+			);
 		}
 		
 		public function feed() {

@@ -75,19 +75,28 @@
 			$this->form();
 			
 			if ($this->form->getValue('save') and $this->profile->save($this->form->getValues())) {
-				if ($this->form->getValue('create_version')) {
-					$version = new EncodingProfileVersion([
-						'encoding_profile_id' => $this->profile['id']
-						// TODO: save based version
-					]);
-				} else {
-					$version = EncodingProfileVersion::find($this->form->getValue('version'));
-				}
+				$error = EncodingProfileVersion::isTemplateValid($this->form->getValue('xml_template'));
 				
-				$version->save($this->form->getValues());
+				// TODO: move to Model validation
+				if ($error !== true) {
+					$this->flashNow('Template error: ' . $error);
+				} else {
+					if ($this->form->getValue('create_version')) {
+						$version = new EncodingProfileVersion([
+							'encoding_profile_id' => $this->profile['id']
+							// TODO: save based version
+						]);
 						
-				$this->flash('Encoding profile updated');
-				return $this->redirect('encodingprofiles', 'index');
+						$this->flash('Encoding profile updated, new profile version created');
+					} else {
+						$version = EncodingProfileVersion::find($this->form->getValue('version'));
+						$this->flash('Encoding profile updated');
+					}
+					
+					$version->save($this->form->getValues());
+					
+					return $this->redirect('encodingprofiles', 'index');
+				}
 			}
 			
 			if ($this->form->wasSubmitted()) {
