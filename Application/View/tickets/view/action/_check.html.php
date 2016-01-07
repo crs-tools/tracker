@@ -12,7 +12,11 @@
 <li class="checkbox"><?= $f->checkbox('failed', 'This encoding failed or something is wrong with the metadata.'); ?></li>
 <li><?= $f->textarea('comment', 'Comment', null, ['class' => 'wide hidden']); ?></li>
 <?php if (isset($recordingProperties['Record.Language'])): ?>
-	<li><p>Recording language was set to <strong><?= $languages[$recordingProperties['Record.Language']['value']] ?></strong>.</p></li>
+	<li><p>Recording language was set to
+		<strong><?= (isset($languages[$recordingProperties['Record.Language']['value']]))?
+			$languages[$recordingProperties['Record.Language']['value']] : $recordingProperties['Record.Language']['value']; ?>
+		</strong>.
+	</p></li>
 <?php endif; ?>
 
 <?php if (isset($project->Properties['Publishing.Base.Url']) and isset($ticket->EncodingProfile->Properties['EncodingProfile.Extension'])): ?>
