@@ -19,14 +19,8 @@
 	</p></li>
 <?php endif; ?>
 
-<?php if (isset($project->Properties['Publishing.Base.Url']) and isset($ticket->EncodingProfile->Properties['EncodingProfile.Extension'])): ?>
-	<li><p>The file maybe available <?= $this->a(
-		$project->Properties['Publishing.Base.Url']['value'] .
-			$ticket['fahrplan_id'] .
-			'-' . $ticket->EncodingProfile['slug'] .
-			'.' . $ticket->EncodingProfile->Properties['EncodingProfile.Extension']['value'],
-		'as download'
-	); ?>.</p></li>
+<?php if ($project->hasEncodingProfilePublishingURL($ticket)): ?>
+	<li><p>The file maybe available <?= $this->a($project->getEncodingProfilePublishingURL($ticket), 'as download'); ?>.</p></li>
 <?php endif; ?>
 
 <li><?= $f->submit('Everything\'s fine'); // Closing <li> is in parent template ?>
