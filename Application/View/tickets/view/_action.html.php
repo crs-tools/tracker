@@ -25,12 +25,9 @@
 						echo $this->render('tickets/view/action/_' . $action . '', ['f' => $f]);
 						break;
 				} ?>
-					<?php
-					// TODO: enable jumping again
-					/*
-						echo $f->checkbox('forward', null, false, array(), true) . '<label for="ticket-action-forward" class="ticket-action-forward">jump to next ticket</label>';
-					*/
-
+					<?php echo $f->checkbox('jump', null, isset($_GET['jump']), []) .
+						'<label for="ticket-action-jump" class="ticket-action-jump">jump to next ticket</label>';
+					
 					echo ' or ' . $this->linkTo(
 						'tickets',
 						'un' . $action,

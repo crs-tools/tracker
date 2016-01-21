@@ -577,46 +577,23 @@
 						]);
 						
 						$this->flash('Successfully finished ' . $this->state);
+						
+						if ($this->actionForm->getValue('jump')) {
+							$next = $this->ticket->findNextForAction($this->state);
+							
+							if ($next !== null) {
+								$this->flash('Successfully finished ' . $this->state . ', jumped to next ticket');
+								return $this->redirect('tickets', $action, $next, $this->project, ['?jump']);
+							}
+						}
 					}
 					
-					return $this->redirect('tickets', 'view', $this->ticket, $this->project); 
+					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 				}
 			}
 			
 			$this->_assignTimeline($this->ticket);
 			
-			/*
-			if (Request::isPostRequest()) {
-				…
-					if (Request::post('reset', Request::checkbox) and !empty($states['reset'])) {
-						if (!empty($ticket['parent_id'])) {
-							$this->Ticket->resetRecordingTask($ticket['parent_id']);
-						}
-						
-						return $this->_redirectWithReferer($ticket);
-				…
-					} else {
-				…
-					if ($this->Ticket->save()) {
-						
-						if (Request::post('forward', Request::checkbox)) {
-							if (isset($ticket['encoding_profile_id']) and $forward = $this->Ticket->findFirst(array(), 'project_id = ? AND state_id = ? AND encoding_profile_id = ? AND id != ?', array($this->Project->id, $states['from'], $ticket['encoding_profile_id'], $ticket['id']))) {
-								return $this->View->redirect('tickets', $action, $forward + array('project_slug' => $this->Project->slug, '?forward'));
-							}
-							
-							if ($forward = $this->Ticket->findFirst(array(), 'project_id = ? AND state_id = ? AND id != ?', array($this->Project->id, $states['from'], $ticket['id']))) {
-								return $this->View->redirect('ticket', 'view', $forward + array('project_slug' => $this->Project->slug, '?forward'));
-							}
-							
-							$this->flash('No more tickets to ' . $action);
-						}
-						
-						return $this->_redirectWithReferer($ticket);
-					}
-				}
-			}
-			*/
-						
 			return $this->render('tickets/view');
 		}
 		
@@ -672,10 +649,8 @@
 			
 			$this->form();
 			
-			if ($this->form->wasSubmitted()) {	
-				$ticket->save([
-					'needs_attention' => $this->form->getValue('needs_attention')
-				]);
+			if ($this->form->wasSubmitted()) {
+				$ticket->needsAttention($this->form->getValue('needs_attention'));
 				
 				if ($ticket->addComment($this->form->getValue('text'))) {
 					$this->flash('Comment created');

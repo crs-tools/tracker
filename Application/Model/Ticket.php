@@ -265,6 +265,24 @@
 			');
 		}
 		
+		public static function action_next(Model_Resource $resource, $project, $state, $encodingProfile = null) {
+			$resource
+				->where([
+					'project_id' => $project,
+					'handle_id' => null
+				])
+				->orWhere([
+					'ticket_state' => $state,
+					'ticket_state_next' => $state
+				]);
+			
+			if ($encodingProfile !== null) {
+				$resource->where([
+					'encoding_profile_version_id' => $encodingProfile
+				]);
+			}
+		}
+		
 		/*
 		 * This join results in a query like this:
 		 *
@@ -785,6 +803,31 @@
 						($state === null)? $this['ticket_state'] : $state
 					]
 				);
+		}
+		
+		public function findNextForAction($state) {
+			$next = null;
+			
+			if ($this['encoding_profile_version_id'] !== null) {
+				$next = Ticket::findAll()
+					->scoped(['action_next' => [
+						$this['project_id'],
+						$state,
+						$this['encoding_profile_version_id']
+					]])
+					->first();
+			}
+			
+			if ($next === null) {
+				$next = Ticket::findAll()
+					->scoped(['action_next' => [
+						$this['project_id'],
+						$state
+					]])
+					->first();
+			}
+			
+			return $next;
 		}
 	}
 	
