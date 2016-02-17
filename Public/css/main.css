@@ -1276,17 +1276,14 @@ form#ticket-action {
 	margin-bottom: 4em;
 }
 
-form#ticket-action fieldset ul li #ticket-action-forward {
 form#ticket-action fieldset ul li #ticket-action-jump {
 	margin-left: 0.2em;
 }
 
-form#ticket-action fieldset ul li label.ticket-action-forward {
 form#ticket-action fieldset ul li label.ticket-action-jump {
 	position: static;
 	float: none;
 	padding: 0;
-	margin: 0 0 0 0.4em;
 	margin: 0 0 0 0.5em;
 	width: auto;
 	border: none;
