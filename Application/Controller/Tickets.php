@@ -650,7 +650,9 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
-				$ticket->needsAttention($this->form->getValue('needs_attention'));
+				$ticket->save([
+					'needs_attention' => $this->form->getValue('needs_attention')
+				]);
 				
 				if ($ticket->addComment($this->form->getValue('text'))) {
 					$this->flash('Comment created');
