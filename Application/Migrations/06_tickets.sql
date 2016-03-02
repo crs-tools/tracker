@@ -164,7 +164,8 @@ CREATE OR REPLACE FUNCTION update_encoding_ticket_state() RETURNS trigger AS $$
 BEGIN
   IF NEW.ticket_type = 'recording' 
     AND NEW.ticket_state <> OLD.ticket_state 
-    AND NEW.ticket_state = 'finalized' 
+    AND NEW.ticket_state = 'finalized'
+    AND NEW.failed = false
     AND 'staged' = COALESCE(
       (SELECT ticket_state FROM tbl_ticket tt WHERE tt.ticket_type='meta' AND tt.id=NEW.parent_id),
       'staging') 
@@ -183,7 +184,10 @@ BEGIN
   IF NEW.ticket_type = 'encoding' 
     AND 'finalized' = COALESCE(
       (SELECT ticket_state FROM tbl_ticket tt WHERE tt.ticket_type='recording' AND tt.parent_id=NEW.parent_id),
-      'scheduled') 
+      'scheduled')
+    AND false = COALESCE(
+      (SELECT failed FROM tbl_ticket tt WHERE tt.ticket_type='recording' AND tt.parent_id=NEW.parent_id),
+      true)
     AND 'staged' = COALESCE(
       (SELECT ticket_state FROM tbl_ticket tt WHERE tt.ticket_type='meta' AND tt.id=NEW.parent_id),
       'staging') 
