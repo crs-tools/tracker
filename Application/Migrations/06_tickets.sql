@@ -106,7 +106,6 @@ CREATE TABLE tbl_ticket
   modified timestamp with time zone NOT NULL DEFAULT now(),
   failed boolean NOT NULL DEFAULT false,
   needs_attention boolean NOT NULL DEFAULT false,
-  repairing character varying(128),
   progress double precision not null default 0.0,
   CONSTRAINT tbl_ticket_pk PRIMARY KEY (id),
   CONSTRAINT tbl_ticket_encoding_profile_version_fk FOREIGN KEY (encoding_profile_version_id)
