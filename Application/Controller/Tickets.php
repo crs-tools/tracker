@@ -166,10 +166,25 @@
 			$this->searchForm = $this->form();
 			
 			$this->users = User::findAll()
-					->select('id, name')
-					->orderBy('name')
-					->indexBy('id', 'name')
-					->toArray();
+				->select('id, name')
+				->orderBy('name')
+				->indexBy('id', 'name')
+				->toArray();
+			
+			// TODO: by worker group, by project...
+			$this->workers = Worker::findAll()
+				->select('id, name')
+				->orderBy('last_seen DESC')
+				->indexBy('id', 'name')
+				->limit(15)
+				->toArray();
+			
+			$this->assignedWorkers = Worker::findAll()
+				->scoped(['assigned' => [$this->project['id']]])
+				->select('id, name')
+				->orderBy('last_seen DESC')
+				->indexBy('id', 'name')
+				->toArray();
 			
 			$states = [];
 			

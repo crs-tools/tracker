@@ -29,7 +29,11 @@
 	<fieldset id="tickets-search-selects">
 		<?= $f->select('types', '', ['meta' => 'meta', 'recording' => 'recording', 'ingest' => 'ingest', 'encoding' => 'encoding'], null, ['id' => 'tickets-search-types']); ?>
 		<?= $f->select('states', '', $states, null, ['id' => 'tickets-search-states']); ?>
-		<?= $f->select('users', '', $users, null, ['id' => 'tickets-search-assignees']); ?>
+		<?= $f->select('users', '', [
+			'Users' => $users,
+			'Workers (assigned)' => $assignedWorkers,
+			'Workers (15 last seen)' => $workers
+		], null, ['id' => 'tickets-search-assignees']); ?>
 		<?= $f->select('profiles', '', $profiles->toArray(), null, ['id' => 'tickets-search-profiles']); ?>
 		<?= $f->select('days', '', $days->toArray(), null, ['id' => 'tickets-search-days']); ?>
 		<?= $f->select('rooms', '', $rooms->toArray(), null, ['id' => 'tickets-search-rooms']); ?>
