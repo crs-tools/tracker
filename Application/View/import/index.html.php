@@ -45,10 +45,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($previousImports as $import): ?>
+			<?php foreach($previousImports as $import):
+				$date = h((new DateTime($import['created']))->format('Y-m-d H:i:s')); ?>
 				<tr>
 					<td><code><?= h($import['url']); ?></code></td>
-					<td><?= $this->linkTo('import', 'download', $import, $project, ['.xml'], $import['version']); ?></td>
+					<td><?= $this->linkTo('import', 'download', $import, $project, ['.xml'], (!empty($import['version']))? $import['version'] : ('<em>' . $date . '</em>'), (!empty($import['version']))? $import['version'] : $date); ?></td>
 					<td><?= h($import['user_name']); ?></td>
 					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
 				</tr>
