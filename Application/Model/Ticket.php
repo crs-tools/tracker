@@ -242,6 +242,16 @@
 			);
 		}
 		
+		public static function filter_restricted(Model_Resource $resource, $userId) {
+			$resource->join(
+				'tbl_user_project_restrictions',
+				[
+					self::TABLE . '.project_id = tbl_user_project_restrictions.project_id',
+					'tbl_user_project_restrictions.user_id' => $userId
+				]
+			);
+		}
+		
 		public static function order_list(Model_Resource $resource) {
 			$resource
 				->andSelect(

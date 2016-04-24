@@ -52,6 +52,20 @@
 			<?php endif; ?>
 			<li><?= $f->password('password', (!empty($user))? 'New user password' : 'Password'); ?></li>
 		</ul>
+	</fieldset>
+	<fieldset>
+		<legend>Project access</legend>
+		<ul>
+			<li class="checkbox"><?= $f->checkbox('restrict_project_access', 'Restrict access to the following projects', $user['restrict_project_access']); ?></li>
+			<?php foreach ($userProjects as $index => $project): ?>
+				<li><?= $f->select('Project[' . $index . '][project_id]', '', $projects->toArray(), $project['id']); ?></li>
+			<?php endforeach; ?>
+			<li>
+				<li><label></label><p><a href="#">Add restriction</a><span class="description">A user without project restrictions has access to all projects.</span></p></li>
+			</li>
+		</ul>
+	</fieldset>
+	<fieldset>
 		<ul>
 			<li>
 				<?php echo $f->submit((!empty($user))? 'Save user' : 'Create user') . ' or ';

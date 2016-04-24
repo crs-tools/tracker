@@ -22,6 +22,23 @@
 		const FIELD_ACTIVE = false;
 		const FIELD_LOGIN_COUNT = false;
 		
+		public $hasAndBelongsToMany = [
+			'Project' => [
+				'foreign_key' => ['project_id'],
+				'self_key' => ['user_id'],
+				'via' => 'tbl_user_project_restrictions',
+				'select' => 'tbl_project.id'
+			]
+		];
+		
+		public static function isRestricted() {
+			if (!static::isLoggedIn()) {
+				return false;
+			}
+			
+			return self::$Session->get()['restrict_project_access'];
+		}
+		
 	}
 	
 ?>

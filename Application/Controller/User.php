@@ -111,11 +111,13 @@
 				return $this->redirect('user', 'index');
 			}
 			
+			$this->projects = Project::findAll();
+			
 			return $this->render('user/edit');
 		}
 		
 		public function edit(array $arguments) {
-			$this->user = User::findOrThrow($arguments['id']);
+			$this->user = User::findOrThrow($arguments['id'], ['Project']);
 			
 			$this->form();
 			
@@ -128,6 +130,11 @@
 					return $this->redirect('user', 'index');
 				}
 			}
+			
+			$this->userProjects = $this->user->Project;
+			$this->projects = Project::findAll()
+				->orderBy('read_only, created DESC')
+				->indexBy('id', 'title');
 			
 			return $this->render('user/edit');
 		}

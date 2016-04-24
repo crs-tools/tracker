@@ -920,6 +920,12 @@ h2.ticket span.fahrplan {
 	z-index: 10;
 }
 
+.header-project-restricted {
+  padding: 0.5em 0.9em;
+  margin-bottom: 0.7em;
+  color: #acacac;
+}
+
 ul.ticket-header-bar.left, ul.ticket-header-bar.right {
 	position: absolute;
 	top: 0;
@@ -2295,6 +2301,11 @@ ul.projects > li {
 	margin: 0;
 	list-style-type: none;
 	border-bottom: 1px solid #e0e0e0;
+}
+
+ul.projects .project-restricted {
+  padding: 0.5em 1.6em;
+  color: #acacac;
 }
 
 form fieldset.projects-list {

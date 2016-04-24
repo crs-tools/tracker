@@ -39,7 +39,13 @@
 					'project_id' => $projects,
 					'next_state_service_executable' => true
 				]);
-						
+			
+			if (User::isRestricted()) {
+				$tickets->scoped([
+					'filter_restricted' => [User::getCurrent()['id']]
+				]);
+			}
+			
 			$this->filtered = $this->group
 				->getFilteredTickets($projects, $tickets);
 			

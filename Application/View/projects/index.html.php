@@ -13,9 +13,14 @@
 	<?php endif; ?>
 </div>
 
+<?php $hasReadonly = false; ?>
 <ul class="projects">
 	<?php if (!empty($projects)): ?>
-		<?php $hasReadonly = false; ?>
+		<?php if (User::isRestricted()): ?>
+			<li class="project-restricted">
+				Your project access is restricted. More projects may exist.
+			</li>
+		<?php endif; ?>
 		<?php foreach ($projects as $project): ?>
 			<?php if($project['read_only'] && !$hasReadonly): ?>
 				<?php $hasReadonly = true; ?>
@@ -37,10 +42,9 @@
 				</ul>
 			</li>
 		<?php endforeach; ?>
-		<?php if($hasReadonly): ?>
-					</ul>
-				</fieldset>
-			</form>
-		<?php endif ?>
 	<?php endif; ?>
 </ul>
+<?php if($hasReadonly): ?>
+	</fieldset>
+</form>
+<?php endif ?>

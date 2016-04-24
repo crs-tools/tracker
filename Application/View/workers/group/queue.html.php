@@ -18,6 +18,11 @@
 		<li class="ticket-header-bar-background-right"></li>
 	</ul>
 </div>
+<?php if (User::isRestricted()): ?>
+	<div class="header-project-restricted">
+		Your project access is restricted. This queue may contain more tickets from other projects.
+	</div>
+<?php endif; ?>
 
 <?php if (isset($queue)): ?>
 	<ul class="tickets">

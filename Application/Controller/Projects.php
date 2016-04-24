@@ -25,6 +25,11 @@
 		public function index() {
 			$this->projects = Project::findAll()
 				->orderBy('read_only, created DESC');
+			
+			if (User::isRestricted()) {
+				$this->projects->scoped(['filter_restricted' => [User::getCurrent()['id']]]);
+			}
+			
 			return $this->render('projects/index');
 		}
 		

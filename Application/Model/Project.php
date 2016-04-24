@@ -181,6 +181,17 @@
 				$this->Properties['Publishing.Url.Secret']['value']
 			);
 		}
+		
+		/* Scopes */
+		public static function filter_restricted(Model_Resource $resource, $userId) {
+			$resource->join(
+				'tbl_user_project_restrictions',
+				[
+					self::TABLE . '.id = project_id',
+					'user_id' => $userId
+				]
+			);
+		}
 
 		private static function protectNginxUrl($base, $resource, $expire, $secret, $remoteIp = ''){
 			return $base . $resource . '?' . http_build_query([

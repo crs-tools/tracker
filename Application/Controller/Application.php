@@ -47,15 +47,26 @@
 				return $this->redirect('projects', 'index');
 			}
 			
-			$this->project = Project::findByOrThrow([
-				'slug' => $arguments['project_slug']
-			]);
+			$this->project = Project::findAll()
+				->where(['slug' => $arguments['project_slug']]);
+			
+			if (User::isLoggedIn() and User::getCurrent()['restrict_project_access']) {
+				$this->project->scoped(['filter_restricted' => [User::getCurrent()['id']]]);
+			}
+			
+			$this->project = $this->project->first();
+			
+			if ($this->project === null) {
+				throw new EntryNotFoundException();
+			}
 			
 			$this->project['project_slug'] = $this->project['slug'];
 			
-			if ($this->project['read_only'] and
+			if (
+				$this->project['read_only'] and
 				$this->projectReadOnlyAccess !== null and
-				empty($this->projectReadOnlyAccess[$action])) {
+				empty($this->projectReadOnlyAccess[$action])
+			) {
 				$this->flash('You can\'t alter tickets in this project because it\'s read only');
 				return $this->redirect('tickets', 'index', $this->project);
 			}
