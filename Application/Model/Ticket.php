@@ -156,7 +156,7 @@
 				case 'recording':
 					return 'Recording';
 					break;
-				case 'recording':
+				case 'ingest':
 					return 'Ingest';
 					break;
 				case 'encoding':
