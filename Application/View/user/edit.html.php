@@ -57,18 +57,20 @@
 		<legend>Project access</legend>
 		<ul>
 			<li class="checkbox">
-				<?= $f->checkbox('restrict_project_access', 'Restrict access to the following projects', $user['restrict_project_access'], ['data-enable-restrictions' => '']); ?>
+				<?= $f->checkbox('restrict_project_access', 'Restrict access to the following projects', (!empty($user))? $user['restrict_project_access'] : true, ['data-enable-restrictions' => '']); ?>
 				<span class="description">Access restrictions are only available for non admin users.</span>
 			</li>
-			<?php foreach ($userProjects as $index => $project): ?>
-				<li>
-					<label></label>
-					<?= $f->hidden('Project[' . $index . '][project_id]', $project['id'], ['data-project-index' => $index, 'data-project-destroy' => 'Project[' . $index . '][_destroy]']); ?>
-					<span class="project-restrictions-project" data-project-delete>
-						<?= h($projects[$project['id']]); ?>
-					</span>
-				</li>
-			<?php endforeach; ?>
+			<?php if (!empty($userProjects)): ?>
+				<?php foreach ($userProjects as $index => $project): ?>
+					<li>
+						<label></label>
+						<?= $f->hidden('Project[' . $index . '][project_id]', $project['id'], ['data-project-index' => $index, 'data-project-destroy' => 'Project[' . $index . '][_destroy]']); ?>
+						<span class="project-restrictions-project" data-project-delete>
+							<?= h($projects[$project['id']]); ?>
+						</span>
+					</li>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			
 			<li><?= $f->select('', '', ['' => ''] + $projects->toArray(), '', ['data-project-select' => '']); ?></li>
 			<?php $f->register('Project[][project_id]'); ?>

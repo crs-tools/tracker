@@ -1687,7 +1687,7 @@ var Tracker = {};
       .change(function(event) {
         if (event.target.value === 'admin') {
           this.enable.prop('disabled', true);
-          this.add.detach();
+          this.add && this.add.detach();
         } else {
           this.enable.prop('disabled', false);
           this.enable.change();
@@ -1734,7 +1734,7 @@ var Tracker = {};
         if (event.target.checked) {
           this.add.appendTo(this.list);
         } else {
-          this.add.detach();
+          this.add && this.add.detach();
         }
       }.bind(this))
       .change();

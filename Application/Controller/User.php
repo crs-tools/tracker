@@ -111,7 +111,9 @@
 				return $this->redirect('user', 'index');
 			}
 			
-			$this->projects = Project::findAll();
+			$this->projects = Project::findAll()
+				->orderBy('read_only, created DESC')
+				->indexBy('id', 'title');
 			
 			return $this->render('user/edit');
 		}
