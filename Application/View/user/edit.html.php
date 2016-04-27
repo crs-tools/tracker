@@ -37,7 +37,7 @@
 					'user' => 'user',
 					'superuser' => 'superuser',
 					'admin' => 'admin'
-				], $user['role']); ?>
+				], $user['role'], ['data-user-edit-role' => '']); ?>
 			</li>
 		</ul>
 	</fieldset>
@@ -53,16 +53,26 @@
 			<li><?= $f->password('password', (!empty($user))? 'New user password' : 'Password'); ?></li>
 		</ul>
 	</fieldset>
-	<fieldset>
+	<fieldset data-project-access-restrictions>
 		<legend>Project access</legend>
 		<ul>
-			<li class="checkbox"><?= $f->checkbox('restrict_project_access', 'Restrict access to the following projects', $user['restrict_project_access']); ?></li>
-			<?php foreach ($userProjects as $index => $project): ?>
-				<li><?= $f->select('Project[' . $index . '][project_id]', '', $projects->toArray(), $project['id']); ?></li>
-			<?php endforeach; ?>
-			<li>
-				<li><label></label><p><a href="#">Add restriction</a><span class="description">A user without project restrictions has access to all projects.</span></p></li>
+			<li class="checkbox">
+				<?= $f->checkbox('restrict_project_access', 'Restrict access to the following projects', $user['restrict_project_access'], ['data-enable-restrictions' => '']); ?>
+				<span class="description">Access restrictions are only available for non admin users.</span>
 			</li>
+			<?php foreach ($userProjects as $index => $project): ?>
+				<li>
+					<label></label>
+					<?= $f->hidden('Project[' . $index . '][project_id]', $project['id'], ['data-project-index' => $index, 'data-project-destroy' => 'Project[' . $index . '][_destroy]']); ?>
+					<span class="project-restrictions-project" data-project-delete>
+						<?= h($projects[$project['id']]); ?>
+					</span>
+				</li>
+			<?php endforeach; ?>
+			
+			<li><?= $f->select('', '', ['' => ''] + $projects->toArray(), '', ['data-project-select' => '']); ?></li>
+			<?php $f->register('Project[][project_id]'); ?>
+			<?php $f->register('Project[][_destroy]'); ?>
 		</ul>
 	</fieldset>
 	<fieldset>

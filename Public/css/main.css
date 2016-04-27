@@ -547,6 +547,10 @@ form fieldset ul li select {
 	margin: 1.4em 0 0 0;
 }
 
+form fieldset ul li select + a {
+  margin-left: 0.7em;
+}
+
 form fieldset ul li.checkbox,
 form fieldset ul li.radio {
 	padding-bottom: 0.5em;
@@ -918,12 +922,6 @@ h2.ticket span.fahrplan {
   height: 32px;
 	margin-bottom: 1em;
 	z-index: 10;
-}
-
-.header-project-restricted {
-  padding: 0.5em 0.9em;
-  margin-bottom: 0.7em;
-  color: #acacac;
 }
 
 ul.ticket-header-bar.left, ul.ticket-header-bar.right {
@@ -2477,6 +2475,25 @@ ul.project-settings-header li.current a.hooks:before {
   padding: 10px;
   border-bottom: 1px solid #e0e0e0;
   text-align: right;
+}
+
+.header-project-restricted {
+  padding: 0.5em 0.9em;
+  margin-bottom: 0.7em;
+  color: #acacac;
+}
+
+.project-restrictions-project {
+  display: inline-block;
+  padding: 0.3em 0.9em;
+  margin-top: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 100px;
+  color: #3d464d;
+}
+
+.project-restrictions-project a {
+  margin-left: 0.5em;
 }
 
 .progress-width[data-progress="0"] { width: 0%; }

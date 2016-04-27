@@ -447,10 +447,10 @@ var Tracker = {};
   }
   
   function updateState() {
-    if (state.select[0].selectedIndex != state.initial) {      
+    if (state.select[0].selectedIndex != state.initial) {
       failed.checkbox[0].checked = false;
       failed.checkbox.trigger('change');
-    } 
+    }
 
     if ((state.select[0].selectedIndex + 1) < state.select[0].options.length) {
       state.next.text('Select next state (' + state.select[0].options[state.select[0].selectedIndex+1].text + ')');
@@ -993,7 +993,7 @@ var Tracker = {};
       next = null,
       previous = null,
       progress = null,
-	    progressBar = null,
+      progressBar = null,
       timeout = null;
   
   function poll() {
@@ -1133,7 +1133,6 @@ var Tracker = {};
   
 */
 (function() {
-  
   function scrollToSection(section) {
     $('html, body').animate({
       scrollTop: section.offset().top
@@ -1620,6 +1619,143 @@ var Tracker = {};
   };
 })();
 
+
+/*
+  
+  User access restrictions edit
+  
+*/
+(function() {
+  function getRemoveButton(click) {
+    return $('<a></a>')
+      .attr('href', '#')
+      .text('Remove')
+      .click(function(event) {
+        event.preventDefault();
+        
+        if (click) {
+          click.call(this, event);
+        }
+        
+        $(event.target).closest('li').remove();
+        filterProjects.call(this);
+      }.bind(this));
+  }
+  
+  function filterProjects() {
+    var projects = [];
+    
+    this.list
+      .find('[data-project-index]')
+      .each(function(i, input) {
+        projects.push(input.value);
+      });
+    
+    this.list
+      .find('[data-project-select]')
+      .each(function(i, select) {
+        if (!select.value) {
+          return;
+        }
+        
+        projects.push(select.value);
+      })
+      .each(function(i, select) {
+        for (var o = 0; o < select.options.length; o++) {
+          if (select.options[o].value === select.value) {
+            continue;
+          }
+          
+          select.options[o].disabled =
+            (projects.indexOf(select.options[o].value) !== -1);
+        }
+      });
+  }
+  
+  Tracker.UserProjectAccessRestrictions = function(element) {
+    this.element = $(element);
+    this.list = this.element.find('ul');
+    this.enable = this.element.find('[data-enable-restrictions]');
+    this.projects = this.element
+      .find('[data-project-select]')
+      .parent()
+      .detach();
+    
+    this.element
+      .closest('form')
+      .find('[data-user-edit-role]')
+      .change(function(event) {
+        if (event.target.value === 'admin') {
+          this.enable.prop('disabled', true);
+          this.add.detach();
+        } else {
+          this.enable.prop('disabled', false);
+          this.enable.change();
+        }
+      }.bind(this))
+      .change();
+    
+    this.add = $('<li><label></label></li>')
+      .append(
+        $('<p></p>')
+          .append(
+            $('<a></a>')
+              .attr('href', '#')
+              .text('Add project')
+              .click(function(event) {
+                event.preventDefault();
+                
+                var lastInput = this.list.find('[data-project-index]:last'),
+                    lastIndex = (lastInput[0])? lastInput.data('project-index') : -1;
+                
+                this.projects
+                  .clone()
+                  .insertBefore(
+                    this.add
+                  )
+                  .find('select')
+                  .attr('data-project-index', lastIndex + 1)
+                  .attr('name', 'Project[' + (lastIndex + 1) + '][project_id]')
+                  .change(filterProjects.bind(this))
+                  .after(getRemoveButton.call(this));
+                
+                filterProjects.call(this);
+              }.bind(this))
+          )
+          /*.append(
+            $('<span></span>')
+              .addClass('description')
+              .text('A user without project restrictions has access to all projects.')
+          )*/
+      );
+    
+    this.enable
+      .change(function(event) {
+        if (event.target.checked) {
+          this.add.appendTo(this.list);
+        } else {
+          this.add.detach();
+        }
+      }.bind(this))
+      .change();
+    
+    this.list
+      .find('[data-project-delete]')
+      .append(getRemoveButton.call(this, function(event) {
+        var input = $(event.target)
+          .closest('li')
+          .find('input')
+          .clone()
+          .insertAfter(this.list);
+        
+        input
+          .clone()
+          .attr('name', input.data('project-destroy'))
+          .insertAfter(input);
+      }));
+  }
+})();
+
 $(function() {
   $('#ticket-action-comment.hidden').parent().hide();
   // $('#ticket-action-expand_by').parent().hide();
@@ -1681,6 +1817,10 @@ $(function() {
   $('time[datetime]').each(function(i, time) {
     new Tracker.Time(time);
   });
+  
+  $('[data-project-access-restrictions]').each(function(i, element) {
+    new Tracker.UserProjectAccessRestrictions(element);
+  })
   
   $('ul[data-invert-checkboxes]').each(function(i, ul) {
     ul = $(ul);
@@ -1779,7 +1919,7 @@ $(function() {
         input.click();
       });
     
-    input.parent('td').addClass('link');  
+    input.parent('td').addClass('link');
   });
   
   $('input[data-association-destroy]')

@@ -31,6 +31,10 @@
 			]
 		];
 		
+		public $acceptNestedEntriesFor = [
+			'Project' => true
+		];
+		
 		public static function isRestricted() {
 			if (!static::isLoggedIn()) {
 				return false;
