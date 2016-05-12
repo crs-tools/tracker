@@ -478,7 +478,7 @@
 			if (empty($ticketType) || empty($ticketState)) {
 				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
 			}
-			
+
 			// create query: find all tickets in state
 			$tickets = Ticket::findAll(['State'])
 				->from('view_serviceable_tickets', 'tbl_ticket')
@@ -523,6 +523,44 @@
 
 			return $tickets_matching;
 			*/
+		}
+
+		/**
+		 * Get all tickets in state $state from projects assigned to the workerGroup, unless workerGroup is halted
+		 *
+		 * @param string $ticketType
+		 * @param string $ticketState
+		 * @param array $propertyFilters filter_parameters return only tickets matching given properties
+		 * @return array ticket data or false if no matching ticket found (or user is halted)
+		 * @throws EntryNotFoundException
+		 */
+		public function getTicketsForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
+			if (empty($ticketType) || empty($ticketState)) {
+				throw new EntryNotFoundException(__FUNCTION__.': ticket type or ticket state missing', 401);
+			}
+
+			if ($this->_workerGroup['paused']) {
+				return false;
+			}
+
+			// create query: find all tickets in state
+			$tickets = Ticket::findAll(['State'])
+				->from('tbl_ticket')
+				->where([
+					'project_id' => $this->_assignedProjects,
+					'ticket_type' => $ticketType,
+					'ticket_state' => $ticketState
+				])
+				->scoped([
+					'virtual_property_filter' => [$propertyFilters]
+				]);
+
+			$this->_workerGroup->filterTickets(
+				$this->_assignedProjects,
+				$tickets
+			);
+
+			return $tickets->toArray();
 		}
 
 		/**
