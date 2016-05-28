@@ -35,7 +35,7 @@
 	// AccessControl::allow('owner', ['tickets'], ['delete_comment']);
 	
 	// User
-	AccessControl::allow('user', ['tickets'], ['jobfile', 'edit']);
+	AccessControl::allow('user', ['tickets'], ['jobfile', 'edit', 'edit_multiple']);
 	
 	AccessControl::allow('user', ['encodingprofiles'], ['index', 'view']);
 	AccessControl::allow('user', ['workers'], ['index', 'queue']);
