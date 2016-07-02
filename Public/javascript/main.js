@@ -384,14 +384,6 @@ var Tracker = {};
         });
       
       quicksearch.tickets = $('ul.tickets');
-      
-      $(document).on('keydown', function(event) {
-        // Ctrl/Cmd + F
-        if ((event.metaKey || event.ctrlKey) && event.which == 70) {
-          quicksearch.q.focus();
-          event.preventDefault();
-        }
-      });
     }
   };
 }());
