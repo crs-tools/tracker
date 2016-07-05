@@ -2098,6 +2098,8 @@ a.ticket-import-fold {
 #feed li.event.event-action-cut-start:before,
 #feed li.event.event-action-cut:before				{background-position: -84px -234px;}
 #feed li.event.event-action-fix:before				{background-position: -98px -234px;}
+#feed li.event.event-source-failed:before,
+#feed li.event.event-encoding-source-failed:before,
 #feed li.event.event-rpc-setticketfailed:before	{background-position: -112px -234px;}
 #feed li.event.event-action-cut-failed:before		{background-position: -126px -234px;}
 #feed li.event.event-created:before					{background-position: -140px -234px;}
