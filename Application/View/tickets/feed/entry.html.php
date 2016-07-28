@@ -19,18 +19,18 @@
 			$e .= $message;
 		} */ ?>
 		
-		<?php /* if ($entry->includesMessage()) {
+		<?php if ($entry->includesMessage()) {
 			$lines = array_filter(explode("\n", h($entry['comment'])));
 
 			echo '<code>' . nl2br(implode('<br />', array_slice($lines, 0, 3)));
 
 			if (count($lines) > 3) {
 				#TODO FIXME $ticket is null, using "+" fails:
-				echo ' ' . $this->linkTo('tickets', 'log', $ticket + array('entry' => $entry['id']) + $project + array('.txt'), 'more');
+				// echo ' ' . $this->linkTo('tickets', 'log', $ticket + array('entry' => $entry['id']) + $project + array('.txt'), 'more');
 			}
 
 			echo '</code>';
-		} */ ?>
+		} ?>
 		
 	<?php else: ?>
 		<em><?= $entry['event']; ?></em>
