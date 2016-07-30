@@ -124,8 +124,6 @@ print "testing setTicketProperties($tid, $props): ";
 print_check($rpc->setTicketProperties($tid, $props), true);
 
 print "testing getTicketProperties($tid, $pattern): ";
-print_check($rpc->getTicketProperties($tid, $pattern), $token);
-print "testing getTicketProperties($tid, $pattern) (different than documented): ";
 print_check($rpc->getTicketProperties($tid, $pattern)->{$pattern}, $token);
 
 print "testing getTicketProperties($tid): ";
@@ -144,7 +142,5 @@ print "testing with umlaut setTicketProperties($tid, $props): ";
 print_check($rpc->setTicketProperties($tid, $props), true);
 
 print "testing with umlaut getTicketProperties($tid, $pattern): ";
-print_check($rpc->getTicketProperties($tid, $pattern), $token);
-print "testing with umlaut getTicketProperties($tid, $pattern) (different than documented): ";
 print_check($rpc->getTicketProperties($tid, $pattern)->{$pattern}, $token);
 
