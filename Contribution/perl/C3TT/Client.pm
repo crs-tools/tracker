@@ -12,11 +12,11 @@ C3TT::Client - Client for interacting with the C3 Ticket Tracker via XML-RPC
 
 =head1 VERSION
 
-Version 0.4
+Version 0.5
 
 =cut
 
-our $VERSION   = '0.4';
+our $VERSION   = '0.5';
 
 =head1 SYNOPSIS
 
@@ -53,12 +53,13 @@ use Data::Dumper;
 use Net::Domain qw(hostname hostfqdn);
 use Digest::SHA qw(hmac_sha256_hex);
 use URI::Escape qw(uri_escape);
+use IO::Socket::SSL;
 
 use constant PREFIX => 'C3TT.';
 
 # Number of repetitions to perform when the communication with the tracker raises an exception
 # E.g.: the client will wait 10s after a fail before retrying (10 * 6 = 1 minute)
-use constant REMOTE_CALL_TRIES => 6;
+use constant REMOTE_CALL_TRIES => 180;
 use constant REMOTE_CALL_SLEEP => 10;
 
 sub new {
@@ -74,9 +75,12 @@ sub new {
     }
 
     # create remote handle
-    $self->{remote} = XML::RPC::Fast->new($self->{url}.'?group='.$self->{token}.'&hostname='.hostfqdn);
+    $self->{remote} = XML::RPC::Fast->new($self->{url}.'?group='.$self->{token}.'&hostname='.hostfqdn, ua => 'LWP', timeout => 30);
 
     bless $self;
+
+    my $version = $self->getVersion();
+    die "be future compatible - tracker RPC API version is $version!\nI'd be more happy with '4.0'.\n" unless ($version eq '4.0');
 
     return $self;
 }
