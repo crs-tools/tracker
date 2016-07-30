@@ -3,6 +3,7 @@ use C3TT::Client;
 use Data::Dumper;
 use POSIX qw(strftime);
 use boolean ':all';
+use utf8;
 
 my $opt = shift;
 my $debug = 0;
@@ -77,6 +78,9 @@ print_check($rpc->ping($tid, 'foo'), 'OK');
 print "testing addLog ($tid, 'foo'): ";
 print_check($rpc->addLog ($tid, 'foo'), true);
 
+print "testing with umlauts addLog ($tid, 'foo-€'): ";
+print_check($rpc->addLog ($tid, "foo-€"), true);
+
 print "testing getNextState($pid, $type, $state): ";
 print_check($rpc->getNextState($pid, $type, $state));
 
@@ -132,4 +136,15 @@ print_check($rpc->getJobFile($tid));
 
 print "testing setTicketFailed($tid, 'Failtest'): ";
 print_check($rpc->setTicketFailed($tid, 'Failtest'), true);
+
+$token .= "-€";
+$props->{$pattern} = $token;
+
+print "testing with umlaut setTicketProperties($tid, $props): ";
+print_check($rpc->setTicketProperties($tid, $props), true);
+
+print "testing with umlaut getTicketProperties($tid, $pattern): ";
+print_check($rpc->getTicketProperties($tid, $pattern), $token);
+print "testing with umlaut getTicketProperties($tid, $pattern) (different than documented): ";
+print_check($rpc->getTicketProperties($tid, $pattern)->{$pattern}, $token);
 
