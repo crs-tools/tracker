@@ -35,3 +35,5 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		ticket_priority(t.id) DESC;
 
 COMMIT;
+
+-- DO NOT FORGET TO GRANT ACCESS!
