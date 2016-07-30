@@ -11,7 +11,7 @@ $debug = 1 if ($opt eq 'debug');
 # init
 
 unless (defined($ENV{'CRS_TRACKER'})) {
-	print STDERR "\nyou need to give tracker credentials via env variables, \nsee test-profile.sh how to do that.\n\n"
+	print STDERR "\nyou need to give tracker credentials via env variables, \nsee test-profile.sh how to do that.\n\n";
 	die;
 }
 
