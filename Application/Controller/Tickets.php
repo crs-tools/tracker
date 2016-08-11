@@ -334,6 +334,9 @@
 				if (!in_array($key, self::$searchPropertyFields)) {
 					$subCondition[] = 'child.' . $condition;
 					$subParams = array_merge($subParams, $params);
+				} else {
+					$subCondition[] = $condition;
+					$subParams = array_merge($subParams, $params);
 				}
 			}
 			
@@ -351,7 +354,7 @@
 			}
 			
 			$tickets->where(
-				'(' . implode(' OR ', $subq) . ')',
+				'(' . implode(') OR (', $subq) . ')',
 				array_merge($mainParams, $subParams)
 			);
 			
