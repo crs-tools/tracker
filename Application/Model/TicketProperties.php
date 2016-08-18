@@ -160,6 +160,7 @@
 				EncodingProfile.Slug (via encoding_profile.slug)
 				EncodingProfile.Extension (via encoding_profile.extension)
 				EncodingProfile.MirrorFolder (via encoding_profile.mirror_folder)
+				EncodingProfile.IsMaster (via encoding_profile.depends_on)
 		*/
 		public function load() {
 			if ($this->_entries !== null) {
@@ -297,6 +298,14 @@
 						$this->_entries[] = [
 							'name' => 'EncodingProfile.Slug',
 							'value' => $profile['slug'],
+							'virtual' => true
+						];
+					}
+
+					if (!isset($index['EncodingProfile.IsMaster'])) {
+						$this->_entries[] = [
+							'name' => 'EncodingProfile.IsMaster',
+							'value' => ($profile['depends_on'] === null) ? 'yes' : 'no',
 							'virtual' => true
 						];
 					}
