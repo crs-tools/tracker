@@ -43,7 +43,7 @@
 	
 	// Superuser
 	AccessControl::allow('superuser', ['projects'], [
-		'properties', 'profiles', 'states', 'worker', 'edit'
+		'create', 'edit', 'properties', 'profiles', 'states', 'worker'
 	]);
 	AccessControl::allow('superuser', ['tickets'], ['create', 'duplicate']);
 	AccessControl::allow('superuser', ['encodingprofiles']);
