@@ -688,30 +688,19 @@ form fieldset ul.edit-properties li a.delete.restore {
 	background-position: -110px -46px;
 }
 
-form fieldset ul.edit-properties li label[for]:before {
-  content: " ";
-  display: block;
-  position: absolute;
-  left: 12.2em;
-  width: 1px;
-  height: 5.8em;
-  top: 0;
-	border-right: 1px solid #e0e0e0;
+form fieldset ul.edit-properties li {
+  padding-left: 24.7em;
+  padding-left: 27em;
 }
 
-form fieldset ul.edit-properties li label[for] {
-  display: block;
-  position: static;
-  margin: 0;
-  padding: 1.1em 0 0 0;
+form fieldset ul.edit-properties li label {
+  width: 25em;
+  font-size: 1em;
+}
+
+form fieldset ul.edit-properties li label input.text {
   width: auto;
-  text-align: left;
-  float: none;
-  border: none;
-}
-
-form fieldset ul.edit-properties li input.text {
-  margin-top: 0.2em;
+  text-align: right;
 }
 
 /*form fieldset ul.edit-properties li span.*/
