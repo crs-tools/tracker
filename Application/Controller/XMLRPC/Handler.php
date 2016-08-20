@@ -109,7 +109,7 @@
 			}
 			
 			return strstr($hostName . '.', '.', true);
-		}	
+		}
 		
 		/**
 		* get version string of XMLRPC API
@@ -728,5 +728,3 @@
 			return true;
 		}*/
 	}
-	
-?>
