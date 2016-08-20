@@ -672,9 +672,7 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
-				$ticket->save([
-					'needs_attention' => $this->form->getValue('needs_attention')
-				]);
+				$ticket->needsAttention($this->form->getValue('needs_attention'));
 				
 				if ($ticket->addComment($this->form->getValue('text'))) {
 					$this->flash('Comment created');
@@ -744,6 +742,10 @@
 						$ticket->addComment($this->form->getValue('comment'));
 					}
 					
+					$this->ticket->needsAttention(
+						$this->form->getValue('group_needs_attention')
+					);
+					
 					Ticket::createMissingRecordingTickets(
 						$this->project['id']
 					);
@@ -779,7 +781,11 @@
 						if ($this->form->getValue('comment')) {
 							$this->ticket->addComment($this->form->getValue('comment'));
 						}
-				
+						
+						$this->ticket->needsAttention(
+							$this->form->getValue('group_needs_attention')
+						);
+						
 						$this->flash('Ticket updated');
 						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 					}
@@ -993,7 +999,7 @@
 		
 		/*
 		private function _redirectWithReferer(array $ticket) {
-			if ($referer = Request::get('ref')) { 
+			if ($referer = Request::get('ref')) {
 				if ($this->View->isValidReferer($referer)) {
 					return $this->View->redirect('tickets', 'index', array('project_slug' => $this->Project->slug, '?t=' . $referer));
 				}

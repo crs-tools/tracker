@@ -106,7 +106,7 @@ if (isset($recordingProperties)) {
 						<ul>
 							<li><?php echo $f->textarea('text', null, null, array('class' => 'wide')); ?></li>
 							<li>
-								<?php echo $f->checkbox('needs_attention', 'Ticket needs attention', $ticket['needs_attention']);
+								<?php echo $f->checkbox('needs_attention', 'Ticket group needs attention', $ticket->needsAttention());
 								echo $f->submit('Comment'); ?>
 							</li>
 						</ul>

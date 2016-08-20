@@ -66,7 +66,7 @@ else: ?>
 				]
 			); ?></li>
 			<li class="checkbox">
-				<?= $f->checkbox('needs_attention', 'Ticket needs attention', (!empty($ticket))? $ticket['needs_attention'] : false); ?>
+				<?= $f->checkbox('group_needs_attention', 'Ticket group needs attention', (!empty($ticket))? $ticket->needsAttention() : false); ?>
 			</li>
 			<?php $f->register('comment'); ?>
 		</ul>

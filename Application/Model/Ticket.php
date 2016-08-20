@@ -330,15 +330,15 @@
 		 *
 		 * which gives results like these:
 		 *
-		 *  id   | parent_id | ticket_type | title                         | child_id | child_parent_id | child_ticket_type | child_title               
+		 *  id   | parent_id | ticket_type | title                         | child_id | child_parent_id | child_ticket_type | child_title
 		 * ------+-----------+-------------+-------------------------------+----------+-----------------+-------------------+-------------------------------
 		 *  1225 |           | meta        | Ticket                        |     1267 |            1225 | encoding          | Ticket (H.264-MP4 from DV HQ)
 		 *  1225 |           | meta        | Ticket                        |     1268 |            1225 | encoding          | Ticket (WebM from DV)
 		 *  1225 |           | meta        | Ticket                        |     1364 |            1225 | recording         | Ticket (Recording)
-		 *  1364 |      1225 | recording   | Ticket (Recording)            |          |                 |                   | 
-		 *  1267 |      1225 | encoding    | Ticket (H.264-MP4 from DV HQ) |          |                 |                   | 
-		 *  1268 |      1225 | encoding    | Ticket (WebM from DV)         |          |                 |                   | 
-		 * 
+		 *  1364 |      1225 | recording   | Ticket (Recording)            |          |                 |                   |
+		 *  1267 |      1225 | encoding    | Ticket (H.264-MP4 from DV HQ) |          |                 |                   |
+		 *  1268 |      1225 | encoding    | Ticket (WebM from DV)         |          |                 |                   |
+		 *
 		 */
 		public static function with_child(Model_Resource $resource) {
 			$resource->leftJoin(
@@ -380,7 +380,7 @@
 					[TicketProperties::TABLE, 'property_' . $as],
 					'((ticket_id = ' .
 						self::TABLE .
-						'.id AND ' . 
+						'.id AND ' .
 						self::TABLE .
 						'.parent_id IS NULL) OR (ticket_id = ' .
 						self::TABLE .
@@ -687,6 +687,22 @@
 			}
 			
 			return $this['ticket_state_next'] === $state;
+		}
+		
+		public function needsAttention($needsAttentation = null) {
+			if ($this['parent_id'] === null) {
+				$ticket = $this;
+			} else {
+				$ticket = $this->Parent;
+			}
+			
+			if ($needsAttentation === null) {
+				return $ticket['needs_attention'];
+			}
+			
+			return $ticket->saveOrThrow([
+				'needs_attention' => $needsAttentation
+			]);
 		}
 		
 		public function addComment($comment, $handle = null) {

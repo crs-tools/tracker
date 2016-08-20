@@ -22,7 +22,7 @@
 				<span class="state"><?= $ticket['ticket_state']; ?></span>
 			<?php endif; ?>
 		
-			<?php if ($ticket['needs_attention']): ?>
+			<?php if ($ticket->needsAttention()): ?>
 				<span class="needs_attention">needs attention</span>
 			<?php endif; ?>
 		

@@ -34,7 +34,7 @@ if (!empty($filtered) and (!empty($filtered[$ticket['id']]) or !empty($filtered[
 
 <?= View::tag('li', $attributes, false); ?>
 	<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
-		<span class="vid<?= (($ticket['needs_attention'] and (empty($ticket['parent_id']) or !empty($simulateTickets)))? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
+		<span class="vid<?= (((empty($ticket['parent_id'])) and $ticket->needsAttention())? ' needs_attention' : ''); ?>" title="<?= h($ticket['fahrplan_id']); ?>">
 		
 		<?php if (empty($ticket['parent_id']) or isset($simulateTickets)) {
 			echo h($ticket['fahrplan_id']);
