@@ -220,6 +220,15 @@
 		}
 		
 		/*
+			Scopes
+		*/
+		public static function include_in_feed(Model_Resource $resource) {
+			$resource->whereNot([
+				'event' => 'RPC.addLog'
+			]);
+		}
+		
+		/*
 		if (!empty($log)) {
 			foreach ($log as $entry) {
 				if (!isset($entries[$entryIndex])) {
