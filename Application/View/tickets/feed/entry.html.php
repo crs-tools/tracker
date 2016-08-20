@@ -9,7 +9,7 @@
 ?>
 
 <li
-	class="event event-<?= strtolower(str_replace('.', '-', $entry['event'])); ?>"
+	class="event event-<?= strtolower(str_replace('.', '-', $entry['event'])); ?><?= ($entry['needs_attention'])? ' needs_attention' : '' ?>"
 	data-timestamp="<?= $created->getTimestamp(); ?>"
 	data-id="<?= $entry['id']; ?>"
 >
