@@ -744,7 +744,7 @@
 			}
 			
 			$source = $parent->Source;
-			$oldState = $source['state'];
+			$oldState = $source['ticket_state'];
 			$toState = null;
 			
 			if (
