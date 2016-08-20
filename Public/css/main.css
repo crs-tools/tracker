@@ -20,7 +20,8 @@ form input,
 button.link,
 ul.ticket-header-bar li button,
 ul.ticket-header-bar li a,
-#timeline ul li.event code a  {
+#timeline ul li.event code a,
+#feed li.event code a {
 	font-family: "Helvetica Neue", Helvetica, Helmet, Freesans, sans-serif;
 }
 
