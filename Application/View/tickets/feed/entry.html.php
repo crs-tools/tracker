@@ -8,7 +8,11 @@
 	$created = new DateTime($entry['created']);
 ?>
 
-<li class="event event-<?= strtolower(str_replace('.', '-', $entry['event'])); ?>" data-timestamp="<?= $created->getTimestamp(); ?>" data-id="<?= $entry['id']; ?>">
+<li
+	class="event event-<?= strtolower(str_replace('.', '-', $entry['event'])); ?>"
+	data-timestamp="<?= $created->getTimestamp(); ?>"
+	data-id="<?= $entry['id']; ?>"
+>
 	<?php if ($message !== false): ?>
 		<?= $message; ?>
 		
@@ -21,16 +25,21 @@
 		
 		<?php if ($entry->includesMessage()) {
 			$lines = array_filter(explode("\n", h($entry['comment'])));
-
+			
 			echo '<code>' . nl2br(implode('<br />', array_slice($lines, 0, 3)));
-
+			
 			if (count($lines) > 3) {
-				echo ' ' . $this->linkTo('tickets', 'log', $entry->Ticket->toArray() + array('entry' => $entry['id']) + $project->toArray() + array('.txt'), 'more');
+				echo ' ' . $this->linkTo(
+					'tickets', 'log',
+					$entry->Ticket->toArray() +
+						$project->toArray() +
+						['entry' => $entry['id'], '.txt'],
+					'more'
+				);
 			}
-
+			
 			echo '</code>';
 		} ?>
-		
 	<?php else: ?>
 		<em><?= $entry['event']; ?></em>
 	<?php endif; ?>
