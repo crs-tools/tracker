@@ -2106,6 +2106,7 @@ a.ticket-import-fold {
 #feed												{margin: 25px 260px 0 0; padding: 0; border-top: 2px solid #cfcfcf;}
 #feed li											{position: relative; margin: 0; padding: 0.4em 0.5em 0.35em; border-bottom: 1px solid #cfcfcf; list-style-type: none;}
 #feed li.event:before								{content:''; display: block; float: left; width: 14px; height: 15px; margin: 0.2em 7px 0 0; background: transparent url(../images/main.png) no-repeat left -234px;}
+#feed li.event.needs_attention {/*background-color: rgba(255, 213, 29, 0.2);*/background-color:#f8efca;}
 #feed li.event.event-rpc-property-set:before		{background-position: -14px -234px;}
 #feed li.event.event-encoding-reset:before			{background-position: -42px -234px;}
 #feed li.event.event-comment-add:before				{background-position: -56px -234px;}

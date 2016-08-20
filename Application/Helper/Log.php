@@ -22,7 +22,14 @@
 			$this->linkTo(
 				'tickets', 'view', ['id' => $entry['ticket_id']], $project,
 				$entry['ticket_fahrplan_id'],
-				['data-ticket-id' => $entry['ticket_fahrplan_id']]
+				[
+					'data-ticket-id' => $entry['ticket_fahrplan_id'],
+					'aria-label' => $entry->Ticket->getTitle(
+						$entry['parent_title'],
+						$entry['encoding_profile_name']
+					),
+					'data-tooltip' => true,
+				]
 			)
 			/*,
 			'<span data-tickets="' . Filter::specialChars(json_encode($ticketData)) . '">' . ((isset($entry['children']))? (count($entry['children']) + 1) . ' tickets'  : '1 ticket') . '</span>'*/

@@ -130,7 +130,7 @@
 			];
 		}
 		
-		public function getTitle() {
+		public function getTitle($parentTitle = null, $encodingProfileName = null) {
 			if (!array_key_exists('title', $this->_entry)) {
 				return null;
 			}
@@ -138,20 +138,27 @@
 			$value = $this->_entry['title'];
 			
 			if ($value !== null) {
-				return $value; 
+				return $value;
 			}
 			
-			if (!isset($this->_entry['parent_id'])) {
-				return null;
+			if ($parentTitle !== null) {
+				$title = $parentTitle;
+			} elseif (isset($this->_entry['parent_title'])) {
+				$title = $this->_entry['parent_title'];
+			} else {
+				if (!isset($this->_entry['parent_id'])) {
+					return null;
+				}
+				
+				$title = $this->Parent['title'];
 			}
 			
-			$title = $this->Parent['title'];
-			$title .= ' (' . $this->getTitleSuffix() . ')';
+			$title .= ' (' . $this->getTitleSuffix($encodingProfileName) . ')';
 			
 			return $title;
 		}
 		
-		public function getTitleSuffix() {
+		public function getTitleSuffix($encodingProfileName = null) {
 			switch ($this->_entry['ticket_type']) {
 				case 'recording':
 					return 'Recording';
@@ -160,6 +167,14 @@
 					return 'Ingest';
 					break;
 				case 'encoding':
+					if ($encodingProfileName !== null) {
+						return $encodingProfileName;
+					}
+					
+					if (isset($this->_entry['encoding_profile_name'])) {
+						return $this->_entry['encoding_profile_name'];
+					}
+					
 					return $this->EncodingProfile['name'];
 					break;
 			}

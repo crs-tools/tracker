@@ -398,8 +398,11 @@
 		
 		public function feed() {
 			$this->log = LogEntry::findAll()
-				->join(['Handle', 'Ticket'])
-				->scoped(['include_in_feed'])
+				->join(['Handle', 'Ticket', 'ParentTicket'])
+				->scoped([
+					'include_in_feed',
+					'with_title'
+				])
 				->where(['tbl_ticket.project_id' => $this->project['id']])
 				->orderBy('created DESC, id DESC')
 				->limit(100);

@@ -15,7 +15,8 @@
 			],
 			'Ticket' => [
 				'foreign_key' => ['ticket_id'],
-				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id'
+				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id, parent_id, ticket_type, encoding_profile_version_id',
+				'join_assoications' => ['Parent' => ['join' => true]]
 			],
 			'User' => [
 				'foreign_key' => ['handle_id'],
@@ -226,6 +227,32 @@
 			$resource->whereNot([
 				'event' => 'RPC.addLog'
 			]);
+		}
+		
+		public static function with_title(Model_Resource $resource) {
+			$resource->join(
+				Ticket::TABLE,
+				[Ticket::TABLE . '.parent_id = id'],
+				[],
+				'title AS parent_title, needs_attention',
+				'LEFT'
+			);
+			
+			$resource->join(
+				EncodingProfileVersion::TABLE,
+				[Ticket::TABLE . '.encoding_profile_version_id = id'],
+				[],
+				false,
+				'LEFT'
+			);
+			
+			$resource->join(
+				EncodingProfile::TABLE,
+				[EncodingProfileVersion::TABLE . '.encoding_profile_id = id'],
+				[],
+				'name as encoding_profile_name',
+				'LEFT'
+			);
 		}
 		
 		/*
