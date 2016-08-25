@@ -535,7 +535,7 @@ var Tracker = {};
         .change(updateCommentField);;
       failed.initial = failed.checkbox[0].checked;
       
-      needsAttention.checkbox = $('#ticket-edit-needs_attention')
+      needsAttention.checkbox = $('#ticket-edit-group_needs_attention')
         .change(updateCommentField);
       
       state.select = $('#ticket-edit-state').change(updateState);
