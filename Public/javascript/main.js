@@ -1099,7 +1099,12 @@ var Tracker = {};
               }
               
               $.each(result.entries, function(i, entry) {
-                $(entry).insertBefore(last);
+                $(entry)
+                  .insertBefore(last)
+                  .find('time[datetime]')
+                  .each(function(i, time) {
+                    new Tracker.Time(time);
+                  });
               });
               
               progress.detach();
