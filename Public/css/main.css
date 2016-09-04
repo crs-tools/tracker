@@ -175,7 +175,7 @@ ul.navigation input{font-size: 0.9em; float: none; margin-top: -0.2em;}
 
 #header, #content {
 	position: relative;
-	max-width: 65em;
+	max-width: 845px;
 	margin: 0 auto;
 	text-align: left;
 }
