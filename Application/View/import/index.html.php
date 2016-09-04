@@ -69,7 +69,7 @@
 		<?php if (!isset($_GET['all'])): ?>
 			<tfoot>
 			<tr>
-				<td colspan="4" class="link center more">
+				<td colspan="5" class="link center more">
 					<?= $this->linkTo('import', 'index', $project, ['?all'], 'Show all'); ?>
 				</td>
 			</tr>
