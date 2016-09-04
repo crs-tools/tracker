@@ -1,6 +1,6 @@
 <?php
 	
-	function timeAgo($dateTime) {
+	function timeAgo($dateTime, $prefix = 'on ') {
 		if (!$dateTime instanceOf DateTime) {
 			$dateTime = new DateTime($dateTime);
 		}
@@ -12,11 +12,11 @@
 				'data-tooltip' => true,
 				'datetime' => $dateTime->format('c')
 			],
-			timeRelativeDifference($dateTime)
+			timeRelativeDifference($dateTime, null, $prefix)
 		);
 	}
 	
-	function timeRelativeDifference(DateTime $dateTime, $now = null) {
+	function timeRelativeDifference(DateTime $dateTime, $now = null, $prefix = 'on ') {
 		if ($now === null) {
 			$now = new DateTime();
 		}
@@ -51,7 +51,7 @@
 		
 		$year = $dateTime->format('Y');
 		
-		return 'on ' . $dateTime->format('M j') .
+		return $prefix . $dateTime->format('M j') .
 			(($now->format('Y') !== $year)? (', ' . $year) : '');
 	}
 	
@@ -61,7 +61,7 @@
 		$hours = floor($duration / 60 / 60);
 		
 		return (($hours > 0)? $hours . 'h ' : '') .
-			(($minutes > 0)? $minutes . 'm ' : '') . 
+			(($minutes > 0)? $minutes . 'm ' : '') .
 			(($seconds > 0)? $seconds . 's ' : '');
 	}
 	

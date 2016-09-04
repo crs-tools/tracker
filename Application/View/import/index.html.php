@@ -40,16 +40,27 @@
 			<tr>
 				<th>URL</th>
 				<th>Version</th>
+				<th>Imported</th>
 				<th>User</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach($previousImports as $import):
-				$date = h((new DateTime($import['created']))->format('Y-m-d H:i:s')); ?>
+				$date = h((new DateTime($import['created']))->format('Y-m-d H:i:s'));
+				$url = parse_url($import['url']); ?>
 				<tr>
-					<td><code><?= h($import['url']); ?></code></td>
-					<td><?= $this->linkTo('import', 'download', $import, $project, ['.xml'], (!empty($import['version']))? $import['version'] : ('<em>' . $date . '</em>'), (!empty($import['version']))? $import['version'] : $date); ?></td>
+					<td>
+						<a href="<?= h($import['url']); ?>" rel="nofollow" aria-label="<?= h($import['url']); ?>" data-tooltip="true">
+							<?= ($url !== false) ? h($url['host'] . str_shorten($url['path'], 35 - mb_strlen($url['host']), 2, '…', '/')) : ''; ?>
+						</a>
+					</td>
+					<td><?= $this->linkTo(
+						'import', 'download', $import, $project, ['.xml'],
+						(!empty($import['version']))? $import['version'] : ('<em>' . $date . '</em>'),
+						(!empty($import['version']))? $import['version'] : $date
+					); ?></td>
+					<td><?= timeAgo($import['created'], ''); ?></td>
 					<td><?= h($import['user_name']); ?></td>
 					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
 				</tr>
