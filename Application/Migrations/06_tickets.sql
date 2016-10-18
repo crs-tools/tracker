@@ -137,6 +137,9 @@ CREATE INDEX tbl_ticket_project_id_idx ON tbl_ticket USING btree(project_id);
 CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(fahrplan_id);
 CREATE INDEX tbl_ticket_handle_id_idx ON tbl_ticket USING btree(handle_id);
 
+-- partial unique index
+CREATE UNIQUE INDEX unique_fahrplan_id ON tbl_ticket (project_id, fahrplan_id) WHERE parent_id IS NULL;
+
 -- trigger
 CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();
 CREATE TRIGGER state_trigger BEFORE INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_next_state();
