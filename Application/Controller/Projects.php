@@ -36,9 +36,19 @@
 		public function settings() {
 			$this->properties = $this->project->Properties;
 			
-			$this->duration = Ticket::getRecordingDurationByProject(
-				$this->project['id']
-			);
+			$this->stats = [
+				'count' => Ticket::findAll()
+					->select('ticket_state, COUNT(*) AS row_count')
+					->where([
+						'project_id' => $this->project['id'],
+						'ticket_type' => 'meta'
+					])
+					->groupBy('ticket_state')
+					->indexBy('ticket_state', 'row_count'),
+				'duration' => Ticket::getRecordingDurationByProject(
+					$this->project['id']
+				)
+			];
 			$this->encodingProfileCount = $this->project
 				->EncodingProfileVersion
 				->count();
