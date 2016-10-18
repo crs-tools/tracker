@@ -33,7 +33,7 @@ else: ?>
 				<li><?= $f->input('fahrplan_id', 'Fahrplan ID', null, ['class' => 'narrow']); ?></li>
 			<?php endif ?>
 			
-			<li><?= $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', ['class' => 'wide', 'disabled' => ($ticket['parent_id'] !== null)]); ?></li>
+			<li><?= $f->input('title', 'Title', (!empty($ticket))? $ticket['title'] : '', ['class' => 'wide', 'disabled' => (!empty($ticket) and $ticket['parent_id'] !== null)]); ?></li>
 			
 			<?php if (isset($profile)): ?>
 				<li>
