@@ -742,7 +742,7 @@
 						$ticket->addComment($this->form->getValue('comment'));
 					}
 					
-					$this->ticket->needsAttention(
+					$ticket->needsAttention(
 						$this->form->getValue('group_needs_attention')
 					);
 					
