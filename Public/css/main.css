@@ -675,6 +675,22 @@ form fieldset ul.edit-properties li .delete {
 	text-decoration: line-through;
 }
 
+form fieldset ul.edit-properties li input.delete::-webkit-input-placeholder {
+  text-decoration: line-through;
+}
+
+form fieldset ul.edit-properties li input.delete:-moz-placeholder {
+   text-decoration: line-through;
+}
+
+form fieldset ul.edit-properties li input.delete::-moz-placeholder {
+   text-decoration: line-through;
+}
+
+form fieldset ul.edit-properties li input.delete:-ms-input-placeholder {
+  text-decoration: line-through;
+}
+
 form fieldset ul.edit-properties li a.delete {
 	display: inline-block;
 	width: 22px;

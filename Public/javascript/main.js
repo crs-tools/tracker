@@ -589,7 +589,8 @@ var Tracker = {};
             $('<input></input>')
               .attr({
                 'type': 'checkbox',
-                'class': 'ticket-edit-multiple-enable'
+                'class': 'ticket-edit-multiple-enable',
+                'data-edit-multiple-enable': 'true'
               })
               .change(function(event) {
                 $(this)
@@ -1211,7 +1212,7 @@ var Tracker = {};
     var deleteField,
         deleteName = input.data('property-destroy');
     
-    $('<a></a>')
+    var deleteButton = $('<a></a>')
       .attr('href', '#')
       .addClass('delete')
       .text('Delete ' + this.description)
@@ -1228,7 +1229,7 @@ var Tracker = {};
             .text('Delete ' + this.description)
             .attr('title', 'Delete ' + this.description);
           
-            deleteField.detach();
+          deleteField.detach();
         } else {
           input[0].disabled = true;
           input.addClass('delete');
@@ -1251,6 +1252,29 @@ var Tracker = {};
         }
       }.bind(this))
       .insertAfter(input);
+    
+    var enableButton = input.parent().find('[data-edit-multiple-enable]');
+    
+    if (enableButton.length) {
+      deleteButton.hide();
+      
+      enableButton.change(function(event) {
+        if (event.target.checked) {
+          deleteButton.show();
+        } else {
+          deleteButton.hide();
+          
+          input.removeClass('delete');
+          
+          $(deleteButton)
+            .removeClass('restore')
+            .text('Delete ' + this.description)
+            .attr('title', 'Delete ' + this.description);
+          
+          deleteField.detach();
+        }
+      }.bind(this));
+    }
   }
   
   function appendCreateButton() {
