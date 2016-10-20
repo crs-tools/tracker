@@ -40,6 +40,7 @@
 			'language' => 'property_fahrplan_language.value',
 			'persons' => 'property_fahrplan_persons.value',
 			'optout' => 'property_fahrplan_optout.value',
+			'property_name' => 'has_property.name',
 			'modified' => 'modified'
 		];
 		
@@ -50,7 +51,8 @@
 			'room',
 			'language',
 			'persons',
-			'optout'
+			'optout',
+			'property_name'
 		];
 		
 		protected $projectReadOnlyAccess = [
@@ -278,6 +280,12 @@
 				
 				if (empty($operators[$i]) or !isset($values[$i])) {
 					continue;
+				}
+				
+				switch ($key) {
+					case 'property_name':
+						$tickets->scoped(['with_has_property']);
+						break;
 				}
 				
 				if (!isset(self::$searchMapping[$key])) {

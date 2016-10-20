@@ -408,6 +408,16 @@
 			}
 		}
 		
+		public static function with_has_property(Model_Resource $resource) {
+			$resource->join(
+				[TicketProperties::TABLE, 'has_property'],
+				'(ticket_id = ' . self::TABLE .
+					'.id OR ticket_id = child.id)',
+				[],
+				false
+			);
+		}
+		
 		public static function with_recording(Model_Resource $resource) {
 			$resource->leftJoin(
 				[self::TABLE, 'recording'],

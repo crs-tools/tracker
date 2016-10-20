@@ -28,6 +28,7 @@ var Tracker = {};
             <option value="optout">Opt-Out</option>\
           </optgroup>\
           <optgroup label="Other">\
+            <option value="property_name">Property name</option>\
             <option value="modified">Modified</option>\
           </optgroup>\
         </select>'),
