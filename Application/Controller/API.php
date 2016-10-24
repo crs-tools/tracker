@@ -51,7 +51,8 @@
 					'with_merged_properties' => [[
 						'Fahrplan.GUID' => 'fahrplan_guid',
 						'Record.Cutdiffseconds' => 'duration',
-						'YouTube.Url0' => 'youtube_url'
+						'YouTube.Url0' => 'youtube_url',
+						'YouTube.Url1' => 'youtube_url_translated'
 					]]
 				]);
 			
