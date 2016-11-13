@@ -87,7 +87,7 @@
 				$args[] = (is_array($argument))?
 					http_build_query(
 						['' => $argument],
-						null,
+						'',
 						'&',
 						PHP_QUERY_RFC3986
 					) :
