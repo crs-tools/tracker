@@ -101,6 +101,8 @@
 				if (
 					isset($properties[$filter['property_key']]) and
 					(string) $properties[$filter['property_key']]['value'] === $filter['property_value']
+					or
+					!isset($properties[$filter['property_key']]) and $filter['property_value'] === ''
 				) {
 					// TODO: for "NOT"/"NONE": set $filter here, break
 					$valid = true;
