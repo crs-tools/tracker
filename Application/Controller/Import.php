@@ -13,7 +13,10 @@
 	class Controller_Import extends Controller_Application {
 		
 		protected $requireAuthorization = true;
-		protected $projectReadOnlyAccess = [];
+		protected $projectReadOnlyAccess = [
+			'index' => true,
+			'download' => true
+		];
 		
 		public function index(array $arguments) {
 			$this->form('import', 'create', $this->project);
@@ -205,6 +208,8 @@
 			$xml = self::_toObject($import['xml']);
 			$tickets = [];
 			$dayChange = null;
+			
+			// TODO: check if fahrplan has tickets, skip everything else otherwise
 			
 			if (isset($xml->conference) and isset($xml->conference->day_change)) {
 				// Legacy pentabarf date style
@@ -430,6 +435,7 @@
 			return [
 				(string) $response,
 				$xml,
+				// TODO: version may not exit, enable null
 				(string) $xml->version
 			];
 		}

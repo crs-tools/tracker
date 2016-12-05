@@ -26,9 +26,9 @@
 		<legend>New import</legend>
 		<ul>
 			<li>
-				<?= $f->input('url','XML URL', '', ['class' => 'wide']); ?>
+				<?= $f->input('url','XML URL', '', ['class' => 'wide', 'disabled' => $project['read_only']]); ?>
 			</li>
-			<li><?= $f->submit('Create new import'); ?></li>
+			<li><?= $f->submit('Create new import', ['disabled' => $project['read_only']]); ?></li>
 		</ul>
 	</fieldset>
 </form>
@@ -42,7 +42,9 @@
 				<th>Version</th>
 				<th>Imported</th>
 				<th>User</th>
-				<th></th>
+				<?php if (!$project['read_only']): ?>
+					<th></th>
+				<?php endif; ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -62,7 +64,11 @@
 					); ?></td>
 					<td><?= timeAgo($import['created'], ''); ?></td>
 					<td><?= h($import['user_name']); ?></td>
-					<td class="link right"><?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?></td>
+					<?php if (!$project['read_only']): ?>
+						<td class="link right">
+							<?= $this->linkTo('import', 'repeat', $import, $project, 'Repeat import…'); ?>
+						</td>
+					<?php endif; ?>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
