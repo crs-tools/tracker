@@ -22,7 +22,7 @@
 			</li>
 		<?php endif; ?>
 		<?php foreach ($projects as $project): ?>
-			<?php if($project['read_only'] && !$hasReadonly): ?>
+			<?php if($project['read_only'] and !$hasReadonly): ?>
 				<?php $hasReadonly = true; ?>
 				</ul>
 				<form>
