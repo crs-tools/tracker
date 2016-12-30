@@ -67,7 +67,7 @@
 				->limit(1)
 				->first();
 			
-			if ($this->worker) {
+			if (!$this->worker) {
 				$this->worker = Worker::create(array(
 					'name' => $name,
 					'worker_group_id' => $this->_workerGroup['id']
