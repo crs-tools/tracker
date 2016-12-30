@@ -60,7 +60,14 @@
 			
 			$name = self::_getNameFromHostName($_GET['hostname']);
 			
-			if (!$this->worker = Worker::findBy(array('name' => $name))) {
+			// FIXME: this is a dirty fix for a race condition!
+			$this->worker = Worker::findAll()
+				->where(array('name' => $name))
+				->orderBy('id DESC')
+				->limit(1)
+				->first();
+			
+			if ($this->worker) {
 				$this->worker = Worker::create(array(
 					'name' => $name,
 					'worker_group_id' => $this->_workerGroup['id']
