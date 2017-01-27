@@ -72,14 +72,24 @@
 					'name' => $name,
 					'worker_group_id' => $this->_workerGroup['id']
 				));
-			} else {
-				if ($this->worker['worker_group_id'] !== $this->_workerGroup['id']) {
-					// update group id, if mismatching with group related to given credentials
-					$this->worker->save(['worker_group_id' => $this->_workerGroup['id']]);
+				if (!$this->worker) {
+					// creation may have failed due to race condition, query again
+					$this->worker = Worker::findAll()
+						->where(array('name' => $name))
+						->orderBy('id DESC')
+						->limit(1)
+						->first();
 				}
-				
-				$this->worker->touch(['last_seen']);
+				if (!$this->worker) {
+					return $this->_XMLRPCFault(-32500, 'can neither create nor find worker entry');
+				}
 			}
+			if ($this->worker['worker_group_id'] !== $this->_workerGroup['id']) {
+				// update group id, if mismatching with group related to given credentials
+				$this->worker->save(['worker_group_id' => $this->_workerGroup['id']]);
+			}
+
+			$this->worker->touch(['last_seen']);
 
 			// store projects ids of projects assigned to parent worker group
 			$this->_assignedProjects = $this->_workerGroup
