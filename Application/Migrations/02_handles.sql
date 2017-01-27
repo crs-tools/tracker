@@ -83,7 +83,8 @@ CREATE TABLE tbl_worker
   CONSTRAINT tbl_worker_pkey PRIMARY KEY (id),
   CONSTRAINT tbl_worker_worker_group_id_fkey FOREIGN KEY (worker_group_id)
       REFERENCES tbl_worker_group (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT tbl_worker_name_group_uq UNIQUE (name, worker_group_id)
 )
 INHERITS (tbl_handle)
 WITHOUT OIDS;
