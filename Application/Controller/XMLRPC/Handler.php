@@ -62,7 +62,10 @@
 			
 			// FIXME: this is a dirty fix for a race condition!
 			$this->worker = Worker::findAll()
-				->where(array('name' => $name))
+				->where(array(
+					'name' => $name,
+					'worker_group_id' => $this->_workerGroup['id']
+					))
 				->orderBy('id DESC')
 				->limit(1)
 				->first();
@@ -75,7 +78,10 @@
 				if (!$this->worker) {
 					// creation may have failed due to race condition, query again
 					$this->worker = Worker::findAll()
-						->where(array('name' => $name))
+						->where(array(
+							'name' => $name,
+							'worker_group_id' => $this->_workerGroup['id']
+							))
 						->orderBy('id DESC')
 						->limit(1)
 						->first();
@@ -83,10 +89,6 @@
 				if (!$this->worker) {
 					return $this->_XMLRPCFault(-32500, 'can neither create nor find worker entry');
 				}
-			}
-			if ($this->worker['worker_group_id'] !== $this->_workerGroup['id']) {
-				// update group id, if mismatching with group related to given credentials
-				$this->worker->save(['worker_group_id' => $this->_workerGroup['id']]);
 			}
 
 			$this->worker->touch(['last_seen']);
