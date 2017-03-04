@@ -240,51 +240,53 @@
 		}
 		
 		/**
-		 * Set ticket state of given ticket to consecutive state, if allowed
+		 * Advance ticket state from initial state to first serviceable state.
 		 *
 		 * @param integer $ticket_id ticket identifier
-		 * @param string $log_message optional log message
 		 * @return bool true if state successfully advanced
 		 * @throws Exception
 		 */
-		public function setTicketNextState($ticket_id, $log_message = '') {
+		public function setCommenceTicketState($ticket_id) {
 			$ticket = Ticket::findBy(['id' => $ticket_id]);
 			if(!$ticket) {
-				throw new Exception(__FUNCTION__.': ticket not found',101);
+				throw new Exception(__FUNCTION__.': ticket not found',1301);
 			}
 
-			if(empty($ticket['handle_id']) || $ticket['handle_id'] != $this->worker['id']) {
-				throw new Exception(__FUNCTION__.': ticket is not assigned to you',102);
+			if(!empty($ticket['handle_id'])) {
+				throw new Exception(__FUNCTION__.': ticket is currently assigned',1302);
 			}
 
 			if(!in_array($ticket['project_id'],$this->_assignedProjects)) {
-				throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',103);
+				throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',1303);
 			}
 
-			$state = $ticket->State;
-			if(false && !$state['service_executable']) {
-				throw new Exception(__FUNCTION__.': current ticket state is not serviceable',104);
-			}
-			
-			if($ticket['ticket_state_next'] === null) {
-				throw new Exception(__FUNCTION__.': no next state available!',105);
+			$initial_state = $ticket->Project->queryFirstState($ticket['ticket_type'])->first();
+			if($initial_state['ticket_state'] != $ticket['ticket_state']) {
+				throw new Exception(__FUNCTION__.': ticket is not in initial state!',1304);
 			}
 			
-			$previousState = $state['ticket_state'];
+			$commenceState = ProjectTicketState::getCommenceState($ticket['project_id'], $ticket['ticket_type']);
+			if(!$commenceState) {
+				throw new Exception(__FUNCTION__.': ticket has no commence state!',1305);
+			}
+			
+			$log_entry = [
+				'ticket_id' => $ticket['id'],
+				'from_state' => $ticket['ticket_state'],
+				'to_state' => $commenceState,
+				'handle_id' => $this->worker['id'],
+				'event' => 'RPC.'.__FUNCTION__,
+				'comment' => 'Advanced ticket from initial state'
+			];
 
-			if($ticket->save(['ticket_state' => $ticket['ticket_state_next']])) {
-				LogEntry::create(array(
-					'ticket_id' => $ticket['id'],
-					'from_state' => $previousState,
-					'to_state' => $ticket['ticket_state_next'],
-					'handle_id' => $this->worker['id'],
-					'event' => 'RPC.'.__FUNCTION__,
-					'comment' => $log_message));
-
-				return true;
+			if(!$save = $ticket->save(['ticket_state' => $commenceState])) {
+				Log::warning(__FUNCTION__.': setting to commence state failed');
+				return false;
 			}
 
-			return false;
+			LogEntry::create($log_entry);
+			
+			return true;
 		}
 
 		/**
