@@ -142,7 +142,7 @@
 		/**
 		 * Get details about the encoding profiles available for this project.
 		 *
-		 * @param integer encoding_profile_id get details only for specified profile
+		 * @param integer $encoding_profile_id get details only for specified profile
 		 * @return array profile details
 		 */
 		public function getEncodingProfiles($encoding_profile_id = null) {
@@ -157,9 +157,9 @@
 		/**
 		 * Get consecutive ticket state of given ticket type and ticket state available for this project.
 		 *
-		 * @param integer project_id project identifier
-		 * @param string ticket_type type of ticket (meta, recording, encoding, ingest)
-		 * @param string ticket_state ticket state to find successor of
+		 * @param integer $project_id project identifier
+		 * @param string $ticket_type type of ticket (meta, recording, encoding, ingest)
+		 * @param string $ticket_state ticket state to find successor of
 		 * @return array ticket state
 		 */
 		public function getNextState($project_id, $ticket_type, $ticket_state) {
@@ -169,9 +169,9 @@
 		/**
 		 * Get preceding ticket state of given ticket type and ticket state available for this project.
 		 *
-		 * @param integer project_id project identifier
-		 * @param string ticket_type type of ticket (meta, recording, encoding, ingest)
-		 * @param string ticket_state ticket state to find predecessor of
+		 * @param integer $project_id project identifier
+		 * @param string $ticket_type type of ticket (meta, recording, encoding, ingest)
+		 * @param string $ticket_state ticket state to find predecessor of
 		 * @return array ticket state
 		 */
 		public function getPreviousState($project_id, $ticket_type, $ticket_state) {
@@ -181,7 +181,7 @@
 		/**
 		 * Get consecutive ticket state of given ticket
 		 *
-		 * @param integer ticket_id ticket identifier
+		 * @param integer $ticket_id ticket identifier
 		 * @return array ticket state
 		 */
 		public function getTicketNextState($ticket_id) {
@@ -193,9 +193,8 @@
 		/**
 		 * Set ticket state of given ticket to consecutive state, if allowed
 		 *
-		 * (Maybe deprecated)
-		 * @param integer ticket_id ticket identifier
-		 * @param string log_message optional log message
+		 * @param integer $ticket_id ticket identifier
+		 * @param string $log_message optional log message
 		 * @return bool true if state successfully advanced
 		 * @throws Exception
 		 */
@@ -245,8 +244,8 @@
 		 * Workers for services are supposed to poll the tracker periodically to notify about there state
 		 * and progress. The return value is used to apply commands.
 		 *
-		 * @param integer ticket_id of current ticket a worker is working on, empty if none assigned
-		 * @param string optional log message
+		 * @param integer $ticket_id of current ticket a worker is working on, empty if none assigned
+		 * @param string $log_message optional log message
 		 * @return string command to handle by worker, 'OK' if nothing special to do
 		 */
 		public function ping($ticket_id = null, $log_message = null) {
@@ -305,7 +304,7 @@
 		/**
 		* Get properties of ticket with given id
 		*
-		* @param int ticket_id id of ticket
+		* @param int $ticket_id id of ticket
 		* @return array property data
 		* @throws Exception if ticket not found
 		*/
@@ -321,8 +320,8 @@
 		/**
 		* Set ticket properties for ticket with given id
 		*
-		* @param int ticket_id id of ticket
-		* @param array associative array of properties ( key => value )
+		* @param int $ticket_id id of ticket
+		* @param array $properties associative array of properties ( key => value )
 		* @return true if properties set successfully
 		* @throws Exception if ticket not exists
 		*/
@@ -369,9 +368,9 @@
 		 *
 		 * First ticket found gets assigned to calling user and state transition to $state is performed.
 		 *
-		 * @param string ticketType type of ticket
-		 * @param string ticketState ticket state the returned ticket will be in after this call
-		 * @param array propertyFilters return only tickets matching given properties
+		 * @param string $ticketType type of ticket
+		 * @param string $ticketState ticket state the returned ticket will be in after this call
+		 * @param array $propertyFilters return only tickets matching given properties
 		 * @return array ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
@@ -487,9 +486,9 @@
 		/**
 		 * Get all assigned tickets in state $state
 		 *
-		 * @param string ticket_type type of ticket
-		 * @param string ticket_state ticket state
-		 * @param array filter_parameters return only tickets matching given properties
+		 * @param string $ticketType type of ticket
+		 * @param string $ticketState ticket state
+		 * @param array $propertyFilters return only tickets matching given properties
 		 * @return array ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
@@ -587,13 +586,13 @@
 		}
 
 		/**
-		 * Unassign ticket and set state to according state after procressing by service.
+		 * Unassign ticket and set state to according state after processing by service.
 		 *
 		 * A log message can be appended.
 		 *
-		 * @param integer id of ticket
-		 * @param string optional log message
-		 * @return boolean true if action was performed sucessfully
+		 * @param integer $ticket_id id of ticket
+		 * @param string $log_message optional log message
+		 * @return boolean true if action was performed successfully
 		 * @throws Exception
 		 */
 		public function setTicketDone($ticket_id, $log_message = null) {
@@ -643,9 +642,9 @@
 		 *
 		 * A log message can be appended.
 		 *
-		 * @param integer id of ticket
-		 * @param string optional log message
-		 * @return boolean true if action was performed sucessfully
+		 * @param integer $ticket_id id of ticket
+		 * @param string $log_message optional log message
+		 * @return boolean true if action was performed successfully
 		 * @throws Exception
 		 */
 		public function setTicketFailed($ticket_id, $log_message = null) {
@@ -688,8 +687,8 @@
 		/**
 		 * Render job file for master.pl encoding scripts
 		 *
-		 * @param integer id of ticket
-		 * @return boolean true if action was performed sucessfully
+		 * @param integer $ticket_id id of ticket
+		 * @return boolean true if action was performed successfully
 		 * @throws Exception
 		 */
 		public function getJobfile($ticket_id) {
@@ -706,8 +705,8 @@
 		/**
 		* Add a log message regarding the ticket with given id
 		*
-		* @param int ticket_id id of ticket
-		* @param string comment text for log message
+		* @param int $ticket_id id of ticket
+		* @param string $log_message comment text for log message
 		* @return boolean true if comment saved successfully
 		* @throws Exception if ticket not found
 		*/
