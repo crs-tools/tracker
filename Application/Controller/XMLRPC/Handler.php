@@ -140,18 +140,32 @@
 		}
 
 		/**
-		 * Get details about the encoding profiles available for this project.
+		 * Get details about the encoding profiles available for given project.
 		 *
+		 * @param integer $project_id id of project
 		 * @param integer $encoding_profile_id get details only for specified profile
 		 * @return array profile details
+		 * @throws Exception
 		 */
-		public function getEncodingProfiles($encoding_profile_id = null) {
-			if(!empty($encoding_profile_id)) {
-				$profiles = array(EncodingProfile::findBy(array('id' => $encoding_profile_id))->toArray());
-			} else {
-				$profiles = EncodingProfile::findAll()->toArray();
+		public function getEncodingProfiles($project_id, $encoding_profile_id = null) {
+			// handle project
+			if(!in_array($project_id, $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 101);
 			}
-			return is_array($profiles) ? $profiles : array();
+			$project = Project::findOrThrow(['id' => $project_id]);
+			
+			// check for a specific encoding profile
+			if(!empty($encoding_profile_id)) {
+				$profile = $project->EncodingProfileVersion->where(['encoding_profile_id' => $encoding_profile_id])->first();
+				if(!$profile) {
+					throw new Exception(__FUNCTION__ . ': encoding profile is not assigned to the project', 102);
+				}
+				
+				return $profile->toArray();
+			}
+			
+			// list all profiles
+			return $project->EncodingProfileVersion->fetchAll();
 		}
 
 		/**
