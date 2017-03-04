@@ -724,25 +724,11 @@
 		}
 		
 		/**
-		 * Check whether project is writable and user not set to read only.
+		 * Return a list of projects assigned to the current worker group
 		 *
+		 * @return array list of project IDs serviceable and assigned to current worker group
 		 */
-		/*private function checkReadOnly() {
-			if($this->Project->current()->read_only) {
-				throw new ActionNotAllowedException('project is read_only',411);
-			}
-			
-			// return false if user is currently halted
-			$halted_until = Date::fromString($this->User->halted_until);
-			if(Date::now()->isLater($halted_until)) {
-				Log::debug('checkReadOnly: user is halted! new tickets available in '.Date::distanceInWords($halted_until));
-				return false;
-			}
-
-			if(!empty($this->Config->RPC['hold_services'])) {
-				Log::debug('checkReadOnly: all workers are halted by admin.');
-				return false;
-			}
-			return true;
-		}*/
+		public function getServiceableProjects() {
+			return $this->_assignedProjects;
+		}
 	}
