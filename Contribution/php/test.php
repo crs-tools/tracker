@@ -25,38 +25,51 @@ $token = 'XXXXXXXXXXXXXXXXXXXXX';
 $secret = 'XXXXXXXXXXXXXXXXXXXXX';
 
 // create client
-$client = new \C3TT\Client('http://pegro.tracker.fem-net.de/rpc', $token, $secret);
+$client = new \C3TT\Client('https://tracker-dev.fem-net.de/pegro/rpc', $token, $secret);
 
 // example call
 $version = $client->getVersion();
 if($version == '4.0') {
-    echo "API still works!\n";
+	echo "API still works!\n";
 }
 
 // create ticket
-
+$project_id = 18;
+$fahrplan_id = 124;
 $props = [
-    'fahrplan_id' => 2337,
-    'Fahrplan.Slug' => 'das-ist-ein-test'
+	'Fahrplan.Slug' => 'das-ist-ein-test'
 ];
 
 try {
-    $ticket = $client->createTicket(17, 'Test video', $props);
-
-    var_export($ticket);
-
-    // advance ticket state
-    $client->setTicketNextState($ticket['id']);
-
-    //var_export($client->getEncodingProfiles());
-
-    $child_ticket = $client->createChildTicket($ticket['id'], 'encoding', ['encoding_profile_id' => 6]);
-
-    var_export($child_ticket);
-
-    $client->setTicketNextState($child_ticket['id']);
-
+	if(!in_array($project_id, $client->getServiceableProjects())) {
+		echo "Project " . $project_id . " is currently not serviceable\n";
+		return;
+	}
+	
+	// get assigned encoding profiles
+	$profiles = $client->getEncodingProfiles($project_id);
+	
+	// create meta ticket
+	$ticket = $client->createMetaTicket($project_id, 'Test video', $fahrplan_id, $props);
+	var_export($ticket);
+	
+	// create encoding ticket
+	$child_ticket = $client->createEncodingTicket($ticket['id'], $profiles[0]['encoding_profile_id'], ['Encoding.Test' => 12]);
+	var_export($child_ticket);
+	
+	// set next state on encoding ticket
+	$client->setCommenceTicketState($child_ticket['id']);
+	
+	// set next state on meta ticket
+	$client->setCommenceTicketState($ticket['id']);
+	
+	// get ticket info
+	var_export($client->getMetaTicketInfo($project_id, $fahrplan_id));
+	
+	// get ticket info (alternative way)
+	var_export($client->getTicketInfo($ticket['id']));
+	
 } catch(Exception $e) {
-    echo "ERROR: (".$e->getCode().") ".$e->getMessage() ."\n";
-    return;
+	echo "ERROR: (" . $e->getCode() . ") " . $e->getMessage() . "\n";
+	return;
 }
