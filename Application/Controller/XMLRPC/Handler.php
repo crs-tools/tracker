@@ -266,40 +266,37 @@
 			// log ping
 			$time_since = ($this->worker['last_seen']) ? (new DateTime())->diff(new DateTime($this->worker['last_seen']))->format('%Hh %imin %ss') : 'long long time';
 			Log::debug('ping from '.$this->worker['name'].' ('.$this->Request->getRemoteIP().') [last ping '.$time_since." ago]: ticket_id=$ticket_id log_message='$log_message'");
-
-			// set cmd for return value
+			
+			// assume nothing is wrong
 			$cmd = 'OK';
-			$reason = '';
-
-			$state = array();
-			// check ticket state if id given
-			$ticket_id = intval($ticket_id);
-			if($ticket_id > 0) {
-				if(!$ticket = Ticket::find(['id' => $ticket_id], ['State', 'Handle'])) {
-					$reason = 'ticket not found';
-				} elseif($ticket['handle_id'] == null) {
-					$reason = 'ticket is unassigned';
-				} elseif($ticket['handle_id'] != $this->worker['id']) {
-					$reason = 'ticket is assigned to other handle: '.$ticket['handle_name'];
-				} elseif(!in_array($ticket['project_id'],$this->_assignedProjects)) {
-					$reason = 'ticket in project not assigned to worker group';
-				}
+			$reason = false;
+			
+			// return, if worker is idling
+			if(!$ticket_id) {
+				return $cmd;
+			}
+			
+			$ticket = Ticket::find(['id' => $ticket_id], ['State', 'Handle']);
+			if(!$ticket) {
+				$reason = 'ticket not found';
+			} elseif($ticket['handle_id'] == null) {
+				$reason = 'ticket is unassigned';
+			} elseif($ticket['handle_id'] != $this->worker['id']) {
+				$reason = 'ticket is assigned to other handle: '.$ticket['handle_name'];
+			} elseif(!in_array($ticket['project_id'],$this->_assignedProjects)) {
+				$reason = 'ticket in project not assigned to worker group';
+			} else {
 				$state = $ticket->State;
 				if(empty($state) || !$state['service_executable']) {
 					$reason = 'ticket is in non-service state: '.$ticket['ticket_state'];
 				}
-
-				// lose ticket if error occurred
-				if(!empty($reason)) {
-					$cmd = 'Ticket lost';
-					Log::warning('[RPC] ping: '.$reason);
-				}
-			} else {
-				$ticket_id = null;
 			}
 
-			if($cmd != 'OK') {
-				// only log valid ticket ids
+			// lose ticket, if an error occurred
+			if($reason) {
+				$cmd = 'Ticket lost';
+				Log::warning('[RPC] ping: '.$reason);
+				
 				if($ticket) {
 					LogEntry::create(array(
 						'ticket_id' => $ticket_id,
@@ -309,9 +306,7 @@
 					));
 				}
 			}
-
-			// TODO: add last_ping?
-
+			
 			return $cmd;
 		}
 		
