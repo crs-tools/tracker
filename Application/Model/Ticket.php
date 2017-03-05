@@ -612,6 +612,15 @@
 			return $handle->fetch()['create_missing_encoding_tickets'];
 		}
 		
+		public static function createMissingEncodingTicket($metaTicket, $encodingProfile) {
+			$handle = Database::$Instance->query(
+				'SELECT create_missing_encoding_ticket(?, ?)',
+				[$metaTicket, $encodingProfile]
+			);
+			
+			return $handle->fetch()['create_missing_encoding_ticket'];
+		}
+		
 		public function getDependingEncodingTicketState() {
 			$handle = Database::$Instance->query(
 				'SELECT ticket_depending_encoding_ticket_state(?)',
