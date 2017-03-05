@@ -96,4 +96,37 @@ END
 $$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION ticket_state_commence(param_project_id bigint, param_ticket_type enum_ticket_type)
+  RETURNS enum_ticket_state AS
+$$
+DECLARE
+  ret enum_ticket_state;
+  next_state record;
+BEGIN
+  -- special case: meta ticket, since it has no serviceable states
+  IF param_ticket_type = 'meta' THEN
+    RETURN 'staged'::enum_ticket_state;
+  END IF;
+
+  ret := (SELECT ticket_state_initial(param_project_id, param_ticket_type));
+
+  WHILE ret IS NOT NULL LOOP
+    SELECT * INTO next_state FROM ticket_state_next(param_project_id, param_ticket_type, ret);
+    IF NOT FOUND THEN
+      ret := NULL;
+      EXIT;
+    END IF;
+
+    -- exit, if serviceable state is found
+    EXIT WHEN next_state.service_executable IS TRUE;
+
+    -- otherwise set current state as possible commence state
+    ret := next_state.ticket_state;
+  END LOOP;
+
+  RETURN ret;
+END
+$$
+LANGUAGE plpgsql;
+
 COMMIT;
