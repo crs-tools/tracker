@@ -1,7 +1,3 @@
-BEGIN;
-
-SET ROLE TO postgres;
-
 CREATE OR REPLACE FUNCTION create_missing_recording_tickets(param_project_id bigint) RETURNS integer AS $$
   DECLARE
 	row_count integer;
@@ -40,4 +36,3 @@ CREATE OR REPLACE FUNCTION create_missing_recording_tickets(param_project_id big
   END;
 $$ LANGUAGE plpgsql;
 
-COMMIT;
