@@ -41,6 +41,15 @@
 			return ($row === false)? null : $row;
 		}
 		
+		public static function getCommenceState($project, $type) {
+			$handle = Database::$Instance->query(
+				'SELECT ticket_state_commence(?, ?)',
+				[$project, $type]
+			);
+			
+			return $handle->fetch()['ticket_state_commence'];
+		}
+		
 		public static function createAll($project) {
 			return (new Database_Query(self::TABLE))
 				->insertFrom(TicketState::findAll()->select(
