@@ -357,73 +357,39 @@
 			}
 			
 			// create query: find all tickets in state
-			$tickets = Ticket::findAll(['State'])
-				->from('view_serviceable_tickets', 'tbl_ticket')
-				->where([
-					'project_id' => $this->_assignedProjects,
-					'ticket_type' => $ticketType,
-					'next_state' => $ticketState,
-					'next_state_service_executable' => 1,
-					'handle_id' => null
-				])
-				->scoped([
-					'virtual_property_filter' => [$propertyFilters]
-				])
-				->orderBy('ticket_priority(id) DESC');
-			
-			$this->_workerGroup->filterTickets(
-				$this->_assignedProjects,
-				$tickets
-			);
-			
-			$ticket = $tickets->first();
+			$ticket = null;
+			try {
+				$tickets = Ticket::findAll(['State'])
+					->from('view_serviceable_tickets', 'tbl_ticket')
+					->where([
+						'project_id' => $this->_assignedProjects,
+						'ticket_type' => $ticketType,
+						'next_state' => $ticketState,
+						'next_state_service_executable' => 1,
+						'handle_id' => null
+					])
+					->scoped([
+						'virtual_property_filter' => [$propertyFilters]
+					])
+					->orderBy('ticket_priority(id) DESC');
+				
+				$this->_workerGroup->filterTickets(
+					$this->_assignedProjects,
+					$tickets
+				);
+				
+				$ticket = $tickets->first();
+			} catch(Exception $e) {
+				Log::warning($e->getMessage());
+				throw new Exception(__FUNCTION__.': error fetching tickets. suspecting invalid parameters.' .
+					sprintf(' (got %s: %s)', get_class($e), $e->getMessage()), 402);
+			}
 			
 			if ($ticket === null) {
 				return false;
 			}
 			
-			// check again if we still need to filter tickets properties
-			/*
-			if(empty($propertyFilter)) {
-				$ticket = $tickets->first();
-			} else {
-				foreach($tickets as $_ticket) {
-					$ticket = $_ticket;
-					$properties = $this->getTicketProperties($_ticket['id']);
-					foreach($properties as $name => $value) {
-						if(array_key_exists($name,$propertyFilter) && $propertyFilter[$name] != $value) {
-							// if property mismatch, invalidate current ticket guess
-							$ticket = null;
-							break;
-						}
-					}
-					if($ticket) {
-						break;
-					}
-				}
-			}
-			*/
-			
-			/* TODO handling abandoned tickets after timeout
-			 if(!$ticket = $this->Ticket->findUnassignedByState($service['from'], 1)) {
-				// no matching ticket found
-				
-				// get ping timeout for workers
-				$worker_timeout = !empty($this->Config->RPC['worker_timeout']) ? $this->Config->RPC['worker_timeout'] : '5min';
-				
-				// check for tickets assigned to workers which are not seen for longer than $worker_timeout
-				if(!$ticket = $this->Ticket->findAbandonedByState($service['state'],$worker_timeout,1)) {
-					return false;
-				}
-				
-				$from_state_id = $service['state'];
-				$from_user_id = $ticket['user_id'];
-				
-				Log::info('[RPC] assignNextUnassignedForState: reassign abandoned ticket #'.$this->Ticket->id);
-			} else {
-				$from_state_id = $service['from'];
-				$from_user_id = null;
-			}*/
+			/* TODO handling abandoned tickets after timeout */
 			
 			$logEntry = [
 				'ticket_id' => $ticket['id'],
