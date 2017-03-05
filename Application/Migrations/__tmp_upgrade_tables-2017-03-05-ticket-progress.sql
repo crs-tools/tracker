@@ -1,8 +1,4 @@
-﻿BEGIN;
-
-SET ROLE TO postgres;
-
-CREATE OR REPLACE FUNCTION ticket_state_progress(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state) RETURNS float AS $$
+﻿CREATE OR REPLACE FUNCTION ticket_state_progress(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state) RETURNS float AS $$
 DECLARE
   progress float;
 BEGIN
@@ -31,23 +27,3 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION ticket_progress(param_ticket_id bigint) RETURNS float AS $$
-DECLARE
-  progress float;
-BEGIN
-  SELECT SUM(percent_progress) / COUNT(id) INTO progress FROM (
-	SELECT t.id, ticket_state_progress(t.project_id, t.ticket_type, t.ticket_state) AS percent_progress FROM tbl_ticket t WHERE t.id = param_ticket_id AND t.parent_id IS NOT NULL
-	UNION 
-	SELECT t.id, ticket_state_progress(t.project_id, t.ticket_type, t.ticket_state) AS percent_progress FROM tbl_ticket t WHERE t.parent_id = param_ticket_id
-  ) as all_tickets;
-    IF progress IS NULL THEN
-	progress := 0;
-  END IF;
-
-  RETURN progress;
-END
-$$ LANGUAGE plpgsql;
-
-
-COMMIT;
