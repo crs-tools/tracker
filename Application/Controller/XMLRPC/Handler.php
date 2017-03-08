@@ -251,7 +251,6 @@
 		 */
 		public function createMetaTicket($project_id, $title, $fahrplan_id, array $properties = [])
 		{
-			
 			// check project
 			if(!in_array($project_id, $this->_assignedProjects)) {
 				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 1001);
@@ -315,6 +314,30 @@
 			} catch(Exception $e) {
 				throw new Exception(__FUNCTION__ . ': ticket creation failed. reason: ' . $e->getMessage(), 1006);
 			}
+		}
+		
+		/**
+		 * Get meta ticket for given fahrplan id
+		 *
+		 * @param integer $project_id id of project to create ticket in
+		 * @param integer $fahrplan_id external reference ID
+		 * @return array ticket data
+		 * @throws Exception if ticket not found
+		 */
+		public function getMetaTicketInfo($project_id, $fahrplan_id)
+		{
+			// check project
+			if(!in_array($project_id, $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 1101);
+			}
+			
+			// handle ticket
+			$metaTicket = Ticket::find([ 'ticket_type' => 'meta', 'project_id' => $project_id, 'fahrplan_id' => $fahrplan_id ]);
+			if(!$metaTicket) {
+				throw new EntryNotFoundException(__FUNCTION__ . ': no meta ticket found in this project for given fahrplan id', 1102);
+			}
+			
+			return $this->_getTicketInfo($metaTicket);
 		}
 		
 		/**
