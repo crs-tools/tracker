@@ -130,6 +130,11 @@
 			return strstr($hostName . '.', '.', true);
 		}
 		
+		private static function _filterFields(array $data, array $fields)
+		{
+			return array_intersect_key($data, array_flip($fields));
+		}
+		
 		/**
 		* get version string of XMLRPC API
 		*
@@ -167,7 +172,73 @@
 			// list all profiles
 			return $project->EncodingProfileVersion->fetchAll();
 		}
-
+		
+		/**
+		 * Filter ticket details for output
+		 *
+		 * @param object $ticket ticket
+		 * @return array filtered ticket info
+		 * @throws Exception
+		 */
+		private function _getTicketInfo($ticket) {
+			if(!($ticket instanceof Ticket)) {
+				return [];
+			}
+			
+			$ticket_info = self::_filterFields($ticket->toArray(), [
+				'id',
+				'project_id',
+				'fahrplan_id',
+				'title',
+				'ticket_type',
+				'ticket_state',
+				'ticket_state_next',
+				'failed',
+				'progress'
+			]);
+			
+			// generate URL for user interaction
+			$ticket_info['url_web'] = $this->Request->getRootURL() .
+				Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $ticket->Project['slug']]);
+			
+			// add type-dependent detail info
+			switch($ticket['ticket_type']) {
+				case 'encoding':
+					$ticket_info['parent_id'] = $ticket['parent_id'];
+					$ticket_info['encoding_profile_id'] = $ticket->EncodingProfileVersion['encoding_profile_id'];
+					break;
+			}
+			
+			// recursion: get child ticket info
+			foreach($ticket->Children as $childTicket) {
+				$ticket_info['children'][] = $this->_getTicketInfo($childTicket);
+			}
+			
+			return $ticket_info;
+		}
+		
+		
+		/**
+		 * Get ticket details of given ticket id
+		 *
+		 * @param integer $ticket_id ticket identifier
+		 * @return array ticket info
+		 * @throws Exception
+		 */
+		public function getTicketInfo($ticket_id)
+		{
+			$ticket = Ticket::find(['id' => $ticket_id]);
+			if(!$ticket) {
+				throw new Exception(__FUNCTION__ . ': ticket not found', 201);
+			}
+			
+			if(!in_array($ticket['project_id'], $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': ticket in project not assigned to worker group', 202);
+			}
+			
+			return $this->_getTicketInfo($ticket);
+		}
+		
 		/**
 		 * Set ticket state of given ticket to consecutive state, if allowed
 		 *
