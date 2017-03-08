@@ -169,42 +169,6 @@
 		}
 
 		/**
-		 * Get consecutive ticket state of given ticket type and ticket state available for this project.
-		 *
-		 * @param integer $project_id project identifier
-		 * @param string $ticket_type type of ticket (meta, recording, encoding, ingest)
-		 * @param string $ticket_state ticket state to find successor of
-		 * @return array ticket state
-		 */
-		public function getNextState($project_id, $ticket_type, $ticket_state) {
-			return ProjectTicketState::getNextState($project_id, $ticket_type, $ticket_state);
-		}
-
-		/**
-		 * Get preceding ticket state of given ticket type and ticket state available for this project.
-		 *
-		 * @param integer $project_id project identifier
-		 * @param string $ticket_type type of ticket (meta, recording, encoding, ingest)
-		 * @param string $ticket_state ticket state to find predecessor of
-		 * @return array ticket state
-		 */
-		public function getPreviousState($project_id, $ticket_type, $ticket_state) {
-			return ProjectTicketState::getPreviousState($project_id, $ticket_type, $ticket_state);
-		}
-
-		/**
-		 * Get consecutive ticket state of given ticket
-		 *
-		 * @param integer $ticket_id ticket identifier
-		 * @return array ticket state
-		 */
-		public function getTicketNextState($ticket_id) {
-			return Ticket::findBy(['id' => $ticket_id])
-				->queryNextState()
-				->fetchRow();
-		}
-
-		/**
 		 * Set ticket state of given ticket to consecutive state, if allowed
 		 *
 		 * @param integer $ticket_id ticket identifier
