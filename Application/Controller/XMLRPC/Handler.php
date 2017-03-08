@@ -341,6 +341,75 @@
 		}
 		
 		/**
+		 * Add a new encoding ticket to existing meta ticket
+		 *
+		 * @param integer $meta_ticket_id id of meta ticket to create a child for
+		 * @param integer $encoding_profile_id id of encoding profile
+		 * @param array $properties ticket properties
+		 * @return array ticket data
+		 * @throws Exception if ticket not found
+		 */
+		public function createEncodingTicket($meta_ticket_id, $encoding_profile_id, array $properties = [])
+		{
+			// handle ticket
+			$metaTicket = Ticket::find(['id' => $meta_ticket_id, 'ticket_type' => 'meta'], ['Project']);
+			if(!$metaTicket) {
+				throw new EntryNotFoundException(__FUNCTION__ . ': meta ticket not found', 1201);
+			}
+			
+			// handle project
+			if(!in_array($metaTicket['project_id'], $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 1202);
+			}
+			$project = Project::find(['id' => $metaTicket['project_id']]);
+			
+			// handle encoding profile
+			if(empty($encoding_profile_id) || !is_numeric($encoding_profile_id)) {
+				throw new Exception(__FUNCTION__ . ': encoding profile is invalid', 1203);
+			}
+			
+			if(!$encodingProfileVersion = $project->EncodingProfileVersion
+				->where(['encoding_profile_id' => $encoding_profile_id])
+				->first()) {
+				throw new Exception(__FUNCTION__ . ': given encoding profile not available in this project', 1204);
+			}
+			
+			try {
+				// create missing encoding ticket
+				$ticket_id = Ticket::createMissingEncodingTicket($meta_ticket_id, $encoding_profile_id);
+				
+				Log::warning('ticket_id: '.$ticket_id);
+				
+				// get ticket
+				$ticket = Ticket::find(['id' => $ticket_id]);
+				
+				LogEntry::create(array(
+					'ticket_id' => $ticket['id'],
+					'from_state' => '',
+					'to_state' => $ticket['ticket_state'],
+					'handle_id' => $this->worker['id'],
+					'event' => 'RPC.' . __FUNCTION__,
+					'comment' => 'encoding ticket created/updated'));
+				
+				// store properties
+				$ticketProperties = array();
+				foreach($properties as $name => $value) {
+					$ticketProperties[$name] = [
+						'name' => $name,
+						'value' => $value
+					];
+				}
+				
+				// save
+				$ticket->save(['properties' => $ticketProperties]);
+				
+				return $ticket->toArray();
+			} catch(Exception $e) {
+				throw new Exception(__FUNCTION__ . ': ticket creation failed. reason: ' . $e->getMessage(), 1205);
+			}
+		}
+		
+		/**
 		 * Advance ticket state from initial state to first serviceable state.
 		 *
 		 * @param integer $ticket_id ticket identifier
