@@ -597,7 +597,7 @@
 		 * @throws Exception
 		 */
 		public function setTicketDone($ticket_id, $log_message = null) {
-			if(!$ticket = Ticket::findAll(['State'])->from('view_serviceable_tickets', 'tbl_ticket')->where(['id' => $ticket_id])->first()) {
+			if(!$ticket = Ticket::findAll(['State'])->where(['id' => $ticket_id])->first()) {
 				throw new EntryNotFoundException(__FUNCTION__.': ticket not found or parent in wrong state',501);
 			}
 
