@@ -240,6 +240,84 @@
 		}
 		
 		/**
+		 * Add a new meta ticket
+		 *
+		 * @param integer $project_id id of project to create ticket in
+		 * @param string $title ticket title
+		 * @param integer $fahrplan_id external reference ID
+		 * @param array $properties ticket properties
+		 * @return array ticket data
+		 * @throws Exception if ticket cannot be created
+		 */
+		public function createMetaTicket($project_id, $title, $fahrplan_id, array $properties = [])
+		{
+			
+			// check project
+			if(!in_array($project_id, $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 1001);
+			}
+			
+			// check title
+			if(empty($title)) {
+				throw new Exception(__FUNCTION__ . ': ticket title is empty', 1002);
+			}
+			
+			// check fahrplan_id
+			if(empty($fahrplan_id) || !is_numeric($fahrplan_id)) {
+				throw new Exception(__FUNCTION__ . ': fahrplan ID is invalid', 1003);
+			}
+			// Internal fahrplan id is mandatory, must be unique and can't be changed later
+			if(Ticket::exists([ 'project_id' => $project_id, 'fahrplan_id' => $fahrplan_id ])) {
+				throw new Exception(__FUNCTION__ . ': ticket with given fahrplan ID already exists', 1004);
+			}
+			
+			$project = Project::find(['id' => $project_id]);
+			
+			$ticket_data = [
+				'ticket_type' => 'meta',
+				'project_id' => $project['id'],
+				'project_slug' => $project['project_slug'],
+				'title' => $title,
+				'fahrplan_id' => $fahrplan_id
+			];
+			
+			$first_state = $project->queryFirstState($ticket_data['ticket_type'])->first();
+			if(empty($first_state)) {
+				throw new Exception(__FUNCTION__ . ': no valid states configured in project for ticket type meta', 1005);
+			}
+			$ticket_data['ticket_state'] = $first_state['ticket_state'];
+			
+			// store remaining properties
+			$ticket_data['properties'] = array();
+			foreach($properties as $name => $value) {
+				$ticket_data['properties'][$name] = [
+					'name' => $name,
+					'value' => $value
+				];
+			}
+			
+			try {
+				$ticket = Ticket::createOrThrow($ticket_data);
+				
+				LogEntry::create(array(
+					'ticket_id' => $ticket['id'],
+					'from_state' => '',
+					'to_state' => $ticket['ticket_state'],
+					'handle_id' => $this->worker['id'],
+					'event' => 'RPC.' . __FUNCTION__,
+					'comment' => 'ticket created'));
+				
+				Ticket::createMissingEncodingTickets(
+					$project['id']
+				);
+				
+				return $ticket->toArray();
+			} catch(Exception $e) {
+				throw new Exception(__FUNCTION__ . ': ticket creation failed. reason: ' . $e->getMessage(), 1006);
+			}
+		}
+		
+		/**
 		 * Advance ticket state from initial state to first serviceable state.
 		 *
 		 * @param integer $ticket_id ticket identifier
