@@ -7,6 +7,10 @@
 	class LogEntry extends Model {
 		
 		const TABLE = 'tbl_log';
+		
+		const MESSAGE_TYPE_LOG = 'log';
+		const MESSAGE_TYPE_SINGLE = 'single';
+		const MESSAGE_TYPE_MULTIPLE = 'multiple';
 
 		public $belongsTo = [
 			'Handle' => [
@@ -194,7 +198,7 @@
 			*/
 		];
 		
-		public function getEventMessage($type = 'log') {
+		public function getEventMessage($type = self::MESSAGE_TYPE_LOG) {
 			$toState = ($this['to_state'] !== null)? $this['to_state'] : 'unknown state';
 			$fromState = ($this['from_state'] !== null)? $this['from_state'] : 'unknown state';
 			

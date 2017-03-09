@@ -17,7 +17,6 @@
 		'/Model/EncodingProfileVersion',
 		
 		'/Helper/EncodingProfile',
-		'/Helper/Log',
 		'/Helper/Ticket',
 		'/Helper/Time'
 	);
