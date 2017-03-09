@@ -158,10 +158,12 @@
 				throw new Exception(__FUNCTION__ . ': project not assigned to worker group', 101);
 			}
 			$project = Project::findOrThrow(['id' => $project_id]);
+
+			$profiles = $project->EncodingProfileVersion->join(['EncodingProfile']);
 			
 			// check for a specific encoding profile
 			if(!empty($encoding_profile_id)) {
-				$profile = $project->EncodingProfileVersion->where(['encoding_profile_id' => $encoding_profile_id])->first();
+				$profile = $profiles->where(['encoding_profile_id' => $encoding_profile_id])->first();
 				if(!$profile) {
 					throw new Exception(__FUNCTION__ . ': encoding profile is not assigned to the project', 102);
 				}
@@ -170,7 +172,7 @@
 			}
 			
 			// list all profiles
-			return $project->EncodingProfileVersion->fetchAll();
+			return $profiles->fetchAll();
 		}
 		
 		/**
