@@ -54,7 +54,7 @@
 				<tr>
 					<td>
 						<a href="<?= h($import['url']); ?>" rel="nofollow" aria-label="<?= h($import['url']); ?>" data-tooltip="true">
-							<?= ($url !== false) ? h($url['host'] . str_shorten($url['path'], 35 - mb_strlen($url['host']), 2, '…', '/')) : ''; ?>
+							<?= ($url !== false and isset($url['host']) and isset($url['path'])) ? h($url['host'] . str_shorten($url['path'], 35 - mb_strlen($url['host']), 2, '…', '/')) : $import['url']; ?>
 						</a>
 					</td>
 					<td><?= $this->linkTo(
