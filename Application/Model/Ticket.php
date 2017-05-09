@@ -106,7 +106,9 @@
 			'type' => 'Fahrplan.Type',
 			'track' => 'Fahrplan.Track',
 			'language' => 'Fahrplan.Language',
-			'abstract' => 'Fahrplan.Abstract'
+			'abstract' => 'Fahrplan.Abstract',
+			// inofficial properties
+			'video_download_url' => 'Fahrplan.VideoDownloadURL'
 		];
 		
 		private static $_virtualPropertyConditions = [
