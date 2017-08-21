@@ -855,12 +855,13 @@
 			return (new Database_Query(''))
 				->select('ticket_state')
 				->from(
-					'ticket_state_previous(?, ?, ?)',
+					'ticket_state_previous(?, ?, ?, ?)',
 					'previous_state',
 					[
 						$this['project_id'],
 						$this['ticket_type'],
-						($state === null)? $this['ticket_state'] : $state
+						($state === null)? $this['ticket_state'] : $state,
+						$this['id']
 					]
 				);
 		}
@@ -869,16 +870,17 @@
 			return (new Database_Query(''))
 				->select('ticket_state')
 				->from(
-					'ticket_state_next(?, ?, ?)',
+					'ticket_state_next(?, ?, ?, ?)',
 					'next_state',
 					[
 						$this['project_id'],
 						$this['ticket_type'],
-						($state === null)? $this['ticket_state'] : $state
+						($state === null)? $this['ticket_state'] : $state,
+						$this['id']
 					]
 				);
 		}
-		
+
 		public function findNextForAction($state) {
 			$next = null;
 			
