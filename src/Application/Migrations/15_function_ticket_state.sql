@@ -2,7 +2,7 @@ BEGIN;
 
 SET ROLE TO postgres;
 
-CREATE OR REPLACE FUNCTION ticket_state_next(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state)
+CREATE OR REPLACE FUNCTION ticket_state_next(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state, param_ticket_id bigint default NULL)
   RETURNS TABLE(ticket_state enum_ticket_state, service_executable boolean) AS
   $$
 DECLARE
@@ -19,7 +19,16 @@ BEGIN
 	WHERE
 		pts.project_id = param_project_id AND
 		ts2.ticket_type = param_ticket_type AND
-		ts2.ticket_state = param_ticket_state
+		ts2.ticket_state = param_ticket_state AND
+		(pts.skip_on_dependent = false OR
+			( /* is master encoding ticket */
+				SELECT ep.depends_on
+				FROM tbl_ticket t
+				JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+				JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
+				WHERE t.id = param_ticket_id
+			) IS NULL
+		)
   ORDER BY
     ts1.sort ASC
 	LIMIT 1;
@@ -30,7 +39,7 @@ END
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION ticket_state_previous(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state)
+CREATE OR REPLACE FUNCTION ticket_state_previous(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state, param_ticket_id bigint default NULL)
   RETURNS TABLE(ticket_state enum_ticket_state, service_executable boolean) AS
   $$
 DECLARE
@@ -47,7 +56,16 @@ BEGIN
 	WHERE
 		pts.project_id = param_project_id AND
 		ts2.ticket_type = param_ticket_type AND
-		ts2.ticket_state = param_ticket_state
+		ts2.ticket_state = param_ticket_state AND
+		(pts.skip_on_dependent = false OR
+		 ( /* is master encoding ticket */
+			 SELECT ep.depends_on
+			 FROM tbl_ticket t
+				 JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+				 JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
+			 WHERE t.id = param_ticket_id
+		 ) IS NULL
+		)
   ORDER BY
     ts1.sort DESC
 	LIMIT 1;
@@ -96,7 +114,7 @@ END
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION ticket_state_commence(param_project_id bigint, param_ticket_type enum_ticket_type)
+CREATE OR REPLACE FUNCTION ticket_state_commence(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_id bigint)
   RETURNS enum_ticket_state AS
 $$
 DECLARE
@@ -111,7 +129,7 @@ BEGIN
   ret := (SELECT ticket_state_initial(param_project_id, param_ticket_type));
 
   WHILE ret IS NOT NULL LOOP
-    SELECT * INTO next_state FROM ticket_state_next(param_project_id, param_ticket_type, ret);
+    SELECT * INTO next_state FROM ticket_state_next(param_project_id, param_ticket_type, ret, param_ticket_id);
     IF NOT FOUND THEN
       ret := NULL;
       EXIT;

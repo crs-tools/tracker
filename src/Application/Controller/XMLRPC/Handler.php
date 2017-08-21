@@ -437,7 +437,7 @@
 				throw new Exception(__FUNCTION__.': ticket is not in initial state!',1304);
 			}
 			
-			$commenceState = ProjectTicketState::getCommenceState($ticket['project_id'], $ticket['ticket_type']);
+			$commenceState = ProjectTicketState::getCommenceState($ticket['project_id'], $ticket['ticket_type'], $ticket_id);
 			if(!$commenceState) {
 				throw new Exception(__FUNCTION__.': ticket has no commence state!',1305);
 			}
