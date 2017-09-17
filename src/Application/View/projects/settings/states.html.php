@@ -35,6 +35,7 @@ $typeRows = 0; ?>
 									<th width="20%">Type</th>
 									<th width="40%">State</th>
 									<th width="5%">Service</th>
+                                    <th width="5%">Skip for Subtickets</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -61,6 +62,9 @@ $typeRows = 0; ?>
 				?></td>
 				<td class="right"><?php if ($state['service_executable']) {
 					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], [], false);
+				} ?></td>
+				<td class="right"><?php if ($state['ticket_state'] === 'postencoded' || $state['ticket_state'] === 'checking') {
+					echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], [], false);
 				} ?></td>
 			</tr>
 			<?php $f->register('States[' . $index . '][_destroy]'); ?>
