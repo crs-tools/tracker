@@ -63,7 +63,7 @@ $typeRows = 0; ?>
 				<td class="right"><?php if ($state['service_executable']) {
 					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], [], false);
 				} ?></td>
-				<td class="right"><?php if ($state.isSkippable()) {
+				<td class="right"><?php if (TicketState::isSkippable($state['ticket_state'])) {
 					echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], [], false);
 				} ?></td>
 			</tr>

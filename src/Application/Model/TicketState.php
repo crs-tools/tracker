@@ -34,9 +34,9 @@
 			return self::$_actions[$action];
 		}
 
-		public function isSkippable() {
-			return ($this['ticket_state'] === 'postencoded' ||
-				$this['ticket_state'] === 'checking');
+		public static function isSkippable($state) {
+			return ($state === 'postencoded' ||
+				$state === 'checking');
 		}
 		
 		public function defaultScope(Model_Resource $resource) {
