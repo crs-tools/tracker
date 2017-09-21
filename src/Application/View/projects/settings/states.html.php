@@ -35,7 +35,7 @@ $typeRows = 0; ?>
 									<th width="20%">Type</th>
 									<th width="40%">State</th>
 									<th width="5%">Service</th>
-                                    <th width="5%">Skip in dependent profiles</th>
+                                    <th width="5%" title="Skip for dependent encoding profiles">Skip</th>
 								</tr>
 							</thead>
 							<tbody>
