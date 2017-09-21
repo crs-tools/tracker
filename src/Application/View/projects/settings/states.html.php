@@ -1,7 +1,9 @@
 <?php $this->title('States | '); ?>
 <?= $this->render('projects/settings/_header'); ?>
 
-<?php $type = null;
+<?php $title_service = 'This state will be available to workers';
+$title_skip = 'This state will be skipped in dependent encoding profiles';
+$type = null;
 $typeRows = 0; ?>
 
 <?= $f = $stateForm(['disabled' => $project['read_only']]); ?>
@@ -34,8 +36,8 @@ $typeRows = 0; ?>
 								<tr>
 									<th width="20%">Type</th>
 									<th width="40%">State</th>
-									<th width="5%">Service</th>
-                                    <th width="5%" title="Skip for dependent encoding profiles">Skip</th>
+									<th width="5%" title="<?=$title_service?>">Service</th>
+                                    <th width="5%" title="<?=$title_skip?>">Skip</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -61,10 +63,10 @@ $typeRows = 0; ?>
 					$f->hidden('States[' . $index . '][ticket_type]', $state['ticket_type']);
 				?></td>
 				<td class="right"><?php if ($state['service_executable']) {
-					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], [], false);
+					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], ['title' => $title_service], false);
 				} ?></td>
 				<td class="right"><?php if (TicketState::isSkippable($state['ticket_state'])) {
-					echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], [], false);
+					echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], ['title' => $title_skip], false);
 				} ?></td>
 			</tr>
 			<?php $f->register('States[' . $index . '][_destroy]'); ?>
