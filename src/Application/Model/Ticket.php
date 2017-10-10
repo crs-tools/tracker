@@ -298,7 +298,8 @@
 			$resource
 				->where([
 					'project_id' => $project,
-					'handle_id' => null
+					'handle_id' => null,
+					'failed' => false
 				])
 				->orWhere([
 					'ticket_state' => $state,
