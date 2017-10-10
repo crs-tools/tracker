@@ -541,8 +541,7 @@
 						(int) $this->actionForm->getValue('expand_left'),
 						(int) $this->actionForm->getValue('expand_right')
 					])) {
-						$this->flash('Expanded timeline, ' . $action . ' another ticket while preparing');
-						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+						return $this->_redirectNextOrView('Expanded timeline');
 					}
 				} elseif ($this->actionForm->getValue('failed')) {
 					if ($this->ticket->save([
@@ -553,18 +552,12 @@
 							'comment_id' => (isset($comment))? $comment['id'] : null,
 							'event' => 'Action.' . $action . '.failed'
 						]);
-					
-						$this->flash('Marked ticket as failed');
-						return $this->redirect('tickets', 'view', $this->ticket, $this->project);
+						
+						return $this->_redirectNextOrView('Marked ticket as failed');
 					}
 				} elseif ($this->actionForm->getValue('reset')) {
 					if ($this->ticket->Parent->resetSource($comment)) {
-						$this->flash('Reset all encoding tasks, source failed.');
-						return $this->redirect(
-							'tickets', 'view',
-							$this->ticket->Parent,
-							$this->project
-						);
+						return $this->_redirectNextOrView('Reset all encoding tasks, source failed');
 					}
 				} elseif ($this->actionForm->getValue('language') === '') {
 					$this->flashNow('You have to choose a language');
@@ -605,19 +598,8 @@
 							'to_state' => $this->state
 						]);
 						
-						$this->flash('Successfully finished ' . $this->state);
-						
-						if ($this->actionForm->getValue('jump')) {
-							$next = $this->ticket->findNextForAction($this->state);
-							
-							if ($next !== null) {
-								$this->flash('Successfully finished ' . $this->state . ', jumped to next ticket');
-								return $this->redirect('tickets', $action, $next, $this->project, ['?jump']);
-							}
-						}
+						return $this->_redirectNextOrView('Successfully finished ' . $this->state);
 					}
-					
-					return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 				}
 			}
 			
@@ -655,6 +637,23 @@
 			}
 			
 			return $this->redirect('tickets', 'view', $ticket, $this->project);
+		}
+		
+		private function _redirectNextOrView($flash) {
+			if ($this->actionForm->getValue('jump')) {
+				$next = $this->ticket->findNextForAction($this->state);
+				
+				if ($next !== null) {
+					$this->flash($flash . ', jumped to next ticket');
+					return $this->redirect('tickets', $this->action, $next, $this->project, ['?jump']);
+				} else {
+					$this->flash($flash . ', no tickets left to ' . $this->action);
+				}
+			} else {
+				$this->flash($flash);
+			}
+			
+			return $this->redirect('tickets', 'view', $this->ticket, $this->project);
 		}
 		
 		/*
