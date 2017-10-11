@@ -17,6 +17,7 @@ var Tracker = {};
             <option value="type">Type</option>\
             <option value="state">State</option>\
             <option value="failed">State failed</option>\
+            <option value="needs_attention">Needs attention</option>\
             <option value="encoding_profile">Encoding profile</option>\
           </optgroup>\
           <optgroup label="Fahrplan">\
@@ -145,6 +146,7 @@ var Tracker = {};
               value = dropdowns.languages.clone();
               break;
             case 'failed':
+            case 'needs_attention':
             case 'optout':
               value = dropdowns.bool.clone();
               break;
