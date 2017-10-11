@@ -32,6 +32,7 @@
 			'type' => 'ticket_type',
 			'state' => 'ticket_state',
 			'failed' => 'failed',
+			'needs_attention' => 'needs_attention',
 			'encoding_profile' => 'encoding_profile_version_id',
 			'fahrplan_id' => 'fahrplan_id',
 			'day' => 'property_fahrplan_day.value',
