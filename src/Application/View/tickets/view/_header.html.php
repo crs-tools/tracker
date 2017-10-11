@@ -14,27 +14,29 @@
 		<span class="date">
 			last edited <?= timeAgo($ticket['modified']); ?>
 		</span>
-	
-		<div class="flags">
+	<?php endif; ?>
+
+	<div class="flags">
+		<?php if (isset($showDetails) and $showDetails): ?>
 			<?php if ($ticket['failed']): ?>
 				<span class="failed"><?= $ticket['ticket_state']; ?> failed</span>
 			<?php else: ?>
 				<span class="state"><?= $ticket['ticket_state']; ?></span>
 			<?php endif; ?>
+		<?php endif; ?>
+	
+		<?php if ($ticket->needsAttention()): ?>
+			<span class="needs_attention">needs attention</span>
+		<?php endif; ?>
 		
-			<?php if ($ticket->needsAttention()): ?>
-				<span class="needs_attention">needs attention</span>
-			<?php endif; ?>
-		
-			<?php if (!empty($ticket['handle_id'])): ?>
-				<span class="assignee">assigned to <?= $this->linkTo(
-					'tickets', 'index', $project, ['?u=' . $ticket['handle_id']],
-					($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name'],
-					['aria-label' => 'Last seen ' . timeRelativeDifference(new DateTime($ticket['handle_last_seen'])), 'data-tooltip' => true]
-				); ?></span>
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+		<?php if (isset($showDetails) and $showDetails and !empty($ticket['handle_id'])): ?>
+			<span class="assignee">assigned to <?= $this->linkTo(
+				'tickets', 'index', $project, ['?u=' . $ticket['handle_id']],
+				($ticket['handle_id'] == User::getCurrent()['id']) ? 'you' : $ticket['handle_name'],
+				['aria-label' => 'Last seen ' . timeRelativeDifference(new DateTime($ticket['handle_last_seen'])), 'data-tooltip' => true]
+			); ?></span>
+		<?php endif; ?>
+	</div>
 	
 	<?php if (User::isLoggedIn()): ?>
 		<ul class="ticket-header-bar right horizontal">
