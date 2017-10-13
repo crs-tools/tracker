@@ -27,6 +27,7 @@ $typeRows = 0; ?>
                     // close previous table ?>
             </tbody>
         </table>
+        <br />
                 <?php endif;
 			    // render table header and line beginning with type name ?>
         <table class="default">
@@ -34,8 +35,16 @@ $typeRows = 0; ?>
                 <tr>
                     <th width="20%">Type</th>
                     <th width="40%">State</th>
-                    <th width="15%" class="center" title="<?=$title_service?>">Service</th>
-                    <th width="15%" class="center" title="<?=$title_skip?>">Master only</th>
+                    <th width="15%" class="center" title="<?=$title_service?>">
+                        <?php if($type !== 'meta'): ?>
+                            Service
+                        <?php endif; ?>
+                    </th>
+                    <th width="15%" class="center" title="<?=$title_skip?>">
+						<?php if($type === 'encoding'): ?>
+                            Master only
+						<?php endif; ?>
+                    </th>
                 </tr>
             </thead>
             <tbody>
