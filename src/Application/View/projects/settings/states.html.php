@@ -19,19 +19,25 @@ $typeRows = 0; ?>
 				$encodingStates, (!empty($project))? $project['dependent_ticket_trigger_state'] : null) ?>
 		</fieldset>
 	</div>
-	<div class="column-100">
-		<?php foreach ($states as $index => $state): ?>
-			<?php if ($type != $state['ticket_type']):
+    <div class="stages-container">
+        <?php
+        $firstType = true;
+        $printedRows = 0;
+        foreach ($states as $index => $state):
+			if ($type != $state['ticket_type']):
 				$type = $state['ticket_type'];
 			    if ($type !== null):
+                    if (!$firstType):
                     // close previous table ?>
             </tbody>
         </table>
         </div>
-        <br />
-                <?php endif;
+                <?php
+                    endif;
+                $firstType = false;
+                endif;
 			    // render table header and line beginning with type name ?>
-        <div>
+        <div class="column-50">
         <table class="default">
             <thead>
                 <tr>
