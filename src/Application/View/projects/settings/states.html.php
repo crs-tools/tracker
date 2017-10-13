@@ -27,22 +27,28 @@ $typeRows = 0; ?>
                     // close previous table ?>
             </tbody>
         </table>
+        </div>
         <br />
                 <?php endif;
 			    // render table header and line beginning with type name ?>
+        <div>
         <table class="default">
             <thead>
                 <tr>
                     <th width="20%">Type</th>
                     <th width="40%">State</th>
-                    <th width="15%" class="center" title="<?=$title_service?>">
+                    <th width="15%" class="center"
                         <?php if($type !== 'meta'): ?>
-                            Service
+                            title="<?=$title_service?>">Service
+                        <?php else: ?>
+                            >
                         <?php endif; ?>
                     </th>
-                    <th width="15%" class="center" title="<?=$title_skip?>">
+                    <th width="15%" class="center"
 						<?php if($type === 'encoding'): ?>
-                            Master only
+                        title="<?=$title_skip?>">Master only
+                        <?php else: ?>
+                            >
 						<?php endif; ?>
                     </th>
                 </tr>
@@ -85,5 +91,6 @@ $typeRows = 0; ?>
         endforeach; ?>
 			</tbody>
 		</table>
-	</div>
+	    </div>
+    </div>
 </form>
