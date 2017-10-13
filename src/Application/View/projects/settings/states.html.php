@@ -61,12 +61,12 @@ $typeRows = 0; ?>
 						$f->hidden('States[' . $index . '][ticket_type]', $state['ticket_type']);
 						?>
                     </td>
-                    <td class="right">
+                    <td class="center">
                         <?php if ($state['service_executable']) {
 							echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], ['title' => $title_service], false);
 						} ?>
                     </td>
-                    <td class="right">
+                    <td class="center">
                         <?php if (TicketState::isSkippable($state['ticket_state'])) {
 							echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], ['title' => $title_skip], false);
 						} ?>
