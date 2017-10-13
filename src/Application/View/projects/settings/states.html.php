@@ -19,58 +19,61 @@ $typeRows = 0; ?>
 				$encodingStates, (!empty($project))? $project['dependent_ticket_trigger_state'] : null) ?>
 		</fieldset>
 	</div>
+	<div class="column-100">
 		<?php foreach ($states as $index => $state): ?>
 			<?php if ($type != $state['ticket_type']):
 				$type = $state['ticket_type'];
-				
-				if ($typeRows > 1):
-					$typeRows = 0; ?>
-							</tbody>
-						</table>
-					</div>
-				<?php endif;
-				if ($typeRows == 0): ?>
-					<div class="column-50">
-						<table class="default">
-							<thead>
-								<tr>
-									<th width="20%">Type</th>
-									<th width="40%">State</th>
-									<th width="5%" title="<?=$title_service?>">Service</th>
-                                    <th width="5%" title="<?=$title_skip?>">Skip</th>
-								</tr>
-							</thead>
-							<tbody>
-				<?php endif;
-				$typeRows++; ?>
-				<tr>
-					<td><?= h(mb_ucfirst($type)); ?></td>
-			<?php else: ?>
-				<tr>
-					<td class="empty"></td>
-			<?php endif; ?>
-				<td><?=
-					$f->checkbox(
-						'States[' . $index . '][ticket_state]',
-						$state['ticket_state'],
-						$state['project_enabled'],
-						['value' => $state['ticket_state']] +
+			    if ($type !== null):
+                    // close previous table ?>
+            </tbody>
+        </table>
+                <?php endif;
+			    // render table header and line beginning with type name ?>
+        <table class="default">
+            <thead>
+                <tr>
+                    <th width="20%">Type</th>
+                    <th width="40%">State</th>
+                    <th width="5%" title="<?=$title_service?>">Service</th>
+                    <th width="5%" title="<?=$title_skip?>">Skip</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?= h(mb_ucfirst($type)); ?></td>
+			<?php else:
+                // render normal line beginning (without type name) ?>
+                <tr>
+                    <td class="empty"></td>
+            <?php endif;
+            // render rest of line ?>
+                    <td>
+                        <?=	$f->checkbox(
+							'States[' . $index . '][ticket_state]',
+							$state['ticket_state'],
+							$state['project_enabled'],
+							['value' => $state['ticket_state']] +
 							(($state['project_enabled'])?
 								['data-association-destroy' => 'States[' . $index . '][_destroy]'] :
 								[]),
-						false
-					) .
-					$f->hidden('States[' . $index . '][ticket_type]', $state['ticket_type']);
-				?></td>
-				<td class="right"><?php if ($state['service_executable']) {
-					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], ['title' => $title_service], false);
-				} ?></td>
-				<td class="right"><?php if (TicketState::isSkippable($state['ticket_state'])) {
-					echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], ['title' => $title_skip], false);
-				} ?></td>
-			</tr>
-			<?php $f->register('States[' . $index . '][_destroy]'); ?>
-		<?php endforeach; ?>
+							false
+						) .
+						$f->hidden('States[' . $index . '][ticket_type]', $state['ticket_type']);
+						?>
+                    </td>
+                    <td class="right">
+                        <?php if ($state['service_executable']) {
+							echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], ['title' => $title_service], false);
+						} ?>
+                    </td>
+                    <td class="right">
+                        <?php if (TicketState::isSkippable($state['ticket_state'])) {
+							echo $f->checkbox('States[' . $index . '][skip_on_dependent]', null, $state['project_skip_on_dependent'], ['title' => $title_skip], false);
+						} ?>
+                    </td>
+                </tr>
+				<?php $f->register('States[' . $index . '][_destroy]');
+        endforeach; ?>
 			</tbody>
 		</table>
 	</div>
