@@ -34,8 +34,8 @@ $typeRows = 0; ?>
                 <tr>
                     <th width="20%">Type</th>
                     <th width="40%">State</th>
-                    <th width="15%" title="<?=$title_service?>">Service</th>
-                    <th width="15%" title="<?=$title_skip?>">Master only</th>
+                    <th width="15%" class="center" title="<?=$title_service?>">Service</th>
+                    <th width="15%" class="center" title="<?=$title_skip?>">Master only</th>
                 </tr>
             </thead>
             <tbody>
