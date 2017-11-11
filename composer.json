@@ -3,7 +3,7 @@
   "description": "CRS Ticket Tracker",
   
   "type": "project",
-  "license": "proprietary",
+  "license": "Apache-2.0",
   
   "config": {
     "vendor-dir": "vendor"
