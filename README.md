@@ -4,6 +4,7 @@ CRS Ticket Tracker
 The Ticket Tracker is a web plattform tracking process of video recording and
 ingest sources and video encoding progress. It guides users through manuell processes like cutting and checking and provides an API for [scripts](https://github.com/crs-tools/crs-scripts) doing postprocessing and encoding.
 
+
 Requirements
 ------------
 
@@ -19,16 +20,23 @@ Requirements
 
 Note: [libxdiff0](https://github.com/a-tze/libxdiff ) and [pecl/xdiff](https://github.com/a-tze/php5-xdiff) are available as debian packages.
 
+
 Install
 -------
-
-Try `composer install` to satisfy all requirements. Then
+After checkout run
 
 ```bash
-php -q Install/install.php
+git submodule init
+git submodule update
 ```
 
-sets the database config in `Config/Config.php` and tries to setup tables
+Then you may try `composer install` to satisfy all requirements. Then running
+
+```bash
+./scripts/install
+```
+
+sets the database config in `src/Config/Config.php` and tries to setup tables
 and initial data.
 
 
@@ -43,6 +51,7 @@ are not met.
 
 Contributors may have to a agree to a Contributors License Agreement allowing
 relicensing, soon.
+
 
 License
 -------

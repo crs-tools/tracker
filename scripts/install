@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 	
 	define('ROOT', realpath(__DIR__ . '/..') . '/src/');
@@ -211,5 +212,3 @@
 	]);
 	
 	echo " done.\n";
-	
-?>
