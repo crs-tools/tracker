@@ -47,8 +47,8 @@ relicensing, soon.
 License
 -------
 
-Copyright 2017 Jannes Jeising
+Copyright 2017 Jannes Jeising  
 Copyright 2017 Peter Große
 
-Licensed under the Apache License, Version 2.0.
+Licensed under the Apache License, Version 2.0.  
 Excluding graphics and name, please see LICENSE file for details.
