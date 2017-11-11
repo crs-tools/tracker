@@ -2,9 +2,9 @@
 	
 	$time = microtime(true);
 	
-	define('ROOT', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR);
-	define('LIBRARY', ROOT . 'Library' . DIRECTORY_SEPARATOR);
-	define('APPLICATION', ROOT . 'Application' . DIRECTORY_SEPARATOR);
+	define('ROOT', realpath(__DIR__ . '/..') . '/');
+	define('LIBRARY', ROOT . '../vendor/framework/Library/');
+	define('APPLICATION', ROOT . 'Application/');
 	
 	date_default_timezone_set('Europe/Berlin');
 	

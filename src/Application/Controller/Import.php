@@ -444,10 +444,10 @@
 			$client = new HTTP_Client();
 			$client->setUserAgent('FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)');
 			
-			if (file_exists(ROOT . 'Contribution/certs/cacert.pem')) {
+			if (file_exists(ROOT . '../contribution/certs/cacert.pem')) {
 				$client->setOption(
 					CURLOPT_CAINFO,
-					ROOT . 'Contribution/certs/cacert.pem'
+					ROOT . '../contribution/certs/cacert.pem'
 				);
 			}
 			

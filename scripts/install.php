@@ -1,6 +1,6 @@
 <?php
 	
-	define('ROOT', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR);
+	define('ROOT', realpath(__DIR__ . '/..') . '/src/');
 	
 	define('CONFIG', ROOT . 'Config/');
 	

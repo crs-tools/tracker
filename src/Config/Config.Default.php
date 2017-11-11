@@ -1,6 +1,6 @@
 <?php
 	
-	Log::setPath(ROOT . 'Log/application.log');
+	Log::setPath(ROOT . '../log/application.log');
 	Log::setLevel(Log::INFO);
 	Log::colorize(true);
 	
