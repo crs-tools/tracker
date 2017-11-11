@@ -1,8 +1,8 @@
 CRS Ticket Tracker
 ==================
 
-The Ticket Tracker is a web plattform tracking process of video recording and
-ingest sources and video encoding progress. It guides users through manuell processes like cutting and checking and provides an API for [scripts](https://github.com/crs-tools/crs-scripts) doing postprocessing and encoding.
+The Ticket Tracker is a web platform tracking process of video recording and
+ingest sources and video encoding progress. It guides users through manual processes like editing and checking and provides an API for [scripts](https://github.com/crs-tools/crs-scripts) doing post processing and encoding.
 
 
 Requirements
