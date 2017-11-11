@@ -1,0 +1,11 @@
+DB erstellen
+============
+
+createuser -W -S -R -D c3tt
+
+createdb -E UTF-8 -O c3tt -T template0 c3tt
+
+psql c3tt < /usr/share/postgresql-8.4/contrib/ltree.sql
+
+psql c3tt < res/01_structure.sql
+psql c3tt < res/02_initdata.sql

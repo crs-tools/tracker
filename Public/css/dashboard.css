@@ -1,0 +1,358 @@
+* {margin: 0;padding: 0}
+* html body * {overflow: visible}
+html {height: 100%}
+html * {font-size: 100.01%}
+
+body {
+	position: relative;
+	min-height: 100%;
+	background-color: rgb(40,43,46);
+	background-image: -webkit-linear-gradient(bottom, rgb(61,70,77) 0%, rgb(40,43,46) 100%);
+	background-attachment: fixed;
+	font-family: Helvetica, sans-serif;
+	font-size: 80.00%;
+	color: #fff;
+}
+
+.clearfix:after {
+	content: "";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+div.row {
+	position: relative;
+	padding: 2em 0;
+}
+
+div.column-33 {
+	width: 33.33333333%;
+}
+
+div.column {
+	float: left;
+}
+
+div.column:last-child {
+	float: right;
+}
+
+div.actions div.action div.action-count {
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 200;
+	font-size: 9em;
+	text-align: center;
+	line-height: 1em;
+}
+
+div.actions div.action div.action-description {
+	margin-top: 0.6em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 100;
+	font-size: 2em;
+	text-align: center;
+}
+
+div.actions div.column div.action {
+	padding-bottom: 1em;
+}
+
+div.actions div.column:first-child div.action {
+	border-right: 1px solid #fff;
+}
+
+div.actions div.column:last-child div.action {
+	border-left: 1px solid #fff;
+}
+
+div.row.contributors, div.row.viewer, div.row.schedule {
+	padding-top: 0;
+	margin-top: -1em;
+}
+
+div.contributors div.contributor {
+	text-align: center;
+}
+
+div.contributors div.contributor span {
+	display: inline-block;
+	padding: 0.1em 0.3em;
+	background-color: #fff;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 1.7em;
+	color: rgb(44,48,53);
+}
+
+div.contributors div.contributors-description {
+	margin-top: 0.5em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 200;
+	font-size: 1.1em;
+	text-align: center;
+}
+
+div.contributors div.contributors-description-line {
+	position: absolute;
+	background-color: #fff;
+}
+
+div#contributors-description-line-left-up {
+	top: -0.8em;
+	bottom: 80%;
+	left: 16.66666666%;
+	width: 1px;
+}
+
+div#contributors-description-line-left {
+	top: 20%;
+	left: 16.66666666%;
+	right: 56%;
+	height: 1px;
+}
+
+div#contributors-description-line-center-up {
+	top: -0.8em;
+	bottom: 108%;
+	left: 50%;
+	margin-left: -1px;
+	width: 1px;
+}
+
+div#contributors-description-line-right {
+	top: 20%;
+	left: 56%;
+	right: 16.66666666%;
+	height: 1px;
+}
+
+div#contributors-description-line-right-up {
+	top: -0.8em;
+	bottom: 80%;
+	right: 16.66666666%;
+	width: 1px;
+}
+
+div.viewer-total div.viewer-total-room, div.viewer div.viewer-room {
+	width: 87%;
+	height: 12em;
+	border: 1px solid rgba(100,107,114,0.2);
+	-webkit-border-radius: 1em;
+	-webkit-box-shadow: inset 0 0 7px rgba(0,0,0,0.22);
+	background-color: rgb(46,49,52);
+	background-color: rgba(40,43,46,0.8);
+	text-align: right;
+}
+
+div.viewer-total div.viewer-total-room span {
+	display: inline-block;
+	margin-right: 0.3em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 7.3em;
+	text-shadow: 0 0 13px rgba(0,0,0,0.4);
+	line-height: 1.6em;
+	color: rgb(198,195,189);
+}
+
+div.viewer-total div.viewer-total-room span.viewer-total-up:before, div.viewer-total div.viewer-total-room span.viewer-total-down:before {
+	content: "+";
+	font-size: 0.8em;
+	vertical-align: top;
+	line-height: 1.9em;
+	letter-spacing: 0.1em;
+	color: rgb(130,209,38);
+}
+
+div.viewer-total div.viewer-total-room span.viewer-total-down:before {
+	content: "-";
+	letter-spacing: 0.2em;
+	color: rgb(243,61,78);
+}
+
+div.viewer-total div.column:first-child div.viewer-total-room, div.viewer div.column:first-child div.viewer-room, div.schedule div.column:first-child div.schedule-entry {
+	margin-left: 10%;
+}
+
+div.viewer-total div.column:nth-child(2) div.viewer-total-room, div.viewer div.column:nth-child(2) div.viewer-room, div.schedule div.column:nth-child(2) div.schedule-entry {
+	margin: 0 auto;
+}
+
+div.viewer-total div.column:last-child div.viewer-total-room, div.viewer div.column:last-child div.viewer-room, div.schedule div.column:last-child div.schedule-entry {
+	margin-right: 10%;
+	float: right;
+}
+
+div.viewer div.viewer-room {
+	height: 3.6em;
+	-webkit-border-radius: 0.8em;
+	text-align: left;
+}
+
+div.viewer div.viewer-room div.viewer-room-stream {
+	position: relative;
+	padding-right: 0.5em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 500;
+	font-size: 1.7em;
+	padding-top: 0.15em;
+	line-height: 2em;
+	text-align: right;
+	border-right: 0.1em solid rgb(49,55,60);
+	-webkit-box-shadow: 0.05em 0 0 rgba(100,107,114,0.25), inset -0.05em 0 0 rgba(100,107,114,0.25), inset -0.1em 0 0 rgba(0,0,0,0.05), 0.1em 0 0 rgba(0,0,0,0.05);
+	color: rgb(198,195,189);
+}
+
+div.viewer div.viewer-room div.column:last-child div.viewer-room-stream {
+	border-right: none;
+	-webkit-box-shadow: none;
+}
+
+div.viewer div.viewer-room div.viewer-room-stream:before {
+	content: " ";
+	position: absolute;
+	top: 0.4em;
+	left: 0.35em;
+	width: 100%;
+	height: 100%;
+	background: url(../images/windows.svg) no-repeat;
+}
+
+div.viewer div.viewer-room div.viewer-room-stream.viewer-room-ffmpeg:before {
+	background-image: url(../images/ffmpeg.svg);
+}
+
+div.viewer div.viewer-room div.viewer-room-stream.viewer-room-slides:before {
+	background-image: url(../images/slides.svg);
+}
+
+div.schedule div.schedule-entry {
+	position: relative;
+	width: 89%;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 300;
+	font-size: 1.5em;
+}
+
+div.schedule div.schedule-entry span {
+	display: -webkit-box;
+	height: 3.7em;
+	margin-right: 2.8em;
+	border-bottom: 1px solid #fff;
+	-webkit-box-align: center;
+	vertical-align: center;
+}
+
+div.schedule div.schedule-entry:last-child span {
+	border-bottom: none;
+}
+
+div.schedule div.schedule-entry:nth-child(2) span {
+	padding: 0.3em 0;
+}
+
+div.schedule div.schedule-entry:nth-child(2):before, div.schedule div.schedule-entry:last-child:before, div.schedule div.schedule-entry:nth-child(2):after {
+	content: attr(data-start);
+	position: absolute;
+	top: -0.75em;
+	right: 0;
+	font-size: 0.95em;
+	font-weight: bold;
+}
+
+div.schedule div.schedule-entry:nth-child(2):after {
+	content: attr(data-end);
+	top: 0.45em;
+	font-weight: normal;
+	color: rgb(89,96,105);
+}
+
+div.schedule div.schedule-entry:last-child:before {
+	color: #fff;
+	top: -0.67em;
+	font-weight: normal;
+}
+
+div.schedule div.schedule-entry:first-child, div.schedule div.schedule-entry:last-child {
+	color: rgb(89,96,105);
+}
+
+div.mentions {
+	position: relative;
+}
+
+div.mentions div.mentions-title {
+	position: absolute;
+	left: 3.33333333%;
+	top: 0;
+	bottom: 0;
+	padding-right: 0.5em;
+	border-right: 1px solid #fff;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 300;
+	font-size: 1.5em;
+	line-height: 48px;
+	vertical-align: middle;
+}
+
+div.mentions ul#mentions-stripe {
+	position: absolute;
+	left: 3.33333333%;
+	right: 3.33333333%;
+	top: 0;
+	height: 48px;
+	overflow: hidden;
+}
+
+div.mentions ul#mentions-stripe li {
+	position: relative;
+	height: 48px;
+	margin: 0 0 10px 11em;
+	list-style-type: none;
+}
+
+div.mentions ul#mentions-stripe img {
+	position: absolute;
+	left: 0;
+	top: 0;
+	-webkit-border-radius: 6px;
+}
+
+div.mentions ul#mentions-stripe p {
+	position: absolute;
+	left: 48px;
+	top: 0;
+	right: 0;
+	margin-left: 0.6em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 1.6em;
+	line-height: 48px;
+	vertical-align: middle;
+	overflow: hidden;
+}
+
+div.mentions ul#mentions-stripe p span {
+	white-space: nowrap;
+}
+
+div.mentions ul#mentions-stripe p span span.keyword {
+	color: rgb(198,195,189);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
