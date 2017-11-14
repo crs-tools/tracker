@@ -17,6 +17,7 @@ Requirements
   - pecl/xdiff
 
 - PostgreSQL >= 9.2 database
+  - ltree feature, often found in separate "-contrib" packages
 
 Note: [libxdiff0](https://github.com/a-tze/libxdiff ) and [pecl/xdiff](https://github.com/a-tze/php5-xdiff) are available as debian packages.
 
