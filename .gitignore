@@ -1,5 +1,2 @@
-Config/Config.php
-Public/fahrplan/
-Contribution/php/vendor/
-Contribution/php/composer.lock
-Contribution/php/composer.phar
+src/Config/Config.php
+src/Public/fahrplan/
