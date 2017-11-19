@@ -13,6 +13,7 @@ Requirements
   - ext/intl
   - ext/mbstring
   - ext/xsl
+  - ext/xmlrpc
   - pecl/apcu
   - pecl/xdiff
 
