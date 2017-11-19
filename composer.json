@@ -17,6 +17,7 @@
     "ext-intl": "*",
     "ext-mbstring": "*",
     "ext-xdiff": "*",
+    "ext-xmlprc": "*"
     "ext-xsl": "*"
   }
 }
