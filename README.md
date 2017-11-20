@@ -12,6 +12,7 @@ Requirements
   - ext/curl
   - ext/intl
   - ext/mbstring
+  - ext/openssl
   - ext/xsl
   - ext/xmlrpc
   - pecl/apcu

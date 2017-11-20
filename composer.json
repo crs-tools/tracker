@@ -16,6 +16,7 @@
     "ext-curl": "*",
     "ext-intl": "*",
     "ext-mbstring": "*",
+    "ext-openssl": "*",
     "ext-xdiff": "*",
     "ext-xmlprc": "*",
     "ext-xsl": "*"
