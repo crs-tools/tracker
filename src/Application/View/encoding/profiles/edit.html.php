@@ -52,7 +52,7 @@
 				<li><?= $f->textarea('xml_template', 'XML encoding template', $version['xml_template'], array('class' => 'extra-wide', 'data-has-editor' => true), $useRequestValue); ?></li>
 			<?php else: ?>
 				<li><?= $f->input('versions[0][description]', 'Description', '', array('class' => 'wide'));  ?></li>
-				<li><?= $f->textarea('versions[0][xml_template]', 'XML encoding template', $this->render('encoding/profiles/_defaultProfile'), array('class' => 'extra-wide', 'data-has-editor' => true)); ?></li>
+				<li><?= $f->textarea('versions[0][xml_template]', 'XML encoding template', file_get_contents(APPLICATION . 'View/encoding/profiles/_defaultProfile.xml'), array('class' => 'extra-wide', 'data-has-editor' => true)); ?></li>
 			<?php endif; ?>
 		</ul>
 	</fieldset>
