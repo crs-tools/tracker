@@ -107,6 +107,7 @@
 			'track' => 'Fahrplan.Track',
 			'language' => 'Fahrplan.Language',
 			'abstract' => 'Fahrplan.Abstract',
+			'url' => 'Fahrplan.URL',
 			// inofficial properties
 			'video_download_url' => 'Fahrplan.VideoDownloadURL'
 		];
