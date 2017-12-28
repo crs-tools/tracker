@@ -108,6 +108,7 @@
 			'language' => 'Fahrplan.Language',
 			'abstract' => 'Fahrplan.Abstract',
 			'url' => 'Fahrplan.URL',
+			'description' => 'Fahrplan.Description',
 			// inofficial properties
 			'video_download_url' => 'Fahrplan.VideoDownloadURL'
 		];
