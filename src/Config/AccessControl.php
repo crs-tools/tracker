@@ -6,8 +6,10 @@
 	AccessControl::addRole('user', ['restricted']);
 	AccessControl::addRole('owner');
 	
-	AccessControl::addRole('superuser', ['user']);
+	AccessControl::addRole('restricted superuser', ['user']);
+	AccessControl::addRole('superuser', ['restricted superuser']);
 	AccessControl::addRole('admin', ['user']);
+	AccessControl::addRole('engineer', ['user']);
 	
 	// Everybody
 	AccessControl::allow(null, ['user'], ['login']);
@@ -41,6 +43,8 @@
 	AccessControl::allow('user', ['workers'], ['index', 'queue']);
 	AccessControl::allow('user', ['projects'], ['settings']);
 	
+	// Restricted Superuser
+	
 	// Superuser
 	AccessControl::allow('superuser', ['projects'], [
 		'create', 'edit', 'properties', 'profiles', 'states', 'worker'
@@ -54,5 +58,14 @@
 	AccessControl::allow('admin');
 	
 	AccessControl::deny('admin', ['user'], ['act_as_substitute']);
+	
+	AccessControl::deny('admin', ['project'], ['delete']);
+	AccessControl::deny('admin', ['encodingprofiles'], ['delete']);
+	AccessControl::deny('admin', ['workers'], ['delete_group']);
+	
+	// Engineer
+	AccessControl::allow('engineer');
+	
+	AccessControl::deny('engineer', ['user'], ['act_as_substitute']);
 	
 ?>

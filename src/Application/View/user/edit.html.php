@@ -31,13 +31,20 @@
 				<?= $f->input('name', 'Name', $user['name']); ?>
 			</li>
 			<li>
-				<?= $f->select('role', 'Role', [
-					'read only' => 'read only',
-					'restricted' => 'restricted',
-					'user' => 'user',
-					'superuser' => 'superuser',
-					'admin' => 'admin'
-				], $user['role'], ['data-user-edit-role' => '']); ?>
+				<?php if ($user['role'] === 'engineer'): ?>
+					<?= $f->select('role', 'Role', [
+						'engineer' => 'engineer'
+					], $user['role'], ['disabled' => true]); ?>
+				<?php else: ?>
+					<?= $f->select('role', 'Role', [
+						'read only' => 'read only',
+						'restricted' => 'restricted',
+						'user' => 'user',
+						'restricted superuser' => 'restricted superuser',
+						'superuser' => 'superuser',
+						'admin' => 'admin'
+					], $user['role'], ['data-user-edit-role' => '']); ?>
+				<?php endif; ?>
 			</li>
 		</ul>
 	</fieldset>

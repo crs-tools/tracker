@@ -1,5 +1,5 @@
 <li class="event comment left">
-	<p><?php echo nl2br(h($comment['comment'])); ?></p>
+	<p><?= nl2br(h($comment['comment'])); ?></p>
 	
 	<div class="meta">
 		<span class="description">
