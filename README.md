@@ -59,8 +59,8 @@ relicensing, soon.
 License
 -------
 
-Copyright 2018 Jannes Jeising
+Copyright 2018 Jannes Jeising  
 Copyright 2018 Peter Große
 
-Licensed under the Apache License, Version 2.0.
+Licensed under the Apache License, Version 2.0.  
 Excluding graphics and name, please see LICENSE file for details.
