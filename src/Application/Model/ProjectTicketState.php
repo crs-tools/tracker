@@ -34,7 +34,7 @@
 		public static function getPreviousState($project, $type, $state) {
 			$handle = Database::$Instance->query(
 				'SELECT * FROM ticket_state_previous(?, ?, ?)',
-				[$project, $ticket, $state]
+				[$project, $type, $state]
 			);
 			
 			$row = $handle->fetch();
