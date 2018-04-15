@@ -154,7 +154,15 @@
 				]])
 				->select('ticket_type, ticket_state, service_executable')
 				->orderBy('ticket_type, sort');
-			
+
+			$this->encodingStates = $this->project
+				->States
+				->where([
+					'ticket_type' => 'encoding'
+				])
+				->indexBy('ticket_state', 'ticket_state')
+				->toArray();
+
 			if ($this->stateForm->wasSubmitted()) {
 				if ($this->project->save($this->stateForm->getValues())) {
 					$this->project->updateTicketStates();

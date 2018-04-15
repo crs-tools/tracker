@@ -10,6 +10,13 @@ $typeRows = 0; ?>
 			<?= $f->submit('Save changes'); ?>
 		</fieldset>
 	</div>
+	<div class="project-settings-triggerstate">
+		<fieldset>
+			<?= $f->select('subticket_trigger_state',
+				'Minimum required state of encoding tickets to activate dependent tickets',
+				$encodingStates, (!empty($project))? $project['subticket_trigger_state'] : null, ['id' => 'subticket_trigger_state']) ?>
+		</fieldset>
+	</div>
 		<?php foreach ($states as $index => $state): ?>
 			<?php if ($type != $state['ticket_type']):
 				$type = $state['ticket_type'];
