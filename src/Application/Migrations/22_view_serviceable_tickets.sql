@@ -30,7 +30,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pt.failed = false AND
 		t.failed = false AND
 		COALESCE(pep.priority, 1) > 0 AND
-		COALESCE(ticket_depending_encoding_ticket_state(t.id),'released') = 'released'
+		COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.subticket_trigger_state) >= pj.subticket_trigger_state
 	ORDER BY
 		ticket_priority(t.id) DESC;
 

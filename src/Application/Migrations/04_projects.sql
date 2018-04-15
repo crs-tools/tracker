@@ -11,6 +11,7 @@ CREATE TABLE tbl_project
   id bigserial NOT NULL,
   title character varying(256) NOT NULL CHECK (char_length(title::text) > 0),
   slug character varying(64) NOT NULL CHECK (char_length(slug::text) > 0),
+  subticket_trigger_state enum_ticket_state NOT NULL DEFAULT 'released',
   read_only boolean NOT NULL DEFAULT false,
   created timestamp with time zone NOT NULL DEFAULT now(),
   modified timestamp with time zone NOT NULL DEFAULT now(),
