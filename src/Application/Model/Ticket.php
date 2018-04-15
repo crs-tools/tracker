@@ -633,6 +633,17 @@
 			
 			return $handle->fetch()['ticket_depending_encoding_ticket_state'];
 		}
+
+		public function isDependingEncodingTicketStateSatisfied() {
+			// break through model layer and access project attribute directly
+			// because we do not have native enums -> database must do the comparison
+			$handle = Database::$Instance->query(
+				'SELECT ticket_depending_encoding_ticket_state_satisfied(?)',
+				[$this['id']]
+			);
+
+			return $handle->fetch()['ticket_depending_encoding_ticket_state_satisfied'];
+		}
 		
 		/*
 			Statistics
