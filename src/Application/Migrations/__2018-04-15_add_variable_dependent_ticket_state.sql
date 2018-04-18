@@ -3,7 +3,7 @@ BEGIN;
 SET ROLE TO postgres;
 
 ALTER TABLE tbl_project
-  ADD COLUMN subticket_trigger_state enum_ticket_state 
+  ADD COLUMN dependent_ticket_trigger_state enum_ticket_state
   NOT NULL DEFAULT 'released';
 
 DROP VIEW IF EXISTS view_serviceable_tickets;
@@ -34,7 +34,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pt.failed = false AND
 		t.failed = false AND
 		COALESCE(pep.priority, 1) > 0 AND
-		COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.subticket_trigger_state) >= pj.subticket_trigger_state
+		COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.dependent_ticket_trigger_state) >= pj.dependent_ticket_trigger_state
 	ORDER BY
 		ticket_priority(t.id) DESC;
 
@@ -63,7 +63,7 @@ BEGIN
 		t.id = param_ticket_id;
 
 	SELECT
-		state >= p.subticket_trigger_state INTO satisfaction
+		state >= p.dependent_ticket_trigger_state INTO satisfaction
 	FROM
 		tbl_ticket t
 	JOIN
