@@ -9,7 +9,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		t.*,
 		pstart.value::timestamp with time zone AS time_start,
 		pstart.value::timestamp with time zone + pdur.value::time without time zone::interval AS time_end,
-		(SELECT value FROM tbl_ticket_property WHERE ticket_id = COALESCE(t.parent_id,t.id) AND name = 'Fahrplan.Room') as room,
+		proom.value as room,
 		t.ticket_state_next AS next_state,
 		t.service_executable AS next_state_service_executable
 	FROM
@@ -21,8 +21,11 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 	LEFT JOIN 
 		tbl_ticket_property pstart ON pstart.ticket_id = COALESCE(t.parent_id, t.id) AND pstart.name = 'Fahrplan.DateTime'::ltree
 	LEFT JOIN
+		tbl_ticket_property proom ON proom.ticket_id = COALESCE(t.parent_id,t.id) AND proom.name = 'Fahrplan.Room'::ltree
+	LEFT JOIN
 		tbl_project pj ON pj.id = t.project_id
-	LEFT JOIN tbl_project_encoding_profile pep ON pep.project_id = pj.id AND pep.encoding_profile_version_id = t.encoding_profile_version_id
+	LEFT JOIN
+		tbl_project_encoding_profile pep ON pep.project_id = pj.id AND pep.encoding_profile_version_id = t.encoding_profile_version_id
 	LEFT JOIN
 		tbl_ticket_state state ON state.ticket_type = t.ticket_type AND state.ticket_state = t.ticket_state
 	LEFT JOIN
@@ -33,6 +36,8 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 			masterstate.ticket_state = COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.dependent_ticket_trigger_state)
 
 	WHERE
+		pj.read_only = false AND
+		t.service_executable = true AND
 		t.ticket_type != 'meta' AND
 		pt.ticket_state = 'staged' AND
 		pt.failed = false AND
