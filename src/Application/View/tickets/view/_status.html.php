@@ -27,6 +27,11 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 		'disabled',
 		'Encoding profile is disabled.'
 	];
+} elseif ($ticket['handle_id'] !== null) {
+	$status = [
+		'dependency',
+		'Ticket is assigned to someone'
+	];
 } elseif (
 	isset($projectEncodingProfile) and
 	($state = $ticket->getDependingEncodingTicketState()) !== null and
