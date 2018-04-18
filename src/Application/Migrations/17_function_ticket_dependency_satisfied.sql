@@ -27,11 +27,15 @@ BEGIN
 		t.id = param_ticket_id;
 
 	SELECT
-		state >= p.dependent_ticket_trigger_state INTO satisfaction
+		s1.sort >= s2.sort INTO satisfaction
 	FROM
 		tbl_ticket t
 	JOIN
 		tbl_project p ON t.project_id = p.id
+	JOIN
+		tbl_ticket_state s1 ON t.ticket_type = 'encoding' AND t.ticket_state = s1.ticket_state
+	JOIN
+		tbl_ticket_state s2 ON t.ticket_type = 'encoding' AND p.dependent_ticket_trigger_state = s2.ticket_state
 	WHERE
 		t.id = param_ticket_id;
 
