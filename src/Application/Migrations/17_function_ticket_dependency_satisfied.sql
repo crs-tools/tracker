@@ -27,11 +27,20 @@ BEGIN
 		t.id = param_ticket_id;
 
 	SELECT
-		state >= p.dependent_ticket_trigger_state INTO satisfaction
+		dependent_ticket_state.sort >= configured_trigger_state.sort INTO satisfaction
 	FROM
 		tbl_ticket t
 	JOIN
 		tbl_project p ON t.project_id = p.id
+	JOIN
+		-- if given ticket is no encoding ticket, function will return NULL
+		tbl_ticket_state dependent_ticket_state ON
+			t.ticket_type = 'encoding' AND
+			dependent_ticket_state.ticket_state = t.ticket_state
+	JOIN
+		tbl_ticket_state configured_trigger_state ON
+			t.ticket_type = 'encoding' AND
+			configured_trigger_state.ticket_state = p.dependent_ticket_trigger_state
 	WHERE
 		t.id = param_ticket_id;
 

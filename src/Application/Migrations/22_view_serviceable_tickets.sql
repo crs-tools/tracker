@@ -23,6 +23,14 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 	LEFT JOIN
 		tbl_project pj ON pj.id = t.project_id
 	LEFT JOIN tbl_project_encoding_profile pep ON pep.project_id = pj.id AND pep.encoding_profile_version_id = t.encoding_profile_version_id
+	LEFT JOIN
+		tbl_ticket_state state ON state.ticket_type = t.ticket_type AND state.ticket_state = t.ticket_state
+	LEFT JOIN
+		tbl_ticket_state wantedstate ON wantedstate.ticket_type = 'encoding' AND wantedstate.ticket_state = pj.dependent_ticket_trigger_state
+	LEFT JOIN
+		tbl_ticket_state masterstate ON
+			masterstate.ticket_type = 'encoding' AND
+			masterstate.ticket_state = COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.dependent_ticket_trigger_state)
 
 	WHERE
 		t.ticket_type != 'meta' AND
@@ -30,7 +38,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pt.failed = false AND
 		t.failed = false AND
 		COALESCE(pep.priority, 1) > 0 AND
-		COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.dependent_ticket_trigger_state) >= pj.dependent_ticket_trigger_state
+		masterstate.sort >= wantedstate.sort
 	ORDER BY
 		ticket_priority(t.id) DESC;
 
