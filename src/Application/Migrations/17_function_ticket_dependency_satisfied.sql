@@ -27,7 +27,7 @@ BEGIN
 		t.id = param_ticket_id;
 
 	SELECT
-		state >= p.subticket_trigger_state INTO satisfaction
+		state >= p.dependent_ticket_trigger_state INTO satisfaction
 	FROM
 		tbl_ticket t
 	JOIN

@@ -635,8 +635,7 @@
 		}
 
 		public function isDependingEncodingTicketStateSatisfied() {
-			// break through model layer and access project attribute directly
-			// because we do not have native enums -> database must do the comparison
+			// Use database function directly, PHP can not compare the enums properly.
 			$handle = Database::$Instance->query(
 				'SELECT ticket_depending_encoding_ticket_state_satisfied(?)',
 				[$this['id']]
