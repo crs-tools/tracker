@@ -18,7 +18,7 @@
     "ext-mbstring": "*",
     "ext-openssl": "*",
     "ext-xdiff": "*",
-    "ext-xmlprc": "*",
+    "ext-xmlrpc": "*",
     "ext-xsl": "*"
   }
 }
