@@ -2,7 +2,11 @@ BEGIN;
 
 SET ROLE TO postgres;
 
-DROP VIEW IF EXISTS view_serviceable_tickets;
+-- NOTE: the IF NOT EXISTS needs Postgres >= 9.5
+
+CREATE INDEX IF NOT EXISTS tbl_ticket_parent_id_idx ON tbl_ticket USING hash(parent_id);
+CREATE INDEX IF NOT EXISTS tbl_ticket_project_id_idx ON tbl_ticket USING hash(project_id);
+CREATE INDEX IF NOT EXISTS tbl_ticket_view_servicable_idx ON tbl_ticket USING btree(failed, service_executable, ticket_type);
 
 CREATE OR REPLACE VIEW view_serviceable_tickets AS 
 	SELECT 
@@ -73,3 +77,12 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		calculated_priority DESC;
 
 COMMIT;
+
+DO language plpgsql $$
+
+BEGIN
+  RAISE WARNING 'DO NOT FORGET: it is very likely that you have to give GRANT on the recreated view_serviceable_tickets to your tracker DB user after executing this script!';
+END
+$$;
+BEGIN;
+
