@@ -36,7 +36,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 
 	WHERE
 		pj.read_only = false AND
-		t.ticket_type != 'meta' AND
+		t.ticket_type IN ('recording','encoding','ingest') AND
 		pt.ticket_state = 'staged' AND
 		pt.failed = false AND
 		t.failed = false AND
