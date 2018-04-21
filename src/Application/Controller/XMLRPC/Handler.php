@@ -609,8 +609,8 @@
 					->where([
 						'project_id' => $this->_assignedProjects,
 						'ticket_type' => $ticketType,
-						'next_state' => $ticketState,
-						'next_state_service_executable' => 1,
+						'ticket_state_next' => $ticketState,
+						'service_executable' => 1,
 						'handle_id' => null
 					])
 					->scoped([
@@ -640,7 +640,7 @@
 				'ticket_id' => $ticket['id'],
 				'handle_id' => $this->worker['id'],
 				'from_state' => $ticket['ticket_state'],
-				'to_state' => $ticket['next_state'],
+				'to_state' => $ticket['ticket_state_next'],
 				'event' => 'RPC.'.__FUNCTION__
 			];
 			
@@ -648,7 +648,7 @@
 				// assign to worker with new state
 				[
 					'handle_id' => $this->worker['id'],
-					'ticket_state' => $ticket['next_state']
+					'ticket_state' => $ticket['ticket_state_next']
 				],
 				// ensure ticket is not assigned yet and in the right state
 				[

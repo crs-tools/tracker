@@ -37,7 +37,7 @@
 				->from('view_serviceable_tickets', 'tbl_ticket')
 				->where([
 					'project_id' => $projects,
-					'next_state_service_executable' => true
+					'service_executable' => true
 				]);
 			
 			if (User::isRestricted()) {
