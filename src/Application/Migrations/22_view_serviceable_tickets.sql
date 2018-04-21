@@ -10,8 +10,6 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pstart.value::timestamp with time zone AS time_start,
 		pstart.value::timestamp with time zone + pdur.value::time without time zone::interval AS time_end,
 		proom.value as room,
-		t.ticket_state_next AS next_state,
-		t.service_executable AS next_state_service_executable,
 		CASE WHEN t.parent_id IS NOT NULL THEN
 			pt.priority * t.priority *
 			COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / extract(EPOCH FROM pstart.value::timestamp with time zone), 1) *
