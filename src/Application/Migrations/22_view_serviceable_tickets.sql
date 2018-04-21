@@ -45,6 +45,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pt.ticket_state = 'staged' AND
 		pt.failed = false AND
 		t.failed = false AND
+		COALESCE(tmaster.failed, false) = false AND
 		COALESCE(pep.priority, 1) > 0 AND
 		masterstate.sort >= wantedstate.sort
 	ORDER BY
