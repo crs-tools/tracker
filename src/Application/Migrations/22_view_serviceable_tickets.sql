@@ -11,7 +11,14 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		pstart.value::timestamp with time zone + pdur.value::time without time zone::interval AS time_end,
 		proom.value as room,
 		t.ticket_state_next AS next_state,
-		t.service_executable AS next_state_service_executable
+		t.service_executable AS next_state_service_executable,
+		CASE WHEN t.parent_id IS NOT NULL THEN
+			pt.priority * t.priority *
+			COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / extract(EPOCH FROM pstart.value::timestamp with time zone), 1) *
+			COALESCE(pep.priority, 1)
+		ELSE
+			t.priority * COALESCE(extract(EPOCH FROM CURRENT_TIMESTAMP) / extract(EPOCH FROM pstart.value::timestamp with time zone), 1)
+		END as calculated_priority
 	FROM
 		tbl_ticket t
 	JOIN
@@ -43,6 +50,6 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		COALESCE(pep.priority, 1) > 0 AND
 		masterstate.sort >= wantedstate.sort
 	ORDER BY
-		ticket_priority(t.id) DESC;
+		calculated_priority DESC;
 
 COMMIT;
