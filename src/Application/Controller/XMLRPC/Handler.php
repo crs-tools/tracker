@@ -616,7 +616,7 @@
 					->scoped([
 						'virtual_property_filter' => [$propertyFilters]
 					])
-					->orderBy('ticket_priority(id) DESC');
+					->orderBy('calculated_priority DESC');
 				
 				$this->_workerGroup->filterTickets(
 					$this->_assignedProjects,
