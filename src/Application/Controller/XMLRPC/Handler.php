@@ -609,14 +609,14 @@
 					->where([
 						'project_id' => $this->_assignedProjects,
 						'ticket_type' => $ticketType,
-						'ticket_state_next' => $ticketState,
-						'service_executable' => 1,
+						'next_state' => $ticketState,
+						'next_state_service_executable' => 1,
 						'handle_id' => null
 					])
 					->scoped([
 						'virtual_property_filter' => [$propertyFilters]
 					])
-					->orderBy('calculated_priority DESC');
+					->orderBy('ticket_priority(id) DESC');
 				
 				$this->_workerGroup->filterTickets(
 					$this->_assignedProjects,
