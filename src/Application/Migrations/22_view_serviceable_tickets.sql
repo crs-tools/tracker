@@ -35,6 +35,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 			masterstate.ticket_state = COALESCE(ticket_depending_encoding_ticket_state(t.id),pj.dependent_ticket_trigger_state)
 
 	WHERE
+		pj.read_only = false AND
 		t.ticket_type != 'meta' AND
 		pt.ticket_state = 'staged' AND
 		pt.failed = false AND
