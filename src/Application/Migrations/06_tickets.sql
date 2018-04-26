@@ -136,9 +136,6 @@ WITHOUT OIDS;
 CREATE INDEX tbl_ticket_project_id_idx ON tbl_ticket USING btree(project_id);
 CREATE INDEX tbl_ticket_fahrplan_id_idx ON tbl_ticket USING btree(fahrplan_id);
 CREATE INDEX tbl_ticket_handle_id_idx ON tbl_ticket USING btree(handle_id);
-CREATE INDEX tbl_ticket_parent_id_idx ON tbl_ticket USING hash(parent_id);
-CREATE INDEX tbl_ticket_project_id_idx ON tbl_ticket USING hash(project_id);
-CREATE INDEX tbl_ticket_view_servicable_idx ON tbl_ticket USING btree(failed, service_executable, ticket_type);
 
 -- partial unique index
 CREATE UNIQUE INDEX unique_fahrplan_id ON tbl_ticket (project_id, fahrplan_id) WHERE parent_id IS NULL;
