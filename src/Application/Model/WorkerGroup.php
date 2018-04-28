@@ -110,7 +110,9 @@
 				}
 				
 				$unmatchedFilters[] = $filter;
-				// TODO: for "AND" break here
+				// TODO: for "AND" set $valid=false and break here
+				// $valid = false;
+				// break;
 			}
 			
 			if ($valid) {
