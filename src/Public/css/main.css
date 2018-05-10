@@ -2542,6 +2542,15 @@ ul.project-settings-header li.current a.hooks:before {
   margin-left: 0.5em;
 }
 
+.stages-container .column-50:nth-child(even) {
+	float:right;
+}
+.stages-container .column-50:nth-child(odd) {
+
+	padding-right: 15px;
+	padding-left: 0;
+}
+
 .progress-width[data-progress="0"] { width: 0%; }
 .progress-width[data-progress="1"] { width: 1%; }
 .progress-width[data-progress="2"] { width: 2%; }
