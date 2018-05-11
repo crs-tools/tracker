@@ -2,7 +2,7 @@ BEGIN;
 
 SET ROLE TO postgres;
 
-CREATE OR REPLACE FUNCTION ticket_state_next(param_project_id bigint, param_ticket_type enum_ticket_type, param_ticket_state enum_ticket_state, param_ticket_id bigint default NULL)
+CREATE OR REPLACE FUNCTION ticket_state_next(param_ticket_id bigint)
   RETURNS TABLE(ticket_state enum_ticket_state, service_executable boolean) AS
   $$
 DECLARE
@@ -11,26 +11,61 @@ BEGIN
 	SELECT
 		pts.ticket_state, pts.service_executable
 	FROM
-		tbl_ticket_state ts1
+		tbl_ticket t
 	JOIN
-		tbl_project_ticket_state pts ON pts.ticket_type = ts1.ticket_type AND pts.ticket_state = ts1.ticket_state
+		tbl_ticket_state ts_this ON ts_this.ticket_type = t.ticket_type AND ts_this.ticket_state = t.ticket_state
 	JOIN
-		tbl_ticket_state ts2 ON ts1.ticket_type = ts2.ticket_type AND ts1.sort > ts2.sort
+		tbl_project_ticket_state pts ON pts.project_id = t.project_id AND pts.ticket_type = t.ticket_type
+	JOIN
+		tbl_ticket_state ts_other ON ts_other.ticket_type = pts.ticket_type AND ts_other.ticket_state = pts.ticket_state
 	WHERE
-		pts.project_id = param_project_id AND
-		ts2.ticket_type = param_ticket_type AND
-		ts2.ticket_state = param_ticket_state AND
-		(pts.skip_on_dependent = false OR
-			( /* is master encoding ticket */
-				SELECT ep.depends_on
-				FROM tbl_ticket t
-				JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
-				JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
-				WHERE t.id = param_ticket_id
-			) IS NULL
-		)
-  ORDER BY
-    ts1.sort ASC
+		t.id = param_ticket_id AND
+		ts_other.sort > ts_this.sort AND
+		(pts.skip_on_dependent = FALSE OR
+		( /* is master encoding ticket */
+			SELECT ep.depends_on
+			FROM tbl_ticket t
+			JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+			JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
+			WHERE t.id = param_ticket_id
+		) IS NULL )
+	ORDER BY ts_other.sort ASC
+	LIMIT 1;
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT NULL::enum_ticket_state, false;
+  END IF;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ticket_state_previous(param_ticket_id bigint)
+  RETURNS TABLE(ticket_state enum_ticket_state, service_executable boolean) AS
+  $$
+DECLARE
+BEGIN
+	RETURN QUERY
+	SELECT
+		pts.ticket_state, pts.service_executable
+	FROM
+		tbl_ticket t
+	JOIN
+		tbl_ticket_state ts_this ON ts_this.ticket_type = t.ticket_type AND ts_this.ticket_state = t.ticket_state
+	JOIN
+		tbl_project_ticket_state pts ON pts.project_id = t.project_id AND pts.ticket_type = t.ticket_type
+	JOIN
+		tbl_ticket_state ts_other ON ts_other.ticket_type = pts.ticket_type AND ts_other.ticket_state = pts.ticket_state
+	WHERE
+		t.id = param_ticket_id AND
+		ts_other.sort < ts_this.sort AND
+		(pts.skip_on_dependent = FALSE OR
+		( /* is master encoding ticket */
+			SELECT ep.depends_on
+			FROM tbl_ticket t
+			JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+			JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
+			WHERE t.id = param_ticket_id
+		) IS NULL )
+	ORDER BY ts_other.sort DESC
 	LIMIT 1;
   IF NOT FOUND THEN
     RETURN QUERY SELECT NULL::enum_ticket_state, false;
@@ -58,13 +93,13 @@ BEGIN
 		ts2.ticket_type = param_ticket_type AND
 		ts2.ticket_state = param_ticket_state AND
 		(pts.skip_on_dependent = false OR
-		 ( /* is master encoding ticket */
-			 SELECT ep.depends_on
-			 FROM tbl_ticket t
-				 JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
-				 JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
-			 WHERE t.id = param_ticket_id
-		 ) IS NULL
+		( /* is master encoding ticket */
+			SELECT ep.depends_on
+			FROM tbl_ticket t
+			JOIN tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+			JOIN tbl_encoding_profile ep ON ep.id = epv.encoding_profile_id
+			WHERE t.id = param_ticket_id
+		) IS NULL
 		)
   ORDER BY
     ts1.sort DESC
@@ -129,7 +164,7 @@ BEGIN
   ret := (SELECT ticket_state_initial(param_project_id, param_ticket_type));
 
   WHILE ret IS NOT NULL LOOP
-    SELECT * INTO next_state FROM ticket_state_next(param_project_id, param_ticket_type, ret, param_ticket_id);
+    SELECT * INTO next_state FROM ticket_state_next(param_ticket_id);
     IF NOT FOUND THEN
       ret := NULL;
       EXIT;
