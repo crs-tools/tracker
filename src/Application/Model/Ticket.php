@@ -608,10 +608,10 @@
 			return $handle->fetch()['create_missing_recording_tickets'];
 		}
 		
-		public static function createMissingEncodingTickets($project, $encodingProfile = null) {
+		public static function createMissingEncodingTickets($project) {
 			$handle = Database::$Instance->query(
-				'SELECT create_missing_encoding_tickets(?, ?)',
-				[$project, $encodingProfile]
+				'SELECT create_missing_encoding_tickets(?)',
+				[$project]
 			);
 			
 			return $handle->fetch()['create_missing_encoding_tickets'];

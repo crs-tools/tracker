@@ -87,7 +87,6 @@
 						]
 					]);
 					
-					// TODO: only for encoding profile
 					Ticket::createMissingEncodingTickets(
 						$this->project['id']
 					);
