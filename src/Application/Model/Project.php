@@ -34,7 +34,9 @@
 				'self_key' => ['project_id'],
 				'via' => 'tbl_project_encoding_profile',
 				// TODO: cleanup when Association has support (?)
-				'select' => 'tbl_encoding_profile_version.*, tbl_project_encoding_profile.priority'
+				'select' => 'tbl_encoding_profile_version.*,
+							 tbl_project_encoding_profile.priority,
+							 tbl_project_encoding_profile.auto_create'
 			],
 			// TODO: move to 'through' => 'ProjectState'
 			'States' => [
@@ -87,6 +89,17 @@
 				'SELECT update_all_tickets_progress_and_next_state(?)',
 				[$this['id']]
 			);
+		}
+		
+		public function updateEncodingProfileAutoCreate($versionId, $auto_create) {
+			return Database_Query::updateTable(
+					'tbl_project_encoding_profile',
+					['auto_create' => $auto_create],
+					[
+						'project_id' => $this['id'],
+						'encoding_profile_version_id' => $versionId
+					]
+				)->execute() > 0;
 		}
 		
 		public function updateEncodingProfilePriority($versionId, $priority) {

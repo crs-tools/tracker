@@ -113,6 +113,25 @@
 						);
 					}
 				}
+				
+				if (!empty($values['auto_create']) and
+					is_array($values['auto_create'])) {
+					foreach ($values['auto_create'] as $id => $autoCreate) {
+						if (empty($autoCreate['1']) && !$autoCreate['0'] or
+							$autoCreate['1'] === $autoCreate['0']) {
+							continue;
+						}
+						
+						$this->project->updateEncodingProfileAutoCreate(
+							$id,
+							$autoCreate['1']
+						);
+					}
+					
+					Ticket::createMissingEncodingTickets(
+						$this->project['id']
+					);
+				}
 			}
 			
 			$this->versions = $this->project

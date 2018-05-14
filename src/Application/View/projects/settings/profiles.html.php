@@ -8,6 +8,7 @@
 				<th width="20%">Name</th>
 				<th>Version</th>
 				<th width="10%">Priority</th><?php // TODO: link to edit profile ?>
+				<th width="5%">Auto create</th>
 				<th width="10%"></th>
 				<th width="5%"></th>
 			</tr>
@@ -37,6 +38,17 @@
 						['data-submit-on-change' => true],
 						false
 					); ?>
+				</td>
+				<td><?=
+					$f->checkbox(
+						'auto_create[' . $version['id'] . '][1]',
+						null,
+						$version['auto_create'],
+						['data-submit-on-change' => true],
+						false
+					).
+					$f->hidden('auto_create[' . $version['id'] . '][0]', $version['auto_create']);
+					?>
 				</td>
 				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, ['version' => $version['id']], 'edit profile'); ?></td>
 				<td class="right destroy"><?= $f->button(
