@@ -376,14 +376,19 @@
 				throw new Exception(__FUNCTION__ . ': given encoding profile not available in this project', 1204);
 			}
 			
+			$initial_state = $project->queryFirstState('encoding')->first();
+
 			try {
-				// create missing encoding ticket
-				$ticket_id = Ticket::createMissingEncodingTicket($meta_ticket_id, $encoding_profile_id);
-				
-				Log::warning('ticket_id: '.$ticket_id);
-				
-				// get ticket
-				$ticket = Ticket::find(['id' => $ticket_id]);
+				// create encoding ticket
+				$ticket = Ticket::createOrThrow([
+					'parent_id' => $metaTicket['id'],
+					'project_id' => $metaTicket['project_id'],
+					'fahrplan_id' => $metaTicket['fahrplan_id'],
+					'priority' => $encodingProfileVersion['priority'],
+					'ticket_type' => 'encoding',
+					'ticket_state' => $initial_state['ticket_state'],
+					'encoding_profile_version_id' => $encodingProfileVersion['id']
+				]);
 				
 				LogEntry::create(array(
 					'ticket_id' => $ticket['id'],
@@ -391,7 +396,7 @@
 					'to_state' => $ticket['ticket_state'],
 					'handle_id' => $this->worker['id'],
 					'event' => 'RPC.' . __FUNCTION__,
-					'comment' => 'encoding ticket created/updated'));
+					'comment' => 'encoding ticket created'));
 				
 				// store properties
 				$ticketProperties = array();
