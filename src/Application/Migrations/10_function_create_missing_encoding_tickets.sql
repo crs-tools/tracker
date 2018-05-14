@@ -30,7 +30,8 @@ BEGIN
 	WHERE
 		t1.ticket_type = 'meta' AND
 		t2.id IS NULL AND
-		pep.project_id = param_project_id
+		pep.project_id = param_project_id AND
+		pep.auto_create IS TRUE
 	ORDER BY t1.id ASC, ep.id ASC);
 	GET DIAGNOSTICS row_count = ROW_COUNT;
 	return row_count;

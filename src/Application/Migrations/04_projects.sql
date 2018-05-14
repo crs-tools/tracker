@@ -94,6 +94,7 @@ CREATE TABLE tbl_project_encoding_profile
   project_id bigint NOT NULL,
   encoding_profile_version_id bigint NOT NULL,
   priority double precision NOT NULL DEFAULT 1,
+  auto_create boolean NOT NULL default true,
   CONSTRAINT tbl_project_encoding_profile_pkey PRIMARY KEY (project_id, encoding_profile_version_id),
   CONSTRAINT tbl_project_encoding_profile_encoding_profile_version_id_fkey FOREIGN KEY (encoding_profile_version_id)
       REFERENCES tbl_encoding_profile_version (id) MATCH SIMPLE
