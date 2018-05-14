@@ -80,10 +80,12 @@
 					$this->project->removeEncodingProfileVersion(
 						$values['remove']
 					);
-				} elseif (!empty($values['add'])) {
+				} elseif (!empty($values['add']) and
+					is_array($values['add']) and
+					!empty($values['add']['encoding_profile_version_id'])) {
 					$this->project->save([
 						'EncodingProfileVersion' => [
-							['encoding_profile_version_id' => $values['add']]
+							$values['add']
 						]
 					]);
 					

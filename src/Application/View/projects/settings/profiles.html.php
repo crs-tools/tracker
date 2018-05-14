@@ -63,11 +63,11 @@
 		<?php if ($versionsLeft->getRows() > 0): ?>
 			<tr>
 				<td></td>
-				<td colspan="3">
+				<td>
 					<?php if (!$project['read_only']) {
-						$f->register('add');
+						$f->register('add[encoding_profile_version_id]');
 					} ?>
-					<select name="add" data-submit-on-change="1"<?= ($project['read_only'])? ' disabled="disabled"' : '' ?>>
+					<select name="add[encoding_profile_version_id]" data-submit-on-change="1"<?= ($project['read_only'])? ' disabled="disabled"' : '' ?>>
 						<option value="">Add encoding profile</option>
 						<?php $name = null;
 						// TODO: $f->groupedSelect?
@@ -84,6 +84,27 @@
 						</optgroup>
 					</select>
 				</td>
+				<td class="priority">
+					<?= $f->select(
+						'add[priority]',
+						null,
+						['0' => 'disabled'] + Ticket::$priorities,
+						1,
+						[],
+						false
+					); ?>
+				</td>
+				<td><?=
+					$f->checkbox(
+						'add[auto_create]',
+						null,
+						true,
+						[],
+						false
+					);
+					?>
+				</td>
+				<td colspan="2"></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>
