@@ -2,7 +2,7 @@
 
 SET ROLE TO postgres;
 
-CREATE OR REPLACE FUNCTION ticket_depending_encoding_ticket_state(param_ticket_id bigint)
+CREATE OR REPLACE FUNCTION ticket_dependee_ticket_state(param_depender_ticket_id bigint)
   RETURNS enum_ticket_state AS
   $$
 DECLARE

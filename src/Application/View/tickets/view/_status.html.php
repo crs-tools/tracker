@@ -34,8 +34,8 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 	];
 } elseif (
 	isset($projectEncodingProfile) and
-	($state = $ticket->getDependingEncodingTicketState()) !== null and
-	!$ticket->isDependingEncodingTicketStateSatisfied()
+	($state = $ticket->getDependeeTicketState()) !== null and
+	!$ticket->isDependeeTicketStateSatisfied()
 ) {
 	$status = [
 		'dependency',
