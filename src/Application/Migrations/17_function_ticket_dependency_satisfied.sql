@@ -26,7 +26,7 @@ BEGIN
 	JOIN
 		tbl_ticket_state configured_trigger_state ON
 			depender_ticket.ticket_type = 'encoding' AND
-			configured_trigger_state.ticket_state = project.dependent_ticket_trigger_state
+			configured_trigger_state.ticket_state = project.dependee_ticket_trigger_state
 	WHERE
 		depender_ticket.id = param_depender_ticket_id;
 
