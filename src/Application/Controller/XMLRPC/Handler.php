@@ -33,13 +33,21 @@
 			// set error reporting to suppress notices, since error messages break XML output
 			error_reporting(E_ALL & ~ E_NOTICE);
 		}
-
+		
+		/**
+		 * Authenticate API user.
+		 *
+		 * @param $method string name of called method
+		 * @param array $arguments method arguments provided by the user
+		 * @return mixed
+		 * @throws ImmutableQueryException
+		 */
 		protected function authenticate($method, array $arguments) {
 			if (empty($_GET['group']) or empty($_GET['hostname'])) {
 				return $this->_XMLRPCFault(-32500, 'incomplete arguments');
 			}
 			
-			if (!$this->_workerGroup = WorkerGroup::findBy(array('token' => $_GET['group']))) {
+			if (!$this->_workerGroup = WorkerGroup::findBy(['token' => $_GET['group']])) {
 				return $this->_XMLRPCFault(-32500, 'worker group not found');
 			}
 			
@@ -49,12 +57,18 @@
 
 			$signature = array_pop($this->arguments);
 			
-			if (!self::_validateSignature($this->_workerGroup['secret'], $signature, array_merge(array(
-				$this->Request->getURL(),
-				self::XMLRPC_PREFIX . $method,
-				$this->_workerGroup['token'],
-				$_GET['hostname']),
-				$this->arguments))) {
+			if (!self::_validateSignature(
+				$this->_workerGroup['secret'],
+				$signature,
+				array_merge(
+					[
+						$this->Request->getURL(),
+						self::XMLRPC_PREFIX . $method,
+						$this->_workerGroup['token'],
+						$_GET['hostname']
+					],
+					$this->arguments
+				))) {
 				return $this->_XMLRPCFault(-32500, 'invalid or missing signature');
 			}
 			
@@ -62,26 +76,26 @@
 			
 			// FIXME: this is a dirty fix for a race condition!
 			$this->worker = Worker::findAll()
-				->where(array(
+				->where([
 					'name' => $name,
 					'worker_group_id' => $this->_workerGroup['id']
-					))
+					])
 				->orderBy('id DESC')
 				->limit(1)
 				->first();
 			
 			if (!$this->worker) {
-				$this->worker = Worker::create(array(
+				$this->worker = Worker::create([
 					'name' => $name,
 					'worker_group_id' => $this->_workerGroup['id']
-				));
+				]);
 				if (!$this->worker) {
 					// creation may have failed due to race condition, query again
 					$this->worker = Worker::findAll()
-						->where(array(
+						->where([
 							'name' => $name,
 							'worker_group_id' => $this->_workerGroup['id']
-							))
+							])
 						->orderBy('id DESC')
 						->limit(1)
 						->first();
@@ -101,7 +115,7 @@
 		}
 		
 		private static function _validateSignature($secret, $signature, $arguments) {
-			$args = array();
+			$args = [];
 			foreach($arguments as $argument) {
 				$args[] = (is_array($argument))?
 					http_build_query(
@@ -289,7 +303,7 @@
 			$ticket_data['ticket_state'] = $first_state['ticket_state'];
 			
 			// store remaining properties
-			$ticket_data['properties'] = array();
+			$ticket_data['properties'] = [];
 			foreach($properties as $name => $value) {
 				$ticket_data['properties'][$name] = [
 					'name' => $name,
@@ -300,13 +314,14 @@
 			try {
 				$ticket = Ticket::createOrThrow($ticket_data);
 				
-				LogEntry::create(array(
+				LogEntry::create([
 					'ticket_id' => $ticket['id'],
 					'from_state' => '',
 					'to_state' => $ticket['ticket_state'],
 					'handle_id' => $this->worker['id'],
 					'event' => 'RPC.' . __FUNCTION__,
-					'comment' => 'ticket created'));
+					'comment' => 'ticket created'
+				]);
 				
 				Ticket::createMissingEncodingTickets(
 					$project['id']
@@ -390,16 +405,17 @@
 					'encoding_profile_version_id' => $encodingProfileVersion['id']
 				]);
 				
-				LogEntry::create(array(
+				LogEntry::create([
 					'ticket_id' => $ticket['id'],
 					'from_state' => '',
 					'to_state' => $ticket['ticket_state'],
 					'handle_id' => $this->worker['id'],
 					'event' => 'RPC.' . __FUNCTION__,
-					'comment' => 'encoding ticket created'));
+					'comment' => 'encoding ticket created'
+				]);
 				
 				// store properties
-				$ticketProperties = array();
+				$ticketProperties = [];
 				foreach($properties as $name => $value) {
 					$ticketProperties[$name] = [
 						'name' => $name,
@@ -512,12 +528,12 @@
 				Log::warning('[RPC] ping: '.$reason);
 				
 				if($ticket) {
-					LogEntry::create(array(
+					LogEntry::create([
 						'ticket_id' => $ticket_id,
 						'handle_id' => $this->worker['id'],
 						'comment' => "Worker received command '$cmd'\n\nReason: $reason",
 						'event' => 'RPC.'.__FUNCTION__
-					));
+					]);
 				}
 			}
 			
@@ -559,28 +575,27 @@
 				throw new Exception(__FUNCTION__.': ticket in project not assigned to worker group',303);
 			}
 
-			$ticket_properties = array();
-			$log_message = array();
-			$log_message[] = __FUNCTION__.': changing properties';
+			$ticket_properties = [];
+			$log_message = [ __FUNCTION__.': changing properties' ];
 			foreach($properties as $name => $value) {
 				if(in_array($name,$this->virtual_properties)) {
 					Log::warning('[RPC] setTicketProperties: ingored virtual property '.$name);
 					continue;
 				} elseif($value !== '') {
-					$ticket_properties[] = array('name' => $name, 'value' => $value);
+					$ticket_properties[] = ['name' => $name, 'value' => $value];
 					$log_message[] = $name . '=' . $value;
 				} else {
-					$ticket_properties[] = array('name' => $name, '_destroy' => 1);
+					$ticket_properties[] = ['name' => $name, '_destroy' => 1];
 					$log_message[] = 'deleting property: ' . $name;
 				}
 			}
-			if($ticket->save(array('properties' => $ticket_properties))) {
-				LogEntry::create(array(
+			if($ticket->save(['properties' => $ticket_properties])) {
+				LogEntry::create([
 					'ticket_id' => $ticket['id'],
 					'handle_id' => $this->worker['id'],
 					'comment' => implode("\n",$log_message),
 					'event' => 'RPC.'.__FUNCTION__
-				));
+				]);
 				return true;
 			}
 			return false;
@@ -594,7 +609,7 @@
 		 * @param string $ticketType type of ticket
 		 * @param string $ticketState ticket state the returned ticket will be in after this call
 		 * @param array $propertyFilters return only tickets matching given properties
-		 * @return array ticket data or false if no matching ticket found (or user is halted)
+		 * @return array|false ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
 		public function assignNextUnassignedForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
@@ -678,7 +693,7 @@
 		 * @param string $ticketType type of ticket
 		 * @param string $ticketState ticket state
 		 * @param array $propertyFilters return only tickets matching given properties
-		 * @return array ticket data or false if no matching ticket found (or user is halted)
+		 * @return array|false ticket data or false if no matching ticket found (or user is halted)
 		 * @throws Exception on error
 		 */
 		public function getAssignedForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
@@ -735,15 +750,16 @@
 			return $tickets_matching;
 			*/
 		}
-
+		
 		/**
 		 * Get all tickets in state $state from projects assigned to the workerGroup, unless workerGroup is halted
 		 *
 		 * @param string $ticketType
 		 * @param string $ticketState
 		 * @param array $propertyFilters filter_parameters return only tickets matching given properties
-		 * @return array ticket data or false if no matching ticket found (or user is halted)
+		 * @return array|false ticket data or false if no matching ticket found (or user is halted)
 		 * @throws EntryNotFoundException
+		 * @throws ImmutableQueryException
 		 */
 		public function getTicketsForState($ticketType = '', $ticketState = '', array $propertyFilters = []) {
 			if (empty($ticketType) || empty($ticketState)) {
@@ -807,16 +823,16 @@
 				throw new Exception(__FUNCTION__.': no next state available!',506);
 			}
 
-			$log_entry = array(
+			$log_entry = [
 				'ticket_id' => $ticket['id'],
 				'handle_id' => $this->worker['id'],
 				'from_state' => $ticket['ticket_state'],
 				'to_state' => $ticket['ticket_state_next'],
 				'event' => 'RPC.'.__FUNCTION__,
 				'comment' => $log_message
-			);
+			];
 
-			if (!$save = $ticket->save(array('handle_id' => null, 'ticket_state' => $ticket['ticket_state_next']))) {
+			if (!$save = $ticket->save(['handle_id' => null, 'ticket_state' => $ticket['ticket_state_next']])) {
 				Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
 				return false;
 			}
@@ -855,15 +871,15 @@
 				throw new Exception(__FUNCTION__.': ticket is in non-service state: '.$ticket['ticket_state'], 605);
 			}
 
-			$log_entry = array(
+			$log_entry = [
 				'ticket_id' => $ticket['id'],
 				'handle_id' => $this->worker['id'],
 				'from_state' => $ticket['ticket_state'],
 				'event' => 'RPC.'.__FUNCTION__,
 				'comment' => $log_message
-			);
+			];
 
-			if (!$save = $ticket->save(array('handle_id' => null, 'failed' => true))) {
+			if (!$save = $ticket->save(['handle_id' => null, 'failed' => true])) {
 				Log::warning(__FUNCTION__.': race condition with other request. delaying new request');
 				return false;
 			}
@@ -884,7 +900,7 @@
 			$properties = $this->getTicketProperties($ticket_id);
 
 			// get encoding profile
-			if(!$profileVersion = Ticket::findBy(array('id' => $ticket_id))->EncodingProfileVersion) {
+			if(!$profileVersion = Ticket::findBy(['id' => $ticket_id])->EncodingProfileVersion) {
 				throw new EntryNotFoundException(__FUNCTION__.': encoding profile not found',702);
 			}
 
@@ -904,12 +920,12 @@
 				throw new EntryNotFoundException(__FUNCTION__.': ticket not found',801);
 			}
 
-			return LogEntry::create(array(
+			return LogEntry::create([
 				'ticket_id' => $ticket_id,
 				'handle_id' => $this->worker['id'],
 				'comment' => $log_message,
 				'event' => 'RPC.'.__FUNCTION__
-			)) !== false;
+			]) !== false;
 		}
 		
 		/**
