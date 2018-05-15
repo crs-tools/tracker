@@ -34,7 +34,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 	LEFT JOIN
 		tbl_ticket_state configured_trigger_state ON
 			configured_trigger_state.ticket_type = 'encoding' AND
-			configured_trigger_state.ticket_state = pj.dependent_ticket_trigger_state
+			configured_trigger_state.ticket_state = pj.dependee_ticket_trigger_state
 	LEFT JOIN
 		tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
 	LEFT JOIN

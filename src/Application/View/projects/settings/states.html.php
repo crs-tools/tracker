@@ -12,9 +12,9 @@ $typeRows = 0; ?>
 	</div>
 	<div class="project-settings-triggerstate">
 		<fieldset>
-			<?= $f->select('dependent_ticket_trigger_state',
+			<?= $f->select('dependee_ticket_trigger_state',
 				'Minimum required state for encoding tickets to activate dependent tickets',
-				$encodingStates, (!empty($project))? $project['dependent_ticket_trigger_state'] : null) ?>
+				$encodingStates, (!empty($project))? $project['dependee_ticket_trigger_state'] : null) ?>
 		</fieldset>
 	</div>
 		<?php foreach ($states as $index => $state): ?>
