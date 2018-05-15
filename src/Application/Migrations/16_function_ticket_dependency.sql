@@ -9,11 +9,11 @@ DECLARE
 	state enum_ticket_state;
 BEGIN
 	SELECT
-		t2.ticket_state INTO state
+		dependee.ticket_state INTO state
 	FROM
-		tbl_ticket t
+		tbl_ticket depender
 	JOIN
-		tbl_encoding_profile_version epv ON epv.id = t.encoding_profile_version_id
+		tbl_encoding_profile_version epv ON epv.id = depender.encoding_profile_version_id
 	JOIN
 		tbl_encoding_profile ep ON epv.encoding_profile_id = ep.id
 	JOIN
@@ -21,9 +21,9 @@ BEGIN
 	JOIN
 		tbl_encoding_profile_version epv2 ON epv2.encoding_profile_id = ep2.id
 	JOIN
-		tbl_ticket t2 ON t2.encoding_profile_version_id = epv2.id AND t2.parent_id = t.parent_id
+		tbl_ticket dependee ON dependee.encoding_profile_version_id = epv2.id AND dependee.parent_id = depender.parent_id
 	WHERE
-		t.id = param_ticket_id;
+		depender.id = param_depender_ticket_id;
 	RETURN state;
 END
 $$
