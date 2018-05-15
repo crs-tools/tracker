@@ -625,23 +625,23 @@
 			return $handle->fetch()['create_missing_encoding_ticket'];
 		}
 		
-		public function getDependingEncodingTicketState() {
+		public function getDependeeTicketState() {
 			$handle = Database::$Instance->query(
-				'SELECT ticket_depending_encoding_ticket_state(?)',
+				'SELECT ticket_dependee_ticket_state(?)',
 				[$this['id']]
 			);
 			
-			return $handle->fetch()['ticket_depending_encoding_ticket_state'];
+			return $handle->fetch()['ticket_dependee_ticket_state'];
 		}
 
-		public function isDependingEncodingTicketStateSatisfied() {
+		public function isDependeeTicketStateSatisfied() {
 			// Use database function directly, PHP can not compare the enums properly.
 			$handle = Database::$Instance->query(
-				'SELECT ticket_depending_encoding_ticket_state_satisfied(?)',
+				'SELECT ticket_dependee_ticket_state_satisfied(?)',
 				[$this['id']]
 			);
 
-			return $handle->fetch()['ticket_depending_encoding_ticket_state_satisfied'];
+			return $handle->fetch()['ticket_dependee_ticket_state_satisfied'];
 		}
 		
 		/*
