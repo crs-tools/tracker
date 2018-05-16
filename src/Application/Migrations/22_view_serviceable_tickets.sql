@@ -30,8 +30,6 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 	LEFT JOIN
 		tbl_project_encoding_profile pep ON pep.project_id = pj.id AND pep.encoding_profile_version_id = t.encoding_profile_version_id
 	LEFT JOIN
-		tbl_ticket_state state ON state.ticket_type = t.ticket_type AND state.ticket_state = t.ticket_state
-	LEFT JOIN
 		tbl_ticket_state configured_trigger_state ON
 			configured_trigger_state.ticket_type = 'encoding' AND
 			configured_trigger_state.ticket_state = pj.dependee_ticket_trigger_state
