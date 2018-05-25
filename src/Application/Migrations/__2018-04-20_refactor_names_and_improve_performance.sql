@@ -132,18 +132,17 @@ BEGIN
 	JOIN
 		tbl_project project ON depender_ticket.project_id = project.id
 	JOIN
-		-- if given ticket is no encoding ticket, function will return NULL
 		tbl_ticket_state dependee_ticket_state ON
-			depender_ticket.ticket_type = 'encoding' AND
-			dependee_ticket_state.ticket_type = 'encoding' AND
+			dependee_ticket_state.ticket_type = depender_ticket.ticket_type AND
 			dependee_ticket_state.ticket_state = dependee_state
 	JOIN
 		tbl_ticket_state configured_trigger_state ON
-			depender_ticket.ticket_type = 'encoding' AND
-			configured_trigger_state.ticket_type = 'encoding' AND
+			configured_trigger_state.ticket_type = depender_ticket.ticket_type AND
 			configured_trigger_state.ticket_state = project.dependee_ticket_trigger_state
 	WHERE
-		depender_ticket.id = param_depender_ticket_id;
+		depender_ticket.id = param_depender_ticket_id AND
+		-- if given ticket is no encoding ticket, function will return NULL
+		depender_ticket.ticket_type = 'encoding';
 
 	RETURN satisfaction;
 END
