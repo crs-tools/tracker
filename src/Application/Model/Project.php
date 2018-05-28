@@ -92,14 +92,28 @@
 		}
 		
 		public function updateEncodingProfileAutoCreate($versionId, $auto_create) {
-			return Database_Query::updateTable(
+			$query = Database_Query::updateTable(
 					'tbl_project_encoding_profile',
 					['auto_create' => $auto_create],
 					[
 						'project_id' => $this['id'],
 						'encoding_profile_version_id' => $versionId
 					]
-				)->execute() > 0;
+				);
+			
+			if ($query->execute() <= 0) {
+				return false;
+			}
+			
+			// auto-remove unmodified auto-created tickets
+			if(!$auto_create) {
+				Ticket::findAll()
+					->where([
+						'project_id' => $this['id'],
+						'encoding_profile_version_id' => $versionId,
+						'created = modified'
+					])->delete();
+			}
 		}
 		
 		public function updateEncodingProfilePriority($versionId, $priority) {
