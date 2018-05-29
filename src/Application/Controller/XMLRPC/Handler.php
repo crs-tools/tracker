@@ -391,6 +391,18 @@
 				throw new Exception(__FUNCTION__ . ': given encoding profile not available in this project', 1204);
 			}
 			
+			// if other encoding profiles depend on given profile, prohibit duplicates
+			if(EncodingProfile::exists(['depends_on' => $encodingProfileVersion['encoding_profile_id']]) and
+				Ticket::findAll(['EncodingProfile'])
+					->where([
+						'parent_id' => $metaTicket['id'],
+						EncodingProfileVersion::TABLE.'.encoding_profile_id' => $encodingProfileVersion['encoding_profile_id']
+					])
+					->exists()) {
+				throw new Exception('Ticket with given encoding profile already exists. Since other encoding
+					profiles depend on given profile, no duplicates are allowed.', 1206);
+			}
+
 			$initial_state = $project->queryFirstState('encoding')->first();
 
 			try {
