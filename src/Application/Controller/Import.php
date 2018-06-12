@@ -81,19 +81,20 @@
 				return $this->redirect('import', 'index', $this->project);
 			}
 			
-			$xml = $this->_getXMLAndParse($this->form->getValue('url'));
+			$xml = $this->_getXMLAndParse($this->form->getValues());
 			
 			if ($xml === false) {
 				return $this->Response;
 			}
 			
-			$import = Import::createOrThrow([
+			$import = new Import([
 				'project_id' => $this->project['id'],
 				'user_id' => User::getCurrent()['id'],
-				'url' => $this->form->getValue('url'),
 				'xml' => $xml[0],
 				'version' => $xml[2]
 			]);
+				
+			$import->saveOrThrow($this->form->getValues());
 			
 			return $this->rooms([], $import, $xml[1]);
 		}
@@ -103,24 +104,23 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
-				$import = $this->import->duplicate();
+				$import = $this->import->duplicate(true);
 				
 				if ($this->form->getValue('source') === 'url') {
-					$xml = $this->_getXMLAndParse($import['url']);
+					$xml = $this->_getXMLAndParse($import->toArray());
 					
 					if ($xml === false) {
 						return $this->Response;
 					}
 				}
 				
-				$import = Import::createOrThrow([
-					'project_id' => $this->project['id'],
+				$import->saveOrThrow([
 					'user_id' => User::getCurrent()['id'],
-					'url' => $this->import['url'],
 					'xml' => (isset($xml))? $xml[0] : $this->import['xml'],
 					'version' => (isset($xml))? $xml[2] : $this->import['version'],
 					'rooms' => ($this->form->getValue('apply_rooms'))?
-						$this->import['rooms'] : null
+						$this->import['rooms'] : null,
+					'finished' => null
 				]);
 				
 				return $this->redirect(
@@ -407,10 +407,10 @@
 			return true;
 		}
 		
-		private function _getXMLAndParse($url) {
-			$response = self::_getXML($url);
+		private function _getXMLAndParse(array $import) {
+			$response = self::_getXML($import);
 			
-			if ($response->isFailed()) {
+			if ($response === null or $response->isFailed()) {
 				$this->flash('Import failed (unknown reason)');
 				$this->redirect('import', 'index', $this->project);
 				return false;
@@ -440,9 +440,30 @@
 			];
 		}
 		
-		private static function _getXML($url) {
+		private static function _getXML(array $import) {
+			if (empty($import['url'])) {
+				return null;
+			}
+			
 			$client = new HTTP_Client();
 			$client->setUserAgent('FeM-Tracker/1.0 (http://fem.tu-ilmenau.de)');
+			
+			if (!empty($import['auth_type'])) {
+				switch ($import['auth_type']) {
+					case 'basic':
+						$client->setAuthentication(
+							$import['auth_user'],
+							$import['auth_password']
+						);
+						break;
+					case 'header':
+						$client->addHeader(
+							'Authentication',
+							$import['auth_header']
+						);
+						break;
+				}
+			}
 			
 			if (file_exists(ROOT . '../contribution/certs/cacert.pem')) {
 				$client->setOption(
@@ -451,7 +472,7 @@
 				);
 			}
 			
-			return $client->get($url);
+			return $client->get($import['url']);
 		}
 		
 		private static function _toObject($string) {

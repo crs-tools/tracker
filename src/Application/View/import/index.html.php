@@ -28,6 +28,22 @@
 			<li>
 				<?= $f->input('url','XML URL', '', ['class' => 'wide', 'disabled' => $project['read_only']]); ?>
 			</li>
+			<li>
+				<?= $f->select(
+					'auth_type',
+					'Authentication',
+					[
+						'' => 'No Authentication',
+						'basic' => 'Basic HTTP Authentication',
+						'header' => 'Authentication Header'
+					],
+					'',
+					['data-import-auth-type-value']
+				); ?>
+			</li>
+			<li><?= $f->input('auth_user', 'Username', '', ['data-import-auth-type' => 'basic']); ?></li>
+			<li><?= $f->password('auth_password', 'Password', ['data-import-auth-type' => 'basic']); ?></li>
+			<li><?= $f->input('auth_header', 'Authentication Header', '', ['class' => 'wide', 'data-import-auth-type' => 'header']); ?></li>
 			<li><?= $f->submit('Create new import', ['disabled' => $project['read_only']]); ?></li>
 		</ul>
 	</fieldset>
