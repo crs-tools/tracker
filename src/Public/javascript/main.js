@@ -1980,4 +1980,11 @@ $(function() {
       event.preventDefault();
     }
   });
+  
+  $('[data-import-auth-type-value]')
+    .change(function(event) {
+      $('[data-import-auth-type]').hide();
+      $('[data-import-auth-type="' + event.target.value + '"]').show();
+    })
+    .change();
 });
