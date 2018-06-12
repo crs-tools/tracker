@@ -56,11 +56,13 @@ CREATE OR REPLACE FUNCTION update_ticket_progress()
   RETURNS trigger AS
 $BODY$
   BEGIN
-    UPDATE tbl_ticket SET progress = ticket_progress(NEW.id) WHERE id = NEW.id;
-    IF (NEW.parent_id IS NOT NULL) THEN
+    IF TG_OP = 'DELETE' THEN
+      UPDATE tbl_ticket SET progress = ticket_progress(OLD.parent_id) WHERE id = OLD.parent_id;
+    ELSE
+      UPDATE tbl_ticket SET progress = ticket_progress(NEW.id) WHERE id = NEW.id;
       UPDATE tbl_ticket SET progress = ticket_progress(NEW.parent_id) WHERE id = NEW.parent_id;
     END IF;
-    RETURN NEW;
+    RETURN NULL;
   END
 $BODY$
 LANGUAGE plpgsql VOLATILE;
@@ -145,7 +147,7 @@ CREATE UNIQUE INDEX unique_fahrplan_id ON tbl_ticket (project_id, fahrplan_id) W
 -- trigger
 CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();
 CREATE TRIGGER state_trigger BEFORE INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_next_state();
-CREATE TRIGGER progress_trigger1 AFTER INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress();
+CREATE TRIGGER progress_trigger AFTER INSERT OR DELETE OR UPDATE OF ticket_state, parent_id ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress();
 
 CREATE OR REPLACE FUNCTION inherit_fahrplan_id() RETURNS trigger AS
 $BODY$
