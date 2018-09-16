@@ -1862,6 +1862,15 @@ table.properties tfoot tr td.more a:focus {
   text-decoration: none;
 }
 
+table.profiles tbody tr.warning-missing-dependee td {
+  padding: 0.6em;
+  background-color: #ffd51b;
+  border-bottom-color: #d99e04;
+  font-weight: bold;
+  font-size: 0.9em;
+	color: #3d464d;
+}
+
 form fieldset ul.comments li {
 	width: 40em;
 	padding-left: 1.2em;

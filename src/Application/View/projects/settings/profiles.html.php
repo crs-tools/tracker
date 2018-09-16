@@ -15,6 +15,13 @@
 		</thead>
 		<tbody>
 		<?php foreach ($versions as $index => $version): ?>
+			<?php if (isset($encodingProfilesLeft[$version['encodingprofile_depends_on']])): ?>
+				<tr class="warning-missing-dependee">
+					<td colspan="6">
+						Warning: Encoding profile dependee missing, add a version for <em><?= h($encodingProfilesLeft[$version['encodingprofile_depends_on']]); ?></em>.
+					</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 				<td class="name"><?= $version->EncodingProfile['name']; ?></td>
 				<?php // TODO: $f->selectForResource? ?>

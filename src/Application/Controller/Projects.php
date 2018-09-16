@@ -161,6 +161,10 @@
 				]);
 			}
 			
+			$this->encodingProfilesLeft = (clone $this->versionsLeft)
+				->indexBy('encoding_profile_id', 'name')
+				->toArray();
+			
 			return $this->render('projects/settings/profiles');
 		}
 		
