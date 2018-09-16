@@ -30,7 +30,7 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 } elseif ($ticket['handle_id'] !== null) {
 	$status = [
 		'dependency',
-		'Ticket is assigned to someone'
+		'Ticket is assigned to ' . $ticket['handle_name'] . '.'
 	];
 } elseif (
 	isset($projectEncodingProfile) and
@@ -38,7 +38,8 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 ) {
 	$status = [
 		'dependency',
-		'Encoding profile dependency not satisfied (supporting ticket is missing completely)'
+		"Encoding profile dependency not satisfied\n" .
+			'(encoding ticket for dependee is missing).'
 	];
 } elseif (
 	isset($projectEncodingProfile) and
@@ -47,7 +48,8 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 ) {
 	$status = [
 		'dependency',
-		'Encoding profile dependency not satisfied (supporting ticket is ' . $state . ')'
+		"Encoding profile dependency not satisfied\n" .
+			'(supporting ticket is ' . $state . ').'
 	];
 } else {
 	$status = [
