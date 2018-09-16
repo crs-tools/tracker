@@ -34,6 +34,14 @@ if ($ticket->Parent['ticket_state'] !== 'staged') {
 	];
 } elseif (
 	isset($projectEncodingProfile) and
+	$ticket->isDependeeTicketMissing() === true
+) {
+	$status = [
+		'dependency',
+		'Encoding profile dependency not satisfied (supporting ticket is missing completely)'
+	];
+} elseif (
+	isset($projectEncodingProfile) and
 	($state = $ticket->getDependeeTicketState()) !== null and
 	!$ticket->isDependeeTicketStateSatisfied()
 ) {
