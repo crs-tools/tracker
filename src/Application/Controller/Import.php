@@ -452,14 +452,14 @@
 				switch ($import['auth_type']) {
 					case 'basic':
 						$client->setAuthentication(
-							$import['auth_user'],
-							$import['auth_password']
+							(isset($import['auth_user']))? $import['auth_user'] : '',
+							(isset($import['auth_password']))? $import['auth_password'] : ''
 						);
 						break;
 					case 'header':
 						$client->addHeader(
 							'Authentication',
-							$import['auth_header']
+							(isset($import['auth_header']))? $import['auth_header'] : ''
 						);
 						break;
 				}
