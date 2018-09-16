@@ -67,6 +67,7 @@ CREATE OR REPLACE VIEW view_serviceable_tickets AS
 		parent.ticket_state = 'staged' AND
 		parent.failed = false AND
 		t.failed = false AND
+		(ep.depends_on IS NULL OR dependee_ticket.id IS NOT NULL) AND
 		COALESCE(dependee_ticket.failed, false) = false AND
 		COALESCE(pep.priority, 1) > 0 AND
 		COALESCE(dependee_ticket_state.sort >= configured_trigger_state.sort, true)
