@@ -1759,14 +1759,16 @@ table.default {
   border-collapse: collapse;
 }
 
-@media screen and (max-width: 880px) {
-	table.profiles {
-    table-layout: fixed;
-	}
-	
-	table.profiles select {
-		max-width: 100%;
-	}
+table.profiles {
+  table-layout: fixed;
+}
+
+table.profiles select {
+  max-width: 100%;
+}
+  
+table.profiles tbody tr td.link {
+  white-space: nowrap;
 }
 
 @media screen and (max-width: 785px) {

@@ -7,10 +7,10 @@
 			<tr>
 				<th width="20%">Name</th>
 				<th>Version</th>
-				<th width="10%">Priority</th><?php // TODO: link to edit profile ?>
-				<th width="5%">Auto create</th>
+				<th width="9%">Priority</th><?php // TODO: link to edit profile ?>
+				<th width="6%">Auto create</th>
 				<th width="10%"></th>
-				<th width="5%"></th>
+				<th width="9%"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -51,7 +51,7 @@
 					?>
 				</td>
 				<td class="link right edit"><?= $this->linkTo('encodingprofiles', 'edit', $version->EncodingProfile, ['version' => $version['id']], 'edit profile'); ?></td>
-				<td class="right destroy"><?= $f->button(
+				<td class="link right destroy"><?= $f->button(
 					'remove',
 					null,
 					'remove profile',
