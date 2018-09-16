@@ -48,6 +48,7 @@
 				])
 				->scoped([
 					'with_recording',
+					'with_encoding_profile_name',
 					'with_merged_properties' => [[
 						'Fahrplan.GUID' => 'fahrplan_guid',
 						'Record.Cutdiffseconds' => 'duration',
