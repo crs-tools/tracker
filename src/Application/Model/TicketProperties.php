@@ -41,9 +41,9 @@
 			if (isset($properties['Fahrplan.ID'])) {
 				$parts[] = $properties['Fahrplan.ID'];
 			}
-
+			
 			// add language wild card if project has multiple languages
-			if (count($project->Languages) > 0 && isset($properties['Record.Language'])) {
+			if ($project->Languages->getRows() > 0 && isset($properties['Record.Language'])) {
 				$parts[] = '%s';
 			}
 
@@ -264,7 +264,7 @@
 					if (!isset($index['Encoding.Basename'])) {
 						$basename = $languageTemplate;
 						
-						if (count($this->_parentTicket->Project->Languages) > 0 && isset($index['Record.Language'])) {
+						if ($this->_parentTicket->Project->Languages->getRows() > 0 && isset($index['Record.Language'])) {
 							$basename = sprintf($languageTemplate, $index['Record.Language']);
 						}
 					
