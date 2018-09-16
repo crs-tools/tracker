@@ -625,7 +625,16 @@
 			
 			return $handle->fetch()['ticket_dependee_ticket_state'];
 		}
-
+		
+		public function isDependeeTicketMissing() {
+			$handle = Database::$Instance->query(
+				'SELECT ticket_dependee_missing(?)',
+				[$this['id']]
+			);
+			
+			return $handle->fetch()['ticket_dependee_missing'];
+		}
+		
 		public function isDependeeTicketStateSatisfied() {
 			// Use database function directly, PHP can not compare the enums properly.
 			$handle = Database::$Instance->query(
