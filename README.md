@@ -8,7 +8,7 @@ ingest sources and video encoding progress. It guides users through manual proce
 Requirements
 ------------
 
-- \>= PHP 5.6.0
+- \>= PHP 7.1.0
   - ext/curl
   - ext/intl
   - ext/mbstring
@@ -21,7 +21,7 @@ Requirements
 - PostgreSQL >= 9.2 database
   - ltree feature, often found in separate "-contrib" packages
 
-Note: [libxdiff0](https://github.com/a-tze/libxdiff ) and [pecl/xdiff](https://github.com/a-tze/php5-xdiff) are available as debian packages.
+Note: [libxdiff0](https://github.com/a-tze/libxdiff ) and [pecl/xdiff](https://github.com/a-tze/php7-xdiff) are available as debian packages.
 
 
 Install
