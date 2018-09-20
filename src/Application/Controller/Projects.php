@@ -162,7 +162,7 @@
 			}
 			
 			$this->encodingProfilesLeft = clone $this->versionsLeft;
-			$this->encodingProfilesLeft
+			$this->encodingProfilesLeft = $this->encodingProfilesLeft
 				->indexBy('encoding_profile_id', 'name')
 				->toArray();
 			
