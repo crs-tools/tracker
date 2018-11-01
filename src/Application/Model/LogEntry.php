@@ -98,8 +98,8 @@
 			],
 			'Action.cut.abort' => [
 				'log' => 'Cutting aborted.',
-				'single' => '{user_name} abortet cutting {id}.',
-				'multiple' => '{user_name} abortet cutting {tickets}.',
+				'single' => '{user_name} aborted cutting {id}.',
+				'multiple' => '{user_name} aborted cutting {tickets}.',
 				'message' => false
 			],
 			'Action.check' => [
@@ -122,8 +122,8 @@
 			],
 			'Action.check.abort' => [
 				'log' => 'Checking aborted.',
-				'single' => '{user_name} abortet checking {id}.',
-				'multiple' => '{user_name} abortet checking {tickets}.',
+				'single' => '{user_name} aborted checking {id}.',
+				'multiple' => '{user_name} aborted checking {tickets}.',
 				'message' => false
 			],
 			
