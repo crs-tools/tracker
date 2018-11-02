@@ -36,7 +36,7 @@ CREATE TABLE tbl_project_property
 (
   project_id bigint NOT NULL,
   name ltree NOT NULL CHECK (char_length(name::text) > 0),
-  value character varying(8196) NOT NULL,
+  value text NOT NULL,
   CONSTRAINT tbl_project_property_pk PRIMARY KEY (project_id, name),
   CONSTRAINT tbl_project_property_project_fk FOREIGN KEY (project_id)
       REFERENCES tbl_project (id) MATCH SIMPLE
