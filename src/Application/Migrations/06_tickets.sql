@@ -211,7 +211,7 @@ CREATE TABLE tbl_ticket_property
 (
   ticket_id bigint NOT NULL,
   name ltree NOT NULL CHECK (char_length(name::text) > 0),
-  value character varying(8196) NOT NULL,
+  value text NOT NULL,
   CONSTRAINT tbl_ticket_property_pk PRIMARY KEY (ticket_id, name),
   CONSTRAINT tbl_ticket_property_ticket_fk FOREIGN KEY (ticket_id)
       REFERENCES tbl_ticket (id) MATCH SIMPLE
