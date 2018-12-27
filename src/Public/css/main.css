@@ -1401,7 +1401,7 @@ ul.tickets li a.link:hover, ul.tickets li a.link:focus {
 }
 
 ul.tickets li.child a.link {
-  left: 3.7em;
+  left: 4.5em;
 }
 
 ul.tickets li span {
@@ -1424,7 +1424,7 @@ ul.tickets li span.vid, ul.tickets li span.title {
 }
 
 ul.tickets li span.vid {
-	width: 2.4em;
+	width: 3em;
 	margin-left: 6px;
 	padding-right: 5px;
 	border-right: 1px solid #e4e4e4;
