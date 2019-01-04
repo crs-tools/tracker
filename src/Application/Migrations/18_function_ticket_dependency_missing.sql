@@ -6,7 +6,7 @@ SET ROLE TO postgres;
 -- returns true if:
 --   - given ID is an encoding ticket
 --   - given ID's profile does have a dependency
---   - that dependency is not met in the given ID's project
+--   - no encoding ticket among the given ID's sibling tickets has that dependee profile
 -- In all other cases, including the cases where this check does not
 -- make any sense, it will return false.
 
@@ -37,7 +37,7 @@ BEGIN
 	WHERE
 		depender.id = param_depender_ticket_id;
 
-	RETURN result;
+	RETURN COALESCE(result, false);
 
 END
 $$
