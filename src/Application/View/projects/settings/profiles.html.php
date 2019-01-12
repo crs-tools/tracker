@@ -29,7 +29,7 @@
 					<?= $f->select(
 						'versions[' . $index . '][1]',
 						null,
-						$version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->toArray(),
+						$version->EncodingProfile->Versions->indexBy('id', 'encodingProfileVersionTitle')->orderBy('revision')->toArray(),
 						$version['id'],
 						['data-encoding-profile-version-id' => $version['id'], 'data-encoding-profile-index' => $index],
 						false
