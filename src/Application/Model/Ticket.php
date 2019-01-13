@@ -648,16 +648,14 @@
 		/*
 			Statistics
 		*/
-		public static function countByNextState($project, $ticketType, $ticketState) {
+		public static function countNonfailedByNextState($project, $ticketType, $ticketState) {
 			return Ticket::findAll()
 				->where([
 					'ticket_type' => $ticketType,
-					'project_id' => $project
+					'project_id' => $project,
+					'ticket_state_next' => $ticketState,
+					'failed' => false,
 				])
-				->where(
-					'ticket_state_next = ?',
-					[$ticketState]
-				)
 				->count();
 		}
 		
