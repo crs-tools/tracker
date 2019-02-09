@@ -124,10 +124,16 @@
 			$this->form();
 			
 			if ($this->form->wasSubmitted()) {
+				$values = $this->form->getValues();
+				
+				if (!AccessControl::isAllowed($values['role'], 'user', 'restrict')) {
+					$values['restrict_project_access'] = false;
+				}
+				
 				if ($this->form->getValue('password') and
 					!User::getCurrent()->verifyPassword($this->form->getValue('user_password'))) {
 					$this->flashNow('Your entered a wrong password');
-				} elseif ($this->user->save($this->form->getValues())) {
+				} elseif ($this->user->save($values)) {
 					$this->flash('User ' . $this->user['name'] . ' updated');
 					return $this->redirect('user', 'index');
 				}

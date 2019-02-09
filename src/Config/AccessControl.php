@@ -17,7 +17,7 @@
 	// Read only
 	AccessControl::allow('read only', ['projects'], ['index']);
 	AccessControl::allow('read only', ['user'], [
-		'settings', 'logout', 'changeback', 'act_as_substitute'
+		'settings', 'logout', 'changeback', 'act_as_substitute', 'restrict'
 	]);
 	
 	AccessControl::allow(
@@ -44,20 +44,25 @@
 	AccessControl::allow('user', ['projects'], ['settings']);
 	
 	// Restricted Superuser
+	AccessControl::allow('restricted superuser', ['projects'], [
+		'edit', 'properties', 'profiles', 'states', 'worker', 'edit_filter'
+	]);
+	AccessControl::allow('restricted superuser', ['tickets'], ['create', 'duplicate']);
+	AccessControl::allow('restricted superuser', ['import']);
 	
 	// Superuser
 	AccessControl::allow('superuser', ['projects'], [
-		'create', 'edit', 'properties', 'profiles', 'states', 'worker'
+		'create'
 	]);
-	AccessControl::allow('superuser', ['tickets'], ['create', 'duplicate']);
 	AccessControl::allow('superuser', ['encodingprofiles']);
-	AccessControl::allow('superuser', ['import']);
 	AccessControl::allow('superuser', ['workers'], ['pause', 'unpause', 'edit_group']);
+	
+	AccessControl::deny('superuser', ['user'], ['restrict']);
 	
 	// Admin
 	AccessControl::allow('admin');
 	
-	AccessControl::deny('admin', ['user'], ['act_as_substitute']);
+	AccessControl::deny('admin', ['user'], ['act_as_substitute', 'restrict']);
 	
 	AccessControl::deny('admin', ['project'], ['delete']);
 	AccessControl::deny('admin', ['encodingprofiles'], ['delete']);

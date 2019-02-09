@@ -1709,7 +1709,7 @@ var Tracker = {};
       .closest('form')
       .find('[data-user-edit-role]')
       .change(function(event) {
-        if (event.target.value === 'admin') {
+        if (event.target.value === 'admin' || event.target.value === 'superuser') {
           this.enable.prop('disabled', true);
           this.add && this.add.detach();
         } else {
