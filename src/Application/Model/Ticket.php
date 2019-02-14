@@ -540,6 +540,15 @@
 					'value' => implode(', ', $persons)
 				];
 			}
+
+			$links = $event->xpath('links/link/@href');
+
+			if (!empty($links)) {
+				$ticket['Properties']['Fahrplan.Links'] = [
+					'name' => 'Fahrplan.Links',
+					'value' => implode(' ', $links)
+				];
+			}
 			
 			return new static($ticket);
 		}
