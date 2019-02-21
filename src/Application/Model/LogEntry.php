@@ -126,6 +126,12 @@
 				'multiple' => '{user_name} aborted checking {tickets}.',
 				'message' => false
 			],
+			'Action.reset' => [
+				'log' => 'Ticket reset.',
+				'single' => '{user_name} reset {id} to state {to_state}',
+				'multiple' => '{user_name} reset {tickets}',
+				'message' => false
+			],
 			
 			'Source.failed' => [
 				'log' => 'Marked as failed while checking encoding task.',

@@ -851,6 +851,42 @@
 			
 			return true;
 		}
+
+		public function reset($handle_id = null, $ticket_types = []) {
+			foreach ($ticket_types as $ticket_type) {
+				if (!ctype_alnum($ticket_type)) {
+					throw new ModelException("ticket_types can only contain alpha numeric characters.");
+				}
+			}
+
+			$tickets = Database::$Instance->query(
+				'SELECT * FROM ticket_reset(?,?)',
+				[
+					$this['id'],
+					'{' . implode(',', $ticket_types) . '}'
+				]
+			)->fetchAll();
+
+			foreach ($tickets as $ticket) {
+				$entry = [
+					'ticket_id' => $ticket['ticket_id'],
+					'from_state' => $ticket['from_state'],
+					'to_state' => $ticket['to_state'],
+					'handle_id' => ($handle_id === null) ? User::getCurrent()['id'] : $handle_id,
+					'event' => 'Action.reset'
+					];
+
+				if ($ticket['follows_meta_ticket']) {
+					$entry['comment'] = 'Reset due to meta ticket reset.';
+				}
+				if ($ticket['follows_encoding_ticket']) {
+					$entry['comment'] = 'Reset due to ticket reset of depending encoding profile';
+				}
+
+				LogEntry::create($entry);
+			}
+			return count($tickets);
+		}
 		
 		public function queryPreviousState($state = null) {
 			return (new Database_Query(''))
