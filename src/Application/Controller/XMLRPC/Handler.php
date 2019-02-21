@@ -254,6 +254,30 @@
 			
 			return $this->_getTicketInfo($ticket);
 		}
+
+		/**
+		 * Reset given ticket to initial state.
+		 * Also reset the children of a meta ticket and
+		 * encoding tickets which depend on the given ticket.
+		 *
+		 * @param integer $ticket_id ticket identifier
+		 * @param array $ticket_types filter ticket types
+		 * @throws Exception
+		 * @return boolean
+		 */
+		public function resetTicket($ticket_id, array $ticket_types = [])
+		{
+			$ticket = Ticket::find(['id' => $ticket_id]);
+			if (!$ticket) {
+				throw new Exception(__FUNCTION__ . ': ticket not found', 1401);
+			}
+
+			if (!in_array($ticket['project_id'], $this->_assignedProjects)) {
+				throw new Exception(__FUNCTION__ . ': ticket in project not assigned to worker group', 1402);
+			}
+
+			return $ticket->reset($this->worker['id'], $ticket_types);
+		}
 		
 		/**
 		 * Add a new meta ticket
