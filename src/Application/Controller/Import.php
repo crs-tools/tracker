@@ -297,8 +297,6 @@
 					
 					if ($type === 'new') {
 						$ticket['ticket_type'] = 'meta';
-						// TODO: initial state
-						$ticket['ticket_state'] = 'staging';
 						
 						$changes['+' . $ticket['fahrplan_id']] = $ticket;
 						continue;
