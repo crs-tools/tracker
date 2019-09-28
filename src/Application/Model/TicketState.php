@@ -9,7 +9,9 @@
 		public $hasOne = [
 			'ProjectTicketState' => [
 				'foreign_key' => ['ticket_type', 'ticket_state'],
-				'select' => '(ticket_state IS NOT NULL) AS project_enabled, service_executable AS project_service_executable'
+				'select' => '(ticket_state IS NOT NULL) AS project_enabled,' .
+					'service_executable AS project_service_executable,' .
+					'skip_on_dependent AS project_skip_on_dependent'
 			]
 		];
 		
