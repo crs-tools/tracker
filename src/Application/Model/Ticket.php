@@ -47,7 +47,7 @@
 				'class_name' => 'EncodingProfileVersion',
 				'foreign_key' => ['encoding_profile_version_id'],
 				'select' => 'revision, description',
-				'join_assoications' => [
+				'join_associations' => [
 					'EncodingProfile' => ['select' => 'id, name, slug']
 				]
 			],

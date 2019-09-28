@@ -20,7 +20,7 @@
 			'Ticket' => [
 				'foreign_key' => ['ticket_id'],
 				'select' => 'title AS ticket_title, fahrplan_id AS ticket_fahrplan_id, parent_id, ticket_type, encoding_profile_version_id',
-				'join_assoications' => ['Parent' => ['join' => true]]
+				'join_associations' => ['Parent' => ['join' => true]]
 			],
 			'User' => [
 				'foreign_key' => ['handle_id'],
