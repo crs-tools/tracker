@@ -13,6 +13,8 @@
 					</a>
 					<span class="other">
 					</span>
+					<a class="progress">
+					</a>
 				</li>
 				
 				<?php if (!empty($ticket['Properties'])): ?>
@@ -40,10 +42,12 @@
 					<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 						<span class="vid"><?= h($currentState[$ticket['id']]['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate((!empty($ticket['title']))? $ticket['title'] : $currentState[$ticket['id']]['title'], 45, '…')); ?></span>
-						<span class="view">&nbsp;</span>
+						<span class="view"><span></span></span>
 					</a>
 					<span class="other">
 					</span>
+					<a class="progress" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
+					</a>
 				</li>
 				
 				<li class="table">
@@ -101,10 +105,12 @@
 					<a class="link" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
 						<span class="vid"><?= h($currentState[$ticket['id']]['fahrplan_id']); ?></span>
 						<span class="title"><?= h(str_truncate((!empty($ticket['title']))? $ticket['title'] : $currentState[$ticket['id']]['title'], 45, '…')); ?></span>
-						<span class="view">&nbsp;</span>
+						<span class="view"><span></span></span>
 					</a>
 					<span class="other">
 					</span>
+					<a class="progress" href="<?= $this->Request->getRootURL() . Router::reverse('tickets', 'view', $ticket->toArray() + ['project_slug' => $project['slug']]); ?>">
+					</a>
 				</li>
 			<?php $index++; endforeach; ?>
 		</ul>

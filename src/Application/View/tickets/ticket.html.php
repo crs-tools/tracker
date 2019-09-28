@@ -76,7 +76,7 @@ if (!empty($filtered) and (!empty($filtered[$ticket['id']]) or !empty($filtered[
 			echo '>';
 		} ?>
 		
-		</span><span class="view"></span>
+		</span><span class="view"><span></span></span>
 	</a><span class="other">
 		
 		<?php if (!empty($ticket['handle_id']) and isset($ticket['handle_name'])): ?>
