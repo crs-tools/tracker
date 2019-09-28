@@ -1,2 +1,5 @@
 src/Config/Config.php
 src/Public/fahrplan/
+
+src/Application/node_modules
+src/Public/css/*.css.map
