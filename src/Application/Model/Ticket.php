@@ -835,7 +835,8 @@
 				->where(['ticket_type' => 'encoding']);
 			
 			$encodingTickets->update([
-				'ticket_state' => $this->Project->queryFirstState('encoding'),
+				// Ticket state will be set to the first initial state
+				'ticket_state' => null,
 				'failed' => false,
 				'handle_id' => null
 			]);

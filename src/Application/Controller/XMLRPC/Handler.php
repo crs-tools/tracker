@@ -320,12 +320,6 @@
 				'fahrplan_id' => $fahrplan_id
 			];
 			
-			$first_state = $project->queryFirstState($ticket_data['ticket_type'])->first();
-			if(empty($first_state)) {
-				throw new Exception(__FUNCTION__ . ': no valid states configured in project for ticket type meta', 1005);
-			}
-			$ticket_data['ticket_state'] = $first_state['ticket_state'];
-			
 			// store remaining properties
 			$ticket_data['properties'] = [];
 			foreach($properties as $name => $value) {
@@ -427,8 +421,6 @@
 					profiles depend on given profile, no duplicates are allowed.', 1206);
 			}
 
-			$initial_state = $project->queryFirstState('encoding')->first();
-
 			try {
 				// create encoding ticket
 				$ticket = Ticket::createOrThrow([
@@ -437,7 +429,6 @@
 					'fahrplan_id' => $metaTicket['fahrplan_id'],
 					'priority' => $encodingProfileVersion['priority'],
 					'ticket_type' => 'encoding',
-					'ticket_state' => $initial_state['ticket_state'],
 					'encoding_profile_version_id' => $encodingProfileVersion['id']
 				]);
 				
