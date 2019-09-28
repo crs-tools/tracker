@@ -71,6 +71,7 @@
 				->scoped([
 					'with_default_properties',
 					'with_encoding_profile_name',
+					'without_closed_children',
 					'order_list'
 				]);
 			

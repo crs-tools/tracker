@@ -438,6 +438,19 @@
 			);
 		}
 		
+		public static function without_closed_children(Model_Resource $resource) {
+			$resource
+				->andSelect('parent.ticket_state AS parent_state')
+				->leftJoin(
+					[self::TABLE, 'parent'],
+					['.parent_id = id']
+				)
+				->where(
+					'parent_id IS NULL OR parent.ticket_state != ?',
+					['closed']
+				);
+		}
+		
 		public static function virtual_property_filter(Model_Resource $resource, array $filters) {
 			foreach ($filters as $property => $condition) {
 				if (!isset(self::$_virtualPropertyConditions[$property])) {
