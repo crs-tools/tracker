@@ -323,76 +323,64 @@ ul.tickets {
 		a.progress span span {
 			display: none;
 		}
-	}
-}
-
-
-@media screen and (max-width: 850px) {
-	ul.tickets li {
-		span.day { display: none; }
-		span.room { max-width: 7em; }
-	}
-}
-
-@media screen and (max-width: 812px) {
-	ul.tickets li {
-		span.room { display: none; }
-		span.title { width: 61%; }
-	}
-}
-
-@media screen and (max-width: 680px) {
-	ul.tickets li {
-		span.start { display: none; }
-		span.title { width: 67%; }
-	}
-}
-
-@media screen and (max-width: 625px) {
-	ul.tickets li {
-		span.assignee { display: none; }
-		a.link { right: 90px; }
-		span.view { right: -84px; }
-	}
-}
-
-@media screen and (max-width: 615px) {
-	ul.tickets li {
-		span.room,
-		span.start,
-		span.day {
-			display: none;
-		}
 		
-		span.state {
-			width: auto;
-			margin-left: 0;
-			position: absolute;
-			right: 60px;
-		}
-		span.title {
-			width: 59%;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
+		@media screen and (max-width: 850px) {
+			span.day { display: none; }
+			span.room { max-width: 7em; }
 		}
 
-		a.link { right: 15px; }
-		a.link span.view { right: -10px; }
-	}
-}
+		@media screen and (max-width: 812px) {
+			span.room { display: none; }
+			span.title { width: 61%; }
+		}
 
-@media screen and (max-width: 525px) {
-	ul.tickets li {
-		span.state { display: none; }
-		span.title { width: 80%; }
-	}
-}
+		@media screen and (max-width: 700px) {
+			span.start { display: none; }
+			span.title { width: 67%; }
+		}
 
-@media screen and (max-width: 450px) {
-	ul.tickets li span.title {
-		width: 74%;
-		overflow: hidden;
-		height: 20px;
+		@media screen and (max-width: 670px) {
+			span.assignee { display: none; }
+			a.link { right: 90px; }
+			a.link span.view { right: -84px; }
+		}
+
+		@media screen and (max-width: 615px) {
+			span.room,
+			span.start,
+			span.day {
+				display: none;
+			}
+	
+			span.state {
+				width: auto;
+				margin-left: 0;
+				position: absolute;
+				right: 60px;
+				border-right: none;
+			}
+			span.title {
+				width: 59%;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+
+			a.link { right: 15px; }
+			a.link span.view { right: -10px; }
+		}
+
+		@media screen and (max-width: 525px) {
+			span.state { display: none; }
+			span.title { width: 80%; }
+		}
+
+		@media screen and (max-width: 450px) {
+			span.title {
+				width: 74%;
+				overflow: hidden;
+				height: 20px;
+			}
+		}
 	}
 }
