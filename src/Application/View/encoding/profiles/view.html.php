@@ -32,7 +32,7 @@
 			<tbody>
 				<?php foreach ($versions as $version): ?>
 					<tr>
-						<td><?= $f->radio('version_a', null, $version['id']) . $f->radio('version_b', null, $version['id']); ?>
+						<td class="encoding-profile-select"><?= $f->radio('version_a', null, $version['id']) . $f->radio('version_b', null, $version['id']); ?>
 						<td><strong>r<?= $version['revision']; ?></strong></td>
 						<td><?= (new Datetime($version['created']))->format('d.m.Y H:i'); ?></td>
 						<td><?= h($version['description']); ?></td>

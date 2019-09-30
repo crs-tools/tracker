@@ -2,6 +2,10 @@ div.table table tr.encoding-profile-version td {
   padding: 0;
 }
 
+table tr td.encoding-profile-select {
+	white-space: nowrap;
+}
+
 @media screen and (max-width: 505px) {
 	div.table.encoding-profiles table .slug,
 	div.table.encoding-profiles table .ext { display: none; }
