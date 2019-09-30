@@ -2001,17 +2001,6 @@ div.table table tr td.link a {
 	div.table.users table td { width: auto; }
 }
 
-/* Encoding profiles */
-
-@media screen and (max-width: 505px) {
-	div.table.encoding-profiles table .slug,
-	div.table.encoding-profiles table .ext { display: none; }
-}
-
-div.table table tr.encoding-profile-version td {
-  padding: 0;
-}
-
 /* Projects */
 
 ul.projects {
