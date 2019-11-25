@@ -610,9 +610,9 @@
 					continue;
 				} elseif($value !== '') {
 					$ticket_properties[] = ['name' => $name, 'value' => $value];
-                    if(strpos($name, "Progress." ) === false ){
-                        $log_message[] = $name . '=' . $value;
-                    }
+					if(strpos($name, "Progress." ) === false ){
+						$log_message[] = $name . '=' . $value;
+					}
 				} else {
 					$ticket_properties[] = ['name' => $name, '_destroy' => 1];
 					$log_message[] = 'deleting property: ' . $name;
