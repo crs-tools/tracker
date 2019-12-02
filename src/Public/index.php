@@ -38,7 +38,7 @@
 			$time, 1 / $time
 		));
 	} catch (Exception $e) {
-		Log::handleException($e);
+		Log::exception($e);
 		
 		$c = ($e->getCode() > 400)? $e->getCode() : 500;
 		echo Controller::renderTemplate(
