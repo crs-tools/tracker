@@ -314,7 +314,7 @@
 					case 'is_in':
 					case 'is_not_in':
 						$parts = explode(',', $values[$i]);
-						$condition = self::$searchMapping[$key] . (($operators[$i] == 'is_not_in')? 'NOT ' : '') . ' IN (' . substr(str_repeat('? , ', count($parts)), 0, -3) . ')';
+						$condition = self::$searchMapping[$key] . (($operators[$i] == 'is_not_in')? ' NOT' : '') . ' IN (' . substr(str_repeat('? , ', count($parts)), 0, -3) . ')';
 						
 						foreach ($parts as $part) {
 							$params[] = trim($part);
