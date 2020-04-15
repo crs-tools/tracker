@@ -163,7 +163,7 @@ CREATE UNIQUE INDEX unique_fahrplan_id ON tbl_ticket (project_id, fahrplan_id) W
 
 -- trigger
 CREATE TRIGGER valid_handle BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE valid_handle();
-CREATE TRIGGER initial_state_trigger BEFORE INSERT ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_ticket_initial_state();
+CREATE TRIGGER initial_state_trigger BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_ticket_initial_state();
 CREATE TRIGGER state_trigger BEFORE INSERT OR UPDATE OF ticket_state ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_next_state();
 CREATE TRIGGER progress_trigger AFTER INSERT OR DELETE OR UPDATE OF ticket_state, parent_id ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE update_ticket_progress();
 

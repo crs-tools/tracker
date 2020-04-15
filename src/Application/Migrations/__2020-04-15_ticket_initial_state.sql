@@ -21,7 +21,7 @@ LANGUAGE plpgsql VOLATILE;
 
 DROP TRIGGER IF EXISTS initial_state_trigger ON tbl_ticket;
 
-CREATE TRIGGER initial_state_trigger BEFORE INSERT ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_ticket_initial_state();
+CREATE TRIGGER initial_state_trigger BEFORE INSERT OR UPDATE ON tbl_ticket FOR EACH ROW EXECUTE PROCEDURE set_ticket_initial_state();
 
 COMMIT;
 
