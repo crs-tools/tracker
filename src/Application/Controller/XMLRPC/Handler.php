@@ -341,6 +341,10 @@
 					'comment' => 'ticket created'
 				]);
 				
+				Ticket::createMissingRecordingTickets(
+					$project['id']
+				);
+				
 				Ticket::createMissingEncodingTickets(
 					$project['id']
 				);
