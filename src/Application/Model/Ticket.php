@@ -114,6 +114,7 @@
 		];
 		
 		private static $_virtualPropertyConditions = [
+			'Fahrplan.Room' => 'room = ?',
 			'Record.StartedBefore' => 'time_start < ?',
 			'Record.EndedAfter' => 'time_end > ?',
 			'Record.EndedBefore' => 'time_end < ?'
