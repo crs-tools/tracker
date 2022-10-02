@@ -39,6 +39,7 @@
 			// Process templates as XSL
 			
 			$content = new DOMDocument('1.0', 'UTF-8');
+
 			$parent = $content->createElement('properties');
 			
 			foreach ($properties as $name => $value) {
@@ -59,6 +60,7 @@
 			
 			// pretty print
 			$output = $processor->transformToDoc($content);
+			$output->insertBefore($output->createProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="/xsl/jobstyle.xsl"'), $output->firstChild);
 			
 			if (!$output or !$output instanceOf DOMDocument) {
 				throw EncodingProfileTemplateException::fromLibXMLErrors();
