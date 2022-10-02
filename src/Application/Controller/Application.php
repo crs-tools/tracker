@@ -29,7 +29,7 @@
 			$this->Response->addHeader(
 				'Content-Security-Policy',
 				'default-src \'self\';' .
-					'font-src \'none\'; frame-src \'none\'; object-src \'none\';'
+				'font-src \'none\'; style-src \'self\' \'unsafe-inline\'; frame-src \'none\'; object-src \'none\';'
 			);
 			
 			$this->Response->addHeader('X-Content-Type-Options', 'nosniff');
