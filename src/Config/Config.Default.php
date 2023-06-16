@@ -22,5 +22,10 @@
 	session_set_cookie_params(0, '/', null, false, true);
 	
 	libxml_disable_entity_loader(true);
-	
+
+	// Use settings like these to enable external auth mechanisms
+	// like OIDC or SAML, but don't forget to exclude RPC URLs
+	// from access control
+	#User::setExternalUserHeader('REMOTE_USER');
+	#User::setExternalUserHeader('HTTP_X_USER');
 ?>
