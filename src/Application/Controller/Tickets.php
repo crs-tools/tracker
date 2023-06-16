@@ -274,8 +274,7 @@
 			$mainCondition = $subCondition = [];
 			$mainParams = $subParams = [];
 			
-			reset($fields);
-			while (list($i, $key) = each($fields)) {
+			foreach ($fields as $i => $key) {
 				$condition = '';
 				$params = [];
 				
