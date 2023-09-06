@@ -29,7 +29,6 @@
 				])
 				->scoped([
 					'with_default_properties',
-					'with_encoding_profile_name',
 					'order_list'
 				]);
 			
@@ -48,23 +47,29 @@
 				])
 				->scoped([
 					'with_recording',
+					'with_encoding_profile_name',
 					'with_merged_properties' => [[
 						'Fahrplan.GUID' => 'fahrplan_guid',
+						'Record.Language' => 'language',
 						'Record.Cutdiffseconds' => 'duration',
 						'YouTube.Url0' => 'youtube_url',
 						'YouTube.Url1' => 'youtube_url_translated',
 						'YouTube.Url2' => 'youtube_url_translated_2'
 					]]
 				]);
-			
-			return $this->_respond($tickets);
+
+			return $this->_respond($tickets, function($x) { return $x['youtube_url'] !== null; });
 		}
 		
-		protected function _respond($data) {
+		protected function _respond($data, $filter = null) {
 			if ($data instanceOf Model_Resource) {
 				$data = $data->toArray();
 			}
-			
+
+			if ($filter) {
+				$data = array_values(array_filter($data, $filter));
+			}
+
 			if ($this->respondTo('json')) {
 				$this->Response->setContent(json_encode($data));
 				return $this->Response;
