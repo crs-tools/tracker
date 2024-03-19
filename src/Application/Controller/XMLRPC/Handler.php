@@ -673,7 +673,34 @@
 					$this->_assignedProjects,
 					$tickets
 				);
-				
+
+				if($propertyFilters) {
+					$tickets->filter(function(array $entry) use ($tickets, $propertyFilters) {
+						$ticket = new Ticket();
+						$ticket->init($entry);
+
+						$valid = false;
+						$unmatchedFilters = [];
+						$properties = $ticket->MergedProperties->toArray();
+						foreach ($propertyFilters as $filter_key => $filter_value) {
+							if (
+								isset($properties[$filter_key]) and
+								(string) $properties[$filter_key]['value'] === $filter_value
+								or
+								!isset($properties[$filter_key]) and $filter_value === ''
+							) {
+								// TODO: for "NOT"/"NONE": set $filter here, break
+								$valid = true;
+								continue;
+							}
+
+							$unmatchedFilters[] = $filter_key;
+						}
+
+						if($valid) return true; else return false;
+					});
+				}
+
 				$ticket = $tickets->first();
 			} catch(Exception $e) {
 				Log::warning($e->getMessage());
