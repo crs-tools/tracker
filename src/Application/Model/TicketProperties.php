@@ -193,6 +193,21 @@
 						'virtual' => true
 					];
 				}
+				
+				if (!isset($index['Fahrplan.End']) && isset($index['Fahrplan.Duration']) {
+					$duration = explode(':', $index['Fahrplan.Duration']);
+					if (count($duration) == 3) {
+						$duration_interval = date_interval_create_from_date_string("$duration[0] days $duration[1] hours $duration[2] minutes");
+					} elseif (count($duration) == 2) {
+						$duration_interval = date_interval_create_from_date_string("$duration[1] hours $duration[2] minutes");
+					}
+					if (isset($duration_interval)) {
+						$this->_entries[] = [
+							'name' => 'Fahrplan.End',
+							'value' => date_add($date->format('H:i'), $duration_interval),
+							'virtual' => true
+						];
+				}
 			}
 			
 			if (isset($index['Fahrplan.Persons']) and !isset($index['Fahrplan.Person_list'])) {
