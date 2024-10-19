@@ -35,7 +35,8 @@
 					[
 						'' => 'No Authentication',
 						'basic' => 'Basic HTTP Authentication',
-						'header' => 'Authentication Header'
+						'header_authentication' => 'Authentication Header'
+						'header_authorization' => 'Authorization Header'
 					],
 					'',
 					['data-import-auth-type-value']
@@ -43,7 +44,8 @@
 			</li>
 			<li><?= $f->input('auth_user', 'Username', '', ['data-import-auth-type' => 'basic']); ?></li>
 			<li><?= $f->password('auth_password', 'Password', ['data-import-auth-type' => 'basic']); ?></li>
-			<li><?= $f->input('auth_header', 'Authentication Header', '', ['class' => 'wide', 'data-import-auth-type' => 'header']); ?></li>
+			<li><?= $f->input('auth_header_authentication', 'Authentication Header', '', ['class' => 'wide', 'data-import-auth-type' => 'header_authentication']); ?></li>
+			<li><?= $f->input('auth_header_authorization', 'Authorization Header', '', ['class' => 'wide', 'data-import-auth-type' => 'header_authorization']); ?></li>
 			<li><?= $f->submit('Create new import', ['disabled' => $project['read_only']]); ?></li>
 		</ul>
 	</fieldset>
