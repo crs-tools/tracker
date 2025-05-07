@@ -21,6 +21,8 @@
 	
 	session_set_cookie_params(0, '/', null, false, true);
 	
-	libxml_disable_entity_loader(true);
+	if (PHP_MAJOR_VERSION < 8) {
+		libxml_disable_entity_loader(true);
+	}
 	
 ?>
