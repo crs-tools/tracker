@@ -487,6 +487,13 @@
 				];
 			}
 			
+			if (isset($attributes['code'])) {
+				$ticket['Properties']['Fahrplan.Code'] = [
+					'name' => 'Fahrplan.Code',
+					'value' => (string) $attributes['code']
+				];
+			}
+			
 			if (!isset($event->title)) {
 				throw new TicketFahrplanException('event title is missing');
 			}
