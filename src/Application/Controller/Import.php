@@ -454,10 +454,16 @@
 							(isset($import['auth_password']))? $import['auth_password'] : ''
 						);
 						break;
-					case 'header':
+					case 'header_authentication':
 						$client->addHeader(
 							'Authentication',
-							(isset($import['auth_header']))? $import['auth_header'] : ''
+							(isset($import['auth_header_authentication']))? $import['auth_header_authentication'] : ''
+						);
+						break;
+					case 'header_authorization':
+						$client->addHeader(
+							'Authorization',
+							(isset($import['auth_header_authorization']))? $import['auth_header_authorization'] : ''
 						);
 						break;
 				}
