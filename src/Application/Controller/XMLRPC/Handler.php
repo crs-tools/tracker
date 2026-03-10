@@ -614,13 +614,15 @@
 					continue;
 				} elseif($value !== '') {
 					$ticket_properties[] = ['name' => $name, 'value' => $value];
-					$log_message[] = $name . '=' . $value;
+					if(strpos($name, "Progress." ) === false ){
+						$log_message[] = $name . '=' . $value;
+					}
 				} else {
 					$ticket_properties[] = ['name' => $name, '_destroy' => 1];
 					$log_message[] = 'deleting property: ' . $name;
 				}
 			}
-			if($ticket->save(['properties' => $ticket_properties])) {
+			if($ticket->save(['properties' => $ticket_properties]) && count($log_message) > 1) {
 				LogEntry::create([
 					'ticket_id' => $ticket['id'],
 					'handle_id' => $this->worker['id'],
