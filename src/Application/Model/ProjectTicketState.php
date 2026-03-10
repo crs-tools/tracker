@@ -20,31 +20,10 @@
 			]
 		];
 		
-		// TODO: use Ticket::queryNextState / queryPreviousState?
-		public static function getNextState($project, $type, $state) {
+		public static function getCommenceState($ticket) {
 			$handle = Database::$Instance->query(
-				'SELECT * FROM ticket_state_next(?, ?, ?)',
-				[$project, $type, $state]
-			);
-			$row = $handle->fetch();
-			
-			return ($row === false)? null : $row;
-		}
-		
-		public static function getPreviousState($project, $type, $state) {
-			$handle = Database::$Instance->query(
-				'SELECT * FROM ticket_state_previous(?, ?, ?)',
-				[$project, $type, $state]
-			);
-			
-			$row = $handle->fetch();
-			return ($row === false)? null : $row;
-		}
-		
-		public static function getCommenceState($project, $type) {
-			$handle = Database::$Instance->query(
-				'SELECT ticket_state_commence(?, ?)',
-				[$project, $type]
+				'SELECT ticket_state_commence(?)',
+				[$ticket]
 			);
 			
 			return $handle->fetch()['ticket_state_commence'];

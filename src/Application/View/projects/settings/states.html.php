@@ -2,7 +2,7 @@
 <?= $this->render('projects/settings/_header'); ?>
 
 <?php $type = null;
-$typeRows = 0; ?>
+$first = false; ?>
 
 <?= $f = $stateForm(['disabled' => $project['read_only']]); ?>
 	<div class="project-settings-save">
@@ -17,54 +17,74 @@ $typeRows = 0; ?>
 				$encodingStates, (!empty($project))? $project['dependee_ticket_trigger_state'] : null) ?>
 		</fieldset>
 	</div>
-		<?php foreach ($states as $index => $state): ?>
-			<?php if ($type != $state['ticket_type']):
-				$type = $state['ticket_type'];
-				
-				if ($typeRows > 1):
-					$typeRows = 0; ?>
-							</tbody>
-						</table>
-					</div>
-				<?php endif;
-				if ($typeRows == 0): ?>
-					<div class="column-50">
-						<table class="default">
-							<thead>
-								<tr>
-									<th width="20%">Type</th>
-									<th width="40%">State</th>
-									<th width="5%">Service</th>
-								</tr>
-							</thead>
-							<tbody>
-				<?php endif;
-				$typeRows++; ?>
+	<div class="column-50">
+		<table class="default">
+			<thead>
 				<tr>
-					<td><?= h(mb_ucfirst($type)); ?></td>
-			<?php else: ?>
+					<th width="20%">Type</th>
+					<th width="40%">State</th>
+					<th width="5%">Service</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($states as $index => $state) {
+					if ($state['ticket_type'] === 'encoding') {
+						continue;
+					}
+					
+					if ($type !== $state['ticket_type']) {
+						$type = $state['ticket_type'];
+						$first = true;
+					} else {
+						$first = false;
+					}
+					
+					
+					echo $this->render('projects/settings/states/_state', [
+						'f' => $f,
+						'first' => $first,
+						'index' => $index,
+						'state' => $state
+					]);
+				} ?>
+			</tbody>
+		</table>
+	</div>
+	<div class="column-50">
+		<table class="default">
+			<thead>
 				<tr>
-					<td class="empty"></td>
-			<?php endif; ?>
-				<td><?=
-					$f->checkbox(
-						'States[' . $index . '][ticket_state]',
-						$state['ticket_state'],
-						$state['project_enabled'],
-						['value' => $state['ticket_state']] +
-							(($state['project_enabled'])?
-								['data-association-destroy' => 'States[' . $index . '][_destroy]'] :
-								[]),
-						false
-					) .
-					$f->hidden('States[' . $index . '][ticket_type]', $state['ticket_type']);
-				?></td>
-				<td class="right"><?php if ($state['service_executable']) {
-					echo $f->checkbox('States[' . $index . '][service_executable]', null, $state['project_service_executable'], [], false);
-				} ?></td>
-			</tr>
-			<?php $f->register('States[' . $index . '][_destroy]'); ?>
-		<?php endforeach; ?>
+					<th width="20%">Type</th>
+					<th width="35%">State</th>
+					<th width="5%">Service</th>
+					<th width="5%">
+						<span aria-label="Select if the state will be skipped
+in dependent encoding profiles" data-tooltip="true">Skip</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($states as $index => $state) {
+					if ($state['ticket_type'] !== 'encoding') {
+						continue;
+					}
+					
+					if ($type !== $state['ticket_type']) {
+						$type = $state['ticket_type'];
+						$first = true;
+					} else {
+						$first = false;
+					}
+					
+					
+					echo $this->render('projects/settings/states/_state', [
+						'f' => $f,
+						'first' => $first,
+						'index' => $index,
+						'state' => $state,
+						'skip' => true
+					]);
+				} ?>
 			</tbody>
 		</table>
 	</div>

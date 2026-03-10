@@ -40,7 +40,7 @@ $BODY$
   DECLARE
    next_state record;
   BEGIN
-    next_state := ticket_state_next(NEW.project_id, NEW.ticket_type, NEW.ticket_state);
+    next_state := ticket_state_next(NEW.id, NEW.ticket_state);
 
     NEW.ticket_state_next := next_state.ticket_state;
     NEW.service_executable := next_state.service_executable;
@@ -95,7 +95,7 @@ $BODY$
       (progress, ticket_state_next, service_executable)
         = (tp, (n).ticket_state, (n).service_executable)
     FROM (
-      SELECT id, ticket_state_next(t2.project_id, t2.ticket_type, t2.ticket_state) AS n, ticket_progress(t2.id) as tp
+      SELECT id, ticket_state_next(t2.id) AS n, ticket_progress(t2.id) as tp
       FROM tbl_ticket t2
       WHERE t2.project_id = param_project_id AND param_project_id IS NOT NULL
     ) AS x
